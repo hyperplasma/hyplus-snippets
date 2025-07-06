@@ -1,0 +1,46 @@
+# 依赖目录
+node_modules/
+jspm_packages/
+bower_components/
+
+# 构建产物
+dist/
+build/
+out/
+*.tmp
+*.log
+
+# 环境文件
+.env
+.env.local
+.env.development
+.env.production
+
+# 编辑器配置
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+npm-debug.log*
+.nfs*
+
+# 测试覆盖
+coverage/
+.nyc_output/
+
+# 包管理器文件
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 缓存目录
+.cache/
