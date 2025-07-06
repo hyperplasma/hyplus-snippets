@@ -1,4 +1,5 @@
 <!-- HyNav: Hyplus Nav Page, Ultimate Button popup addon
+ Description: currently only implemented in Ultimate Button, but the CSS is shared with other components.
  Code type: HTML
  Shortcode: [wpcode id="11647"] (auto-generated)
 -->

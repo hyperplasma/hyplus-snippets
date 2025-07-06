@@ -2,7 +2,7 @@
 /**
  * Footer Beian Text PHP
  * 在页脚添加备案信息和相关链接
- * Current status: beian text unused
+ * Current status: beian text unused (and erased)
  */
 add_filter( 'generate_copyright','tu_custom_copyright' );
 function tu_custom_copyright() {

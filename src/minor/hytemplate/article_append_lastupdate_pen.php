@@ -1,5 +1,6 @@
-<!-- Show the Last Updated and Pen Date in Article 
- Code type: universal (html + php)
+<!-- Show the Last Updated and Pen Date in Article
+ Description: This version currently needs JS code to append the last updated date and edit button to the article meta section.
+ Code type: universal (html + js + php)
 -->
 <?php
 add_action('wp_footer', function() {
