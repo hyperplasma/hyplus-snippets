@@ -140,12 +140,8 @@ function get_ai_response($message) {
 
 
 	// ZP AI
-	$api_key = '34a7f6d79930061a0e93dfb025446f67.Ld6dP4db3SxwfaBe'; // 替换为AI的API密钥
+	$api_key = 'XXX'; // 替换为AI的API密钥
 	$url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions  '; // 根据AI的实际API端点进行替换
-
-	// GOD (for anagosis)
-	// $api_key = 'sk-ibQ5qPFcuMLuqZhUkKtqQsZvqRrvbEoFGcugj8WPU7W7aPxA';
-	// $url = 'https://api.gptgod.online/v1/chat/completions  ';
 
 	$data = array(
 		'model' => 'glm-4-flash', // 根据AI的实际API规范调整模型名称
