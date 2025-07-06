@@ -1,6 +1,7 @@
 <?php
 /**
  * Counters of Pages and Apps PHP
+ * Shortcode: [site_content_counts]
  */
 add_action('wp_footer', function() {
     ?>
