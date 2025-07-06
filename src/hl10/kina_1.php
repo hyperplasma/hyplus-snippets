@@ -1,7 +1,7 @@
 <?php
 /**
  * Old, unused, and deprecated code for KINA-1 AI Chat. Better use her spiritual successor, KINA-Next, at https://kina.hyperplasma.top/
- * Code type: PHP
+ * Code type: PHP (half-universal)
  * Shortcode: [ai_chat]
  * Current status: unused
  */
