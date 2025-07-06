@@ -46,7 +46,7 @@ add_action('template_redirect', function () {
                 $count_html = '<div style="text-align:center;font-size:20px;color:#333;margin-top:8px;font-weight:600;">共' . $count . '条</div>';
 
                 // 移动端搜索框（仅在 max-width:768px 时显示），圆角31px，无按钮，占满宽度，placeholder为Hyplus Search...
-                // 相关CSS在main_style.css中（搜索`HY-from`）
+                // 相关CSS在hypluscss.css中（搜索`HY-from`）
 				$search_form = '
                 <form class="mobile-search-bar" role="search" method="get" action="' . esc_url(home_url('/')) . '" style="display:none;text-align:center;">
                     <input type="search" name="s" value="' . esc_attr(get_search_query()) . '" placeholder="Hyplus Search..." autocomplete="off" />
