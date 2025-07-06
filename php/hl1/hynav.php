@@ -1,6 +1,6 @@
 <!-- HyNav: Hyplus Nav Page, Ultimate Button popup addon
-Snippet type: HTML
-Shortcode: [wpcode id="11647"]
+ Code type: HTML
+ Shortcode: [wpcode id="11647"] (auto-generated)
 -->
 
 <div class="hyplus-nav-container hyplus-unselectable">

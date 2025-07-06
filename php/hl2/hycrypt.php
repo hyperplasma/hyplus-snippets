@@ -1,0 +1,1334 @@
+<!-- HyCrypt 编码/加密器
+ Code Type: HTML
+ Shortcode: [wpcode id="12640"] (auto-generated)
+-->
+<div class="hycrypt-container">
+	<div class="hycrypt-calculator">
+		<div class="hycrypt-calculator-container">
+			<div class="hycrypt-label-row">
+				<div class="hycrypt-label-title hyplus-unselectable" style="flex-shrink:0;">输入</div>
+				<!-- 功能下拉 -->
+				<div class="hycrypt-select-group hyplus-unselectable">
+					<select id="hycrypt-main-func" class="hycrypt-select">
+						<option value="text-encrypt" selected>对称加密/解密</option>
+						<option value="hash">Hash加密</option>
+						<option value="base64">BASE64加密/解密</option>
+						<option value="escape">Escape编码/解码</option>
+						<option value="jwt">JWT编码/解码</option>
+						<option value="morse">摩斯密码</option>
+						<option value="random">生成随机字符</option>
+					</select>
+					<select id="hycrypt-sub-func" class="hycrypt-select"></select>
+				</div>
+				<button class="hycrypt-copy-btn hyplus-unselectable" id="hycrypt-copy-input-btn" title="复制输入" type="button" style="margin-left:8px;">📋</button>
+			</div>
+			<textarea id="hycrypt-input" placeholder=""></textarea>
+			<!-- 密钥区域 -->
+			<div id="hycrypt-key-row" style="display: none;">
+				<div class="hycrypt-label-row" style="margin-top: 8px;">
+					<div class="hycrypt-label-title hyplus-unselectable" id="hycrypt-key-label">密钥（请妥善保存）</div>
+					<button class="hycrypt-copy-btn hyplus-unselectable" id="hycrypt-copy-key-btn" title="复制密钥" type="button">📋</button>
+				</div>
+				<textarea id="hycrypt-key-input" class="hycrypt-key-input" placeholder="xxx密钥"></textarea>
+			</div>
+			<!-- 按钮区 -->
+			<div class="hycrypt-button-row hyplus-unselectable" id="hycrypt-btn-row"></div>
+			<!-- 输出区域们 -->
+			<div id="hycrypt-output-areas"></div>
+		</div>
+	</div>
+	<div class="hycrypt-version hyplus-unselectable">HyCrypt v0.9</div>
+</div>
+
+<style>
+	.hycrypt-container {
+		width: 100%;
+		max-width: 700px;
+		margin: 20px auto;
+	}
+	.hycrypt-calculator {
+		padding: 20px;
+		box-shadow: 0 0 10px rgba(0,0,0,0.1);
+		border-radius: 8px;
+		background: #f9f9f9;
+		box-sizing: border-box;
+	}
+	.hycrypt-calculator-container {
+		display: flex;
+		flex-direction: column;
+	}
+	.hycrypt-label-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 6px;
+		flex-wrap: nowrap;
+		overflow-x: auto;
+	}
+	.hycrypt-label-title {
+		font-size: 20px;
+		font-weight: bold;
+		color: #3b4d7a;
+		letter-spacing: 1px;
+		text-align: left;
+		font-family: inherit;
+		margin-right: 0;
+	}
+	.hycrypt-select-group {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-left: 8px;
+		max-width: 70%;
+		overflow-x: auto;
+		padding: 2px 0;
+		flex-shrink: 1;
+	}
+	.hycrypt-select-group select {
+		flex-shrink: 1;
+		white-space: nowrap;
+	}
+	.hycrypt-select-group select:not(:first-child) {
+		margin-left: 8px;
+	}
+	.hycrypt-select {
+		font-size: 16px;
+		padding: 4px 12px;
+		border-radius: 4px;
+		border: 1px solid #b2c1de;
+		background: #f2f7fd;
+		color: #2a436b;
+		outline: none;
+		transition: border 0.2s;
+	}
+	.hycrypt-copy-btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 20px;
+		padding: 2px 8px 2px 8px;
+		border-radius: 4px;
+		transition: background 0.2s;
+		color: #3860b7;
+		user-select: none;
+	}
+	.hycrypt-copy-btn:hover {
+		background: #ecf1fc;
+	}
+	#hycrypt-input, .hycrypt-key-input, .hycrypt-json-input {
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		width: 100%;
+		box-sizing: border-box;
+		resize: vertical;
+		overflow-y: auto;
+		line-height: 1.5;
+		white-space: pre-wrap;
+		word-break: break-all;
+		margin-bottom: 14px;
+		background: #fff;
+		font-size: 17px;
+		font-family: monospace; /* 修改为等宽字体，更适合显示代码 */
+	}
+	#hycrypt-input {
+		min-height: 44px;
+		max-height: 300px;
+	}
+	.hycrypt-key-input {
+		min-height: 44px;
+		max-height: 300px;
+	}
+	.hycrypt-key-input {
+		resize: none;
+		max-height: 2em;
+		background: #fff;
+		border-radius: 4px;
+	}
+	.hycrypt-result {
+		padding: 15px;
+		background: #fff;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		min-height: 30px;
+		word-break: break-all;
+		color: #222;
+		transition: color 0.2s;
+		margin-top: 0;
+		white-space: pre-wrap;
+		font-family: monospace; /* 修改为等宽字体 */
+		tab-size: 4; /* 设置Tab键宽度为4个空格 */
+	}
+	.hycrypt-result-default {
+		color: #aaa;
+	}
+	.hycrypt-result-json {
+		min-height: 100px;
+		max-height: 300px;
+		resize: vertical;
+		overflow-y: auto;
+	}
+	.hycrypt-button-row {
+		display: flex;
+		gap: 15px;
+		width: 100%;
+		margin-bottom: 8px;
+	}
+	.hycrypt-button-row button {
+		flex: 1 1 0;
+		padding: 12px 0;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 18px;
+		box-shadow: 0 2px 8px 0 rgba(60,60,60,0.10), 0 1.5px 2.5px 0 rgba(60,60,60,0.10);
+		transition: background 0.3s, box-shadow 0.3s;
+		letter-spacing: 1px;
+		font-family: inherit;
+		font-weight: bold;
+	}
+	.hycrypt-btn-blue {
+		background: #1976d2;
+		color: #fff;
+	}
+	.hycrypt-btn-blue:hover {
+		background: #1256a2;
+	}
+	.hycrypt-btn-green {
+		background: #43a047;
+		color: #fff;
+	}
+	.hycrypt-btn-green:hover {
+		background: #2c7e37;
+	}
+	.hycrypt-btn-orange {
+		background: #ff9800;
+		color: #fff;
+	}
+	.hycrypt-btn-orange:hover {
+		background: #d37c00;
+	}
+	.hycrypt-btn-gray {
+		background: #ccc;
+		color: #222;
+	}
+	.hycrypt-btn-gray:hover {
+		background: #b3b3b3;
+		color: #222;
+	}
+	.hycrypt-version {
+		margin-top: 10px;
+		color: #aaa;
+		font-size: 15px;
+		font-family: inherit;
+		user-select: none;
+		letter-spacing: 1px;
+		background: transparent;
+		z-index: 2;
+		align-self: flex-end;
+		text-align: right;
+		width: 100%;
+	}
+
+	/* JWT特定样式 */
+	.hycrypt-jwt-output {
+		margin-bottom: 15px;
+	}
+	.hycrypt-jwt-output:last-child {
+		margin-bottom: 0;
+	}
+	.hycrypt-jwt-textarea {
+		width: 100%;
+		min-height: 100px;
+		max-height: 300px;
+		font-family: monospace;
+		font-size: 15px;
+		line-height: 1.5;
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		background: #fff;
+		resize: vertical;
+		white-space: pre-wrap;
+		tab-size: 4;
+	}
+
+	@media (max-width: 700px) {
+		.hycrypt-version { font-size: 14px; }
+		.hycrypt-label-title { font-size: 17px; }
+	}
+	@media (max-width: 500px) {
+		.hycrypt-calculator { padding: 7px; }
+		.hycrypt-version { font-size: 13px; }
+	}
+</style>
+
+<!-- CryptoJS库 - 用于基础加密功能 -->
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
+
+<!-- jsrsasign库 - 用于JWT的RSA/ECDSA等高级算法支持 -->
+<script src="https://cdn.jsdelivr.net/npm/jsrsasign@10.9.0/lib/jsrsasign-all-min.js"></script>
+
+<!-- buffer库 - 用于某些编码转换 -->
+<script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
+
+<script>
+	// ======================== 摩斯码表 ========================
+	const MORSE_CHAR_TO_CODE = {
+		'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+		'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+		'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+		'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+		'Y': '-.--', 'Z': '--..', '0': '-----', '1': '.----', '2': '..---',
+		'3': '...--', '4': '....-', '5': '.....', '6': '-....', '7': '--...',
+		'8': '---..', '9': '----.', '.': '.-.-.-', ',': '--..--', '?': '..--..',
+		"'": '.----.', '!': '-.-.--', '/': '-..-.', '(': '-.--.', ')': '-.--.-',
+		'&': '.-...', ':': '---...', ';': '-.-.-.', '=': '-...-', '+': '.-.-.',
+		'-': '-....-', '_': '..--.-', '"': '.-..-.', '$': '...-..-', '@': '.--.-.',
+		' ': '/'
+	};
+
+	const MORSE_CODE_TO_CHAR = {};
+	for (const [k, v] of Object.entries(MORSE_CHAR_TO_CODE)) MORSE_CODE_TO_CHAR[v] = k;
+
+	// JWT默认值
+	const JWT_DEFAULTS = {
+		header: {
+			alg: "HS256",
+			typ: "JWT"
+		},
+		payload: {
+			username: "LoongBeta",
+			sub: "hyplus",
+			iat: Math.floor(new Date('2025-06-08T06:11:09Z').getTime() / 1000),
+			nbf: Math.floor(new Date('2025-06-08T06:11:09Z').getTime() / 1000),
+			exp: Math.floor(new Date('2025-06-08T06:11:09Z').getTime() / 1000) + 86400
+		},
+		secret: "json.hyplusz"
+	};
+
+	// ======================== 功能配置 ========================
+	const hycryptFuncs = [
+		{
+			key: 'text-encrypt',
+			name: '对称加密/解密',
+			sub: [
+				{ key: 'AES', label: 'AES' },
+				{ key: 'DES', label: 'DES' },
+				{ key: '3DES', label: '3DES' },
+				{ key: 'RC4', label: 'RC4' },
+				{ key: 'Rabbit', label: 'Rabbit' }
+			],
+			inputPlaceholder: '请输入待加密/解密的内容',
+			keyInput: true,
+			keyPlaceholder: (subk) => `${subk}密钥`,
+			keyLabel: (subk) => '密钥（请妥善保存）',
+			outputs: [
+				{ label: '输出', id: 'hycrypt-output-1' }
+			],
+			btns: [
+				{ id: 'hycrypt-btn-encrypt', label: '加密', class: 'hycrypt-btn-blue', show: true },
+				{ id: 'hycrypt-btn-decrypt', label: '解密', class: 'hycrypt-btn-green', show: true },
+				{ id: 'hycrypt-btn-swap', label: '↑↓', class: 'hycrypt-btn-orange', show: true },
+				{ id: 'hycrypt-btn-clear', label: '清空', class: 'hycrypt-btn-gray', show: true }
+			]
+		},
+		{
+			key: 'hash',
+			name: 'Hash加密',
+			sub: [
+				{ key: 'MD5', label: 'MD5' },
+				{ key: 'SHA1', label: 'SHA-1' },
+				{ key: 'SHA256', label: 'SHA-2 (SHA 256)' },
+				{ key: 'SHA512', label: 'SHA-2 (SHA 512)' },
+				{ key: 'SHA3_64', label: 'SHA-3 (64)' },
+				{ key: 'SHA3_224', label: 'SHA-3 (224)' },
+				{ key: 'SHA3_256', label: 'SHA-3 (256)' },
+				{ key: 'SHA3_384', label: 'SHA-3 (384)' },
+				{ key: 'SHA3_512', label: 'SHA-3 (512)' },
+				{ key: 'RIPEMD160', label: 'RIPEMD-160' }
+			],
+			inputPlaceholder: '请输入要进行Hash加密的内容',
+			keyInput: false,
+			outputs: [
+				{ label: '输出', id: 'hycrypt-output-1' }
+			],
+			btns: [
+				{ id: 'hycrypt-btn-encrypt', label: '加密', class: 'hycrypt-btn-blue', show: true },
+				{ id: 'hycrypt-btn-clear', label: '清空', class: 'hycrypt-btn-gray', show: true }
+			]
+		},
+
+		{
+			key: 'base64',
+			name: 'BASE64加密/解密',
+			sub: [],
+			inputPlaceholder: '请输入要进行BASE64加密/解密的内容',
+			keyInput: false,
+			outputs: [
+				{ label: '输出', id: 'hycrypt-output-1' }
+			],
+			btns: [
+				{ id: 'hycrypt-btn-encrypt', label: '加密', class: 'hycrypt-btn-blue', show: true },
+				{ id: 'hycrypt-btn-decrypt', label: '解密', class: 'hycrypt-btn-green', show: true },
+				{ id: 'hycrypt-btn-swap', label: '↑↓', class: 'hycrypt-btn-orange', show: true },
+				{ id: 'hycrypt-btn-clear', label: '清空', class: 'hycrypt-btn-gray', show: true }
+			]
+		},
+		{
+			key: 'escape',
+			name: 'Escape编码/解码',
+			sub: [],
+			inputPlaceholder: '请输入要进行Escape编码/解码的内容',
+			keyInput: false,
+			outputs: [
+				{ label: '输出', id: 'hycrypt-output-1' }
+			],
+			btns: [
+				{ id: 'hycrypt-btn-encrypt', label: '编码', class: 'hycrypt-btn-blue', show: true },
+				{ id: 'hycrypt-btn-decrypt', label: '解码', class: 'hycrypt-btn-green', show: true },
+				{ id: 'hycrypt-btn-swap', label: '↑↓', class: 'hycrypt-btn-orange', show: true },
+				{ id: 'hycrypt-btn-clear', label: '清空', class: 'hycrypt-btn-gray', show: true }
+			]
+		},
+		{
+			key: 'morse',
+			name: '摩斯密码',
+			sub: [],
+			inputPlaceholder: '请输入要进行摩斯密码加解密的内容',
+			keyInput: false,
+			outputs: [
+				{ label: '输出', id: 'hycrypt-output-1' }
+			],
+			btns: [
+				{ id: 'hycrypt-btn-encrypt', label: '加密', class: 'hycrypt-btn-blue', show: true },
+				{ id: 'hycrypt-btn-decrypt', label: '解密', class: 'hycrypt-btn-green', show: true },
+				{ id: 'hycrypt-btn-swap', label: '↑↓', class: 'hycrypt-btn-orange', show: true },
+				{ id: 'hycrypt-btn-clear', label: '清空', class: 'hycrypt-btn-gray', show: true }
+			]
+		},
+		{
+			key: 'random',
+			name: '生成随机字符',
+			sub: [
+				{ key: 'timestamp', label: '时间戳' },
+				{ key: 'uuid', label: 'UUID' },
+				{ key: 'random', label: '随机可见字符' }
+			],
+			inputPlaceholder: function(subKey) {
+				if (subKey === 'timestamp') {
+					return '';
+				} else if (subKey === 'uuid') {
+					return '要生成的UUID数量（可选，默认1）';
+				} else if (subKey === 'random') {
+					return '要生成的随机可见字符长度（可选，默认1）';
+				}
+				return '';
+			},
+			keyInput: false,
+			showInput: function(subKey) {
+				return subKey === 'uuid' || subKey === 'random';
+			},
+			outputs: [
+				{ label: '输出', id: 'hycrypt-output-1' }
+			],
+			btns: [
+				{ id: 'hycrypt-btn-generate', label: '生成', class: 'hycrypt-btn-blue', show: true },
+				{ id: 'hycrypt-btn-clear', label: '清空', class: 'hycrypt-btn-gray', show: true }
+			]
+		},
+		{
+			key: 'jwt',
+			name: 'JWT加密/解密',
+			sub: [
+				/*      { key: 'RS256', label: 'RS256' },
+            { key: 'RS384', label: 'RS384' },
+            { key: 'RS512', label: 'RS512' },
+            { key: 'PS256', label: 'PS256' },
+            { key: 'PS384', label: 'PS384' },
+            { key: 'PS512', label: 'PS512' },
+            { key: 'ES256', label: 'ES256' },
+            { key: 'ES384', label: 'ES384' },
+            { key: 'ES512', label: 'ES512' }, */
+				{ key: 'HS256', label: 'HS256' },
+				{ key: 'HS384', label: 'HS384' },
+				{ key: 'HS512', label: 'HS512' }
+			],
+			inputPlaceholder: 'JWT字符串',
+			keyInput: false,
+			outputs: [
+				{ label: '头部/Header', id: 'hycrypt-jwt-header', isJson: true },
+				{ label: '载荷/Payload', id: 'hycrypt-jwt-payload', isJson: true },
+				{ label: '对称密钥', id: 'hycrypt-jwt-secret' }
+			],
+			btns: [
+				{ id: 'hycrypt-btn-decode', label: '解码', class: 'hycrypt-btn-blue', show: true },
+				{ id: 'hycrypt-btn-encode', label: '编码', class: 'hycrypt-btn-green', show: true },
+				{ id: 'hycrypt-btn-verify', label: '校验', class: 'hycrypt-btn-orange', show: true },
+				{ id: 'hycrypt-btn-clear', label: '清空', class: 'hycrypt-btn-gray', show: true }
+			]
+		}
+	];
+
+	// ======================== 弹窗/复制 ========================
+	function hycryptShowToast(msg) {
+		if (!msg) return;
+		let old = document.getElementById('hycrypt-toast');
+		if (old) old.remove();
+		const toast = document.createElement('div');
+		toast.id = 'hycrypt-toast';
+		toast.textContent = msg;
+		Object.assign(toast.style, {
+			position: 'fixed',
+			bottom: '40px',
+			left: '50%',
+			transform: 'translateX(-50%)',
+			zIndex: 9999,
+			background: '#1976d2',
+			color: '#fff',
+			padding: '10px 28px',
+			borderRadius: '8px',
+			fontSize: '17px',
+			boxShadow: '0 4px 16px rgba(30,40,70,.13)',
+			opacity: '0',
+			transition: 'opacity 0.3s',
+			pointerEvents: 'none',
+		});
+		document.body.appendChild(toast);
+		setTimeout(() => { toast.style.opacity = '1'; }, 10);
+		setTimeout(() => {
+			toast.style.opacity = '0';
+			setTimeout(() => { toast.remove(); }, 350);
+		}, 1200);
+	}
+
+	function hycryptCopyTextToClipboard(text, msg) {
+		if (!text) return;
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard.writeText(text).then(() => {
+				hycryptShowToast(msg || "已复制");
+			});
+		} else {
+			const temp = document.createElement('textarea');
+			temp.value = text;
+			document.body.appendChild(temp);
+			temp.select();
+			document.execCommand('copy');
+			document.body.removeChild(temp);
+			hycryptShowToast(msg || "已复制");
+		}
+	}
+
+	// =============== 对称加密/解密实现 ===============
+	function hycryptEncrypt(text, key, type) {
+		switch(type) {
+			case 'AES':
+				return CryptoJS.AES.encrypt(text, key).toString();
+			case 'DES':
+				return CryptoJS.DES.encrypt(text, key).toString();
+			case '3DES':
+				return CryptoJS.TripleDES.encrypt(text, key).toString();
+			case 'RC4':
+				return CryptoJS.RC4.encrypt(text, key).toString();
+			case 'Rabbit':
+				return CryptoJS.Rabbit.encrypt(text, key).toString();
+			default:
+				throw new Error("未知加密算法");
+		}
+	}
+
+	function hycryptDecrypt(text, key, type) {
+		try {
+			switch(type) {
+				case 'AES':
+					return CryptoJS.AES.decrypt(text, key).toString(CryptoJS.enc.Utf8);
+				case 'DES':
+					return CryptoJS.DES.decrypt(text, key).toString(CryptoJS.enc.Utf8);
+				case '3DES':
+					return CryptoJS.TripleDES.decrypt(text, key).toString(CryptoJS.enc.Utf8);
+				case 'RC4':
+					return CryptoJS.RC4.decrypt(text, key).toString(CryptoJS.enc.Utf8);
+				case 'Rabbit':
+					return CryptoJS.Rabbit.decrypt(text, key).toString(CryptoJS.enc.Utf8);
+				default:
+					throw new Error("未知加密算法");
+			}
+		} catch(e) {
+			throw new Error("解密失败，密文或密钥错误");
+		}
+	}
+
+	// =============== Hash加密实现 ===============
+	function hycryptHash(text, type) {
+		switch(type) {
+			case 'MD5':
+				return CryptoJS.MD5(text).toString();
+			case 'SHA1':
+				return CryptoJS.SHA1(text).toString();
+			case 'SHA256':
+				return CryptoJS.SHA256(text).toString();
+			case 'SHA512':
+				return CryptoJS.SHA512(text).toString();
+			case 'SHA3_64':
+				return CryptoJS.SHA3(text, { outputLength: 64 }).toString();
+			case 'SHA3_224':
+				return CryptoJS.SHA3(text, { outputLength: 224 }).toString();
+			case 'SHA3_256':
+				return CryptoJS.SHA3(text, { outputLength: 256 }).toString();
+			case 'SHA3_384':
+				return CryptoJS.SHA3(text, { outputLength: 384 }).toString();
+			case 'SHA3_512':
+				return CryptoJS.SHA3(text, { outputLength: 512 }).toString();
+			case 'RIPEMD160':
+				return CryptoJS.RIPEMD160(text).toString();
+			default:
+				throw new Error("未知Hash算法");
+		}
+	}
+
+	// =============== BASE64实现 ===============
+	function hycryptBase64Encrypt(text) {
+		try {
+			return btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g,
+														 function toSolidBytes(match, p1) {
+				return String.fromCharCode('0x' + p1);
+			}));
+		} catch(e) {
+			throw new Error("BASE64编码失败");
+		}
+	}
+
+	function hycryptBase64Decrypt(text) {
+		try {
+			return decodeURIComponent(atob(text).split('').map(function(c) {
+				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+			}).join(''));
+		} catch(e) {
+			throw new Error("BASE64解码失败");
+		}
+	}
+
+	// =============== Escape实现 ===============
+	function hycryptEscape(text) {
+		try {
+			return escape(text);
+		} catch(e) {
+			throw new Error("Escape编码失败");
+		}
+	}
+
+	function hycryptUnescape(text) {
+		try {
+			return unescape(text);
+		} catch(e) {
+			throw new Error("Escape解码失败");
+		}
+	}
+
+	// =============== 摩斯密码实现 ===============
+	function hycryptMorseEncrypt(str) {
+		try {
+			return str.toUpperCase().split('').map(ch =>
+												   MORSE_CHAR_TO_CODE[ch] || ch
+												  ).join(' ');
+		} catch(e) {
+			throw new Error("摩斯密码加密失败");
+		}
+	}
+
+	function hycryptMorseDecrypt(str) {
+		try {
+			return str.trim().split(/ +/).map(code =>
+											  MORSE_CODE_TO_CHAR[code] || code
+											 ).join('');
+		} catch(e) {
+			throw new Error("摩斯密码解密失败");
+		}
+	}
+
+	// =============== 随机字符生成实现 ===============
+	function hycryptGenerateRandom(subType, count) {
+		count = parseInt(count) || (subType === 'random' ? 1 : 1);
+
+		if (subType === 'timestamp') {
+			return Date.now().toString();
+		}
+
+		if (subType === 'uuid') {
+			return Array.from({ length: count }, () => crypto.randomUUID()).join('\n');
+		}
+
+		if (subType === 'random') {
+			const length = count > 0 ? count : 1;
+			const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:",./<>?\\\'';
+			return Array.from({ length: length }, () =>
+							  charset.charAt(Math.floor(Math.random() * charset.length))
+							 ).join('');
+		}
+
+		throw new Error("未知随机生成类型");
+	}
+
+	// =============== JWT相关功能实现 ===============
+	// JSON格式化显示，保持4空格缩进
+	function formatJSON(obj) {
+		try {
+			return JSON.stringify(obj, null, 4);
+		} catch(e) {
+			return obj;
+		}
+	}
+
+	// JSON字符串转对象
+	function parseJSON(str) {
+		try {
+			return JSON.parse(str);
+		} catch(e) {
+			throw new Error("JSON格式错误");
+		}
+	}
+
+	// Base64 URL Safe编码
+	function base64UrlEncode(str) {
+		try {
+			const base64 = btoa(
+				encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+												(match, p1) => String.fromCharCode('0x' + p1)
+											   )
+			);
+			return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+		} catch(e) {
+			throw new Error("Base64URL编码失败");
+		}
+	}
+
+	// Base64 URL Safe解码
+	function base64UrlDecode(str) {
+		try {
+			str = str.replace(/-/g, '+').replace(/_/g, '/');
+			while (str.length % 4) str += '=';
+			return decodeURIComponent(
+				atob(str).split('').map(c =>
+										'%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+									   ).join('')
+			);
+		} catch(e) {
+			throw new Error("Base64URL解码失败");
+		}
+	}
+
+	// JWT解码
+	function hycryptJwtDecode(jwt) {
+		try {
+			const parts = jwt.split('.');
+			if (parts.length !== 3) throw new Error("JWT格式错误");
+
+			return {
+				header: parseJSON(base64UrlDecode(parts[0])),
+				payload: parseJSON(base64UrlDecode(parts[1])),
+				signature: parts[2]
+			};
+		} catch(e) {
+			throw new Error("JWT解码失败: " + e.message);
+		}
+	}
+
+	// JWT编码
+	function hycryptJwtEncode(header, payload, secret) {
+		try {
+			const encodedHeader = base64UrlEncode(JSON.stringify(header));
+			const encodedPayload = base64UrlEncode(JSON.stringify(payload));
+			const dataToSign = encodedHeader + '.' + encodedPayload;
+
+			let signature;
+			switch(header.alg) {
+				case 'HS256':
+					signature = CryptoJS.HmacSHA256(dataToSign, secret);
+					break;
+				case 'HS384':
+					signature = CryptoJS.HmacSHA384(dataToSign, secret);
+					break;
+				case 'HS512':
+					signature = CryptoJS.HmacSHA512(dataToSign, secret);
+					break;
+				default:
+					throw new Error("不支持的算法: " + header.alg);
+			}
+
+			const encodedSignature = base64UrlEncode(signature.toString(CryptoJS.enc.Latin1));
+			return `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
+		} catch(e) {
+			throw new Error("JWT编码失败: " + e.message);
+		}
+	}
+
+	// JWT验证
+	function hycryptJwtVerify(jwt, secret) {
+		try {
+			const parts = jwt.split('.');
+			if (parts.length !== 3) throw new Error("JWT格式错误");
+
+			const header = parseJSON(base64UrlDecode(parts[0]));
+			const dataToSign = parts[0] + '.' + parts[1];
+
+			let signature;
+			switch(header.alg) {
+				case 'HS256':
+					signature = CryptoJS.HmacSHA256(dataToSign, secret);
+					break;
+				case 'HS384':
+					signature = CryptoJS.HmacSHA384(dataToSign, secret);
+					break;
+				case 'HS512':
+					signature = CryptoJS.HmacSHA512(dataToSign, secret);
+					break;
+				default:
+					throw new Error("不支持的算法: " + header.alg);
+			}
+
+			const expectedSignature = base64UrlEncode(signature.toString(CryptoJS.enc.Latin1));
+			if (parts[2] !== expectedSignature) {
+				throw new Error("签名验证失败");
+			}
+
+			// 验证时间相关的声明
+			const payload = parseJSON(base64UrlDecode(parts[1]));
+			const now = Math.floor(Date.now() / 1000);
+
+			if (payload.exp && now >= payload.exp) {
+				throw new Error("Token已过期");
+			}
+			if (payload.nbf && now < payload.nbf) {
+				throw new Error("Token尚未生效");
+			}
+			if (payload.iat && now < payload.iat) {
+				throw new Error("Token的签发时间异常");
+			}
+
+			return true;
+		} catch(e) {
+			throw new Error("JWT验证失败: " + e.message);
+		}
+	}
+
+	// =============== JWT UI处理函数 ===============
+	function createJwtTextarea(id, value, isJson = false) {
+		const textarea = document.createElement('textarea');
+		textarea.className = 'hycrypt-jwt-textarea';
+		textarea.id = id;
+
+		if (isJson) {
+			try {
+				textarea.value = formatJSON(parseJSON(value));
+			} catch(e) {
+				textarea.value = value;
+			}
+		} else {
+			textarea.value = value;
+		}
+
+		// Tab键处理
+		textarea.addEventListener('keydown', function(e) {
+			if (e.key === 'Tab') {
+				e.preventDefault();
+				const start = this.selectionStart;
+				const end = this.selectionEnd;
+				this.value = this.value.substring(0, start) + 
+					'    ' + 
+					this.value.substring(end);
+				this.selectionStart = this.selectionEnd = start + 4;
+			}
+		});
+
+		return textarea;
+	}
+
+	// =============== 功能查找工具 ===============
+	function hycryptGetFuncObj(main, sub) {
+		const f = hycryptFuncs.find(f => f.key === main);
+		if (!f) return null;
+		if (f.sub && f.sub.length > 0 && sub) {
+			return { ...f, subKey: sub };
+		}
+		return f;
+	}
+
+	// =============== UI动态渲染 ===============
+	function hycryptSetUIbyFunc(mainFuncKey, subFuncKey, onlyChangeSub = false) {
+		const mainFunc = hycryptFuncs.find(f => f.key === mainFuncKey);
+		if (!mainFunc) return;
+
+		// 二级菜单
+		const subSelect = document.getElementById('hycrypt-sub-func');
+		if (mainFunc.sub && mainFunc.sub.length > 0) {
+			subSelect.style.display = '';
+			subSelect.innerHTML = '';
+			mainFunc.sub.forEach((sub, i) => {
+				let opt = document.createElement('option');
+				opt.value = sub.key;
+				opt.textContent = sub.label;
+
+				// 设置默认选中的选项
+				if (subFuncKey && subFuncKey === sub.key) {
+					opt.selected = true;
+				} else if (!subFuncKey) {
+					switch (mainFuncKey) {
+						case 'text-encrypt':
+							if (sub.key === 'AES') opt.selected = true;
+							break;
+						case 'hash':
+							if (sub.key === 'MD5') opt.selected = true;
+							break;
+						case 'jwt':
+							if (sub.key === 'HS256') opt.selected = true;
+							break;
+						case 'random':
+							if (sub.key === 'timestamp') opt.selected = true;
+							break;
+					}
+				}
+				subSelect.appendChild(opt);
+			});
+
+			if (subSelect.selectedIndex === -1) {
+				subSelect.selectedIndex = 0;
+			}
+
+			// 更新当前选中的subFuncKey
+			subFuncKey = subSelect.value;
+
+			// 如果是JWT功能，立即更新Header中的算法
+			if (mainFuncKey === 'jwt') {
+				const headerArea = document.getElementById('hycrypt-jwt-header');
+				if (headerArea) {
+					try {
+						const header = JSON.parse(headerArea.value);
+						header.alg = subFuncKey;
+						headerArea.value = JSON.stringify(header, null, 4);
+					} catch(e) {
+						// 如果解析失败，使用默认header
+						const defaultHeader = { ...JWT_DEFAULTS.header, alg: subFuncKey };
+						headerArea.value = JSON.stringify(defaultHeader, null, 4);
+					}
+				}
+			}
+		} else {
+			subSelect.style.display = 'none';
+		}
+
+		// 输入框
+		const inputBox = document.getElementById('hycrypt-input');
+		if (!onlyChangeSub) {
+			inputBox.value = '';
+
+			if (typeof mainFunc.inputPlaceholder === "function") {
+				inputBox.placeholder = mainFunc.inputPlaceholder(subFuncKey || (mainFunc.sub && mainFunc.sub[0].key));
+			} else {
+				inputBox.placeholder = mainFunc.inputPlaceholder;
+			}
+
+			if (mainFuncKey === 'random') {
+				if (typeof mainFunc.showInput === "function") {
+					inputBox.style.display = mainFunc.showInput(subFuncKey || (mainFunc.sub && mainFunc.sub[0].key)) ? '' : 'none';
+				} else {
+					inputBox.style.display = mainFunc.showInput ? '' : 'none';
+				}
+			} else {
+				inputBox.style.display = '';
+			}
+		} else {
+			if (mainFuncKey === 'random' && typeof mainFunc.showInput === "function") {
+				inputBox.style.display = mainFunc.showInput(subFuncKey) ? '' : 'none';
+				if (!mainFunc.showInput(subFuncKey)) {
+					inputBox.value = '';
+				} else {
+					inputBox.placeholder = mainFunc.inputPlaceholder(subFuncKey);
+				}
+			}
+		}
+
+		// 密钥行
+		const keyRow = document.getElementById('hycrypt-key-row');
+		if (mainFunc.keyInput) {
+			keyRow.style.display = '';
+			const keyInput = document.getElementById('hycrypt-key-input');
+			const keyLabel = document.getElementById('hycrypt-key-label');
+			keyInput.value = '';
+			const subk = (subFuncKey || (mainFunc.sub && mainFunc.sub[0].key));
+
+			if (typeof mainFunc.keyPlaceholder === "function") {
+				keyInput.placeholder = mainFunc.keyPlaceholder(subk);
+			} else {
+				keyInput.placeholder = mainFunc.keyPlaceholder;
+			}
+
+			if (typeof mainFunc.keyLabel === "function") {
+				keyLabel.textContent = mainFunc.keyLabel(subk);
+			} else {
+				keyLabel.textContent = mainFunc.keyLabel;
+			}
+		} else {
+			keyRow.style.display = 'none';
+		}
+
+		// 输出区域
+		const outputAreas = document.getElementById('hycrypt-output-areas');
+		outputAreas.innerHTML = '';
+		mainFunc.outputs.forEach((out, idx) => {
+			const labelRow = document.createElement('div');
+			labelRow.className = 'hycrypt-label-row';
+			const label = document.createElement('div');
+			label.className = 'hycrypt-label-title hyplus-unselectable';
+			label.id = `hycrypt-output-label-${idx+1}`;
+			label.textContent = out.label;
+			const btn = document.createElement('button');
+			btn.className = 'hycrypt-copy-btn hyplus-unselectable';
+			btn.id = `hycrypt-copy-output-btn-${idx+1}`;
+			btn.title = '复制输出';
+			btn.type = 'button';
+			btn.textContent = '📋';
+			labelRow.appendChild(label);
+			labelRow.appendChild(btn);
+
+			let outDiv;
+			if (mainFuncKey === 'jwt') {
+				outDiv = createJwtTextarea(
+					out.id,
+					out.id === 'hycrypt-jwt-header' ? 
+					formatJSON(JWT_DEFAULTS.header) :
+					out.id === 'hycrypt-jwt-payload' ?
+					formatJSON(JWT_DEFAULTS.payload) :
+					JWT_DEFAULTS.secret,
+					out.isJson
+				);
+			} else {
+				outDiv = document.createElement('div');
+				outDiv.id = out.id;
+				outDiv.className = 'hycrypt-result hycrypt-result-default';
+				outDiv.textContent = '此处显示结果';
+			}
+
+			outputAreas.appendChild(labelRow);
+			outputAreas.appendChild(outDiv);
+		});
+
+		// 按钮显示
+		const btnRow = document.getElementById('hycrypt-btn-row');
+		btnRow.innerHTML = '';
+		mainFunc.btns.forEach(btn => {
+			if (!btn.show) return;
+			const b = document.createElement('button');
+			b.id = btn.id;
+			b.textContent = btn.label;
+			b.className = btn.class;
+			btnRow.appendChild(b);
+		});
+
+		// 绑定按钮事件
+		bindAllEvents(mainFuncKey, subFuncKey);
+
+		// 绑定复制按钮
+		mainFunc.outputs.forEach((out, idx) => {
+			setTimeout(() => {
+				const copyBtn = document.getElementById(`hycrypt-copy-output-btn-${idx+1}`);
+				const outDiv = document.getElementById(out.id);
+				if (copyBtn && outDiv) {
+					copyBtn.onclick = () => {
+						let text = outDiv.value || outDiv.textContent;
+						if (text && text !== '此处显示结果') hycryptCopyTextToClipboard(text, "输出内容已复制");
+					}
+				}
+			}, 25);
+		});
+
+		// 输入框复制
+		const copyInputBtn = document.getElementById('hycrypt-copy-input-btn');
+		if (copyInputBtn) {
+			copyInputBtn.onclick = function() {
+				const input = document.getElementById('hycrypt-input');
+				let text = input.value;
+				if (text) hycryptCopyTextToClipboard(text, "输入内容已复制");
+			};
+		}
+	}
+
+	// =============== 事件绑定 ===============
+	function bindAllEvents(mainFuncKey, subFuncKey) {
+		const btnEncrypt = document.getElementById('hycrypt-btn-encrypt');
+		const btnDecrypt = document.getElementById('hycrypt-btn-decrypt');
+		const btnSwap = document.getElementById('hycrypt-btn-swap');
+		const btnClear = document.getElementById('hycrypt-btn-clear');
+		const btnGenerate = document.getElementById('hycrypt-btn-generate');
+		const btnDecode = document.getElementById('hycrypt-btn-decode');
+		const btnEncode = document.getElementById('hycrypt-btn-encode');
+		const btnVerify = document.getElementById('hycrypt-btn-verify');
+
+		if (btnEncrypt) btnEncrypt.onclick = function(e) { hycryptHandleEncrypt(mainFuncKey, subFuncKey, e); };
+		if (btnDecrypt) btnDecrypt.onclick = function(e) { hycryptHandleDecrypt(mainFuncKey, subFuncKey, e); };
+		if (btnSwap) btnSwap.onclick = function(e) { hycryptHandleSwap(e); };
+		if (btnClear) btnClear.onclick = function(e) { hycryptHandleClear(e); };
+		if (btnGenerate) btnGenerate.onclick = function(e) { hycryptHandleGenerate(mainFuncKey, subFuncKey, e); };
+		if (btnDecode) btnDecode.onclick = function(e) { hycryptHandleJwtDecode(e); };
+		if (btnEncode) btnEncode.onclick = function(e) { hycryptHandleJwtEncode(subFuncKey, e); };
+		if (btnVerify) btnVerify.onclick = function(e) { hycryptHandleJwtVerify(e); };
+	}
+
+	// =============== 按钮处理函数 ===============
+	function hycryptHandleEncrypt(mainFuncKey, subFuncKey, e) {
+		e.preventDefault && e.preventDefault();
+		const input = document.getElementById('hycrypt-input').value;
+		if (!input) {
+			hycryptShowToast("请输入待处理内容");
+			return;
+		}
+
+		try {
+			let result;
+			switch(mainFuncKey) {
+				case 'text-encrypt':
+					const key = document.getElementById('hycrypt-key-input').value;
+					if (!key) {
+						hycryptShowToast("请输入密钥");
+						return;
+					}
+					result = hycryptEncrypt(input, key, subFuncKey);
+					break;
+				case 'hash':
+					result = hycryptHash(input, subFuncKey);
+					break;
+				case 'base64':
+					result = hycryptBase64Encrypt(input);
+					break;
+				case 'escape':
+					result = hycryptEscape(input);
+					break;
+				case 'morse':
+					result = hycryptMorseEncrypt(input);
+					break;
+			}
+			const output = document.getElementById('hycrypt-output-1');
+			if (output) {
+				output.textContent = result;
+				output.classList.remove('hycrypt-result-default');
+			}
+		} catch(ex) {
+			hycryptShowToast(ex.message);
+		}
+	}
+
+	function hycryptHandleDecrypt(mainFuncKey, subFuncKey, e) {
+		e.preventDefault && e.preventDefault();
+		const input = document.getElementById('hycrypt-input').value;
+		if (!input) {
+			hycryptShowToast("请输入待处理内容");
+			return;
+		}
+
+		try {
+			let result;
+			switch(mainFuncKey) {
+				case 'text-encrypt':
+					const key = document.getElementById('hycrypt-key-input').value;
+					if (!key) {
+						hycryptShowToast("请输入密钥");
+						return;
+					}
+					result = hycryptDecrypt(input, key, subFuncKey);
+					break;
+				case 'base64':
+					result = hycryptBase64Decrypt(input);
+					break;
+				case 'escape':
+					result = hycryptUnescape(input);
+					break;
+				case 'morse':
+					result = hycryptMorseDecrypt(input);
+					break;
+			}
+			const output = document.getElementById('hycrypt-output-1');
+			if (output) {
+				output.textContent = result;
+				output.classList.remove('hycrypt-result-default');
+			}
+		} catch(ex) {
+			hycryptShowToast(ex.message);
+		}
+	}
+
+	function hycryptHandleGenerate(mainFuncKey, subFuncKey, e) {
+		e.preventDefault && e.preventDefault();
+		try {
+			const count = document.getElementById('hycrypt-input').value;
+			const result = hycryptGenerateRandom(subFuncKey, count);
+			const output = document.getElementById('hycrypt-output-1');
+			if (output) {
+				output.textContent = result;
+				output.classList.remove('hycrypt-result-default');
+			}
+		} catch(ex) {
+			hycryptShowToast(ex.message);
+		}
+	}
+
+	function hycryptHandleClear(e) {
+		e.preventDefault && e.preventDefault();
+		document.getElementById('hycrypt-input').value = '';
+		const outputs = document.querySelectorAll('.hycrypt-result, .hycrypt-jwt-textarea');
+		outputs.forEach(output => {
+			if (output.classList.contains('hycrypt-result')) {
+				output.textContent = '此处显示结果';
+				output.classList.add('hycrypt-result-default');
+			} else {
+				output.value = '';
+			}
+		});
+		const keyInput = document.getElementById('hycrypt-key-input');
+		if (keyInput) keyInput.value = '';
+	}
+
+	function hycryptHandleSwap(e) {
+		e.preventDefault && e.preventDefault();
+		const input = document.getElementById('hycrypt-input');
+		const output = document.getElementById('hycrypt-output-1');
+		if (output && !output.classList.contains('hycrypt-result-default')) {
+			const temp = input.value;
+			input.value = output.textContent;
+			output.textContent = temp || '此处显示结果';
+			if (!temp) output.classList.add('hycrypt-result-default');
+		}
+	}
+
+	function hycryptHandleJwtDecode(e) {
+		e.preventDefault && e.preventDefault();
+		const input = document.getElementById('hycrypt-input').value.trim();
+		if (!input) {
+			hycryptShowToast("请输入JWT字符串");
+			return;
+		}
+
+		try {
+			const decoded = hycryptJwtDecode(input);
+			document.getElementById('hycrypt-jwt-header').value = JSON.stringify(decoded.header, null, 4);
+			document.getElementById('hycrypt-jwt-payload').value = JSON.stringify(decoded.payload, null, 4);
+		} catch(ex) {
+			hycryptShowToast(ex.message);
+		}
+	}
+
+	function hycryptHandleJwtEncode(algorithm, e) {
+		e.preventDefault && e.preventDefault();
+		try {
+			const header = JSON.parse(document.getElementById('hycrypt-jwt-header').value);
+			const payload = JSON.parse(document.getElementById('hycrypt-jwt-payload').value);
+			const secret = document.getElementById('hycrypt-jwt-secret').value;
+
+			if (!secret) {
+				hycryptShowToast("请输入密钥");
+				return;
+			}
+
+			// 确保header中的算法与选择的一致
+			header.alg = algorithm;
+			const jwt = hycryptJwtEncode(header, payload, secret);
+			document.getElementById('hycrypt-input').value = jwt;
+		} catch(ex) {
+			hycryptShowToast(ex.message);
+		}
+	}
+
+	function hycryptHandleJwtVerify(e) {
+		e.preventDefault && e.preventDefault();
+		const input = document.getElementById('hycrypt-input').value.trim();
+		const secret = document.getElementById('hycrypt-jwt-secret').value;
+
+		if (!input) {
+			hycryptShowToast("请输入JWT字符串");
+			return;
+		}
+
+		if (!secret) {
+			hycryptShowToast("请输入密钥");
+			return;
+		}
+
+		try {
+			hycryptJwtVerify(input, secret);
+			hycryptShowToast("JWT验证通过");
+		} catch(ex) {
+			hycryptShowToast(ex.message);
+		}
+	}
+
+	// =============== 入口 ===============
+	document.addEventListener('DOMContentLoaded', function() {
+		const mainFuncSel = document.getElementById('hycrypt-main-func');
+		const subFuncSel = document.getElementById('hycrypt-sub-func');
+
+		let currentMain = mainFuncSel.value;
+		let currentSub = null;
+
+		switch (currentMain) {
+			case 'text-encrypt':
+				currentSub = 'AES';
+				break;
+			case 'hash':
+				currentSub = 'MD5';
+				break;
+			case 'jwt':
+				currentSub = 'HS256';
+				break;
+			case 'random':
+				currentSub = 'timestamp';
+				break;
+		}
+
+		hycryptSetUIbyFunc(currentMain, currentSub);
+
+		mainFuncSel.addEventListener('change', function() {
+			currentMain = mainFuncSel.value;
+			switch (currentMain) {
+				case 'text-encrypt':
+					currentSub = 'AES';
+					break;
+				case 'hash':
+					currentSub = 'MD5';
+					break;
+				case 'jwt':
+					currentSub = 'HS256';
+					break;
+				case 'random':
+					currentSub = 'timestamp';
+					break;
+				default:
+					currentSub = null;
+			}
+			hycryptSetUIbyFunc(currentMain, currentSub);
+		});
+
+		subFuncSel.addEventListener('change', function() {
+			currentSub = subFuncSel.value;
+			if (currentMain === 'jwt') {
+				const headerArea = document.getElementById('hycrypt-jwt-header');
+				if (headerArea) {
+					try {
+						const header = JSON.parse(headerArea.value);
+						header.alg = currentSub;
+						headerArea.value = JSON.stringify(header, null, 4);
+					} catch(e) {
+						const defaultHeader = { ...JWT_DEFAULTS.header, alg: currentSub };
+						headerArea.value = JSON.stringify(defaultHeader, null, 4);
+					}
+				}
+			}
+			hycryptSetUIbyFunc(currentMain, currentSub, true);
+		});
+
+		const input = document.getElementById('hycrypt-input');
+		input.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				hycryptHandleClear(e);
+			}
+		});
+	});
+</script>

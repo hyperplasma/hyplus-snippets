@@ -1,0 +1,1083 @@
+<!-- HyCalc
+ Code Type: HTML
+ Shortcode: [wpcode id="12585"] (auto-generated)
+-->
+<div class="hycalc-container">
+	<div class="scientific-calculator">
+		<div class="calculator-container">
+			<div class="hycalc-label-row">
+				<div class="hycalc-label-title hyplus-unselectable">输入</div>
+				<button class="hycalc-copy-btn hyplus-unselectable" id="copy-input-btn" title="复制输入" type="button">📋</button>
+			</div>
+			<textarea id="expression" placeholder="Enter 计算，Esc 清空&#10;示例：(F6F5N)24//max((V)36,e,2*cos(pi/4))"></textarea>
+
+			<div class="button-row hyplus-unselectable">
+				<button onclick="calculate()" id="calc-btn">计算</button>
+				<button onclick="clearCalc()" id="clear-btn">清空</button>
+			</div>
+
+			<div class="hycalc-label-row">
+				<div class="hycalc-label-title hyplus-unselectable">输出</div>
+				<button class="hycalc-copy-btn hyplus-unselectable" id="copy-output-btn" title="复制输出" type="button">📋</button>
+			</div>
+			<div id="result" class="result-default">此处显示结果</div>
+		</div>
+	</div>
+	<div class="calc-version hyplus-unselectable">HyCalc v0.9.1</div>
+	<!-- 计算器支持的运算/函数说明表格，分为基础运算与对数、函数、常数、进制转换、位运算、三角函数与双曲函数六大块，自适应布局，所有大块均为两列 -->
+	<div id="functionsSection" style="margin-top: 40px; padding: 0 20px;">
+
+		<!-- 1. 基础运算与对数 -->
+		<div class="function-group-container">
+			<div class="function-group-title">基础运算与对数</div>
+			<div class="functions-columns">
+				<div class="functions-column">
+					<div class="function-item">
+						<span>加/减/乘/除</span>
+						<span class="function-key-row2">
+							<span>
+								<span class="function-key-block">+</span>
+								<span class="function-key-block">-</span>
+							</span>
+							<span>
+								<span class="function-key-block">*</span>
+								<span class="function-key-block">/</span>
+							</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>乘方</span>
+						<span>
+							<span class="function-key-block">^</span>
+							<span class="function-key-block">pow(x, y)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>指数函数</span>
+						<span>
+							<span class="function-key-block">e^x</span>
+							<span class="function-key-block">exp(x)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>平方根/n次方根</span>
+						<span>
+							<span class="function-key-block">sqrt(x[, n])</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>阶乘</span>
+						<span>
+							<span class="function-key-block">x!</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>双阶乘</span>
+						<span>
+							<span class="function-key-block">x!!</span>
+						</span>
+					</div>
+				</div>
+				<div class="functions-column">
+					<div class="function-item">
+						<span>取余</span>
+						<span>
+							<span class="function-key-block">%</span>
+							<span class="function-key-block">mod(x, y)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>整除</span>
+						<span>
+							<span class="function-key-block">//</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>对数</span>
+						<span>
+							<span class="function-key-block">log(a, x)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>自然对数</span>
+						<span>
+							<span class="function-key-block">ln(x)</span>
+							<span class="function-key-block">log(x)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>常用对数</span>
+						<span>
+							<span class="function-key-block">lg(x)</span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 2. 函数（数值/取整/随机/最大最小等） -->
+		<div class="function-group-container">
+			<div class="function-group-title">函数</div>
+			<div class="functions-columns">
+				<div class="functions-column">
+					<div class="function-item">
+						<span>绝对值</span>
+						<span>
+							<span class="function-key-block">abs(x)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>向上取整</span>
+						<span>
+							<span class="function-key-block">ceil(x)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>向下取整</span>
+						<span>
+							<span class="function-key-block">floor(x)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>四舍五入</span>
+						<span>
+							<span class="function-key-block">round(x, n)</span>
+							<span class="function-key-block">round(x)</span>
+						</span>
+					</div>
+				</div>
+				<div class="functions-column">
+					<div class="function-item">
+						<span>(0, 1)随机数</span>
+						<span>
+							<span class="function-key-block">rand()</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>最大值</span>
+						<span>
+							<span class="function-key-block">max(a, b, ...)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>最小值</span>
+						<span>
+							<span class="function-key-block">min(a, b, ...)</span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 3. 常数 -->
+		<div class="function-group-container">
+			<div class="function-group-title">常数</div>
+			<div class="functions-columns">
+				<div class="functions-column">
+					<div class="function-item">
+						<span>圆周率π</span>
+						<span>
+							<span class="function-key-block">pi</span>
+						</span>
+					</div>
+				</div>
+				<div class="functions-column">
+					<div class="function-item">
+						<span>自然常数e</span>
+						<span>
+							<span class="function-key-block">e</span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 4. 进制转换 -->
+		<div class="function-group-container">
+			<div class="function-group-title">进制转换</div>
+			<div class="functions-columns">
+				<div class="functions-column">
+					<div class="function-item">
+						<span>b进制数</span>
+						<span>
+							<span class="function-key-block">(x)b</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>b进制转c进制</span>
+						<span>
+							<span class="function-key-block">(x)b(c)</span>
+						</span>
+					</div>
+				</div>
+				<div class="functions-column">
+					<div class="function-item">
+						<span>十进制转c进制</span>
+						<span>
+							<span class="function-key-block">(x)(c)</span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 5. 位运算 -->
+		<div class="function-group-container">
+			<div class="function-group-title">位运算</div>
+			<div class="functions-columns">
+				<div class="functions-column">
+					<div class="function-item">
+						<span>按位与</span>
+						<span>
+							<span class="function-key-block">x & y</span>
+							<span class="function-key-block">and(x, y)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>按位或</span>
+						<span>
+							<span class="function-key-block">x | y</span>
+							<span class="function-key-block">or(x, y)</span>
+						</span>
+					</div>
+				</div>
+				<div class="functions-column">
+					<div class="function-item">
+						<span>按位异或</span>
+						<span>
+							<span class="function-key-block">xor(x, y)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>逻辑非</span>
+						<span>
+							<span class="function-key-block">not(x)</span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 6. 三角函数及其拓展 -->
+		<div class="function-group-container">
+			<div class="function-group-title">三角函数与双曲函数</div>
+			<div class="functions-columns">
+				<div class="functions-column">
+					<div class="function-item">
+						<span>正弦/余弦</span>
+						<span>
+							<span class="function-key-block">sin(x)</span>
+							<span class="function-key-block">cos(x)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>正切/余切</span>
+						<span class="function-key-row2">
+							<span>
+								<span class="function-key-block">tan(x)</span>
+								<span class="function-key-block">tg(x)</span>
+							</span>
+							<span>
+								<span class="function-key-block">cot(x)</span>
+								<span class="function-key-block">ctg(x)</span>
+							</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>正割/余割</span>
+						<span>
+							<span class="function-key-block">sec(x)</span>
+							<span class="function-key-block">csc(x)</span>
+						</span>
+					</div>
+				</div>
+				<div class="functions-column">
+					<div class="function-item">
+						<span>反三角函数</span>
+						<span>
+							<span class="function-key-block">asin(x)</span>
+							<span class="function-key-block">acos(x)</span>
+							<span class="function-key-block">atan(x)</span>
+						</span>
+					</div>
+					<div class="function-item">
+						<span>双曲/反双曲函数</span>
+						<span>
+							<span class="function-key-block">sinh(x)</span>
+							<span class="function-key-block">cosh(x)</span>
+							<span class="function-key-block">tanh(x)</span>
+							<span class="function-key-block">asinh(x)</span>
+							<span class="function-key-block">acosh(x)</span>
+							<span class="function-key-block">atanh(x)</span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.hycalc-container {
+		width: 100%;
+		max-width: 700px;
+		margin: 20px auto;
+	}
+	.scientific-calculator {
+		padding: 20px;
+		box-shadow: 0 0 10px rgba(0,0,0,0.1);
+		border-radius: 8px;
+		background: #f9f9f9;
+		box-sizing: border-box;
+	}
+	.calculator-container {
+		display: flex;
+		flex-direction: column;
+	}
+	.hycalc-label-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 6px;
+	}
+	.hycalc-label-title {
+		font-size: 20px;
+		font-weight: bold;
+		color: #3b4d7a;
+		letter-spacing: 1px;
+		text-align: left;
+		font-family: inherit;
+	}
+	.hycalc-copy-btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 20px;
+		padding: 2px 8px 2px 8px;
+		border-radius: 4px;
+		transition: background 0.2s;
+		margin-left: 2px;
+		color: #3860b7;
+		user-select: none;
+	}
+	.hycalc-copy-btn:hover {
+		background: #ecf1fc;
+	}
+	#expression {
+		padding: 10px;
+		font-size: 23px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		width: 100%;
+		box-sizing: border-box;
+		font-family: 'Times New Roman', Times, serif;
+		resize: vertical;
+		min-height: 44px;
+		max-height: 300px;
+		overflow-y: auto;
+		line-height: 1.5;
+		white-space: pre-wrap;
+		word-break: break-all;
+		margin-bottom: 14px;
+	}
+	#result {
+		padding: 15px;
+		background: #fff;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		min-height: 30px;
+		word-break: break-all;
+		font-size: 23px;
+		font-family: 'Times New Roman', Times, serif;
+		color: #222;
+		transition: color 0.2s;
+		margin-top: 0;
+	}
+	#result.result-default {
+		color: #aaa;
+	}
+	.button-row {
+		display: flex;
+		gap: 15px;
+		width: 100%;
+	}
+	.button-row button {
+		flex: 1 1 0;
+		padding: 12px 0;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 20px;
+		box-shadow: 0 2px 8px 0 rgba(60,60,60,0.10), 0 1.5px 2.5px 0 rgba(60,60,60,0.10);
+		transition: background 0.3s, box-shadow 0.3s;
+		letter-spacing: 1px;
+		font-family: inherit;
+		font-weight: bold;
+		margin-bottom: 14px;
+	}
+	#calc-btn {
+		background: #1976d2;
+		color: #fff;
+	}
+	#calc-btn:hover {
+		background: #1256a2;
+	}
+	#clear-btn {
+		background: #ccc;
+		color: #222;
+	}
+	#clear-btn:hover {
+		background: #b3b3b3;
+	}
+	.calc-version {
+		margin-top: 10px;
+		color: #aaa;
+		font-size: 15px;
+		font-family: inherit;
+		user-select: none;
+		letter-spacing: 1px;
+		background: transparent;
+		z-index: 2;
+		align-self: flex-end;
+		text-align: right;
+		width: 100%;
+	}
+	@media (max-width: 700px) {
+		.calc-version { font-size: 14px;}
+		.hycalc-label-title { font-size: 17px;}
+	}
+	@media (max-width: 500px) {
+		.scientific-calculator { padding: 7px; }
+		.calc-version { font-size: 13px;}
+	}
+
+	/* 大块分组，每块独立两列，移动端变为一列 */
+	.function-group-container {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 34px;
+	}
+	.function-group-title {
+		font-size: 20px;
+		font-weight: bold;
+		color: #3b4d7a;
+		margin-bottom: 18px;
+		letter-spacing: 1px;
+		text-align: center;
+	}
+	.functions-columns {
+		display: flex;
+		width: 100%;
+		gap: 40px;
+	}
+	.functions-column {
+		flex: 1 1 0;
+		min-width: 220px;
+		max-width: 480px;
+	}
+	.function-item {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		margin-bottom: 14px;
+		padding: 6px 0;
+		border-bottom: 1px dotted #e0e0e0;
+		font-size: 16px;
+		font-family: 'Times New Roman', Times, serif;
+	}
+	.function-item > span:first-child {
+		padding-right: 16px;
+		white-space: nowrap;
+	}
+	.function-item > span:last-child {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		min-width: 80px;
+	}
+	.function-key-row2 {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 2px;
+	}
+	.function-key-row2 > span {
+		display: flex;
+		gap: 0.5em;
+	}
+	.function-key-block {
+		font-family: "Fira Mono", "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace;
+		background: #f3f3f3;
+		color: #3860b7;
+		font-size: 15px;
+		padding: 2px 8px;
+		border-radius: 4px;
+		margin: 2px 0;
+		white-space: pre;
+		letter-spacing: 1px;
+		display: block;
+		text-align: right;
+	}
+
+	/* 响应式：<=768px时变为单列 */
+	@media (max-width: 768px) {
+		.functions-columns {
+			flex-direction: column;
+			gap: 0;
+		}
+		.functions-column {
+			max-width: 100%;
+			min-width: 150px;
+		}
+		.function-group-title {
+			font-size: 17px;
+			margin-bottom: 10px;
+		}
+	}
+</style>
+
+<script>
+	const FUNC_NAMES = [
+		'sinh','cosh','tanh','asinh','acosh','atanh','asin','acos','atan',
+		'sin','cos','tan','tg','cot','ctg','sec','csc',
+		'sqrt','pow','log','ln','lg','exp','max','min',
+		'and','or','not','xor','mod',
+		'pi','e',
+		'rand','abs','ceil','floor','round'
+	];
+
+	// 支持36进制（0-9A-Z）
+	const DIGIT_CHARS = [];
+	for (let i = 0; i < 10; ++i) DIGIT_CHARS[i] = String(i);
+	for (let i = 10; i < 36; ++i) DIGIT_CHARS[i] = String.fromCharCode(65 + i - 10);
+	const DIGIT_MAP = {};
+	for (let i = 0; i < 10; ++i) DIGIT_MAP[String(i)] = i;
+	for (let i = 10; i < 36; ++i) {
+		DIGIT_MAP[String.fromCharCode(65 + i - 10)] = i;
+		DIGIT_MAP[String.fromCharCode(97 + i - 10)] = i;
+	}
+
+	function isValidBaseDigit(ch, base) {
+		let v = DIGIT_MAP[ch];
+		return v !== undefined && v < base;
+	}
+	function parseBaseNum(str, base) {
+		str = str.trim();
+		if (str.includes('.')) throw new Error("进制数不支持小数，只能为整数");
+		let isValid = str.length > 0 && [...str].every(ch => isValidBaseDigit(ch.toUpperCase(), base));
+		if (!isValid) throw new Error(`无效的${base}进制数: ${str}`);
+		let val = 0;
+		for (const ch of str) {
+			val = val * base + DIGIT_MAP[ch.toUpperCase()];
+		}
+		return val;
+	}
+	function numToBaseStr(num, base) {
+		if (typeof num !== "number" || !Number.isFinite(num)) throw new Error("无法进制转换为非有限数字");
+		let isNeg = num < 0;
+		num = Math.abs(Math.trunc(num));
+		if (num === 0) return '0';
+		let arr = [];
+		while (num > 0) {
+			arr.push(DIGIT_CHARS[num % base]);
+			num = Math.floor(num / base);
+		}
+		return (isNeg ? "-" : "") + arr.reverse().join('');
+	}
+
+	class NumberNode {
+		constructor(val) { this.type = 'number'; this.val = val; }
+	}
+	class ConstNode {
+		constructor(val) { this.type = 'const'; this.val = val; }
+	}
+	class OpNode {
+		constructor(op, left, right) { this.type = 'op'; this.op = op; this.left = left; this.right = right; }
+	}
+	class UOpNode {
+		constructor(op, expr) { this.type = 'uop'; this.op = op; this.expr = expr; }
+	}
+	class FuncNode {
+		constructor(name, args) { this.type = 'func'; this.name = name; this.args = args; }
+	}
+	class BaseNode {
+		constructor(expr, baseExpr) { this.type = 'base'; this.expr = expr; this.baseExpr = baseExpr; }
+	}
+	class BaseConvNode {
+		constructor(expr, fromBaseExpr, toBaseExpr) { this.type = 'baseconv'; this.expr = expr; this.fromBaseExpr = fromBaseExpr; this.toBaseExpr = toBaseExpr; }
+	}
+
+	function parse(str) {
+		str = str.replace(/\s+/g, '');
+		let pos = 0;
+
+		function peek() { return str[pos]; }
+		function next() { return str[pos++]; }
+		function eof() { return pos >= str.length; }
+		function match(ch) { if (peek() === ch) { pos++; return true; } return false; }
+
+		function getOpPrec(op) {
+			switch (op) {
+				case '+': case '-': case '|': return 2;
+				case '*': case '/': return 3;
+				case '&': case '^': return 4;
+				case '%': case '//': return 3.5;
+				default: return 0;
+			}
+		}
+		function getOpAssoc(op) {
+			switch (op) {
+				case '^': return 'R';
+				default: return 'L';
+			}
+		}
+
+		function parseExpression(prio = 0) {
+			let node;
+			if (peek() === '-') {
+				pos++;
+				node = new UOpNode('-', parseExpression(6));
+			} else {
+				node = parsePrimary();
+			}
+
+			while (!eof()) {
+				let op = null;
+				let prec = null, assoc = null;
+				let two = false;
+				if (str.startsWith('//', pos)) {
+					op = '//'; prec = 3.5; assoc = 'L';
+					two = true;
+				} else if ('+-*/^&|%'.includes(peek())) {
+					op = peek(); prec = getOpPrec(op); assoc = getOpAssoc(op); two = true;
+				}
+				if (two) {
+					if (prec < prio) break;
+					if (op.length === 2) pos += 2; else pos++;
+					let right = parseExpression(assoc === 'L' ? prec + 1 : prec);
+					node = new OpNode(op, node, right);
+					continue;
+				}
+				if (peek() === '!') {
+					if (str.startsWith('!!', pos)) {
+						pos += 2;
+						node = new UOpNode('!!', node);
+						continue;
+					}
+					pos++;
+					node = new UOpNode('!', node);
+					continue;
+				}
+				break;
+			}
+			return node;
+		}
+
+		function parsePrimary() {
+			let m = str.slice(pos).match(/^\(([A-Za-z0-9]+)\)(\d{1,2})\((\d{1,2})\)/i);
+			if (m) {
+				pos += m[0].length;
+				return new BaseConvNode(m[1], Number(m[2]), Number(m[3]));
+			}
+			m = str.slice(pos).match(/^\(([A-Za-z0-9]+)\)\((\d{1,2})\)/i);
+			if (m) {
+				pos += m[0].length;
+				return new BaseConvNode(m[1], 10, Number(m[2]));
+			}
+			m = str.slice(pos).match(/^\(([A-Za-z0-9]+)\)(\d{1,2})/i);
+			if (m) {
+				pos += m[0].length;
+				return new BaseNode(m[1], Number(m[2]));
+			}
+			if (peek() === '(') {
+				let start = pos;
+				let cnt = 0, j = pos;
+				do {
+					if (str[j] === '(') cnt++;
+					else if (str[j] === ')') cnt--;
+					j++;
+				} while (j < str.length && cnt > 0);
+				if (cnt !== 0) throw new Error("括号不匹配");
+				let inside = str.slice(pos + 1, j - 1);
+				pos = j;
+				if (str[pos] === '(') {
+					let pos2 = pos;
+					let cnt2 = 0, j2 = pos2;
+					do {
+						if (str[j2] === '(') cnt2++;
+						else if (str[j2] === ')') cnt2--;
+						j2++;
+					} while (j2 < str.length && cnt2 > 0);
+					if (cnt2 !== 0) throw new Error("括号不匹配");
+					let inside2 = str.slice(pos + 1, j2 - 1);
+					pos = j2;
+					return new BaseConvNode(parse(inside), 10, parse(inside2));
+				} else if (str[pos] === ')') {
+					throw new Error("括号嵌套错误");
+				} else {
+					let baseMatch = str.slice(pos).match(/^(\d{1,2})/);
+					if (baseMatch) {
+						let b = baseMatch[1];
+						pos += b.length;
+						if (str[pos] === '(') {
+							let pos2 = pos;
+							let cnt2 = 0, j2 = pos2;
+							do {
+								if (str[j2] === '(') cnt2++;
+								else if (str[j2] === ')') cnt2--;
+								j2++;
+							} while (j2 < str.length && cnt2 > 0);
+							if (cnt2 !== 0) throw new Error("括号不匹配");
+							let inside2 = str.slice(pos + 1, j2 - 1);
+							pos = j2;
+							return new BaseConvNode(parse(inside), Number(b), parse(inside2));
+						}
+						return new BaseNode(parse(inside), Number(b));
+					}
+				}
+				return parse(inside);
+			}
+			let start = pos;
+			if (peek() === '-' && /\d/.test(str[pos + 1])) pos++;
+			if (/\d/.test(peek())) {
+				while (/\d/.test(peek())) pos++;
+				if (peek() === '.') {
+					pos++;
+					while (/\d/.test(peek())) pos++;
+				}
+				return new NumberNode(Number(str.slice(start, pos)));
+			}
+			if (str.slice(pos).toLowerCase().startsWith('pi')) {
+				pos += 2;
+				return new ConstNode('pi');
+			}
+			if (str.slice(pos).toLowerCase().startsWith('e(')) {
+				pos += 1;
+				return new ConstNode('e');
+			}
+			for (let fname of FUNC_NAMES) {
+				if (str.slice(pos).toLowerCase().startsWith(fname)) {
+					pos += fname.length;
+					if (peek() === '(') {
+						let args = [];
+						pos++; // skip (
+						if (peek() === ')') { pos++; return new FuncNode(fname, []); }
+						while (true) {
+							args.push(parseExpression());
+							if (peek() === ',') { pos++; continue; }
+							if (peek() === ')') { pos++; break; }
+							throw new Error(fname + " 函数参数格式错误");
+						}
+						return new FuncNode(fname, args);
+					}
+					return new FuncNode(fname, []);
+				}
+			}
+			throw new Error("无法解析: " + str.slice(pos, Math.min(str.length, pos+10)));
+		}
+
+		let node = parseExpression();
+		if (pos !== str.length) throw new Error("表达式格式错误");
+		return node;
+	}
+
+	class Calculator {
+		constructor() {
+			this.EPSILON = 1e-12;
+			this.constants = { 'pi': Math.PI, 'e': Math.E };
+			this.functions = {
+				'sin':    x => Math.sin(x),
+				'cos':    x => Math.cos(x),
+				'tan':    x => Math.tan(x),
+				'tg':     x => Math.tan(x),
+				'cot':    x => 1 / Math.tan(x),
+				'ctg':    x => 1 / Math.tan(x),
+				'sec':    x => 1 / Math.cos(x),
+				'csc':    x => 1 / Math.sin(x),
+				'asin':   x => Math.asin(x),
+				'acos':   x => Math.acos(x),
+				'atan':   x => Math.atan(x),
+				'sinh':   x => Math.sinh(x),
+				'cosh':   x => Math.cosh(x),
+				'tanh':   x => Math.tanh(x),
+				'asinh':  x => Math.asinh(x),
+				'acosh':  x => Math.acosh(x),
+				'atanh':  x => Math.atanh(x),
+				'exp':    x => Math.exp(x),
+				'sqrt':   (x, n=2) => n === undefined ? Math.sqrt(x) : Math.pow(x, 1/n),
+				'pow':    (x, y) => Math.pow(x, y),
+				'log':    (...args) => {
+					if (args.length === 1) { return Math.log(args[0]); }
+					else if (args.length === 2) { return Math.log(args[1]) / Math.log(args[0]); }
+					else { throw new Error("log 函数参数个数错误"); }
+				},
+				'ln':     x => Math.log(x),
+				'lg':     x => Math.log10(x),
+				'pi':     () => Math.PI,
+				'e':      () => Math.E,
+				'max':    (...args) => {
+					if (args.length < 1) throw new Error("max 至少需要一个参数");
+					return Math.max(...args);
+				},
+				'min':    (...args) => {
+					if (args.length < 1) throw new Error("min 至少需要一个参数");
+					return Math.min(...args);
+				},
+				'and':    (a, b) => (a|0) & (b|0),
+				'or':     (a, b) => (a|0) | (b|0),
+				'xor':    (a, b) => (a|0) ^ (b|0),
+				'not':    (a)    => a ? 0 : 1,
+				'mod':    (a, b) => a % b,
+				'rand':   () => Math.random(),
+				'abs':    x => Math.abs(x),
+				'ceil':   x => Math.ceil(x),
+				'floor':  x => Math.floor(x),
+				'round':  (x, num_digits=0) => {
+					if (typeof num_digits === "undefined") num_digits = 0;
+					num_digits = Math.floor(Number(num_digits));
+					if (!isFinite(num_digits)) num_digits = 0;
+					if (num_digits > 0) {
+						const p = Math.pow(10, num_digits);
+						return Math.round(x * p) / p;
+					} else if (num_digits < 0) {
+						const p = Math.pow(10, -num_digits);
+						return Math.round(x / p) * p;
+					} else {
+						return Math.round(x);
+					}
+				}
+			};
+		}
+		factorial(n) {
+			if (!Number.isInteger(n) || n < 0) throw new Error("阶乘只能用于非负整数");
+			let res = 1;
+			for (let i = 2; i <= n; ++i) res *= i;
+			return res;
+		}
+		doubleFactorial(n) {
+			if (!Number.isInteger(n) || n < 0) throw new Error("双阶乘只能用于非负整数");
+			let res = 1;
+			for (let i = n; i > 1; i -= 2) res *= i;
+			return res;
+		}
+		evalNode(node) {
+			switch (node.type) {
+				case 'number': return node.val;
+				case 'const': return this.constants[node.val];
+				case 'uop': {
+					let v = this.evalNode(node.expr);
+					if (node.op === '-') return -v;
+					if (node.op === '!') return this.factorial(v);
+					if (node.op === '!!') return this.doubleFactorial(v);
+					throw new Error("未知一元运算符: " + node.op);
+				}
+				case 'op': {
+					let a = this.evalNode(node.left), b = this.evalNode(node.right);
+					if (typeof a === "object" && a && a._baseconv) a = a.dec;
+					if (typeof b === "object" && b && b._baseconv) b = b.dec;
+					return (() => {
+						switch (node.op) {
+							case '+': return a + b;
+							case '-': return a - b;
+							case '*': return a * b;
+							case '/': return a / b;
+							case '^': return Math.pow(a, b);
+							case '&': return (a|0) & (b|0);
+							case '|': return (a|0) | (b|0);
+							case '%': return a % b;
+							case '//': return Math.trunc(a / b);
+							default: throw new Error("未知运算符: " + node.op);
+						}
+					})();
+				}
+				case 'func': {
+					let fn = this.functions[node.name];
+					if (!fn) throw new Error("未知函数: " + node.name);
+					let args = node.args.map(e => {
+						let v = this.evalNode(e);
+						return (typeof v === "object" && v && v._baseconv) ? v.dec : v;
+					});
+					return fn(...args);
+				}
+				case 'base': {
+					let n = typeof node.expr === "string" ? node.expr : this.evalNode(node.expr);
+					let base = typeof node.baseExpr === "number" ? node.baseExpr : this.evalNode(node.baseExpr);
+					if (typeof base !== "number" || base < 2 || base > 36) throw Error("进制必须2~36");
+					let nstr = n.toString().toUpperCase();
+					if (nstr.startsWith('-')) throw Error("进制表达式 (x)b 仅支持正整数（不允许负号），如需负数请在表达式外加负号，如 -(1011)2+1");
+					if (nstr.includes('.')) throw Error("进制数不支持小数，只能为整数");
+					if (!/^[0-9A-Z]+$/.test(nstr)) throw Error("进制数格式错误");
+					if ([...nstr].some(ch => !isValidBaseDigit(ch, base))) throw Error("进制数格式错误");
+					return parseBaseNum(nstr, base);
+				}
+				case 'baseconv': {
+					let n = typeof node.expr === "string" ? node.expr : this.evalNode(node.expr);
+					let fromB = typeof node.fromBaseExpr === "number" ? node.fromBaseExpr : this.evalNode(node.fromBaseExpr);
+					let toB = typeof node.toBaseExpr === "number" ? node.toBaseExpr : this.evalNode(node.toBaseExpr);
+					if (typeof fromB !== "number" || fromB < 2 || fromB > 36) throw Error("原进制仅支持2~36");
+					if (typeof toB !== "number" || toB < 2 || toB > 36) throw Error("目标进制仅支持2~36");
+					let nstr = n.toString().toUpperCase();
+					if (nstr.startsWith('-')) throw Error("进制表达式 (x)b 仅支持正整数（不允许负号），如需负数请在表达式外加负号，如 -(1011)2+1");
+					if (nstr.includes('.')) throw Error("进制数不支持小数，只能为整数");
+					if (!/^[0-9A-Z]+$/.test(nstr)) throw Error("进制数格式错误");
+					if ([...nstr].some(ch => !isValidBaseDigit(ch, fromB))) throw Error("进制数格式错误");
+					let dec = parseBaseNum(nstr, fromB);
+					return { _baseconv: true, dec, toB, value: numToBaseStr(dec, toB) };
+				}
+				default:
+					throw new Error("未知节点类型: " + node.type);
+			}
+		}
+		calculate(expr) {
+			try {
+				let ast = parse(expr);
+				function isTopBaseConv(astNode) {
+					return astNode && astNode.type === "baseconv";
+				}
+				let res = this.evalNode(ast);
+
+				// 输出逻辑调整（最外层是baseconv时，始终输出目标进制字符串）
+				if (isTopBaseConv(ast)) {
+					if (typeof res === "object" && res && res._baseconv && !isNaN(res.dec)) {
+						return `(${res.value})${res.toB}`;
+					}
+				}
+				// 兼容旧的单一进制转换表达式
+				if (typeof res === "object" && res && res._baseconv && !isNaN(res.dec)) {
+					if (/^\s*\([A-Za-z0-9]+\)\d+\(\d+\)\s*$/.test(expr) ||
+						/^\s*\([A-Za-z0-9]+\)\(\d+\)\s*$/.test(expr)
+					   ) {
+						return `(${res.value})${res.toB}`;
+					} else {
+						return res.dec;
+					}
+				}
+				if (typeof res === "number") {
+					if (Math.abs(res) < 1e-12) return "0";
+					return res.toPrecision(10).replace(/\.?0+$/, '').replace(/\.?0+e/, 'e');
+				}
+				return String(res);
+			} catch (e) {
+				return "[Error] " + e.message;
+			}
+		}
+	}
+
+	const calculator = new Calculator();
+
+	function calculate() {
+		const expression = document.getElementById('expression').value;
+		const resultDiv = document.getElementById('result');
+		if (!expression.trim()) {
+			resultDiv.textContent = "此处显示结果";
+			resultDiv.classList.add('result-default');
+			return;
+		}
+		const result = calculator.calculate(expression);
+		resultDiv.textContent = result;
+		resultDiv.classList.remove('result-default');
+	}
+
+	function copyTextToClipboard(text, msg) {
+		if (!text) return;
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard.writeText(text).then(() => {
+				showCopyToast(msg || "已复制");
+			});
+		} else {
+			const temp = document.createElement('textarea');
+			temp.value = text;
+			document.body.appendChild(temp);
+			temp.select();
+			document.execCommand('copy');
+			document.body.removeChild(temp);
+			showCopyToast(msg || "已复制");
+		}
+	}
+
+	function showCopyToast(msg) {
+		if (!msg) return;
+		let old = document.getElementById('hycalc-toast');
+		if (old) old.remove();
+		const toast = document.createElement('div');
+		toast.id = 'hycalc-toast';
+		toast.textContent = msg;
+		Object.assign(toast.style, {
+			position: 'fixed',
+			bottom: '40px',
+			left: '50%',
+			transform: 'translateX(-50%)',
+			zIndex: 9999,
+			background: '#1976d2',
+			color: '#fff',
+			padding: '10px 28px',
+			borderRadius: '8px',
+			fontSize: '17px',
+			boxShadow: '0 4px 16px rgba(30,40,70,.13)',
+			opacity: '0',
+			transition: 'opacity 0.3s',
+			pointerEvents: 'none',
+		});
+		document.body.appendChild(toast);
+		setTimeout(() => { toast.style.opacity = '1'; }, 10);
+		setTimeout(() => {
+			toast.style.opacity = '0';
+			setTimeout(() => { toast.remove(); }, 350);
+		}, 1200);
+	}
+
+	// 输入框复制
+	function copyInput() {
+		const input = document.getElementById('expression');
+		const text = input.value;
+		if (text) {
+			copyTextToClipboard(text, "输入内容已复制");
+		}
+	}
+
+	// 输出框复制
+	function copyOutput() {
+		const resultDiv = document.getElementById('result');
+		const text = resultDiv.textContent;
+		if (text && text !== "此处显示结果") {
+			copyTextToClipboard(text, "输出内容已复制");
+		}
+	}
+
+	function clearCalc() {
+		document.getElementById('expression').value = '';
+		const resultDiv = document.getElementById('result');
+		resultDiv.textContent = "此处显示结果";
+		resultDiv.classList.add('result-default');
+		document.getElementById('expression').focus();
+	}
+	document.addEventListener('DOMContentLoaded', function() {
+		const input = document.getElementById('expression');
+		const copyInputBtn = document.getElementById('copy-input-btn');
+		const copyOutputBtn = document.getElementById('copy-output-btn');
+		copyInputBtn.addEventListener('click', copyInput);
+		copyOutputBtn.addEventListener('click', copyOutput);
+
+		input.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				clearCalc();
+			}
+			if (e.key === 'Enter' && !e.shiftKey) {
+				e.preventDefault();
+				calculate();
+			}
+			if (e.key === '(') {
+				e.preventDefault();
+				const start = input.selectionStart;
+				const end = input.selectionEnd;
+				const val = input.value;
+				input.value = val.slice(0, start) + "()" + val.slice(end);
+				input.selectionStart = input.selectionEnd = start + 1;
+			}
+		});
+		const resultDiv = document.getElementById('result');
+		resultDiv.textContent = "此处显示结果";
+		resultDiv.classList.add('result-default');
+	});
+</script>

@@ -1,0 +1,638 @@
+<!-- HyCount 文本统计器
+ Code Type: HTML
+ Shortcode: [wpcode id="12689"] (auto-generated)
+-->
+
+<div class="hycount-container">
+	<div class="hycount-calculator">
+		<div class="hycount-calculator-container">
+			<!-- 输入区域 -->
+			<div class="hycount-label-row">
+				<div class="hycount-label-title hyplus-unselectable">输入</div>
+				<button class="hycount-clear-btn hyplus-unselectable" id="hycount-clear-btn" title="清空全部">✕</button>
+			</div>
+			<textarea id="hycount-input" placeholder="请输入要统计的文本内容"></textarea>
+
+			<!-- 输出区域 -->
+			<div class="hycount-output-grid">
+				<!-- 第一列 -->
+				<div class="hycount-output-column">
+					<div class="hycount-output-block">
+						<div class="hycount-output-row">
+							<div class="hycount-label-title hyplus-unselectable">总字数</div>
+							<div id="hycount-output-total" class="hycount-result hycount-result-default">0</div>
+						</div>
+					</div>
+					<div class="hycount-output-block">
+						<div class="hycount-output-row">
+							<div class="hycount-label-title hyplus-unselectable">中文字数</div>
+							<div id="hycount-output-chinese" class="hycount-result hycount-result-default">0</div>
+						</div>
+					</div>
+					<div class="hycount-output-block">
+						<div class="hycount-output-row">
+							<div class="hycount-label-title hyplus-unselectable">非中文字数</div>
+							<div id="hycount-output-non-chinese" class="hycount-result hycount-result-default">0</div>
+						</div>
+					</div>
+				</div>
+				<!-- 第二列 -->
+				<div class="hycount-output-column">
+					<div class="hycount-output-block">
+						<div class="hycount-output-row">
+							<div class="hycount-label-title hyplus-unselectable">段落数</div>
+							<div id="hycount-output-paragraphs" class="hycount-result hycount-result-default">0</div>
+						</div>
+					</div>
+					<div class="hycount-output-block">
+						<div class="hycount-output-row">
+							<div class="hycount-label-title hyplus-unselectable">标点符号数</div>
+							<div id="hycount-output-punctuation" class="hycount-result hycount-result-default">0</div>
+						</div>
+					</div>
+					<div class="hycount-output-block">
+						<div class="hycount-output-row">
+							<div class="hycount-label-title hyplus-unselectable">指定字符数</div>
+							<div id="hycount-output-specific" class="hycount-result hycount-result-default">0</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 设置面板 -->
+			<div class="hycount-settings-panel">
+				<div class="hycount-settings-title hyplus-unselectable hycount-center">统计设置</div>
+				<div class="hycount-settings-grid">
+					<!-- 第一栏 -->
+					<div class="hycount-settings-column">
+						<!-- 复选框设置区 -->
+						<div class="hycount-char-config hyplus-unselectable">
+							<div class="hycount-checkbox-group">
+								<label class="hycount-checkbox-label">
+									<input type="checkbox" id="hycount-count-spaces">
+									空格计入字数
+								</label>
+								<label class="hycount-checkbox-label">
+									<input type="checkbox" id="hycount-count-punctuation">
+									标点计入字数
+								</label>
+							</div>
+						</div>
+
+						<!-- 指定字符 -->
+						<div class="hycount-char-config hyplus-unselectable">
+							<div class="hycount-char-title hycount-center">指定字符</div>
+							<textarea id="hycount-specific-chars" 
+									  class="hycount-char-input" 
+									  placeholder="留空表示指定统计空格"></textarea>
+						</div>
+
+						<!-- 排除字符 -->
+						<div class="hycount-char-config hyplus-unselectable">
+							<div class="hycount-char-title hycount-center">排除字符</div>
+							<textarea id="hycount-exclude-chars" 
+									  class="hycount-char-input" 
+									  placeholder="不影响已统计的字符"></textarea>
+						</div>
+					</div>
+
+					<!-- 第二栏 -->
+					<div class="hycount-settings-column">
+						<!-- 中文字符计数方式 -->
+						<div class="hycount-char-config hyplus-unselectable">
+							<div class="hycount-char-title hycount-center">中文字符计数方式</div>
+							<div class="hycount-radio-group">
+								<label>
+									<input type="radio" name="chinese-count-method" value="custom" checked>
+									1个汉字算
+									<input type="number" id="hycount-custom-chinese-length" value="1" min="0" max="100">
+									个字
+								</label>
+								<label>
+									<input type="radio" name="chinese-count-method" value="space">
+									以空格分词计数
+								</label>
+							</div>
+						</div>
+
+						<!-- 英文单词计数方式 -->
+						<div class="hycount-char-config hyplus-unselectable">
+							<div class="hycount-char-title hycount-center">英文单词计数方式</div>
+							<div class="hycount-radio-group">
+								<label>
+									<input type="radio" name="word-count-method" value="custom" checked>
+									1个单词算
+									<input type="number" id="hycount-custom-word-length" value="1" min="0" max="100">
+									个字
+								</label>
+								<label>
+									<input type="radio" name="word-count-method" value="letters">
+									按字母数计数
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="hycount-version hyplus-unselectable">HyCnt v0.1.2</div>
+</div>
+
+<style>
+	.hycount-container {
+		width: 100%;
+		max-width: 700px;
+		margin: 20px auto;
+	}
+	.hycount-calculator {
+		padding: 20px;
+		box-shadow: 0 0 10px rgba(0,0,0,0.1);
+		border-radius: 8px;
+		background: #f9f9f9;
+		box-sizing: border-box;
+	}
+	.hycount-calculator-container {
+		display: flex;
+		flex-direction: column;
+	}
+	.hycount-label-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 6px;
+	}
+	.hycount-output-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+	}
+	.hycount-label-title {
+		font-size: 20px;
+		font-weight: bold;
+		color: #3b4d7a;
+		letter-spacing: 1px;
+		font-family: inherit;
+	}
+	.hycount-center {
+		text-align: center;
+	}
+	.hycount-clear-btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 20px;
+		padding: 2px 8px;
+		border-radius: 4px;
+		color: #666;
+		transition: all 0.2s;
+	}
+	.hycount-clear-btn:hover {
+		background: #eee;
+		color: #333;
+	}
+	#hycount-input {
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		width: 100%;
+		box-sizing: border-box;
+		resize: vertical;
+		min-height: 120px;
+		max-height: 300px;
+		overflow-y: auto;
+		line-height: 1.5;
+		white-space: pre-wrap;
+		word-break: break-all;
+		margin-bottom: 14px;
+		background: #fff;
+		font-size: 17px;
+		font-family: inherit;
+	}
+	.hycount-output-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+		margin: 15px 0;
+	}
+	.hycount-output-column {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+	}
+	.hycount-output-block {
+		background: #fff;
+		padding: 15px;
+		border-radius: 4px;
+		border: 1px solid #ddd;
+	}
+	.hycount-result {
+		font-size: 24px;
+		color: #222;
+		font-family: monospace;
+		flex: 1;
+		text-align: center;
+	}
+	.hycount-result-default {
+		color: #888;
+	}
+	.hycount-settings-panel {
+		margin-top: 20px;
+		background: #fff;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		padding: 20px;
+	}
+	.hycount-settings-title {
+		font-size: 18px;
+		font-weight: bold;
+		color: #3b4d7a;
+		margin-bottom: 20px;
+	}
+	.hycount-settings-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+	}
+	.hycount-settings-column {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+	.hycount-char-config {
+		background: #f8f9fa;
+		border-radius: 4px;
+		padding: 15px;
+	}
+	.hycount-char-title {
+		font-size: 16px;
+		font-weight: bold;
+		color: #666;
+		margin-bottom: 10px;
+	}
+	.hycount-radio-group {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		background: transparent;
+		padding: 0;
+	}
+	.hycount-radio-group label {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		cursor: pointer;
+		font-size: 14px;
+	}
+	.hycount-radio-group input[type="number"] {
+		background: #fff;
+	}
+	.hycount-radio-group input[type="number"]:disabled {
+		background: #eee;
+		cursor: not-allowed;
+	}
+	.hycount-checkbox-group {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		background: transparent;
+		padding: 0;
+	}
+	.hycount-checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		cursor: pointer;
+		font-size: 14px;
+	}
+	.hycount-char-input {
+		width: 100%;
+		min-height: 32px;
+		max-height: 100px;
+		padding: 8px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		resize: vertical;
+		font-size: 16px;
+		background: #fff;
+		box-sizing: border-box;
+	}
+	input[type="number"] {
+		width: 60px;
+		padding: 4px 8px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		font-size: 14px;
+		text-align: center;
+		background: #fff;
+	}
+	input[type="number"]:disabled {
+		background: #eee;
+		cursor: not-allowed;
+	}
+	.hycount-version {
+		margin-top: 10px;
+		color: #aaa;
+		font-size: 15px;
+		font-family: inherit;
+		user-select: none;
+		letter-spacing: 1px;
+		background: transparent;
+		z-index: 2;
+		align-self: flex-end;
+		text-align: right;
+		width: 100%;
+	}
+
+	/* 响应式设计 */
+	@media (max-width: 768px) {
+		.hycount-calculator {
+			padding: 15px;
+		}
+		.hycount-settings-grid {
+			grid-template-columns: 1fr;
+			gap: 15px;
+		}
+		.hycount-output-grid {
+			grid-template-columns: 1fr;
+			gap: 15px;
+		}
+		.hycount-label-title {
+			font-size: 18px;
+		}
+		.hycount-result {
+			font-size: 20px;
+		}
+		.hycount-version {
+			font-size: 14px;
+		}
+	}
+	@media (max-width: 500px) {
+		.hycount-calculator {
+			padding: 10px;
+		}
+		.hycount-version {
+			font-size: 13px;
+		}
+	}
+</style>
+
+<script>
+	// ======================== Toast提示 ========================
+	function hycountShowToast(msg) {
+		if (!msg) return;
+		let old = document.getElementById('hycount-toast');
+		if (old) old.remove();
+		const toast = document.createElement('div');
+		toast.id = 'hycount-toast';
+		toast.textContent = msg;
+		Object.assign(toast.style, {
+			position: 'fixed',
+			bottom: '40px',
+			left: '50%',
+			transform: 'translateX(-50%)',
+			zIndex: 9999,
+			background: '#1976d2',
+			color: '#fff',
+			padding: '10px 28px',
+			borderRadius: '8px',
+			fontSize: '17px',
+			boxShadow: '0 4px 16px rgba(30,40,70,.13)',
+			opacity: '0',
+			transition: 'opacity 0.3s',
+			pointerEvents: 'none',
+		});
+		document.body.appendChild(toast);
+		setTimeout(() => { toast.style.opacity = '1'; }, 10);
+		setTimeout(() => {
+			toast.style.opacity = '0';
+			setTimeout(() => { toast.remove(); }, 350);
+		}, 1200);
+	}
+
+	// ======================== 文本统计功能 ========================
+	function countText() {
+		const text = document.getElementById('hycount-input').value;
+		const countSpaces = document.getElementById('hycount-count-spaces').checked;
+		const countPunctuation = document.getElementById('hycount-count-punctuation').checked;
+		const wordCountMethod = document.querySelector('input[name="word-count-method"]:checked').value;
+		const chineseCountMethod = document.querySelector('input[name="chinese-count-method"]:checked').value;
+		const customWordLength = parseInt(document.getElementById('hycount-custom-word-length').value) || 0;
+		const customChineseLength = parseInt(document.getElementById('hycount-custom-chinese-length').value) || 0;
+
+		// 获取指定字符和排除字符
+		const specificChars = new Set(document.getElementById('hycount-specific-chars').value);
+		const excludeChars = new Set(document.getElementById('hycount-exclude-chars').value);
+
+		// 计数结果对象
+		const counts = {
+			total: 0,            // 总字数
+			chinese: 0,          // 中文字数
+			nonChinese: 0,      // 非中文字数
+			paragraphs: 0,      // 段落数
+			punctuation: 0,      // 标点符号数
+			spaces: 0,          // 空格数（用于在无指定字符时显示）
+			specific: 0,        // 指定字符数
+		};
+
+		if (!text) {
+			updateResults(counts);
+			return;
+		}
+
+		// 统计段落数（通过换行符分割）
+		counts.paragraphs = text.split(/\n+/).filter(p => p.trim()).length || 0;
+
+		// 统计空格数
+		counts.spaces = (text.match(/\s/g) || []).length;
+
+		// 统计标点符号数（中英文标点）
+		const punctuationRegex = /[.,!?;:'"()\[\]{}<>、，。！？；：''""（）《》【】]/g;
+		counts.punctuation = (text.match(punctuationRegex) || []).length;
+
+		// ================= 主体统计（分词、单词、汉字） =================
+		if (chineseCountMethod === 'space') {
+			// 以空格分词方式处理中文
+			const words = text.split(/\s+/).filter(word => word.length > 0);
+			for (const word of words) {
+				// 检查是否为纯中文词
+				if (/^[\u4e00-\u9fa5]+$/.test(word)) {
+					counts.total += 1;
+					counts.chinese += 1;
+					continue;
+				}
+				// 处理混合词或非中文词
+				processWord(word);
+			}
+		} else {
+			// 按原有方式处理
+			const words = text.split(/\s+/).filter(word => word.length > 0);
+			for (const word of words) {
+				processWord(word);
+			}
+		}
+
+		// ================== 统计空格和标点到各项 ==================
+		// 逻辑修正：空格和标点应当始终计入“总字数”，如勾选则都加到“中文”和“非中文”计数项！
+		if (countSpaces) {
+			counts.total += counts.spaces;
+			counts.chinese += counts.spaces;
+			counts.nonChinese += counts.spaces;
+		}
+		if (countPunctuation) {
+			counts.total += counts.punctuation;
+			counts.chinese += counts.punctuation;
+			counts.nonChinese += counts.punctuation;
+		}
+
+		// 如果没有指定字符，则显示空格数
+		if (specificChars.size === 0) {
+			counts.specific = counts.spaces;
+		}
+
+		updateResults(counts);
+
+		// 辅助函数：处理单词
+		function processWord(word) {
+			// 提取单词中的文字部分（去除标点等）
+			const wordOnly = word.match(/[a-zA-Z\u4e00-\u9fa5]+/g);
+			if (!wordOnly) return;
+
+			for (const part of wordOnly) {
+				// 如果是纯英文单词
+				if (/^[a-zA-Z]+$/.test(part)) {
+					switch (wordCountMethod) {
+						case 'custom':
+							counts.total += customWordLength;
+							counts.nonChinese += customWordLength;
+							break;
+						case 'letters':
+							counts.total += part.length;
+							counts.nonChinese += part.length;
+							break;
+					}
+					continue;
+				}
+
+				// 处理中文字符
+				const chars = Array.from(part);
+				for (const char of chars) {
+					// 如果是排除字符则跳过
+					if (excludeChars.has(char)) continue;
+
+					// 如果是指定字符则单独计数
+					if (specificChars.has(char)) {
+						counts.specific++;
+						continue;
+					}
+
+					// 检查是否为中文字符
+					if (/[\u4e00-\u9fa5]/.test(char)) {
+						if (chineseCountMethod === 'custom') {
+							counts.total += customChineseLength;
+							counts.chinese += customChineseLength;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// 更新结果显示
+	function updateResults(counts) {
+		const results = {
+			'hycount-output-total': counts.total,
+			'hycount-output-chinese': counts.chinese,
+			'hycount-output-non-chinese': counts.nonChinese,
+			'hycount-output-paragraphs': counts.paragraphs,
+			'hycount-output-punctuation': counts.punctuation,
+			'hycount-output-specific': counts.specific
+		};
+
+		for (const [id, value] of Object.entries(results)) {
+			const element = document.getElementById(id);
+			if (element) {
+				element.textContent = value;
+				element.classList.toggle('hycount-result-default', value === 0);
+			}
+		}
+	}
+
+	// ======================== 事件处理 ========================
+	document.addEventListener('DOMContentLoaded', function() {
+		const input = document.getElementById('hycount-input');
+		const clearBtn = document.getElementById('hycount-clear-btn');
+
+		// 输入框实时统计
+		input.addEventListener('input', countText);
+
+		// 清空按钮
+		clearBtn.onclick = function() {
+			input.value = '';
+			document.getElementById('hycount-specific-chars').value = '';
+			document.getElementById('hycount-exclude-chars').value = '';
+			updateResults({
+				total: 0,
+				chinese: 0,
+				nonChinese: 0,
+				paragraphs: 0,
+				punctuation: 0,
+				specific: 0
+			});
+		};
+
+		// 初始化单选框状态
+		function initializeRadioState() {
+			const chineseMethod = document.querySelector('input[name="chinese-count-method"]:checked').value;
+			const wordMethod = document.querySelector('input[name="word-count-method"]:checked').value;
+
+			document.getElementById('hycount-custom-chinese-length').disabled = chineseMethod !== 'custom';
+			document.getElementById('hycount-custom-word-length').disabled = wordMethod !== 'custom';
+		}
+
+		// 输入框值变化处理
+		function handleNumberInput(input) {
+			let val = parseInt(input.value);
+			if (isNaN(val)) val = 0;
+			if (val < 0) val = 0;
+			if (val > 100) val = 100;
+			input.value = val;
+			countText();
+		}
+
+		// 自定义中文字数长度输入框
+		const customChineseLengthInput = document.getElementById('hycount-custom-chinese-length');
+		customChineseLengthInput.addEventListener('input', () => handleNumberInput(customChineseLengthInput));
+		customChineseLengthInput.addEventListener('change', () => handleNumberInput(customChineseLengthInput));
+
+		// 自定义英文单词长度输入框
+		const customWordLengthInput = document.getElementById('hycount-custom-word-length');
+		customWordLengthInput.addEventListener('input', () => handleNumberInput(customWordLengthInput));
+		customWordLengthInput.addEventListener('change', () => handleNumberInput(customWordLengthInput));
+
+		// 指定字符输入框
+		const specificCharsInput = document.getElementById('hycount-specific-chars');
+		specificCharsInput.addEventListener('input', countText);
+
+		// 排除字符输入框
+		const excludeCharsInput = document.getElementById('hycount-exclude-chars');
+		excludeCharsInput.addEventListener('input', countText);
+
+		// 复选框变更
+		document.getElementById('hycount-count-spaces').addEventListener('change', countText);
+		document.getElementById('hycount-count-punctuation').addEventListener('change', countText);
+
+		// 单选框变更
+		document.querySelectorAll('input[type="radio"]').forEach(radio => {
+			radio.addEventListener('change', function() {
+				initializeRadioState();
+				countText();
+			});
+		});
+
+		// 初始化
+		initializeRadioState();
+		countText();
+	});
+</script>

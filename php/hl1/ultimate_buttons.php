@@ -1,7 +1,7 @@
 <!-- Ultimate Buttons v1.3 by Akira37 (Hyperplasma)
-外部组件：HyNav应用导航页面、Better Messages聊天窗口
-外部样式：`hyplus-unselectable` (Hyplus Overall); `hyplus-nav-section` `hyplus-nav-links` `hyplus-nav-group` `hyplus-nav-link` (HyNav)
-Snippet Type: universal
+ 外部组件：HyNav应用导航页面、Better Messages聊天窗口
+ 外部样式：`hyplus-unselectable` (Hyplus Overall); `hyplus-nav-section` `hyplus-nav-links` `hyplus-nav-group` `hyplus-nav-link` (HyNav)
+ Code Type: universal
 -->
 
 <!-- HyButton按钮群 -->
@@ -119,11 +119,11 @@ Snippet Type: universal
 					<div class="tool-name">加密/编码器</div>
 					<div class="tool-desc">文本加密与内容生成</div>
 				</div>
-				<div class="tool-card" onclick="switchTool('apigod')">
+				<!-- <div class="tool-card" onclick="switchTool('apigod')">
 					<div class="tool-icon">🚀</div>
 					<div class="tool-name">API-GOD</div>
 					<div class="tool-desc">网络测试综合工具</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 
