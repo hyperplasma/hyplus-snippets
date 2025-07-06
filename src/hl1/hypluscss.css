@@ -12,14 +12,18 @@ a {
 }
 
 
-/* ====== HY-submenu CSS ======= */
+/**
+ * HY-submenu CSS 子菜单
+ */
 /* 初始状态：隐藏下拉菜单 */
 .menu-item .sub-menu {
 	box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
 }
 
 
-/* ====== HY-sidebar sth CSS ======= */
+/**
+ * HY-sidebar sth CSS 侧边栏
+ */
 .sidebar ul {
 	list-style-type: disc;
 }
@@ -37,7 +41,9 @@ a {
 }
 
 
-/* ====== HY-Para and li line-height CSS ======= */
+/**
+ * HY-Para and li line-height CSS 段落和列表行间距
+ */
 /* 增加段落行间距 */
 p {
 	line-height: 1.6; /* 默认行高是1，这里设置为1.6，可以根据需要调整 */
@@ -72,7 +78,9 @@ ol li {
 }
 
 
-/* ====== HY-Move comment textarea above comments, etc. ====== */
+/**
+ * HY-Move comment textarea above comments, etc. CSS 评论框移动到评论区上方
+ */
 #comments {
 	display: flex;
 	flex-direction: column;
@@ -91,7 +99,9 @@ ol li {
 }
 
 
-/* ====== HY-Custom Header and Footer CSS ====== */
+/**
+ * HY-Custom Header and Footer CSS 自定义页眉页脚
+ */
 .site-header {
 	position: sticky;
 	top: 0;
@@ -134,8 +144,10 @@ footer {
 }
 
 
-/* ====== HY-Body Overall Hyplus style css (Including Inline Code Block, HomeTempButtons, NoSidebarOnMobile, commentForm...) CSS ====== */
-
+/**
+ * HY-Body main architecture CSS
+ * Overall Hyplus style css (Including Inline Code Block, HomeTempButtons, NoSidebarOnMobile, commentForm...) CSS
+ */
 body {
 	background-color: rgba(187,255,255,0.05)
 }
@@ -269,7 +281,6 @@ padding-left: 3px;
 }
 */
 
-
 @media screen and (min-width: 769px) {
 	body:has(.sidebar) .sidebar {
 		margin-left: 13px;
@@ -346,6 +357,10 @@ padding-left: 3px;
 }
 
 @media screen and (max-width: 768px) {
+	.dropdown-menu-toggle {
+		background-color: #efeeee;
+	}
+
 	#menu-menu_01 {
 		border-radius: 6px;
 		padding-bottom: 5px;
@@ -379,7 +394,9 @@ padding-left: 3px;
 	}
 }
 
-/* ====== HY-Body Font-Family (TNR) + bodyquote CSS ====== */
+/**
+ * HY-Body Font-Family (TNR) + bodyquote CSS
+ */
 blockquote {
 	font-size: 16px;
 	color: #454545;
@@ -464,7 +481,10 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	border-top: 1px solid #ddd;
 }
 
-/* ====== HY-from Counters of Pages and Apps PHP ====== */
+
+/**
+ * HY-from Counters of Pages and Apps PHP
+ */
 .site-content-counts {
 	text-align: center;
 	font-weight: bold;
@@ -474,7 +494,10 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	color: #FF8C00;
 }
 
-/* ====== HY-from Show post count in nav menu and Search Page Template PHP ====== */
+
+/**
+ * HY-from Show post count in nav menu and Search Page Template PHP
+ */
 @media (max-width: 768px) {
 	.mobile-search-bar {
 		display: block !important;
