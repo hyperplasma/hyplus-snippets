@@ -1,7 +1,7 @@
 <!-- HyProgBar - 进度条遮罩层及相关内容（引言）
  Code Type: HTML
+ Current issue: 对锚点链接、各类表单提交的处理不够完善，暂将其排除。
 -->
-
 <div id="pageLeavingMask" class="hyplus-unselectable" style="opacity:1;display:none;">
 	<div id="pageLeavingProgressWrapper">
 		<div id="pageLeavingProgressCircle">
@@ -262,6 +262,17 @@
 			return false;
 		}
 
+		// 判断是否为评论表单（基于你的HTML结构）
+		function isCommentForm(form) {
+			return form && (
+				form.id === 'commentform' ||
+				form.classList.contains('comment-form') ||
+				form.querySelector('textarea[name="comment"]') ||
+				form.querySelector('input[name="submit"][value="发表评论"]') ||
+				form.closest('#respond')
+			);
+		}
+
 		document.addEventListener('click', function(e){
 			let t = e.target;
 			while (t && t !== document) {
@@ -297,19 +308,27 @@
 		}, true);
 
 		document.addEventListener('submit', function(e){
-			// 排除搜索表单和登录表单
+			// 排除搜索表单、登录表单和评论表单
 			const form = e.target.closest('form');
 			if (!form) return;
 			
-			// 检测搜索表单（包含?s=参数或有name="s"的输入框）
+			// 检测搜索表单
 			const isSearchForm = form.getAttribute('action')?.includes('?s=') || form.querySelector('input[name="s"]');
 			
-			// 检测登录表单（根据action、类名或ID判断）
+			// 检测登录表单
 			const isLoginForm = form.getAttribute('action')?.includes('login') || 
 								form.classList.contains('login-form') || 
 								form.id === 'login-form';
 			
-			if (isSearchForm || isLoginForm) {
+			// 检测评论表单（基于你的HTML结构）
+			const isCommentForm = 
+				form.id === 'commentform' ||
+				form.classList.contains('comment-form') ||
+				form.querySelector('textarea[name="comment"]') ||
+				form.querySelector('input[name="submit"][value="发表评论"]') ||
+				form.closest('#respond');
+			
+			if (isSearchForm || isLoginForm || isCommentForm) {
 				// 允许正常提交
 				return;
 			}

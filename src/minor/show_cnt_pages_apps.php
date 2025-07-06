@@ -20,7 +20,7 @@ function display_site_content_counts() {
 
 	// 输出结果
 	ob_start();
-	// CSS位于main.css中（搜索`HY-from`前缀）
+	// CSS位于main_style.css中（搜索`HY-from`前缀）
 ?>
 <div class=site-content-counts><span>Posts:&nbsp;<span class=site-content-counter><?php echo esc_html($post_count); ?></span></span>&nbsp;&nbsp;<span>Apps:&nbsp;<span class=site-content-counter><?php echo esc_html($app_count) . "+"; ?></span></span></div>
 <?php
