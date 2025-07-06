@@ -1,0 +1,255 @@
+<!-- HyNav: Hyplus Nav Page, Ultimate Button popup addon
+Snippet type: HTML
+Shortcode: [wpcode id="11647"]
+-->
+
+<div class="hyplus-nav-container hyplus-unselectable">
+	<!-- AI大模型 -->
+	<div class="hyplus-nav-section">
+		<h3>AI大模型</h3>
+		<div class="hyplus-nav-links">
+			<div class="hyplus-nav-group">
+				<a href="https://chat.deepseek.com" class="hyplus-nav-link" target="_blank">DeepSeek</a>
+				<a href="https://www.doubao.com/" class="hyplus-nav-link" target="_blank">豆包</a>
+				<a href="https://kimi.moonshot.cn" class="hyplus-nav-link" target="_blank">KIMI</a>
+				<a href="https://chatglm.cn/main/alltoolsdetail?lang=zh" class="hyplus-nav-link" target="_blank">ChatGLM</a>
+				<a href="https://xinghuo.xfyun.cn/desk" class="hyplus-nav-link" target="_blank">讯飞星火</a>
+				<a href="https://tongyi.aliyun.com/" class="hyplus-nav-link" target="_blank">通义千问</a>
+				<a href="https://yiyan.baidu.com" class="hyplus-nav-link" target="_blank">文心一言</a>
+			</div>
+			<div class="hyplus-nav-group">
+				<a href="https://gptgod.online/" class="hyplus-nav-link" target="_blank">GPT-GOD</a>
+				<a href="https://github.com/copilot" class="hyplus-nav-link" target="_blank">Copilot</a>
+				<a href="https://x.com/i/grok" class="hyplus-nav-link" target="_blank">Grok</a>
+				<a href="https://app.txyz.ai/" class="hyplus-nav-link" target="_blank">TXYZ</a>
+			</div>
+			<div class="hyplus-nav-group">
+				<a href="https://perchance.org/ai-story-generator" class="hyplus-nav-link" target="_blank">Perchance</a>
+				<a href="https://toolbaz.com/writer/ai-story-generator" class="hyplus-nav-link" target="_blank">ToolBaz</a>
+				<a href="https://deepai.org/machine-learning-model/text2img" class="hyplus-nav-link" target="_blank">DeepAI</a>
+				<a href="https://boredhumans.com/photo_story.php" class="hyplus-nav-link" target="_blank">Photo2Story</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 控制台 -->
+	<div class="hyplus-nav-section">
+		<h3>控制台</h3>
+		<div class="hyplus-nav-links">
+			<div class="hyplus-nav-group">
+				<a href="https://www.aliyun.com/" class="hyplus-nav-link" target="_blank">阿里云</a>
+				<a href="https://www.bt.cn/login.html?ReturnUrl=https://www.bt.cn/admin/servers" class="hyplus-nav-link" target="_blank">宝塔面板</a>
+				<a href="https://mp.weixin.qq.com" class="hyplus-nav-link" target="_blank">微信小程序</a>
+				<a href="https://hzh.sealos.run" class="hyplus-nav-link" target="_blank">Sealos</a>
+				<a href="https://developer.huawei.com" class="hyplus-nav-link" target="_blank">华为开发者</a>
+			</div>
+			<div class="hyplus-nav-group">
+				<a href="https://github.com/hyperplasma" class="hyplus-nav-link" target="_blank">GitHub</a>
+				<a href="https://gitee.com/hyperplasma" class="hyplus-nav-link" target="_blank">Gitee</a>
+				<a href="https://mail.google.com/" class="hyplus-nav-link" target="_blank">Gmail</a>
+			</div>
+			<div class="hyplus-nav-group">
+				<a href="https://cn.overleaf.com/" class="hyplus-nav-link" target="_blank">Overleaf</a>
+				<a href="https://colab.research.google.com" class="hyplus-nav-link" target="_blank">Google Colab</a>
+				<a href="https://www.kaggle.com" class="hyplus-nav-link" target="_blank">Kaggle</a>
+			</div>
+			<div class="hyplus-nav-group">
+				<a href="https://www.coze.cn/home" class="hyplus-nav-link" target="_blank">Coze</a>
+				<a href="https://open.bigmodel.cn/console/overview" class="hyplus-nav-link" target="_blank">智谱AI</a>
+				<a href="https://console.bce.baidu.com/#/index/overview" class="hyplus-nav-link" target="_blank">百度智能云</a>
+				<a href="https://bailian.console.aliyun.com/" class="hyplus-nav-link" target="_blank">百炼</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 实用工具 -->
+	<div class="hyplus-nav-section">
+		<h3>通用工具</h3>
+		<div class="hyplus-nav-links">
+			<div class="hyplus-nav-group">
+				<a href="https://compresspng.com/" class="hyplus-nav-link" target="_blank">图片压缩</a>
+				<a href="https://www.iloveimg.com/crop-image" class="hyplus-nav-link" target="_blank">图片裁剪</a>
+				<a href="https://dewatermark.ai/" class="hyplus-nav-link" target="_blank">在线去水印</a>
+				<a href="https://fanyi.baidu.com/" class="hyplus-nav-link" target="_blank">百度翻译</a>
+				<a href="https://translate.google.com/" class="hyplus-nav-link" target="_blank">谷歌翻译</a>
+				<a href="https://www.deepl.com/en/translator" class="hyplus-nav-link" target="_blank">DeepL</a>
+			</div>
+			<div class="hyplus-nav-group">
+				<a href="https://www.latexlive.com" class="hyplus-nav-link" target="_blank">LaTeXLive</a>
+				<a href="https://gitmind.cn" class="hyplus-nav-link" target="_blank">GitMind</a>
+				<a href="https://excalidraw.com" class="hyplus-nav-link" target="_blank">Excalidraw</a>
+				<a href="https://app.diagrams.net/" class="hyplus-nav-link" target="_blank">draw.io</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 社区资源 -->
+	<div class="hyplus-nav-section">
+		<h3>信息检索</h3>
+		<div class="hyplus-nav-links">
+			<div class="hyplus-nav-group">
+				<a href="https://www.baidu.com" class="hyplus-nav-link" target="_blank">百度</a>
+				<a href="https://www.google.com.hk" class="hyplus-nav-link" target="_blank">谷歌</a>
+				<a href="https://www.bing.com" class="hyplus-nav-link" target="_blank">Bing</a>
+				<a href="https://www.duplichecker.com" class="hyplus-nav-link" target="_blank">Duplichecker</a>
+				<a href="https://ascii2d.net" class="hyplus-nav-link" target="_blank">画像詳細検索</a>
+			</div>
+			<div class="hyplus-nav-group">
+				<a href="https://x.com/home" class="hyplus-nav-link" target="_blank">𝕏</a>
+				<a href="https://weibo.com/" class="hyplus-nav-link" target="_blank">微博</a>
+				<a href="https://www.bilibili.com" class="hyplus-nav-link" target="_blank">B站</a>
+				<a href="https://www.youtube.com" class="hyplus-nav-link" target="_blank">Youtube</a>
+				<a href="https://www.twitch.tv" class="hyplus-nav-link" target="_blank">Twitch</a>
+				<a href="https://www.reddit.com" class="hyplus-nav-link" target="_blank">Reddit</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="hyplus-nav-section">
+		<h3>开发辅助站</h3>
+		<div class="hyplus-nav-links">
+			<div class="hyplus-nav-group">
+				<a href="http://www.ab173.com/gongju/ui/rgb.php" class="hyplus-nav-link" target="_blank">ab173(前端)</a>
+				<a href="https://tool.ip138.com/underlinehump/" class="hyplus-nav-link" target="_blank">iP138(驼峰)</a>
+				<a href="https://www.matools.com" class="hyplus-nav-link" target="_blank">MaTools</a>
+				<a href="http://www.esjson.com/htmlformat.html" class="hyplus-nav-link" target="_blank">HTML格式化</a>
+			</div>
+			<div class="hyplus-nav-group">
+				<a href="https://tech.io/snippet" class="hyplus-nav-link" target="_blank">Tech.io</a>
+			</div>
+		</div>
+	</div>
+	<div class="hyplus-nav-section">
+		<h3>其他资源</h3>
+		<div class="hyplus-nav-links">
+			<div class="hyplus-nav-group">
+				<a href="https://xclient.info" class="hyplus-nav-link" target="_blank">Xclient</a>
+				<a href="https://mac.filehorse.com" class="hyplus-nav-link" target="_blank">FileHorse</a>
+				<a href="https://www.macbed.com" class="hyplus-nav-link" target="_blank">AppKed</a>
+			</div>
+			<div class="hyplus-nav-group">
+				<a href="https://web.archive.org/" class="hyplus-nav-link" target="_blank">Wayback Machine</a>
+				<a href="https://steamdb.info/" class="hyplus-nav-link" target="_blank">SteamDB</a>
+				<a href="https://www.steamgriddb.com" class="hyplus-nav-link" target="_blank">SteamGridDB</a>
+				<a href="https://www.tiobe.com/tiobe-index/" class="hyplus-nav-link" target="_blank">TIOBE</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.hyplus-nav-container {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+	}
+
+	.hyplus-nav-section {
+		background: #fbfdfe;
+		border: 1px solid #b6dded;
+		border-radius: 14px;
+		padding: 15px;
+		box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
+	}
+
+	.hyplus-nav-section h3 {
+		text-align: center;
+		margin: 0 0 12px 0;
+		color: #2d3a4b;
+		font-size: 20px;
+		font-weight: 600;
+	}
+
+	.hyplus-nav-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		justify-content: center;
+	}
+
+	.hyplus-nav-group {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-top: -3px;
+		margin-bottom: 4px;
+		justify-content: center;
+		width: 100%;
+		border-bottom: 1px solid rgba(30, 120, 200, 0.07);
+		padding-bottom: 9px;
+	}
+
+	.hyplus-nav-group:last-child {
+		margin-bottom: 0;
+		border-bottom: none;
+		padding-bottom: 0;
+	}
+
+	.hyplus-nav-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 4px 10px;
+		background: #ecf5f8;
+		color: #175082;
+		text-decoration: none;
+		border-radius: 16px;
+		font-size: 16px;
+		font-weight: 600;
+		transition:
+			background 0.18s cubic-bezier(0.4,0,0.2,1),
+			color 0.18s cubic-bezier(0.4,0,0.2,1),
+			box-shadow 0.18s cubic-bezier(0.4,0,0.2,1),
+			transform 0.18s cubic-bezier(0.4,0,0.2,1);
+		box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.17), 0 1px 2px 0 rgba(33, 118, 193, 0.09);
+		min-width: fit-content;
+		text-align: center;
+		margin: 0;
+		border: 1.5px solid #c4e0f7;
+		position: relative;
+		overflow: hidden;
+		will-change: transform, box-shadow;
+	}
+
+	.hyplus-nav-link:hover,
+	.hyplus-nav-link:focus {
+		background: #eaf6ff;
+		color: #155a99;
+		border-color: #8ecafc;
+		box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.20), 0 1.5px 4px 0 rgba(33, 118, 193, 0.13);
+		transform: translateY(-1px) scale(1.025);
+		text-decoration: none;
+		z-index: 2;
+	}
+
+	/* favo-color按钮主色渐变 */
+	.hyplus-nav-link.favo-color {
+		color: #fff;
+		background: linear-gradient(90deg, #43a5f5 0%, #64e0d6 100%);
+		border: 1.5px solid #43a5f5;
+		box-shadow: 0 2.5px 10px 0 rgba(67, 165, 245, 0.17), 0 1px 2px 0 rgba(67, 165, 245, 0.09);
+		border-radius: 6px;
+		padding: 4px 10px;
+	}
+
+	.hyplus-nav-link.favo-color:hover,
+	.hyplus-nav-link.favo-color:focus {
+		background: linear-gradient(90deg, #53b6ff 0%, #71f0e7 100%);
+		border-color: #2e8ad6;
+		color: #fff;
+		box-shadow: 0 4px 14px 0 rgba(67, 165, 245, 0.20), 0 1.5px 4px 0 rgba(67, 165, 245, 0.13);
+		transform: translateY(-1px) scale(1.025);
+		z-index: 2;
+		border-radius: 6px;
+		padding: 4px 10px;
+	}
+
+	@media screen and (max-width: 768px) {
+		.hyplus-nav-container {
+			grid-template-columns: 1fr;
+		}
+		.hyplus-nav-section {
+			padding: 12px;
+		}
+	}
+</style>
