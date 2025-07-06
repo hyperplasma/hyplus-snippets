@@ -119,11 +119,11 @@
 					<div class="tool-name">加密/编码器</div>
 					<div class="tool-desc">文本加密与内容生成</div>
 				</div>
-				<!-- <div class="tool-card" onclick="switchTool('apigod')">
+				<div class="tool-card" onclick="switchTool('apigod')">
 					<div class="tool-icon">🚀</div>
 					<div class="tool-name">API-GOD</div>
 					<div class="tool-desc">网络测试综合工具</div>
-				</div> -->
+				</div>
 			</div>
 		</div>
 
@@ -1395,6 +1395,57 @@
 			}
 		}
 	});
+
+	/**
+	 * Alt + Click to Open Links in New Tab
+	 */
+	document.addEventListener('click', function (event) {
+		// 只响应鼠标左键点击
+		if (event.button !== 0) return;
+
+		// 检查是否按下了 Alt/Option 键
+		if (!event.altKey) return;
+
+		// 查找可能的跳转元素（a标签或带有 data-href 属性等）
+		let el = event.target;
+		while (el && el !== document.body) {
+			if (
+				(el.tagName === 'A' && el.href) ||
+				el.hasAttribute('data-href') ||
+				el.onclick
+			) {
+				break;
+			}
+			el = el.parentElement;
+		}
+		if (!el || el === document.body) return;
+
+		// 获取目标链接
+		let url = '';
+		if (el.tagName === 'A' && el.href) {
+			url = el.href;
+		} else if (el.hasAttribute('data-href')) {
+			url = el.getAttribute('data-href');
+		}
+
+		// 如未获取到URL，则不处理
+		if (!url) return;
+
+		// 阻止默认跳转
+		event.preventDefault();
+		// 新标签页打开
+		window.open(url, '_blank');
+	}, true);
+
+
+	/**
+	 * Random post function for PAT category page
+	 */
+	function goToRandomPost(type, min, max) {
+		var num = Math.floor(Math.random() * (max - min + 1)) + min;
+		var url = `https://www.hyperplasma.top/?s=%5B${type}%5D+${num}`;
+		window.location.href = url;
+	}
 
 	// 主体点击事件处理
 	document.body.addEventListener('click', function(event) {

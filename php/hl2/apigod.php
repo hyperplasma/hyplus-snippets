@@ -1,6 +1,5 @@
 <!-- API-GOD (HyNetStat) - 网络测速和API请求工具 Test Your Wifi
  Version: 0.2
- Status: under investigation
  Created: 2025-05-27 03:37:27 UTC
  Author: hyperplasma
  Code Type: HTML
