@@ -357,9 +357,9 @@ padding-left: 3px;
 }
 
 @media screen and (max-width: 768px) {
-	.dropdown-menu-toggle {
+	/* .dropdown-menu-toggle {
 		background-color: #efeeee;
-	}
+	} */
 
 	#menu-menu_01 {
 		border-radius: 6px;
