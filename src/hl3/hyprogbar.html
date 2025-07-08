@@ -275,7 +275,7 @@
 	document.addEventListener('click', function(e){
 		let t = e.target;
 		while (t && t !== document) {
-			if (t.closest('#primary-menu > ul > li > a')) break;
+			if (t.closest('#primary-menu > ul > li > a') || t.closest('.site-logo')) break;
 			if (t.tagName === 'A') {
 				const href = t.getAttribute('href');
 				if (isSearchLink(href) || isLoginRelated(t)) break;
