@@ -1,13 +1,12 @@
-<!-- HyProgBar - 进度条遮罩层及相关内容（引言）
+<!-- HyProgBar - 顶部进度条遮罩层及相关内容（引言）
  Code Type: HTML
+ 跳转前记录实际进度，加载后精确衔接，动画使用 requestAnimationFrame
 -->
 <div id="pageLeavingMask" class="hyplus-unselectable" style="opacity:1;display:none;">
-	<!-- 只在新页面加载时显示的白色遮罩和引言 -->
 	<div id="pageLeavingQuoteWrapper">
 		<div id="pageLeavingQuote"></div>
 	</div>
 </div>
-<!-- 顶部进度条，任何跳转/提交时显示 -->
 <div id="pageLeavingTopBar" style="display:none;">
 	<div id="pageLeavingTopBarInner"></div>
 </div>
@@ -27,7 +26,6 @@
 		font-family: "行楷", "楷体", "STKaiti", "华文楷体", "仿宋", "STFangsong", "黑体", "STHeiti", sans-serif;
 		font-size: 28px; color: #333; padding: 20px; max-width: 80%; margin: 0 auto; line-height: 1.8; letter-spacing: 1px;
 	}
-
 	#pageLeavingTopBar {
 		position: fixed; left: 0; top: 0; width: 100vw; height: 4px;
 		background: transparent;
@@ -57,17 +55,15 @@
 	const topBarInner = document.getElementById('pageLeavingTopBarInner');
 
 	let quotesCache = null;
-	let progressTimer = null;
+	let progressRaf = null;
 	let jumping = false;
 
-	// 动画参数（进度条初始随机45%~60%）
-	const PROGRESS_RAND_MIN = 45;
-	const PROGRESS_RAND_MAX = 60;
-	const PROGRESS_ANIM_INTERVAL = 16;
-	const PROGRESS_ANIM_TIME_BEFORE = 260;
-	const PROGRESS_ANIM_TIME_AFTER = 440;
+	// 动画参数（进度条初始随机25%~30%）
+	const PROGRESS_RAND_MIN = 25;
+	const PROGRESS_RAND_MAX = 30;
+	const PROGRESS_ANIM_TIME_BEFORE = 250;
+	const PROGRESS_ANIM_TIME_AFTER = 250;
 
-	// 滚动阻止
 	function blockScroll() {
 		mask.addEventListener('wheel', blockScrollHandler, {passive: false});
 		mask.addEventListener('touchmove', blockScrollHandler, {passive: false});
@@ -81,7 +77,6 @@
 		return false;
 	}
 
-	// --- 引言管理 ---
 	function getCurQuote() {
 		return sessionStorage.getItem(QUOTE_CUR_KEY);
 	}
@@ -122,9 +117,11 @@
 		val = Math.max(0, Math.min(100, Math.round(val)));
 		topBarInner.style.width = val + '%';
 	}
-	function clearAllTimers() {
-		if (progressTimer) clearInterval(progressTimer);
-		progressTimer = null;
+	function clearAllAnim() {
+		if (progressRaf !== null) {
+			cancelAnimationFrame(progressRaf);
+			progressRaf = null;
+		}
 	}
 	function showMaskAndQuote(fadeIn = true) {
 		mask.style.display = 'flex';
@@ -151,7 +148,7 @@
 		setTimeout(function(){
 			mask.style.display = 'none';
 			unblockScroll();
-			clearAllTimers();
+			clearAllAnim();
 			if (cb) cb();
 		}, 400);
 	}
@@ -159,7 +156,6 @@
 	function showTopBar(startVal = 0) {
 		topBar.style.display = 'block';
 		setTopBarProgress(startVal);
-		// 立即触发渲染
 		void topBarInner.offsetWidth;
 	}
 	function hideTopBar(cb) {
@@ -167,42 +163,48 @@
 		setTopBarProgress(0);
 		if (cb) cb();
 	}
+
+	// 关键：requestAnimationFrame动画+每一帧写入
 	function animateTopBar(from, to, duration, cb) {
-		clearAllTimers();
+		clearAllAnim();
 		let start = from, end = to;
-		let t0 = Date.now();
-		setTopBarProgress(start);
-		progressTimer = setInterval(function(){
-			let dt = Date.now() - t0;
+		let t0 = performance.now();
+		function step(now) {
+			let dt = now - t0;
 			let percent = Math.min(1, dt/duration);
 			let val = Math.round(start + (end-start)*percent);
 			setTopBarProgress(val);
-			if (dt >= duration) {
+			try {
+				sessionStorage.setItem(LEAVING_PROGRESS, val);
+			} catch(e){}
+			if (percent < 1) {
+				progressRaf = requestAnimationFrame(step);
+			} else {
 				setTopBarProgress(end);
-				clearAllTimers();
+				sessionStorage.setItem(LEAVING_PROGRESS, end);
+				progressRaf = null;
 				if (cb) cb();
 			}
-		}, PROGRESS_ANIM_INTERVAL);
+		}
+		progressRaf = requestAnimationFrame(step);
 	}
 
-	// 跳转前动画：只显示顶部进度条，无遮罩和引言
 	function animateAndJump(href) {
 		if (jumping) return; jumping = true;
 		const randTarget = Math.floor(PROGRESS_RAND_MIN + Math.random() * (PROGRESS_RAND_MAX - PROGRESS_RAND_MIN + 1));
 		showTopBar(0);
 		animateTopBar(0, randTarget, PROGRESS_ANIM_TIME_BEFORE, function(){
 			sessionStorage.setItem(LEAVING_FLAG, '1');
-			sessionStorage.setItem(LEAVING_PROGRESS, randTarget + 1);
+			// LEAVING_PROGRESS已在动画帧实时设置
 			window.location.href = href;
 		});
 	}
-	window.animateAndJump = animateAndJump; // 暴露到全局，便于自定义调用
+	window.animateAndJump = animateAndJump;
 
-	// 新页面动画：显示遮罩层、引言和顶部进度条
 	function handleNewPage() {
 		if (sessionStorage.getItem(LEAVING_FLAG) === '1') {
 			let prog = parseInt(sessionStorage.getItem(LEAVING_PROGRESS), 10);
-			if (isNaN(prog) || prog < PROGRESS_RAND_MIN) prog = PROGRESS_RAND_MIN+1;
+			if (isNaN(prog)) prog = PROGRESS_RAND_MIN + 1;
 			showMaskAndQuote(false);
 			showTopBar(prog);
 			setTimeout(function(){
@@ -218,7 +220,6 @@
 				});
 			}, 60);
 		}
-		// 手动刷新后的加载，仅做淡出动画
 		else if (sessionStorage.getItem(RELOAD_FLAG) === '1') {
 			sessionStorage.removeItem(RELOAD_FLAG);
 			showMaskAndQuote(false);
@@ -246,13 +247,9 @@
 		if (!a.href.startsWith(location.origin)) return false;
 		return true;
 	}
-
-	// 判断是否为搜索链接
 	function isSearchLink(href) {
 		return href && href.includes('?s=');
 	}
-
-	// 判断是否为登录相关链接或表单
 	function isLoginRelated(target) {
 		if (target.tagName === 'A') {
 			const href = target.getAttribute('href');
@@ -265,7 +262,6 @@
 		}
 		return false;
 	}
-
 	function isCommentForm(form) {
 		return form && (
 			form.id === 'commentform' ||
@@ -279,17 +275,11 @@
 	document.addEventListener('click', function(e){
 		let t = e.target;
 		while (t && t !== document) {
-			// 排除primary-menu中的链接
 			if (t.closest('#primary-menu > ul > li > a')) break;
-			
-			// 排除搜索链接和登录相关链接
 			if (t.tagName === 'A') {
 				const href = t.getAttribute('href');
-				if (isSearchLink(href) || isLoginRelated(t)) {
-					break;
-				}
+				if (isSearchLink(href) || isLoginRelated(t)) break;
 			}
-			
 			if (
 				t.tagName === 'A' &&
 				isRealPageJump(t) &&
@@ -311,38 +301,26 @@
 	}, true);
 
 	document.addEventListener('submit', function(e){
-		// 排除搜索表单、登录表单和评论表单
 		const form = e.target.closest('form');
 		if (!form) return;
-		
-		// 检测搜索表单
 		const isSearchForm = form.getAttribute('action')?.includes('?s=') || form.querySelector('input[name="s"]');
-		
-		// 检测登录表单
 		const isLoginForm = form.getAttribute('action')?.includes('login') || 
 							form.classList.contains('login-form') || 
 							form.id === 'login-form';
-		
-		// 检测评论表单（基于你的HTML结构）
 		const isCommentForm = 
 			form.id === 'commentform' ||
 			form.classList.contains('comment-form') ||
 			form.querySelector('textarea[name="comment"]') ||
 			form.querySelector('input[name="submit"][value="发表评论"]') ||
 			form.closest('#respond');
-		
 		if (isSearchForm || isLoginForm || isCommentForm) {
-			// 允许正常提交
 			return;
 		}
-		
-		// 其他表单触发顶部进度条
 		e.preventDefault();
 		animateAndJump(location.href);
 	}, true);
 
 	window.addEventListener('beforeunload', function(e) {
-		// 判断刷新而不是跳转（只有刷新时，LEAVING_FLAG未被设置）
 		if (!sessionStorage.getItem(LEAVING_FLAG)) {
 			try {
 				sessionStorage.setItem(RELOAD_FLAG, '1');

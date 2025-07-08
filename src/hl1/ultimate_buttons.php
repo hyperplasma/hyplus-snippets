@@ -1716,13 +1716,23 @@
 		['goBackButton', 'goForwardButton', 'refreshButton', 'toggleButtonsButton', 'scrollToTopButton'].forEach(id => {
 			const button = document.getElementById(id);
 			if (button) {
-				button.addEventListener('click', {
-					goBackButton: () => window.history.back(),
-					goForwardButton: () => window.history.forward(),
-					refreshButton: () => window.location.reload(),
-					toggleButtonsButton: () => toggleButtons(localStorage.getItem('buttonsShown') !== 'true'),
-					scrollToTopButton: scrollToTop
-				}[id]);
+				if (id === 'refreshButton') {
+					button.addEventListener('click', function() {
+						// 显示加载进度条
+						if (typeof animateAndJump === 'function') {
+							animateAndJump(window.location.href);
+						} else {
+							window.location.reload();
+						}
+					});
+				} else {
+						button.addEventListener('click', {
+						goBackButton: () => window.history.back(),
+						goForwardButton: () => window.history.forward(),
+						toggleButtonsButton: () => toggleButtons(localStorage.getItem('buttonsShown') !== 'true'),
+						scrollToTopButton: scrollToTop
+					}[id]);
+				}
 			}
 		});
 	};
