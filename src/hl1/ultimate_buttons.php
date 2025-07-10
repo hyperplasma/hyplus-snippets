@@ -690,7 +690,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		width: 100%;
-		border: 1px solid #b6dded;
+		/* border: 1px solid #b6dded; */
 		border-radius: 4px;
 	}
 
@@ -699,13 +699,14 @@
 		min-width: 250px;
 	}
 
-	.shortcuts-column:first-child {
+	/* .shortcuts-column:first-child {
 		border-right: 1px solid #b6dded;
-	}
+	} */
 
 	.shortcut-item {
 		padding: 8px;
-		border-bottom: 1px solid #b6dded;
+/*		border-bottom: 1px solid #b6dded;	*/
+		border: 1px solid #b6dded;
 		display: flex;
 		justify-content: space-between;
 	}

@@ -207,7 +207,9 @@
 			if (isNaN(prog)) prog = PROGRESS_RAND_MIN + 1;
 			showMaskAndQuote(false);
 			showTopBar(prog);
-			setTimeout(function(){
+
+			// 等待页面真正加载完毕
+			window.addEventListener('load', function() {
 				animateTopBar(prog, 100, PROGRESS_ANIM_TIME_AFTER, function(){
 					setTimeout(function(){
 						hideTopBar();
@@ -218,13 +220,15 @@
 						});
 					}, 120);
 				});
-			}, 60);
+			});
+
 		}
 		else if (sessionStorage.getItem(RELOAD_FLAG) === '1') {
 			sessionStorage.removeItem(RELOAD_FLAG);
 			showMaskAndQuote(false);
 			showTopBar(0);
-			setTimeout(function(){
+
+			window.addEventListener('load', function() {
 				animateTopBar(0, 100, PROGRESS_ANIM_TIME_AFTER, function(){
 					setTimeout(function(){
 						hideTopBar();
@@ -233,7 +237,7 @@
 						});
 					}, 120);
 				});
-			}, 60);
+			});
 		}
 	}
 	handleNewPage();
