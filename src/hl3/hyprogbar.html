@@ -208,8 +208,10 @@
 			showMaskAndQuote(false);
 			showTopBar(prog);
 
-			// 等待页面真正加载完毕
-			window.addEventListener('load', function() {
+			let finished = false;
+			function finishProgress() {
+				if (finished) return;
+				finished = true;
 				animateTopBar(prog, 100, PROGRESS_ANIM_TIME_AFTER, function(){
 					setTimeout(function(){
 						hideTopBar();
@@ -220,7 +222,9 @@
 						});
 					}, 120);
 				});
-			});
+			}
+			window.addEventListener('load', finishProgress);
+			setTimeout(finishProgress, 25000); // 25秒兜底
 
 		}
 		else if (sessionStorage.getItem(RELOAD_FLAG) === '1') {
@@ -228,7 +232,10 @@
 			showMaskAndQuote(false);
 			showTopBar(0);
 
-			window.addEventListener('load', function() {
+			let finished = false;
+			function finishProgress() {
+				if (finished) return;
+				finished = true;
 				animateTopBar(0, 100, PROGRESS_ANIM_TIME_AFTER, function(){
 					setTimeout(function(){
 						hideTopBar();
@@ -237,7 +244,9 @@
 						});
 					}, 120);
 				});
-			});
+			}
+			window.addEventListener('load', finishProgress);
+			setTimeout(finishProgress, 25000); // 25秒兜底
 		}
 	}
 	handleNewPage();
