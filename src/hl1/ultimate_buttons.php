@@ -1588,7 +1588,7 @@
 		document.getElementById('copyContentBtn').addEventListener('click', function() {
 			let content = '';
 			// 获取正文
-			const article = document.querySelector('article') || document.querySelector('.entry-content') || document.querySelector('.post-content');
+			const article = document.querySelector('#main');
 			if (article) {
 				content = article.innerText;
 			} else {
