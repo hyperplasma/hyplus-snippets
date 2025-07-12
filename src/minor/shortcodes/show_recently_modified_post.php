@@ -29,7 +29,7 @@ function recently_modified_posts_shortcode($atts) {
     $query = new WP_Query( $args );
 
     if ( $query->have_posts() ) {
-        $output = '<ul>';
+        $output = '<ul style="list-style-type:none;">';
         while ( $query->have_posts() ) {
             $query->the_post();
             $output .= '<li><a href="' . get_permalink() . '">' . get_the_title() . '</a>';
