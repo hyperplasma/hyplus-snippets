@@ -217,12 +217,19 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 24px;
+  gap: 12px;
 }
 .profile-info-text {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+@media (max-width: 768px) {
+  .profile-info-card {
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+  }
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
@@ -231,20 +238,18 @@ body {
     <img class="profile-avatar" src="https://www.hyperplasma.top/wp-content/uploads/2025/01/Snipaste_2023-12-08_19-40-36-150x150.png" alt="konoha">
     <div class="profile-info-text">
       <div class="profile-signature">Akira</div>
-      <div class="profile-desc">Akira37, Chairman of Hyperplasma</div>
+      <div class="profile-desc">Chairman of Hyperplasma - The Hyplus</div>
       <div class="profile-links">
         <a href="https://github.com/hyperplasma" target="_blank" rel="noopener external">GitHub</a> ·
         <a href="https://gitee.com/hyperplasma" target="_blank" rel="noopener external">Gitee</a> ·
         <a href="https://akira.blog.csdn.net" target="_blank" rel="noopener external">CSDN</a><br>
         <a href="https://steamcommunity.com/id/hyperplasma/" target="_blank" rel="noopener external">Steam</a> ·
         <a href="https://space.bilibili.com/12103859" target="_blank" rel="noopener external">Bilibili</a> ·
-        <a href="http://hyperplasma.ysepan.com" target="_blank" rel="noopener external">永硕E盘</a>
+        <a href="http://hyperplasma.ysepan.com" target="_blank" rel="noopener external">开放网盘</a><br>
+        <a href="http://kina.hyperplasma.top">KINA-Next</a> ·
+        <a href="https://www.hyperplasma.top/media/">媒体库</a> ·
+        <a href="https://www.hyperplasma.top/game/">娱乐中心</a>
       </div>
-    </div>
-  </div>
-  <div class="profile-card">
-    <div class="profile-links">
-      <a href="http://kina.hyperplasma.top">KINA-Next</a> · <a href="https://www.hyperplasma.top/media/">媒体库</a> · <a href="https://www.hyperplasma.top/game/">娱乐中心</a> · <a href="http://hyperplasma.ysepan.com">HyPan开放网盘</a>
     </div>
   </div>
   <div class="profile-panel">
