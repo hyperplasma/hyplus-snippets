@@ -53,7 +53,7 @@
 			<div class="note-section hyplus-unselectable">
 				<!-- Tutorials -->
 				<div class="hyplus-nav-section">
-					<h3>博文分类</h3>
+					<h3><a href="https://www.hyperplasma.top/random">随机博文</a>&nbsp;·&nbsp;<a href="https://www.hyperplasma.top/hyplus/">应用导航</a></h3>
 					<div class="hyplus-nav-links">
 						<div class="hyplus-nav-group">
 							<a href="https://www.hyperplasma.top/category/general/guide/" class="hyplus-nav-link">软硬件指南</a>
