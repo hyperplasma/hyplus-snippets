@@ -1,6 +1,8 @@
 # Hyplus Snippets
 
-Hyplus code snippets, grouped as follows:
+This repository contains custom Hyplus code snippets of our WordPress site ([www.hyperplasma.top](https://www.hyperplasma.top)), grouped by level and usage.
+
+## Categories
 
 * `hl1`: The most important components or style sheets
 * `hl2`: Components related to Ultimate Buttons or specific pages
@@ -11,5 +13,15 @@ Hyplus code snippets, grouped as follows:
   * `qol`: Solutions to what WP unbearably sucks at
   * `security`: Site security enhancements
   * `shortcodes`: WP shortcodes of custom blocks
+
+## Related plugins
+
+* Better Message
+* GTranslate
+* Ultimate Member
+* WP Code
+* WP Githuber MD
+
+---
 
 See more at [Hyperplasma](https://www.hyperplasma.top).
