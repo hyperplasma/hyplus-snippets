@@ -1,6 +1,7 @@
 <?php
 /**
  * 在WordPress经典编辑器界面隐藏Elementor编辑按钮
+ * Current status: unused (already uninstalled Elementor)
  */
 function hide_elementor_edit_button() {
     // 确保只在管理后台加载

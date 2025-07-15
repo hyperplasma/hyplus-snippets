@@ -2,7 +2,7 @@
 /**
  * 实现 WordPress 页面的 PJAX 功能，保持 header 和 sidebar 不刷新
  * Code type: universal
- * Current status: unused
+ * Current status: unused (jitton of bugs)
  */
 
 // 添加 PJAX 功能的主要代码

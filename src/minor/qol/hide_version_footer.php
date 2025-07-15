@@ -5,6 +5,6 @@
  */ 
 //隐藏版本号
 function wpbeginner_remove_version() {
-return '';
+	return '';
 }
 add_filter('the_generator', 'wpbeginner_remove_version');
