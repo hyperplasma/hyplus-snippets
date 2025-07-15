@@ -21,6 +21,123 @@
 				</div>
 			</div>
 
+			<!-- HyNetStat -->
+			<div class="hynetstat-control-section">
+				<div class="hynetstat-netstat-test-title hyplus-unselectable hynetstat-center">&nbsp;网络测速</div>
+				<div class="hynetstat-server-selector">
+					<select id="hynetstat-server-select" class="hynetstat-select">
+						<option value="auto">自动选择最佳服务器</option>
+						<option value="local" selected>Hyplus服务器（www.hyperplasma.top）</option>
+					</select>
+				</div>
+				<div class="hynetstat-button-row">
+					<button id="hynetstat-test-btn" class="hynetstat-action-btn hynetstat-test-btn hyplus-unselectable">
+						测速
+					</button>
+					<button id="hynetstat-clear-btn" class="hynetstat-action-btn hynetstat-clear-main-btn hyplus-unselectable">
+						清空
+					</button>
+				</div>
+			</div>
+
+			<!-- 测试进度显示 -->
+			<div id="hynetstat-progress-container" class="hynetstat-progress-container" style="display: none;">
+				<div class="hynetstat-progress">
+					<div id="hynetstat-progress-bar" class="hynetstat-progress-bar"></div>
+				</div>
+				<div id="hynetstat-progress-text" class="hynetstat-progress-text">准备测速...</div>
+			</div>
+
+			<!-- 输出区域 -->
+			<div class="hynetstat-output-grid">
+				<!-- 第一列 -->
+				<div class="hynetstat-output-column">
+					<div class="hynetstat-output-block">
+						<div class="hynetstat-output-row">
+							<div class="hynetstat-label-title hyplus-unselectable">网络延迟</div>
+							<div id="hynetstat-output-ping" class="hynetstat-result hynetstat-result-default">-</div>
+						</div>
+					</div>
+					<div class="hynetstat-output-block">
+						<div class="hynetstat-output-row">
+							<div class="hynetstat-label-title hyplus-unselectable">丢包率</div>
+							<div id="hynetstat-output-loss" class="hynetstat-result hynetstat-result-default">-</div>
+						</div>
+					</div>
+					<div class="hynetstat-output-block">
+						<div class="hynetstat-output-row">
+							<div class="hynetstat-label-title hyplus-unselectable">抖动</div>
+							<div id="hynetstat-output-jitter" class="hynetstat-result hynetstat-result-default">-</div>
+						</div>
+					</div>
+				</div>
+				<!-- 第二列 -->
+				<div class="hynetstat-output-column">
+					<div class="hynetstat-output-block">
+						<div class="hynetstat-output-row">
+							<div class="hynetstat-label-title hyplus-unselectable">下载速度</div>
+							<div id="hynetstat-output-download" class="hynetstat-result hynetstat-result-default">-</div>
+						</div>
+					</div>
+					<div class="hynetstat-output-block">
+						<div class="hynetstat-output-row">
+							<div class="hynetstat-label-title hyplus-unselectable">上传速度</div>
+							<div id="hynetstat-output-upload" class="hynetstat-result hynetstat-result-default">-</div>
+						</div>
+					</div>
+					<!-- 将测试节点改为质量评价 -->
+					<div class="hynetstat-output-block">
+						<div class="hynetstat-output-row" title="爽 > 优 > 良 > 差 > 恶 > 无信号">
+							<div class="hynetstat-label-title hyplus-unselectable">质量评价</div>
+							<div id="hynetstat-output-server" class="hynetstat-result hynetstat-result-default">-</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 历史记录 -->
+			<div class="hynetstat-history-table-container">
+				<table class="hynetstat-history-table hyplus-excluded-table">
+					<thead>
+						<tr>
+							<th>测速历史</th>
+							<th>测试节点</th>
+							<th>网络延迟</th>
+							<th>下载速度</th>
+							<th>上传速度</th>
+							<th>质量评价</th>
+							<th class="hynetstat-clear-header" id="hynetstat-clear-all">清除记录</th>
+						</tr>
+					</thead>
+					<tbody id="hynetstat-history-list">
+						<!-- 历史记录将在这里动态插入 -->
+					</tbody>
+				</table>
+			</div>
+
+			<!-- 设置面板 -->
+			<div class="hynetstat-settings-panel">
+				<div class="hynetstat-settings-title hyplus-unselectable hynetstat-center">测速设置</div>
+				<div class="hynetstat-settings-content">
+					<div class="hynetstat-settings-row">
+						<div class="hynetstat-label-title hyplus-unselectable">速度单位：</div>
+						<select id="hynetstat-unit-selector" class="hynetstat-unit-selector">
+							<option value="Mbps" selected>Mbps</option>
+							<option value="MB/s">MB/s</option>
+							<option value="Kbps">Kbps</option>
+							<option value="KB/s">KB/s</option>
+							<option value="Gbps">Gbps</option>
+							<option value="GB/s">GB/s</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<br>
+	<div class="hynetstat-calculator">
+		<div class="hynetstat-calculator-container">
 			<!-- 请求区域 -->
 			<div class="apigod-request-section">
 				<div class="apigod-request-row">
@@ -292,123 +409,6 @@
 						<!-- 历史记录将在这里动态插入 -->
 					</tbody>
 				</table>
-			</div>
-		</div>
-	</div>
-
-	<br>
-	<div class="hynetstat-calculator">
-		<div class="hynetstat-calculator-container">
-			<!-- HyNetStat -->
-			<div class="hynetstat-control-section">
-				<div class="hynetstat-netstat-test-title hyplus-unselectable hynetstat-center">&nbsp;网络测速</div>
-				<div class="hynetstat-server-selector">
-					<select id="hynetstat-server-select" class="hynetstat-select">
-						<option value="auto">自动选择最佳服务器</option>
-						<option value="local" selected>Hyplus服务器（www.hyperplasma.top）</option>
-					</select>
-				</div>
-				<div class="hynetstat-button-row">
-					<button id="hynetstat-test-btn" class="hynetstat-action-btn hynetstat-test-btn hyplus-unselectable">
-						测速
-					</button>
-					<button id="hynetstat-clear-btn" class="hynetstat-action-btn hynetstat-clear-main-btn hyplus-unselectable">
-						清空
-					</button>
-				</div>
-			</div>
-
-			<!-- 测试进度显示 -->
-			<div id="hynetstat-progress-container" class="hynetstat-progress-container" style="display: none;">
-				<div class="hynetstat-progress">
-					<div id="hynetstat-progress-bar" class="hynetstat-progress-bar"></div>
-				</div>
-				<div id="hynetstat-progress-text" class="hynetstat-progress-text">准备测速...</div>
-			</div>
-
-			<!-- 输出区域 -->
-			<div class="hynetstat-output-grid">
-				<!-- 第一列 -->
-				<div class="hynetstat-output-column">
-					<div class="hynetstat-output-block">
-						<div class="hynetstat-output-row">
-							<div class="hynetstat-label-title hyplus-unselectable">网络延迟</div>
-							<div id="hynetstat-output-ping" class="hynetstat-result hynetstat-result-default">-</div>
-						</div>
-					</div>
-					<div class="hynetstat-output-block">
-						<div class="hynetstat-output-row">
-							<div class="hynetstat-label-title hyplus-unselectable">丢包率</div>
-							<div id="hynetstat-output-loss" class="hynetstat-result hynetstat-result-default">-</div>
-						</div>
-					</div>
-					<div class="hynetstat-output-block">
-						<div class="hynetstat-output-row">
-							<div class="hynetstat-label-title hyplus-unselectable">抖动</div>
-							<div id="hynetstat-output-jitter" class="hynetstat-result hynetstat-result-default">-</div>
-						</div>
-					</div>
-				</div>
-				<!-- 第二列 -->
-				<div class="hynetstat-output-column">
-					<div class="hynetstat-output-block">
-						<div class="hynetstat-output-row">
-							<div class="hynetstat-label-title hyplus-unselectable">下载速度</div>
-							<div id="hynetstat-output-download" class="hynetstat-result hynetstat-result-default">-</div>
-						</div>
-					</div>
-					<div class="hynetstat-output-block">
-						<div class="hynetstat-output-row">
-							<div class="hynetstat-label-title hyplus-unselectable">上传速度</div>
-							<div id="hynetstat-output-upload" class="hynetstat-result hynetstat-result-default">-</div>
-						</div>
-					</div>
-					<!-- 将测试节点改为质量评价 -->
-					<div class="hynetstat-output-block">
-						<div class="hynetstat-output-row" title="爽 > 优 > 良 > 差 > 恶 > 无信号">
-							<div class="hynetstat-label-title hyplus-unselectable">质量评价</div>
-							<div id="hynetstat-output-server" class="hynetstat-result hynetstat-result-default">-</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- 历史记录 -->
-			<div class="hynetstat-history-table-container">
-				<table class="hynetstat-history-table hyplus-excluded-table">
-					<thead>
-						<tr>
-							<th>测速历史</th>
-							<th>测试节点</th>
-							<th>网络延迟</th>
-							<th>下载速度</th>
-							<th>上传速度</th>
-							<th>质量评价</th>
-							<th class="hynetstat-clear-header" id="hynetstat-clear-all">清除记录</th>
-						</tr>
-					</thead>
-					<tbody id="hynetstat-history-list">
-						<!-- 历史记录将在这里动态插入 -->
-					</tbody>
-				</table>
-			</div>
-
-			<!-- 设置面板 -->
-			<div class="hynetstat-settings-panel">
-				<div class="hynetstat-settings-title hyplus-unselectable hynetstat-center">测速设置</div>
-				<div class="hynetstat-settings-content">
-					<div class="hynetstat-settings-row">
-						<div class="hynetstat-label-title hyplus-unselectable">速度单位：</div>
-						<select id="hynetstat-unit-selector" class="hynetstat-unit-selector">
-							<option value="Mbps" selected>Mbps</option>
-							<option value="MB/s">MB/s</option>
-							<option value="Kbps">Kbps</option>
-							<option value="KB/s">KB/s</option>
-							<option value="Gbps">Gbps</option>
-							<option value="GB/s">GB/s</option>
-						</select>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>

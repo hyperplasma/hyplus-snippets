@@ -1,4 +1,4 @@
-<!-- Ultimate Buttons v1.3 by Akira37 (Hyperplasma)
+<!-- Ultimate Buttons v1.3.1 by Akira37 (Hyperplasma)
  外部组件：HyNav应用导航页面、Better Messages聊天窗口
  外部样式：`hyplus-unselectable` (Hyplus Overall); `hyplus-nav-section` `hyplus-nav-links` `hyplus-nav-group` `hyplus-nav-link` (HyNav)
  Code Type: universal
@@ -101,13 +101,13 @@
 				<div class="tool-card" onclick="window.location.href='https://www.hyperplasma.top/login/'">
 					<div class="tool-icon">💬</div>
 					<div class="tool-name">即时通讯</div>
-					<div class="tool-desc" style="color: red;">登录后即可使用</div>
+					<div class="tool-desc" style="color: red;">登录后可用</div>
 				</div>
 				<?php endif; ?>
 				<div class="tool-card" onclick="switchTool('wordcount')">
 					<div class="tool-icon">📝</div>
 					<div class="tool-name">字数统计</div>
-					<div class="tool-desc">快速统计文本字数</div>
+					<div class="tool-desc">快速多规则文本计数</div>
 				</div>
 				<div class="tool-card" onclick="switchTool('calculator')">
 					<div class="tool-icon">🧮</div>
@@ -123,6 +123,11 @@
 					<div class="tool-icon">🚀</div>
 					<div class="tool-name">API-GOD</div>
 					<div class="tool-desc">网络测试综合工具</div>
+				</div>
+				<div class="tool-card" onclick="switchTool('hypreview')">
+					<div class="tool-icon">📷</div>
+					<div class="tool-name">图片预览</div>
+					<div class="tool-desc">媒体文件在线演示</div>
 				</div>
 			</div>
 		</div>
@@ -146,6 +151,9 @@
 					break;
 				case 'apigod':
 					echo do_shortcode('[wpcode id="12802"]');
+					break;
+				case 'hypreview':
+					echo do_shortcode('[wpcode id="14220"]');
 					break;
 			}
 			?>
@@ -283,7 +291,9 @@
 				通过<a href="https://www.hyperplasma.top/article/13242/">Hyplusite Exporter</a>导出的页面不支持在线服务，且部分由PHP预生成的JS组件存在显示问题
 			</div>
 		</div>
-		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">Ultimate Buttons v1.3 by Akira37</div>
+		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
+			Ultimate Buttons v1.3.1 by Akira37
+		</div>
 	</div>
 </div>
 

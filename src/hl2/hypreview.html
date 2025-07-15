@@ -1,0 +1,314 @@
+<!-- HyPreview 图片浏览器
+ Code Type: HTML
+ Shortcode: [wpcode id="14220"]
+-->
+<div class="hypreview-container">
+  <div class="hypreview-card">
+    <div class="hypreview-label-row">
+      <div class="hypreview-label-title hyplus-unselectable">图片预览</div>
+    </div>
+    <div id="hypreview-upload-area" class="hypreview-upload-area hyplus-unselectable">
+      <span id="hypreview-upload-tip">点击或拖拽/粘贴图片到此处上传</span>
+      <img id="hypreview-img" style="display:none;" alt="预览图片" />
+    </div>
+    <div class="hypreview-btn-row hyplus-unselectable">
+      <button id="hypreview-upload-btn" class="hypreview-btn hypreview-btn-blue">上传</button>
+      <button id="hypreview-clear-btn" class="hypreview-btn hypreview-btn-gray">清除</button>
+    </div>
+  </div>
+  <div class="hypreview-version hyplus-unselectable">HyPreview v0.2</div>
+</div>
+
+<style>
+.hypreview-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 24px auto 0 auto;
+}
+.hypreview-card {
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.10);
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.hypreview-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.hypreview-label-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #3b4d7a;
+  letter-spacing: 1px;
+  text-align: left;
+  font-family: inherit;
+}
+.hypreview-upload-area {
+  border: 2px dashed #b6dded;
+  border-radius: 8px;
+  background: #fff;
+  height: 260px;
+  min-height: 260px;
+  max-height: 260px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 18px;
+  cursor: default;
+  position: relative;
+  transition: border-color 0.2s;
+  overflow: hidden;
+}
+.hypreview-upload-area.dragover {
+  border-color: #2196f3;
+  background: #e6f3ff;
+}
+#hypreview-upload-tip {
+  color: #aaa;
+  font-size: 16px;
+  text-align: center;
+  user-select: none;
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+#hypreview-img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  cursor: zoom-in;
+  margin: auto;
+  position: relative;
+  z-index: 3;
+}
+.hypreview-btn-row {
+  display: flex;
+  gap: 18px;
+  margin-top: 8px;
+  justify-content: center;
+}
+.hypreview-btn {
+  padding: 8px 28px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 17px;
+  font-family: inherit;
+  font-weight: bold;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(60,60,60,0.10);
+}
+.hypreview-btn-blue {
+  background: #1976d2;
+  color: #fff;
+}
+.hypreview-btn-blue:hover {
+  background: #1256a2;
+}
+.hypreview-btn-gray {
+  background: #ccc;
+  color: #222;
+}
+.hypreview-btn-gray:hover {
+  background: #b3b3b3;
+  color: #222;
+}
+.hypreview-version {
+  margin-top: 10px;
+  color: #aaa;
+  font-size: 15px;
+  font-family: inherit;
+  user-select: none;
+  letter-spacing: 1px;
+  background: transparent;
+  z-index: 2;
+  align-self: flex-end;
+  text-align: right;
+  width: 100%;
+}
+@media (max-width: 700px) {
+  .hypreview-container { max-width: 100%; }
+}
+@media (max-width: 500px) {
+  .hypreview-card { padding: 10px; }
+  .hypreview-version { font-size: 13px; }
+  .hypreview-upload-area { height: 180px; min-height: 180px; max-height: 180px; }
+}
+</style>
+
+<script>
+const LS_KEY = 'hypreview-img-base64';
+const uploadArea = document.getElementById('hypreview-upload-area');
+const imgEl = document.getElementById('hypreview-img');
+const tipEl = document.getElementById('hypreview-upload-tip');
+const uploadBtn = document.getElementById('hypreview-upload-btn');
+const clearBtn = document.getElementById('hypreview-clear-btn');
+
+// 读取localStorage
+function loadImageFromStorage() {
+  const data = localStorage.getItem(LS_KEY);
+  if (data) {
+    imgEl.src = data;
+    imgEl.style.display = 'block';
+    tipEl.style.display = 'none';
+  } else {
+    imgEl.src = '';
+    imgEl.style.display = 'none';
+    tipEl.style.display = 'block';
+  }
+}
+
+// 存储到localStorage
+function saveImageToStorage(base64) {
+  localStorage.setItem(LS_KEY, base64);
+}
+
+// 清除localStorage
+function clearImageStorage() {
+  localStorage.removeItem(LS_KEY);
+  loadImageFromStorage();
+}
+
+// 处理图片文件
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) {
+    showToast('请上传图片文件');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64 = e.target.result;
+    imgEl.src = base64;
+    imgEl.style.display = 'block';
+    tipEl.style.display = 'none';
+    saveImageToStorage(base64);
+  };
+  reader.readAsDataURL(file);
+}
+
+// 上传按钮点击
+uploadBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function(ev) {
+    if (input.files && input.files[0]) {
+      handleFile(input.files[0]);
+    }
+  };
+  input.click();
+});
+
+// 清除按钮点击
+clearBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  clearImageStorage();
+});
+
+// 拖拽上传
+uploadArea.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  uploadArea.classList.add('dragover');
+});
+uploadArea.addEventListener('dragleave', function(e) {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+});
+uploadArea.addEventListener('drop', function(e) {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    handleFile(e.dataTransfer.files[0]);
+  }
+});
+
+// 全局粘贴上传
+function isHyPreviewVisible() {
+  // 判断上传区是否在页面上可见
+  const area = document.getElementById('hypreview-upload-area');
+  if (!area) return false;
+  const style = window.getComputedStyle(area);
+  if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
+  // 检查其祖先元素是否有display:none
+  let el = area;
+  while (el) {
+    if (el !== document.body) {
+      const s = window.getComputedStyle(el);
+      if (s.display === 'none' || s.visibility === 'hidden' || s.opacity === '0') return false;
+    }
+    el = el.parentElement;
+  }
+  return true;
+}
+document.addEventListener('paste', function(e) {
+  // 只在HyPreview可见时处理，且不在输入框/textarea中
+  const active = document.activeElement;
+  if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) {
+    return; // 避免干扰输入框的粘贴
+  }
+  if (!isHyPreviewVisible()) return;
+  const items = (e.clipboardData || window.clipboardData).items;
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item.kind === 'file' && item.type.startsWith('image/')) {
+      handleFile(item.getAsFile());
+      e.preventDefault();
+      return;
+    }
+  }
+});
+
+// 图片点击弹出hylightbox
+imgEl.addEventListener('click', function(e) {
+  e.preventDefault();
+  // 优先尝试openLightbox（hylightbox.js定义）
+  if (typeof openLightbox === 'function') {
+    openLightbox(imgEl.src);
+  } else {
+    // fallback: 触发hylightbox自动绑定
+    // do nothing, hylightbox.js会自动为img绑定
+  }
+});
+
+// Toast提示
+function showToast(msg) {
+  if (!msg) return;
+  let old = document.getElementById('hypreview-toast');
+  if (old) old.remove();
+  const toast = document.createElement('div');
+  toast.id = 'hypreview-toast';
+  toast.textContent = msg;
+  Object.assign(toast.style, {
+    position: 'fixed',
+    bottom: '40px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 9999,
+    background: '#1976d2',
+    color: '#fff',
+    padding: '10px 28px',
+    borderRadius: '8px',
+    fontSize: '17px',
+    boxShadow: '0 2px 8px 0 rgba(60,60,60,0.10)'
+  });
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.remove(); }, 1800);
+}
+
+// 页面加载时自动读取
+window.addEventListener('DOMContentLoaded', loadImageFromStorage);
+</script> 
