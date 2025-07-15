@@ -568,7 +568,7 @@
 		display: flex;
 		gap: 20px;
 		height: calc(100% - 20px);
-		padding: 0 15px;
+		/* padding: 0 15px; */
 		max-width: 1200px;
 		margin: 0 auto;
 		padding-bottom: 20px;
