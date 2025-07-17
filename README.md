@@ -17,7 +17,7 @@ This repository contains custom Hyplus code snippets of our WordPress site ([www
 ## Related plugins
 
 * Better Message
-* GTranslate
+* GTranslate (Currently unavailable)
 * Ultimate Member
 * WP Code
 * WP Githuber MD

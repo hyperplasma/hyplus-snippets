@@ -214,9 +214,9 @@
 					<div class="language-selector-row">
 						<label class="language-label">选择语言:</label>
 						<label id="languageLabel" class="language-label">
-							<?php
-							echo do_shortcode('[gtranslate]');
-							?>
+							<!-- php
+							echo do_shortcode('[gtranslate]'); // Need GTranslate Plugin
+		-->Currently unavailable
 						</label>
 					</div>
 				</div>
@@ -292,7 +292,7 @@
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.3.1 by Akira37
+			Ultimate Buttons v1.3.2 by Akira37
 		</div>
 	</div>
 </div>
