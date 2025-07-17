@@ -1,5 +1,4 @@
 <!-- API-GOD (HyNetStat) - 网络测速和API请求工具 Test Your Wifi
- Version: 0.2
  Created: 2025-05-27 03:37:27 UTC
  Author: hyperplasma
  Code Type: HTML
@@ -412,7 +411,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="hynetstat-version hyplus-unselectable">API-GOD v0.2</div>
+	<div class="hynetstat-version hyplus-unselectable">API-GOD v0.2.1</div>
 </div>
 
 <style>
@@ -1286,10 +1285,10 @@
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/prettier@3.1.1/standalone.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/prettier@3.1.1/parser-babel.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/json-formatter-js@2.3.4/dist/json-formatter.min.js"></script>
+<script src="https://unpkg.zhimg.com/monaco-editor@0.45.0/min/vs/loader.js"></script>
+<script src="https://unpkg.zhimg.com/prettier@3.1.1/standalone.js"></script>
+<script src="https://unpkg.zhimg.com/prettier@3.1.1/parser-babel.js"></script>
+<script src="https://unpkg.zhimg.com/json-formatter-js@2.3.4/dist/json-formatter.min.js"></script>
 
 <script>
 	// ======================== Toast提示 ========================
@@ -2048,7 +2047,6 @@ ${(record.ip && record.ip !== "" && record.ip !== "获取中...") ? record.ip : 
 								   }
 								   });
 								   });
-
 								   // 响应Tab切换
 								   this.resTabBtns.forEach((btn, idx) => {
 								   btn.addEventListener('click', () => {
