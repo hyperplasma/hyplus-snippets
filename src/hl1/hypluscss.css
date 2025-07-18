@@ -389,8 +389,8 @@ padding-left: 3px;
 }
 
 @media screen and (min-width: 769px) {
-	.main-nav a {
-		cursor: default;
+	.main-nav .sub-menu a {
+		cursor: pointer;
 	}
 }
 

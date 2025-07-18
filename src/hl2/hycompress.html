@@ -1,0 +1,342 @@
+<!-- HyCompress
+ Code Type: HTML
+ Shortcode: [wpcode id="14230"] (auto-generated)
+-->
+<div class="hycompress-container">
+	<div class="compressor">
+		<div class="compressor-container">
+			<div class="hycompress-label-row">
+				<div class="hycompress-label-title hyplus-unselectable">代码压缩</div>
+				<select id="compress-type" class="hycompress-select-inline">
+					<option value="auto">自动识别</option>
+					<option value="html">HTML</option>
+					<option value="css">CSS</option>
+					<option value="js">JavaScript</option>
+					<option value="php">PHP</option>
+				</select>
+				<button class="hycompress-copy-btn hyplus-unselectable" id="copy-input-btn" title="复制输入" type="button">📋</button>
+			</div>
+			<textarea id="compress-input" placeholder="在此粘贴HTML/CSS/JS/PHP代码，Esc清空，Ctrl+Enter压缩"></textarea>
+
+			<div class="button-row hyplus-unselectable">
+				<button id="compress-btn">压缩</button>
+				<button id="clear-btn">清空</button>
+			</div>
+
+			<div class="hycompress-label-row">
+				<div class="hycompress-label-title hyplus-unselectable">输出</div>
+				<button class="hycompress-copy-btn hyplus-unselectable" id="copy-output-btn" title="复制输出" type="button">📋</button>
+			</div>
+			<div id="compress-result" class="result-default">此处显示压缩结果</div>
+		</div>
+	</div>
+	<div class="compress-version hyplus-unselectable">HyCompress v0.1.0</div>
+</div>
+
+<style>
+	.hycompress-container {
+		width: 100%;
+		margin: 20px auto;
+	}
+	.compressor {
+		padding: 20px;
+		box-shadow: 0 0 10px rgba(0,0,0,0.1);
+		border-radius: 8px;
+		background: #f9f9f9;
+		box-sizing: border-box;
+	}
+	.compressor-container {
+		display: flex;
+		flex-direction: column;
+	}
+	.hycompress-label-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 6px;
+	}
+	.hycompress-label-title {
+		font-size: 20px;
+		font-weight: bold;
+		color: #3b4d7a;
+		letter-spacing: 1px;
+		text-align: left;
+		font-family: inherit;
+	}
+	.hycompress-copy-btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 20px;
+		padding: 2px 8px 2px 8px;
+		border-radius: 4px;
+		transition: background 0.2s;
+		margin-left: 2px;
+		color: #3860b7;
+		user-select: none;
+	}
+	.hycompress-copy-btn:hover {
+		background: #ecf1fc;
+	}
+	#compress-input {
+		padding: 10px;
+		font-size: 17px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		width: 100%;
+		box-sizing: border-box;
+		font-family: 'Fira Mono', 'JetBrains Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+		resize: vertical;
+		min-height: 80px;
+		max-height: 300px;
+		overflow-y: auto;
+		line-height: 1.5;
+		white-space: pre-wrap;
+		word-break: break-all;
+		margin-bottom: 14px;
+	}
+	#compress-result {
+		padding: 15px;
+		background: #fff;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		min-height: 30px;
+		word-break: break-all;
+		font-size: 17px;
+		font-family: 'Fira Mono', 'JetBrains Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+		color: #222;
+		transition: color 0.2s;
+		margin-top: 0;
+	}
+	#compress-result.result-default {
+		color: #aaa;
+	}
+	.button-row {
+		display: flex;
+		gap: 15px;
+		width: 100%;
+		margin-bottom: 14px;
+	}
+	.button-row button, .button-row select {
+		flex: 1 1 0;
+		padding: 12px 0;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 17px;
+		box-shadow: 0 2px 8px 0 rgba(60,60,60,0.10), 0 1.5px 2.5px 0 rgba(60,60,60,0.10);
+		transition: background 0.3s, box-shadow 0.3s;
+		letter-spacing: 1px;
+		font-family: inherit;
+		font-weight: bold;
+	}
+	#compress-btn {
+		background: #1976d2;
+		color: #fff;
+	}
+	#compress-btn:hover {
+		background: #1256a2;
+	}
+	#clear-btn {
+		background: #ccc;
+		color: #222;
+	}
+	#clear-btn:hover {
+		background: #b3b3b3;
+	}
+	.hycompress-select {
+		background: #fff;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		font-size: 17px;
+		padding: 0 12px;
+		color: #333;
+		min-width: 110px;
+		cursor: pointer;
+		outline: none;
+	}
+	.compress-version {
+		margin-top: 10px;
+		color: #aaa;
+		font-size: 15px;
+		font-family: inherit;
+		user-select: none;
+		letter-spacing: 1px;
+		background: transparent;
+		z-index: 2;
+		align-self: flex-end;
+		text-align: right;
+		width: 100%;
+	}
+	.hycompress-select-row {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		margin-bottom: 6px;
+	}
+	/* 行内下拉框样式 */
+	.hycompress-select-inline {
+		height: 32px;
+		margin: 0 10px;
+		padding: 0 12px;
+		font-size: 16px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		background: #fff;
+		color: #333;
+		min-width: 110px;
+		cursor: pointer;
+		outline: none;
+		vertical-align: middle;
+	}
+</style>
+
+<script>
+function compressCode(code, type) {
+	type = type || 'auto';
+	if (type === 'auto') {
+		if (/^\s*<\?php[\s\S]*\?>\s*$/i.test(code)) type = 'php';
+		else if (/^\s*<\/?[a-zA-Z!]/.test(code)) type = 'html';
+		else if (/function|var|let|const|=>|\$\(|document\.|window\./.test(code)) type = 'js';
+		else if (/\{|\}|;|#|\.|\:/.test(code)) type = 'css';
+		else type = 'js';
+	}
+	if (type === 'html') {
+		let code2 = code.replace(/<!--[\s\S]*?-->/g, '');
+		code2 = code2.replace(/\r?\n/g, '');
+		code2 = code2.replace(/\s{2,}/g, ' ');
+		return code2.trim();
+	} else if (type === 'css') {
+		let code2 = code.replace(/\/\*[\s\S]*?\*\//g, '');
+		code2 = code2.replace(/\r?\n/g, '');
+		code2 = code2.replace(/\s{2,}/g, ' ');
+		return code2.trim();
+	} else if (type === 'js') {
+		let code2 = code.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, '');
+		code2 = code2.replace(/\r?\n/g, '');
+		code2 = code2.replace(/\s{2,}/g, ' ');
+		return code2.trim();
+	} else if (type === 'php') {
+		let code2 = code.replace(/<\?php|\?>/g, '');
+		code2 = code2.replace(/\/\/.*|#.*|\/\*[\s\S]*?\*\//g, '');
+		code2 = code2.replace(/\r?\n/g, '');
+		code2 = code2.replace(/\s{2,}/g, ' ');
+		return code2.trim();
+	} else {
+		return code;
+	}
+}
+
+function showCompressToast(msg) {
+	if (!msg) return;
+	let old = document.getElementById('hycompress-toast');
+	if (old) old.remove();
+	const toast = document.createElement('div');
+	toast.id = 'hycompress-toast';
+	toast.textContent = msg;
+	Object.assign(toast.style, {
+		position: 'fixed',
+		bottom: '40px',
+		left: '50%',
+		transform: 'translateX(-50%)',
+		zIndex: 9999,
+		background: '#1976d2',
+		color: '#fff',
+		padding: '10px 28px',
+		borderRadius: '8px',
+		fontSize: '17px',
+		boxShadow: '0 4px 16px rgba(30,40,70,.13)',
+		opacity: '0',
+		transition: 'opacity 0.3s',
+		pointerEvents: 'none',
+	});
+	document.body.appendChild(toast);
+	setTimeout(() => { toast.style.opacity = '1'; }, 10);
+	setTimeout(() => {
+		toast.style.opacity = '0';
+		setTimeout(() => { toast.remove(); }, 350);
+	}, 1200);
+}
+
+function copyTextToClipboard(text, msg) {
+	if (!text) return;
+	if (navigator.clipboard && window.isSecureContext) {
+		navigator.clipboard.writeText(text).then(() => {
+			showCompressToast(msg || "已复制");
+		});
+	} else {
+		const temp = document.createElement('textarea');
+		temp.value = text;
+		document.body.appendChild(temp);
+		temp.select();
+		document.execCommand('copy');
+		document.body.removeChild(temp);
+		showCompressToast(msg || "已复制");
+	}
+}
+
+function clearCompress() {
+	document.getElementById('compress-input').value = '';
+	const resultDiv = document.getElementById('compress-result');
+	resultDiv.textContent = "此处显示压缩结果";
+	resultDiv.classList.add('result-default');
+	document.getElementById('compress-input').focus();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+	const input = document.getElementById('compress-input');
+	const copyInputBtn = document.getElementById('copy-input-btn');
+	const copyOutputBtn = document.getElementById('copy-output-btn');
+	const compressBtn = document.getElementById('compress-btn');
+	const clearBtn = document.getElementById('clear-btn');
+	const resultDiv = document.getElementById('compress-result');
+	const typeSelect = document.getElementById('compress-type');
+
+	copyInputBtn.addEventListener('click', function() {
+		const text = input.value;
+		if (text) copyTextToClipboard(text, "输入内容已复制");
+	});
+	copyOutputBtn.addEventListener('click', function() {
+		const text = resultDiv.textContent;
+		if (text && text !== "此处显示压缩结果") copyTextToClipboard(text, "输出内容已复制");
+	});
+	compressBtn.addEventListener('click', function() {
+		const code = input.value;
+		if (!code.trim()) {
+			showCompressToast("请输入代码");
+			return;
+		}
+		const type = typeSelect.value;
+		if (type === 'js') {
+			resultDiv.textContent = '正在压缩...';
+			resultDiv.classList.remove('result-default');
+			const compressPromise = compressCode(code, type);
+			if (compressPromise && typeof compressPromise.then === 'function') {
+				compressPromise.then(res => {
+					resultDiv.textContent = res;
+					resultDiv.classList.remove('result-default');
+					showCompressToast("压缩完成");
+				});
+			} else {
+				resultDiv.textContent = compressPromise;
+				resultDiv.classList.remove('result-default');
+				showCompressToast("压缩完成");
+			}
+		} else {
+			const compressed = compressCode(code, type);
+			resultDiv.textContent = compressed;
+			resultDiv.classList.remove('result-default');
+			showCompressToast("压缩完成");
+		}
+	});
+	clearBtn.addEventListener('click', clearCompress);
+	input.addEventListener('keydown', function(e) {
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			clearCompress();
+		}
+	});
+	resultDiv.textContent = "此处显示压缩结果";
+	resultDiv.classList.add('result-default');
+});
+</script>

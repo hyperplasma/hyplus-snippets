@@ -129,6 +129,11 @@
 					<div class="tool-name">图片预览</div>
 					<div class="tool-desc">媒体文件在线演示</div>
 				</div>
+				<div class="tool-card" onclick="switchTool('hycompress')">
+					<div class="tool-icon">🛁</div>
+					<div class="tool-name">代码压缩</div>
+					<div class="tool-desc">前端代码去格式化</div>
+				</div>
 			</div>
 		</div>
 
@@ -155,6 +160,9 @@
 				case 'hypreview':
 					echo do_shortcode('[wpcode id="14220"]');
 					break;
+				case 'hycompress':
+					echo do_shortcode('[wpcode id="14230"]');
+					break;
 			}
 			?>
 		</div>
@@ -162,7 +170,7 @@
 
 	<!-- 设置 -->
 	<div id="settingsContent" class="nav-content hyplus-unselectable" style="display: none;">
-		<div id="settingsHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 15px 0;">Hyplus设置&amp;快捷键大全</div>
+		<div id="settingsHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus设置&amp;快捷键大全</div>
 
 		<!-- 设置内容两列布局 -->
 		<div class="settings-columns-container">
@@ -520,9 +528,9 @@
 	/* 工具选择界面样式 */
 	.tools-header {
 		text-align: center;
-		font-size: 28px;
+		font-size: 24px;
 		font-weight: bold;
-		margin: 20px 0;
+		margin: 15px 0;
 		color: #333;
 	}
 
