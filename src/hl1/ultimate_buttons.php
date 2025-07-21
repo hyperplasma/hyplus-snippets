@@ -1,5 +1,5 @@
-<!-- Ultimate Buttons v1.3.1 by Akira37 (Hyperplasma)
- 外部组件：HyNav应用导航页面、Better Messages聊天窗口
+<!-- Ultimate Buttons by Akira37 (Hyperplasma)
+ 外部组件：HyNav应用导航页面、Better Messages聊天窗口……
  外部样式：`hyplus-unselectable` (Hyplus Overall); `hyplus-nav-section` `hyplus-nav-links` `hyplus-nav-group` `hyplus-nav-link` (HyNav)
  Code Type: universal
 -->
@@ -77,9 +77,8 @@
 			</div>
 
 			<!-- TOC -->
-			<div class="toc-section" id="tocSection">
-				<div id="tocHeader" class="hyplus-unselectable" style="font-size: 24px; font-weight: bold; text-align: center;">Hyplus目录</div>
-				<div id="tocContent"></div>
+			<div class="toc-section hyplus-unselectable" id="tocSection">
+				<?php echo do_shortcode('[toc mode="ub"]'); ?>
 				<br>
 			</div>
 		</div>
@@ -300,601 +299,639 @@
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.3.2 by Akira37
+			Ultimate Buttons v1.3.3 by Akira37
 		</div>
 	</div>
 </div>
 
 <style>
-	/* 基础字体缩放 */
-	:root {
-		--font-scale: 1;
-	}
+    /* 基础字体缩放 */
+    :root {
+        --font-scale: 1;
+    }
 
-	p, span, a, li, td, th, div:not(.font-size-controls *), 
-	label:not(.font-size-controls *), 
-	input[type="text"], textarea, 
-	button:not(.font-size-btn),
-	.post-content, .entry-content,
-	article, section, blockquote, code, pre {
-		font-size: calc(var(--font-scale) * 1em);
-	}
+    p, span, a, li, td, th, div:not(.font-size-controls *), 
+    label:not(.font-size-controls *), 
+    input[type="text"], textarea, 
+    button:not(.font-size-btn),
+    .post-content, .entry-content,
+    article, section, blockquote, code, pre {
+        font-size: calc(var(--font-scale) * 1em);
+    }
 
-	/* 按钮通用样式 */
-	#scrollToTopButton,
-	#toggleButtonsButton,
-	#navButton,
-	#goBackButton,
-	#goForwardButton,
-	#refreshButton {
-		position: fixed;
-		width: 53px;
-		height: 53px;
-		color: white;
+    /* 按钮通用样式 */
+    #scrollToTopButton,
+    #toggleButtonsButton,
+    #navButton,
+    #goBackButton,
+    #goForwardButton,
+    #refreshButton {
+        position: fixed;
+        width: 53px;
+        height: 53px;
+        color: white;
+        text-align: center;
+        line-height: 53px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 119;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5);
+        transition: transform 0.2s ease, background-color 0.5s ease;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    #scrollToTopButton {
+        font-size: 18px;
+        bottom: 10px;
+        right: 130px;
+        background-color: rgba(84, 126, 239, 1);
+    }
+
+    #toggleButtonsButton {
+        font-size: 26px;
+        bottom: 10px;
+        right: 10px;
+        background-color: red;
+    }
+
+    #navButton {
+        font-size: 17px;
+        bottom: 10px;
+        right: 70px;
+        background-color: rgba(84, 126, 239, 1);
+    }
+
+    #goBackButton {
+        font-size: 18px;
+        bottom: 70px;
+        right: 70px;
+        background-color: rgba(84, 126, 239, 1);
+    }
+
+    #goForwardButton {
+        font-size: 18px;
+        bottom: 70px;
+        right: 10px;
+        background-color: rgba(84, 126, 239, 1);
+    }
+
+    #refreshButton {
+        font-size: 24px;
+        bottom: 130px;
+        right: 10px;
+        background-color: rgba(84, 126, 239, 1);
+    }
+
+    /* 鼠标悬停效果 */
+    #scrollToTopButton:hover,
+    #navButton:hover,
+    #goBackButton:hover,
+    #goForwardButton:hover,
+    #refreshButton:hover {
+        transform: scale(1.12);
+        background-color: rgba(94, 136, 249, 1);
+    }
+
+    #toggleButtonsButton:hover {
+        transform: scale(1.12);
+        background-color: rgba(255, 51, 51, 1);
+    }
+
+    /* 导航框样式 */
+    #navContainer {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 85%;
+        height: 85%;
+        max-width: 850px;
+        overflow: hidden;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5);
+        padding: 0;
+        z-index: 120;
+        border-radius: 12px;
+    }
+
+    @media screen and (min-width: 769px) {
+        #navContainer {
+            transition: all 0.3s ease;
+        }
+    }
+
+    /* 导航框控制按钮 */
+    .control-button {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 121;
+        transition: all 0.15s ease;
+    }
+
+    .control-button:hover {
+        transform: scale(1.2);
+    }
+
+    .back-button {
+        background-color: purple;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+    .back-button:hover {
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+
+    .maximize-button {
+        background-color: #4CAF50;
+    }
+
+    .maximize-button:hover {
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+
+    .maximize-button.maximized {
+        background-color: #FF9800;
+    }
+
+    .close-button {
+        background-color: red;
+    }
+
+    .close-button:hover {
+        box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    }
+
+    /* 导航切换按钮样式 */
+    .nav-switch-buttons {
+        padding: 8px 15px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        background-color: white;
+        border-radius: 12px 12px 0 0;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        width: calc(100% - 80px);
+        margin: 0 auto;
+        position: relative;
+        left: 0;
+    }
+
+    .nav-switch-buttons .switch-button {
+        padding: 4px 12px;
+        border: none;
+        border-radius: 4px;
+        background-color: #e6f3ff;
+        color: #333;
+        cursor: pointer;
+        font-size: 14px !important;
+        transition: background-color 0.3s ease;
+        white-space: nowrap;
+        min-width: fit-content;
+    }
+
+    .switch-button.active {
+        background-color: #9fd2ff;
+    }
+
+    .switch-button:hover {
+        color: #333;
+        background-color: #8fcaff;
+    }
+
+    /* 内容区域样式 */
+    .nav-content {
+        height: calc(100% - 37px);
+        overflow-y: auto;
+        padding: 0 15px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-bottom: 20px;
+    }
+
+    /* 工具选择界面样式 */
+    .tools-header {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 15px 0;
+        color: #333;
+    }
+
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .tool-card {
+        background: #ffffff;
+        border: 1px solid #b6dded;
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .tool-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-color: #4a90e2;
+    }
+
+    .tool-icon {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .tool-name {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .tool-desc {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.4;
+    }
+
+    /* 笔记和目录布局 */
+    .note-toc-container {
+        display: flex;
+        gap: 20px;
+        height: calc(100% - 20px);
+        /* padding: 0 15px; */
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-bottom: 20px;
+    }
+
+    .note-section {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* 目录侧栏样式（保留） */
+    .toc-section {
+        width: 350px;
+        padding: 0 10px;
+        background: none;
+        border: none;
+        border-radius: 0;
+        box-sizing: border-box;
+    }
+
+    .note-toc-container:has(> .toc-section:empty) .note-section {
+        flex: 1;
+        width: 100%;
+    }
+
+    /* 目录内容样式（兼容旧实现，推荐使用hyplus-toc样式） */
+    #tocContent ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin: 10px 0;
+    }
+
+    #tocContent ul li {
+        margin-bottom: 10px;
+    }
+
+    #tocContent ul li a {
+        text-decoration: none;
+        color: #0073aa;
+        transition: color 0.2s ease;
+    }
+
+    #tocContent ul li a:hover {
+        text-decoration: none;
+        color: red;
+    }
+
+    #tocContent ul li.level-1 { margin-left: 0px; }
+    #tocContent ul li.level-2 { margin-left: 15px; }
+    #tocContent ul li.level-3 { margin-left: 30px; }
+    #tocContent ul li.level-4 { margin-left: 45px; }
+    #tocContent ul li.level-5 { margin-left: 60px; }
+    #tocContent ul li.level-6 { margin-left: 75px; }
+
+    /* Hyplus TOC 通用样式 */
+    /* .hyplus-toc-container {
+        margin: 0 0 18px 0;
+    } */
+    .hyplus-toc-header {
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+    .hyplus-toc-content ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin: 10px 0;
+    }
+    .hyplus-toc-content ul li {
+        margin-bottom: 10px;
+    }
+    .hyplus-toc-content ul li a {
+        text-decoration: none;
+        color: #0073aa;
+        transition: color 0.2s ease;
+    }
+    .hyplus-toc-content ul li a:hover {
+        color: red;
+    }
+    .hyplus-toc-content ul li.level-1 { margin-left: 0px; }
+    .hyplus-toc-content ul li.level-2 { margin-left: 15px; }
+    .hyplus-toc-content ul li.level-3 { margin-left: 30px; }
+    .hyplus-toc-content ul li.level-4 { margin-left: 45px; }
+    .hyplus-toc-content ul li.level-5 { margin-left: 60px; }
+    .hyplus-toc-content ul li.level-6 { margin-left: 75px; }
+
+    /* post模式专用样式 */
+	.hyplus-toc-container[data-toc-mode="post"] {
+		background: #fff;
+		border: 1.5px solid #b6dded;
+		border-radius: 12px;
+		padding: 16px 22px 12px 22px;
+		display: inline-block;
+		max-width: 100%;
+		margin: 0 0 18px 0;
+		box-sizing: border-box;
+		vertical-align: top;
+	}
+	.hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-header {
 		text-align: center;
-		line-height: 53px;
-		border-radius: 50%;
-		cursor: pointer;
-		z-index: 119;
-		font-family: Arial, sans-serif;
+		margin-bottom: 10px;
 		font-weight: bold;
-		box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5);
-		transition: transform 0.2s ease, background-color 0.5s ease;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-	}
-
-	#scrollToTopButton {
-		font-size: 18px;
-		bottom: 10px;
-		right: 130px;
-		background-color: rgba(84, 126, 239, 1);
-	}
-
-	#toggleButtonsButton {
-		font-size: 26px;
-		bottom: 10px;
-		right: 10px;
-		background-color: red;
-	}
-
-	#navButton {
-		font-size: 17px;
-		bottom: 10px;
-		right: 70px;
-		background-color: rgba(84, 126, 239, 1);
-	}
-
-	#goBackButton {
-		font-size: 18px;
-		bottom: 70px;
-		right: 70px;
-		background-color: rgba(84, 126, 239, 1);
-	}
-
-	#goForwardButton {
-		font-size: 18px;
-		bottom: 70px;
-		right: 10px;
-		background-color: rgba(84, 126, 239, 1);
-	}
-
-	#refreshButton {
-		font-size: 24px;
-		bottom: 130px;
-		right: 10px;
-		background-color: rgba(84, 126, 239, 1);
-	}
-
-	/* 鼠标悬停效果 */
-	#scrollToTopButton:hover,
-	#navButton:hover,
-	#goBackButton:hover,
-	#goForwardButton:hover,
-	#refreshButton:hover {
-		transform: scale(1.12);
-		background-color: rgba(94, 136, 249, 1);
-	}
-
-	#toggleButtonsButton:hover {
-		transform: scale(1.12);
-		background-color: rgba(255, 51, 51, 1);
-	}
-
-	/* 导航框样式 */
-	#navContainer {
-		display: none;
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		width: 85%;
-		height: 85%;
-		max-width: 850px;
-		overflow: hidden;
-		background-color: #ffffff;
-		border: 1px solid #ddd;
-		box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5);
+		color: #333;
 		padding: 0;
-		z-index: 120;
-		border-radius: 12px;
 	}
-
-	@media screen and (min-width: 769px) {
-		#navContainer {
-			transition: all 0.3s ease;
-		}
-	}
-
-	/* 导航框控制按钮 */
-	.control-button {
-		position: absolute;
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		cursor: pointer;
-		z-index: 121;
-		transition: all 0.15s ease;
-	}
-
-	.control-button:hover {
-		transform: scale(1.2);
-	}
-
-	.back-button {
-		background-color: purple;
-		color: white;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 10px;
-		font-weight: bold;
-	}
-
-	.back-button:hover {
-		box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-	}
-
-	.maximize-button {
-		background-color: #4CAF50;
-	}
-
-	.maximize-button:hover {
-		box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-	}
-
-	.maximize-button.maximized {
-		background-color: #FF9800;
-	}
-
-	.close-button {
-		background-color: red;
-	}
-
-	.close-button:hover {
-		box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-	}
-
-	/* 导航切换按钮样式 */
-	.nav-switch-buttons {
-		padding: 8px 15px;
-		display: flex;
-		justify-content: center;
-		gap: 10px;
-		background-color: white;
-		border-radius: 12px 12px 0 0;
-		overflow-x: auto;
-		scroll-behavior: smooth;
-		width: calc(100% - 80px);
-		margin: 0 auto;
-		position: relative;
-		left: 0;
-	}
-
-	.nav-switch-buttons .switch-button {
-		padding: 4px 12px;
-		border: none;
-		border-radius: 4px;
-		background-color: #e6f3ff;
-		color: #333;
-		cursor: pointer;
-		font-size: 14px !important;
-		transition: background-color 0.3s ease;
-		white-space: nowrap;
-		min-width: fit-content;
-	}
-
-	.switch-button.active {
-		background-color: #9fd2ff;
-	}
-
-	.switch-button:hover {
-		color: #333;
-		background-color: #8fcaff;
-	}
-
-	/* 内容区域样式 */
-	.nav-content {
-		height: calc(100% - 37px);
-		overflow-y: auto;
-		padding: 0 15px;
-		max-width: 1200px;
-		margin: 0 auto;
-		padding-bottom: 20px;
-	}
-
-	/* 工具选择界面样式 */
-	.tools-header {
-		text-align: center;
-		font-size: 24px;
-		font-weight: bold;
-		margin: 15px 0;
-		color: #333;
-	}
-
-	.tools-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 20px;
-		padding: 20px;
-		max-width: 1200px;
-		margin: 0 auto;
-	}
-
-	.tool-card {
-		background: #ffffff;
-		border: 1px solid #b6dded;
-		border-radius: 12px;
-		padding: 20px;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	}
-
-	.tool-card:hover {
-		transform: translateY(-5px);
-		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-		border-color: #4a90e2;
-	}
-
-	.tool-icon {
-		font-size: 36px;
-		margin-bottom: 10px;
-	}
-
-	.tool-name {
-		font-size: 18px;
-		font-weight: bold;
-		color: #333;
-		margin-bottom: 8px;
-	}
-
-	.tool-desc {
-		font-size: 14px;
-		color: #666;
-		line-height: 1.4;
-	}
-
-	/* 笔记和目录布局 */
-	.note-toc-container {
-		display: flex;
-		gap: 20px;
-		height: calc(100% - 20px);
-		/* padding: 0 15px; */
-		max-width: 1200px;
-		margin: 0 auto;
-		padding-bottom: 20px;
-	}
-
-	.note-section {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.toc-section {
-		width: 350px;
-		padding: 0 10px;
-	}
-
-	.resizable-textarea {
-		min-height: 150px;
-		height: 200px;
-		resize: vertical;
-		max-height: calc(100vh - 200px);
-	}
-
-	.resizable-textarea:focus {
-		outline: none;
-		border-color: #9fd2ff;
-		box-shadow: 0 0 5px rgba(84, 126, 239, 0.3);
-	}
-
-	/* 目录样式 */
-	#tocContent ul {
-		list-style-type: none;
-		padding-left: 0;
-		margin: 10px 0;
-	}
-
-	#tocContent ul li {
-		margin-bottom: 10px;
-	}
-
-	#tocContent ul li a {
-		text-decoration: none;
-		color: #0073aa;
-		transition: color 0.2s ease;
-	}
-
-	#tocContent ul li a:hover {
-		text-decoration: none;
-		color: red;
-	}
-
-	#tocContent ul li.level-1 { margin-left: 0px; }
-	#tocContent ul li.level-2 { margin-left: 15px; }
-	#tocContent ul li.level-3 { margin-left: 30px; }
-	#tocContent ul li.level-4 { margin-left: 45px; }
-	#tocContent ul li.level-5 { margin-left: 60px; }
-	#tocContent ul li.level-6 { margin-left: 75px; }
-
-	/* 设置页面样式 */
-	.settings-columns-container {
-		display: flex;
-		gap: 30px;
-		padding: 0 20px;
-		margin-bottom: 20px;
-		max-width: 1200px;
-		margin: 0 auto 20px;
-	}
-
-	.settings-column {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.language-selector-row {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
-
-	.language-label {
-		font-size: 14px !important;    
-		color: #333;
-		/* white-space: nowrap;	*/
-	}
-
-	.language-selector {
-		padding: 10px;
-		background-color: #f8f9fa;
-		border-radius: 8px;
-		border: 1px solid #b6dded;
-	}
-
-	.language-selector select,
-	.language-selector .switcher {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.config-item {
-		margin: 10px 0;
-		margin-left: 30px;
-		display: flex;
-		align-items: center;
-	}
-
-	.config-item input[type="checkbox"] {
-		margin: 0;
-		cursor: pointer;
-	}
-
-	.config-item label {
-		margin-left: 10px;
-		cursor: pointer;
-		color: #333;
-		font-size: 14px;
-	}
-
-	/* 快捷键说明样式 */
-	.shortcuts-container {
-		display: flex;
-		flex-wrap: wrap;
-		width: 100%;
-		/* border: 1px solid #b6dded; */
-		border-radius: 4px;
-	}
-
-	.shortcuts-column {
-		flex: 1;
-		min-width: 250px;
-	}
-
-	/* .shortcuts-column:first-child {
-		border-right: 1px solid #b6dded;
-	} */
-
-	.shortcut-item {
-		padding: 8px;
-/*		border-bottom: 1px solid #b6dded;	*/
-		border: 1px solid #b6dded;
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.shortcut-key {
-		color: gray;
-	}
-
-	/* 字体控制样式 */
-	.font-size-controls {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		flex: 1;
-	}
-
-	.font-size-btn {
-		padding: 2px 10px;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		background-color: #fff;
-		color: #333;
-		cursor: pointer;
-		font-size: 14px !important;
-		transition: all 0.2s ease;
-	}
-
-	.font-size-btn:hover {
-		color: #333;
-		background-color: #f0f0f0;
-	}
-
-	.font-size-btn.reset {
-		padding: 2px 8px;
-		background-color: #e6f3ff;
-	}
-
-	.font-size-btn.reset:hover {
-		color: #333;
-		background-color: #d0e8ff;
-	}
-
-	.font-size-display {
-		min-width: 50px;
-		text-align: center;
-		font-size: 14px;
-		color: #333;
-	}
-
-	/* 响应式布局 */
-	@media screen and (max-width: 768px) {
-		.note-toc-container {
-			flex-direction: column;
-			gap: 10px;
-		}
-
-		.toc-section {
-			width: 100%;
-			border-left: none;
-			padding-top: 10px;
-		}
-
-		.resizable-textarea {
-			height: 200px;
-			min-height: 150px;
-		}
-
-		.settings-columns-container {
-			flex-direction: column;
-			gap: 20px;
-		}
-
-		.settings-column {
-			width: 100%;
-		}
-
-		.nav-switch-buttons {
-			width: calc(100% - 40px);
-		}
-
-		.shortcuts-column {
-			flex: 100%;
-		}
-
-		.shortcuts-column:first-child {
-			border-right: none;
-		}
-
-		.shortcuts-column:first-child .shortcut-item:last-child {
-			border-bottom: 1px solid #eee;
-		}
-
-		.tools-grid {
-			grid-template-columns: repeat(2, 1fr);
-			padding: 15px;
-		}
-
-		.tool-card {
-			padding: 15px;
-		}
-	}
-
-	/* 杂项样式 */
-	body.nav-open {
-		overflow: hidden !important;
-	}
-
-	body.nav-open .sidebar {
-		overflow: hidden !important;
-	}
-
-	#navContainer.maximized {
-		width: 100%;
-		height: 100%;
-		max-width: none;
-		border-radius: 0;
-	}
-
-	.toc-section:empty {
-		display: none;
-	}
-
-	#tocSection:empty {
-		display: none;
-	}
-
-	#tocSection:empty + .note-section {
-		width: 100%;
-	}
-
-	.note-toc-container:has(> .toc-section:empty) .note-section {
-		flex: 1;
-		width: 100%;
-	}
-
-	.sidebar {
-		order: 2;
-	}
-	.content-area {
-		order: 1;
-		flex: 1 1 auto;
-	}
-	body.sidebar-left .sidebar {
-		order: 1;
-		width: 28.7%
-			padding-left: -13px;
-		margin-left: 0 !important;
-		margin-right: 5px;
-	}
-	body.sidebar-left .content-area {
-		order: 2;
-		margin-right: 8px;
-	}
-
-	.language-selector.disabled {
-		opacity: 0.6;
-		pointer-events: none;
-	}
-	.language-selector.disabled input[type="radio"] {
-		pointer-events: none;
-	}
-	.language-selector.disabled label {
-		cursor: not-allowed;
-	}
-
-	@media screen and (max-width: 768px) {
-		.sidebar {
-			display: none !important;
-		}
-	}
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-2 { margin-left: 12px; }
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-3 { margin-left: 24px; }
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-4 { margin-left: 36px; }
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-5 { margin-left: 48px; }
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-6 { margin-left: 60px; }
+
+    /* 设置页面样式 */
+    .settings-columns-container {
+        display: flex;
+        gap: 30px;
+        padding: 0 20px;
+        margin-bottom: 20px;
+        max-width: 1200px;
+        margin: 0 auto 20px;
+    }
+
+    .settings-column {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .language-selector-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .language-label {
+        font-size: 14px !important;    
+        color: #333;
+        /* white-space: nowrap;	*/
+    }
+
+    .language-selector {
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #b6dded;
+    }
+
+    .language-selector select,
+    .language-selector .switcher {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .config-item {
+        margin: 10px 0;
+        margin-left: 30px;
+        display: flex;
+        align-items: center;
+    }
+
+    .config-item input[type="checkbox"] {
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .config-item label {
+        margin-left: 10px;
+        cursor: pointer;
+        color: #333;
+        font-size: 14px;
+    }
+
+    /* 快捷键说明样式 */
+    .shortcuts-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        /* border: 1px solid #b6dded; */
+        border-radius: 4px;
+    }
+
+    .shortcuts-column {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    /* .shortcuts-column:first-child {
+        border-right: 1px solid #b6dded;
+    } */
+
+    .shortcut-item {
+        padding: 8px;
+        /* border-bottom: 1px solid #b6dded;	*/
+        border: 1px solid #b6dded;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .shortcut-key {
+        color: gray;
+    }
+
+    /* 字体控制样式 */
+    .font-size-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+    }
+
+    .font-size-btn {
+        padding: 2px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        cursor: pointer;
+        font-size: 14px !important;
+        transition: all 0.2s ease;
+    }
+
+    .font-size-btn:hover {
+        color: #333;
+        background-color: #f0f0f0;
+    }
+
+    .font-size-btn.reset {
+        padding: 2px 8px;
+        background-color: #e6f3ff;
+    }
+
+    .font-size-btn.reset:hover {
+        color: #333;
+        background-color: #d0e8ff;
+    }
+
+    .font-size-display {
+        min-width: 50px;
+        text-align: center;
+        font-size: 14px;
+        color: #333;
+    }
+
+    /* 响应式布局 */
+    @media screen and (max-width: 768px) {
+        .note-toc-container {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toc-section {
+            width: 100%;
+            border-left: none;
+            padding-top: 10px;
+        }
+
+        .resizable-textarea {
+            height: 200px;
+            min-height: 150px;
+        }
+
+        .settings-columns-container {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .settings-column {
+            width: 100%;
+        }
+
+        .nav-switch-buttons {
+            width: calc(100% - 40px);
+        }
+
+        .shortcuts-column {
+            flex: 100%;
+        }
+
+        .shortcuts-column:first-child {
+            border-right: none;
+        }
+
+        .shortcuts-column:first-child .shortcut-item:last-child {
+            border-bottom: 1px solid #eee;
+        }
+
+        .tools-grid {
+            grid-template-columns: repeat(2, 1fr);
+            padding: 15px;
+        }
+
+        .tool-card {
+            padding: 15px;
+        }
+    }
+
+    /* 杂项样式 */
+    body.nav-open {
+        overflow: hidden !important;
+    }
+
+    body.nav-open .sidebar {
+        overflow: hidden !important;
+    }
+
+    #navContainer.maximized {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        border-radius: 0;
+    }
+
+    .sidebar {
+        order: 2;
+    }
+    .content-area {
+        order: 1;
+        flex: 1 1 auto;
+    }
+    body.sidebar-left .sidebar {
+        order: 1;
+        width: 28.7%
+            padding-left: -13px;
+        margin-left: 0 !important;
+        margin-right: 5px;
+    }
+    body.sidebar-left .content-area {
+        order: 2;
+        margin-right: 8px;
+    }
+
+    .language-selector.disabled {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    .language-selector.disabled input[type="radio"] {
+        pointer-events: none;
+    }
+    .language-selector.disabled label {
+        cursor: not-allowed;
+    }
+
+    @media screen and (max-width: 768px) {
+        .sidebar {
+            display: none !important;
+        }
+    }
 </style>
 
 <script>
@@ -1024,14 +1061,14 @@
 	// 导航框控制
 	function updateTocVisibility() {
 		const tocSection = document.getElementById('tocSection');
-		const tocContent = document.getElementById('tocContent');
+		const tocContent = tocSection ? tocSection.querySelector('.hyplus-toc-content') : null;
 		const noteSection = document.querySelector('.note-section');
 		if (!tocContent || !tocContent.hasChildNodes()) {
-			tocSection.style.display = 'none';
-			noteSection.style.width = '100%';
+			if (tocSection) tocSection.style.display = 'none';
+			if (noteSection) noteSection.style.width = '100%';
 		} else {
-			tocSection.style.display = 'block';
-			noteSection.style.width = '';
+			if (tocSection) tocSection.style.display = '';
+			if (noteSection) noteSection.style.width = '';
 		}
 	}
 
@@ -1491,74 +1528,6 @@
 		chatBtn = document.getElementById('chatPageButton');
 		chatContent = document.getElementById('chatContent');
 		navContainer = document.getElementById('navContainer');
-
-		// 文章目录生成
-		const headers = document.querySelectorAll("article h1, article h2, article h3, article h4, article h5, article h6");
-		const tocContent = document.getElementById("tocContent");
-		const tocHeader = document.getElementById("tocHeader");
-		const pattern = /^[0-9]+(\.[0-9]+)*(\)|\.)?[\s]/;  // 修正正则表达式
-		const anchorMap = new Map();
-
-		if (headers.length > 0) {
-			const ul = document.createElement("ul");
-			const fragment = document.createDocumentFragment();
-			let hasContent = false;
-
-			headers.forEach((header) => {
-				const match = header.textContent.trim().match(pattern);
-				if (match) {
-					hasContent = true;
-					const titleText = header.textContent.trim();
-					const baseAnchor = titleText.replace(/[^a-zA-Z0-9\s]/g, '')  // 修正正则表达式
-					.replace(/\s+/g, '_');  // 修正空格替换
-					let anchor = `#${baseAnchor}`;
-					let suffix = 2;
-					while (anchorMap.has(anchor)) {
-						anchor = `#${baseAnchor}_${suffix}`;  // 修改分隔符
-						suffix++;
-					}
-					anchorMap.set(anchor, true);
-
-					const li = document.createElement("li");
-					const a = document.createElement("a");
-					a.textContent = titleText;
-					a.href = anchor;
-					header.id = anchor.substring(1);
-
-					const level = parseInt(header.tagName.substring(1), 10);
-					li.classList.add(`level-${level}`);
-					li.appendChild(a);
-					ul.appendChild(li);
-				}
-			});
-
-			if (hasContent) {
-				tocHeader.style.display = "block";
-				fragment.appendChild(ul);
-				tocContent.appendChild(fragment);
-				updateTocVisibility();  // 确保更新目录可见性
-			} else {
-				tocHeader.style.display = "none";
-			}
-
-			// TOC 点击处理
-			tocContent.addEventListener("click", function(e) {
-				if (e.target.tagName.toLowerCase() === "a") {
-					e.preventDefault();
-					const targetId = e.target.getAttribute("href").substring(1);
-					const targetElement = document.getElementById(targetId);
-					if (targetElement) {
-						targetElement.scrollIntoView({ behavior: "smooth" });
-					}
-					setTimeout(function() {
-						navContainer.style.display = "none";
-						document.body.classList.remove("nav-open");
-					}, 50);
-				}
-			});
-		} else {
-			tocHeader.style.display = "none";
-		}
 	});
 
 	// 页面加载完成后的初始化
