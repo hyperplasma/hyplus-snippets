@@ -1,7 +1,8 @@
 <?php
 /**
- * Parent Page Redirect PHP
- * 在单页面中点击标题时跳转到父页面
+ * Parent Page Redirect PHP - 在单页面中点击标题时跳转到父页面
+ * Code type: PHP/JS
+ * Current status: unused
  */
 function add_parent_page_redirect_script() {
     // 只在单页面显示时添加脚本
