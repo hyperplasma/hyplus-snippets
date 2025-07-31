@@ -1,12 +1,14 @@
 <?php
 /*
-Plugin Name: HyTOC
-Description: Hyplus 文章目录生成器，支持多种布局模式。
-Version: 1.0
-Author: Hyperplasma
-*/
+ * Name: Hyplus TOC
+ * Description: 生成Ultimate Buttons风格的目录，支持短代码[toc mode=ub|widget|post]，可自动插入正文第一个标题前。
+ * Code type: PHP
+ * Shortcode: [toc mode=post]
+ */
 
-add_shortcode('toc', 'hyplus_render_toc_shortcode');
+// 目录生成主函数
+function hyplus_generate_toc($content = '', $mode = 'post', $echo = false, $is_auto = false) {
+    preg_match_all('/<h([1-6])[^>]*>([0-9]+(\.[0-9]+)*[\)\.]?\s+[^<]*)<\/h[1-6]>/', $content, $matches, PREG_SET_ORDER);
 
 // 自动在正文第一个被TOC捕获的标题前插入[toc]（仅文章页且未手动插入时）
 add_filter('the_content', 'hyplus_auto_insert_toc_before_first_toc_heading');
@@ -151,4 +153,5 @@ function hyplus_render_toc_shortcode($atts) {
     </script>
     <?php
     return ob_get_clean();
+}
 }
