@@ -4,7 +4,7 @@
  * 支持多场景对话历史隔离，集成智谱GLM-4.5大模型服务
  * 短代码参数：id（必传，对话场景标识）、prompt（可选，系统指令）
  * Code type: PHP
- * Current status: active
+ * Current status: unused
  */
 
 // 注册短代码
