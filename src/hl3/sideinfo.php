@@ -11,7 +11,7 @@ function hyplus_sideinfo_shortcode() {
 ?>
 <div class="hyplus-sideinfo">
     <!-- 切换按钮 -->
-    <div style="text-align: center; margin-bottom: 6px;">
+    <div style="text-align: center;">
         <button class="sideinfo-toggle hyplus-nav-link hyplus-unselectable" onclick="toggleSideinfo(this)">分类</button>
     </div>
     
@@ -31,7 +31,7 @@ function hyplus_sideinfo_shortcode() {
     <!-- 目录内容 -->
     <div class="sideinfo-toc" style="display: none;">
         <div class="toc-wrapper">
-            <?php echo do_shortcode('[toc mode=widget]'); ?>
+            <?php echo do_shortcode('[toc mode=widget hideparent=false]'); ?>
         </div>
     </div>
 </div>
@@ -41,8 +41,7 @@ function hyplus_sideinfo_shortcode() {
     width: 100%;
 }
 
-.sideinfo-toggle.hyplus-nav-link {
-    font-size: 13px;
+.sideinfo-toggle {
     padding: 4px 12px;
     background: #ecf5f8;
     color: #175082;
@@ -97,7 +96,7 @@ function toggleSideinfo(btn) {
     if (cat.style.display !== 'none') {
         cat.style.display = 'none';
         toc.style.display = 'block';
-        btn.textContent = 'Hyplus目录';
+        btn.textContent = '目录';
     } else {
         cat.style.display = 'block';
         toc.style.display = 'none';

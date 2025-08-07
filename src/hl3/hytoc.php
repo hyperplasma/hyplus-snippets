@@ -1,7 +1,7 @@
 <?php
 /*
  * Name: Hyplus TOC
- * Description: 生成Ultimate Buttons风格的目录，支持短代码[toc mode=ub|widget|post]，可自动插入正文第一个标题前。
+ * Description: 生成Ultimate Buttons风格的目录，支持短代码[toc mode=ub|widget|post hideparent=true|false]，可自动插入正文第一个标题前。
  * Code type: PHP
  * Shortcode: [toc mode=post]
  */
@@ -25,13 +25,15 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
 // 短代码处理函数
 function hyplus_render_toc_shortcode($atts) {
     $atts = shortcode_atts([
-        'mode' => 'post'
+        'mode' => 'post',
+        'hideparent' => 'true'
     ], $atts);
 
     $mode = $atts['mode'];
+    $hideparent = ($atts['hideparent'] === 'false') ? 'false' : 'true'; // 默认为true
     ob_start();
     ?>
-    <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>">
+    <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>" data-hideparent="<?php echo esc_attr($hideparent); ?>">
         <?php if ($mode !== 'widget'): ?>
             <div class="hyplus-toc-header">Hyplus目录</div>
         <?php endif; ?>
@@ -39,7 +41,7 @@ function hyplus_render_toc_shortcode($atts) {
     </div>
     <script>
     (function(){
-        function generateToc(container, mode) {
+        function generateToc(container, mode, hideParent) {
             var article = document.querySelector('article') || document.getElementById('main') || document.body;
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
             var tocContent = container.querySelector('.hyplus-toc-content');
@@ -57,7 +59,7 @@ function hyplus_render_toc_shortcode($atts) {
                 if (tocHeader) tocHeader.style.display = 'none';
                 tocContent.innerHTML = '';
                 if (tocSection) tocSection.style.display = (mode === 'ub' ? 'none' : 'none');
-                if (mode === 'widget') {
+                if (mode === 'widget' && hideParent === 'true') {
                     var parent = container.parentElement;
                     while (parent && parent !== document.body) {
                         if (parent.classList.contains('widget') || parent.classList.contains('widget-area') || parent.classList.contains('sidebar-widget')) {
@@ -122,15 +124,17 @@ function hyplus_render_toc_shortcode($atts) {
         function insertPostToc() {
             var container = document.querySelector('.hyplus-toc-container[data-toc-mode="post"]');
             if (!container) return;
-            generateToc(container, 'post');
+            var hideParent = container.getAttribute('data-hideparent');
+            generateToc(container, 'post', hideParent);
         }
 
         function initToc() {
             var containers = document.querySelectorAll('.hyplus-toc-container');
             containers.forEach(function(container){
                 var mode = container.getAttribute('data-toc-mode');
+                var hideParent = container.getAttribute('data-hideparent');
                 if (mode === 'post') return;
-                generateToc(container, mode);
+                generateToc(container, mode, hideParent);
             });
         }
 
@@ -144,5 +148,4 @@ function hyplus_render_toc_shortcode($atts) {
     return ob_get_clean();
 }
 
-// 注册短代码
 add_shortcode('toc', 'hyplus_render_toc_shortcode');
