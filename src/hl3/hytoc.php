@@ -6,10 +6,6 @@
  * Shortcode: [toc mode=post]
  */
 
-// 目录生成主函数
-function hyplus_generate_toc($content = '', $mode = 'post', $echo = false, $is_auto = false) {
-    preg_match_all('/<h([1-6])[^>]*>([0-9]+(\.[0-9]+)*[\)\.]?\s+[^<]*)<\/h[1-6]>/', $content, $matches, PREG_SET_ORDER);
-
 // 自动在正文第一个被TOC捕获的标题前插入[toc]（仅文章页且未手动插入时）
 add_filter('the_content', 'hyplus_auto_insert_toc_before_first_toc_heading');
 function hyplus_auto_insert_toc_before_first_toc_heading($content) {
@@ -26,6 +22,7 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
     return $content;
 }
 
+// 短代码处理函数
 function hyplus_render_toc_shortcode($atts) {
     $atts = shortcode_atts([
         'mode' => 'post'
@@ -35,13 +32,14 @@ function hyplus_render_toc_shortcode($atts) {
     ob_start();
     ?>
     <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>">
-        <div class="hyplus-toc-header">Hyplus目录</div>
+        <?php if ($mode !== 'widget'): ?>
+            <div class="hyplus-toc-header">Hyplus目录</div>
+        <?php endif; ?>
         <div class="hyplus-toc-content"></div>
     </div>
     <script>
     (function(){
         function generateToc(container, mode) {
-            // 选择正文区域
             var article = document.querySelector('article') || document.getElementById('main') || document.body;
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
             var tocContent = container.querySelector('.hyplus-toc-content');
@@ -49,23 +47,18 @@ function hyplus_render_toc_shortcode($atts) {
             var pattern = /^[0-9]+(\.[0-9]+)*(\)|\.)?[\s]/;
             var anchorMap = {};
 
-            // 只收录带数字序号的标题
             var validHeaders = [];
             headers.forEach(function(header){
                 if (header.textContent.trim().match(pattern)) validHeaders.push(header);
             });
 
-            // 目录显示/隐藏控制
             var tocSection = (mode === 'ub') ? container.closest('.toc-section') : container;
             if (validHeaders.length === 0) {
                 if (tocHeader) tocHeader.style.display = 'none';
                 tocContent.innerHTML = '';
                 if (tocSection) tocSection.style.display = (mode === 'ub' ? 'none' : 'none');
-                // widget模式下，隐藏父widget
                 if (mode === 'widget') {
-                    // 常见WordPress小工具父容器有 widget 或 widget-area 类
                     var parent = container.parentElement;
-                    // 向上查找带 widget 或 widget-area 类的父元素
                     while (parent && parent !== document.body) {
                         if (parent.classList.contains('widget') || parent.classList.contains('widget-area') || parent.classList.contains('sidebar-widget')) {
                             parent.style.display = 'none';
@@ -105,7 +98,6 @@ function hyplus_render_toc_shortcode($atts) {
             tocContent.innerHTML = '';
             tocContent.appendChild(ul);
 
-            // 点击目录跳转
             tocContent.addEventListener('click', function(e){
                 if (e.target.tagName.toLowerCase() === 'a') {
                     e.preventDefault();
@@ -114,7 +106,6 @@ function hyplus_render_toc_shortcode($atts) {
                     if (targetElement) {
                         targetElement.scrollIntoView({behavior: "smooth"});
                     }
-                    // UB模式下自动关闭弹窗
                     if (mode === 'ub') {
                         var navContainer = document.getElementById('navContainer');
                         if (navContainer) {
@@ -128,19 +119,17 @@ function hyplus_render_toc_shortcode($atts) {
             });
         }
 
-        // 自动插入post模式TOC到正文第一个被TOC捕获的标题前（已由PHP实现，这里只生成目录）
         function insertPostToc() {
             var container = document.querySelector('.hyplus-toc-container[data-toc-mode="post"]');
             if (!container) return;
             generateToc(container, 'post');
         }
 
-        // 其他模式：直接生成
         function initToc() {
             var containers = document.querySelectorAll('.hyplus-toc-container');
             containers.forEach(function(container){
                 var mode = container.getAttribute('data-toc-mode');
-                if (mode === 'post') return; // post模式单独处理
+                if (mode === 'post') return;
                 generateToc(container, mode);
             });
         }
@@ -154,4 +143,6 @@ function hyplus_render_toc_shortcode($atts) {
     <?php
     return ob_get_clean();
 }
-}
+
+// 注册短代码
+add_shortcode('toc', 'hyplus_render_toc_shortcode');
