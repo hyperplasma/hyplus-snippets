@@ -12,7 +12,7 @@ add_filter('protected_title_format', function($title) {
 /* 移除密码保护文章摘要 */
 add_filter('the_excerpt', function($excerpt) {
 	if (post_password_required()) {
-		return '';
+		return '此内容受密码保护。如需查阅，请先输入此内容的临时保护密码。';
 	}
 	return $excerpt;
 });
@@ -21,7 +21,7 @@ add_filter('the_password_form', function($form) {
 	// 替换表单提示语
 	$form = str_replace(
 		'此内容受密码保护。如需查阅，请在下列字段中输入您的密码。',
-		'此内容受密码保护。如需查阅，请在下列字段中输入此内容的保护密码。',
+		'此内容受密码保护。如需查阅，请在下列字段中输入此内容的临时保护密码。密码随时可能更改，详情请联系管理员。',
 		$form
 	);
 	// 替换输入框前的标签
