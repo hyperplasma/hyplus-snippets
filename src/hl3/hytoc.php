@@ -26,14 +26,16 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
 function hyplus_render_toc_shortcode($atts) {
     $atts = shortcode_atts([
         'mode' => 'post',
-        'hideparent' => 'true'
+        'hideparent' => 'true',
+        'emptymsg' => 'true'
     ], $atts);
 
     $mode = $atts['mode'];
     $hideparent = ($atts['hideparent'] === 'false') ? 'false' : 'true'; // 默认为true
+    $emptymsg = ($atts['emptymsg'] === 'false') ? 'false' : 'true'; // 默认为true
     ob_start();
     ?>
-    <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>" data-hideparent="<?php echo esc_attr($hideparent); ?>">
+    <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>" data-hideparent="<?php echo esc_attr($hideparent); ?>" data-emptymsg="<?php echo esc_attr($emptymsg); ?>">
         <?php if ($mode !== 'widget'): ?>
             <div class="hyplus-toc-header">Hyplus目录</div>
         <?php endif; ?>
@@ -41,7 +43,7 @@ function hyplus_render_toc_shortcode($atts) {
     </div>
     <script>
     (function(){
-        function generateToc(container, mode, hideParent) {
+        function generateToc(container, mode, hideParent, emptyMsg) {
             var article = document.querySelector('article') || document.getElementById('main') || document.body;
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
             var tocContent = container.querySelector('.hyplus-toc-content');
@@ -56,17 +58,23 @@ function hyplus_render_toc_shortcode($atts) {
 
             var tocSection = (mode === 'ub') ? container.closest('.toc-section') : container;
             if (validHeaders.length === 0) {
-                if (tocHeader) tocHeader.style.display = 'none';
-                tocContent.innerHTML = '';
-                if (tocSection) tocSection.style.display = (mode === 'ub' ? 'none' : 'none');
-                if (mode === 'widget' && hideParent === 'true') {
-                    var parent = container.parentElement;
-                    while (parent && parent !== document.body) {
-                        if (parent.classList.contains('widget') || parent.classList.contains('widget-area') || parent.classList.contains('sidebar-widget')) {
-                            parent.style.display = 'none';
-                            break;
+                if (mode === 'widget' && emptyMsg === 'true') {
+                    if (tocHeader) tocHeader.style.display = 'block';
+                    tocContent.innerHTML = '<div class="hyplus-toc-empty" style="margin-top:10px;text-align:center;color:#999;font-style:italic;">当前无可用目录</div>';
+                    if (tocSection) tocSection.style.display = 'block';
+                } else {
+                    if (tocHeader) tocHeader.style.display = 'none';
+                    tocContent.innerHTML = '';
+                    if (tocSection) tocSection.style.display = 'none';
+                    if (mode === 'widget' && hideParent === 'true') {
+                        var parent = container.parentElement;
+                        while (parent && parent !== document.body) {
+                            if (parent.classList.contains('widget') || parent.classList.contains('widget-area') || parent.classList.contains('sidebar-widget')) {
+                                parent.style.display = 'none';
+                                break;
+                            }
+                            parent = parent.parentElement;
                         }
-                        parent = parent.parentElement;
                     }
                 }
                 return;
@@ -125,7 +133,8 @@ function hyplus_render_toc_shortcode($atts) {
             var container = document.querySelector('.hyplus-toc-container[data-toc-mode="post"]');
             if (!container) return;
             var hideParent = container.getAttribute('data-hideparent');
-            generateToc(container, 'post', hideParent);
+            var emptyMsg = container.getAttribute('data-emptymsg') || 'true';
+            generateToc(container, 'post', hideParent, emptyMsg);
         }
 
         function initToc() {
@@ -133,8 +142,9 @@ function hyplus_render_toc_shortcode($atts) {
             containers.forEach(function(container){
                 var mode = container.getAttribute('data-toc-mode');
                 var hideParent = container.getAttribute('data-hideparent');
+                var emptyMsg = container.getAttribute('data-emptymsg') || 'true';
                 if (mode === 'post') return;
-                generateToc(container, mode, hideParent);
+                generateToc(container, mode, hideParent, emptyMsg);
             });
         }
 
