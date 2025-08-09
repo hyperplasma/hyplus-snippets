@@ -60,7 +60,7 @@ function hyplus_render_toc_shortcode($atts) {
             if (validHeaders.length === 0) {
                 if (mode === 'widget' && emptyMsg === 'true') {
                     if (tocHeader) tocHeader.style.display = 'block';
-                    tocContent.innerHTML = '<div class="hyplus-toc-empty" style="margin-top:10px;text-align:center;color:#999;font-style:italic;">当前无可用目录</div>';
+                    tocContent.innerHTML = '<div class="hyplus-toc-empty hyplus-unselectable" style="margin-top:10px;text-align:center;color:#999;font-style:italic;">当前无可用目录</div>';
                     if (tocSection) tocSection.style.display = 'block';
                 } else {
                     if (tocHeader) tocHeader.style.display = 'none';
