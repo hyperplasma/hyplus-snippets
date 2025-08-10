@@ -114,7 +114,11 @@ function hyplus_render_toc_shortcode($atts) {
                     var targetId = e.target.getAttribute('href').substring(1);
                     var targetElement = document.getElementById(targetId);
                     if (targetElement) {
-                        targetElement.scrollIntoView({behavior: "smooth"});
+                        // 获取目标元素距离页面顶部的绝对位置，减去 sticky header 高度
+                        var rect = targetElement.getBoundingClientRect();
+                        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        var targetY = rect.top + scrollTop - 65;    // 减去 sticky header 高度
+                        window.scrollTo({top: targetY, behavior: "smooth"});
                     }
                     if (mode === 'ub') {
                         var navContainer = document.getElementById('navContainer');
