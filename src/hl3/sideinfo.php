@@ -29,7 +29,7 @@ function hyplus_sideinfo_shortcode() {
     </div>
 
     <!-- 目录内容 -->
-    <div class="sideinfo-toc" style="display: none;">
+    <div class="sideinfo-toc" style="display: none; font-size: 15px; word-break: break-all; overflow-wrap: anywhere;">
         <div class="toc-wrapper">
             <?php echo do_shortcode('[toc mode=widget hideparent=false]'); ?>
         </div>

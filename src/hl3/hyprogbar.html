@@ -3,342 +3,393 @@
  跳转前记录实际进度，加载后精确衔接，动画使用 requestAnimationFrame
 -->
 <div id="pageLeavingMask" class="hyplus-unselectable" style="opacity:1;display:none;">
-	<div id="pageLeavingQuoteWrapper">
-		<div id="pageLeavingQuote"></div>
-	</div>
+    <div id="pageLeavingLoadingCircleWrapper">
+        <div id="pageLeavingLoadingCircle"></div>
+    </div>
+    <div id="pageLeavingQuoteWrapper">
+        <div id="pageLeavingQuote"></div>
+    </div>
 </div>
 <div id="pageLeavingTopBar" style="display:none;">
-	<div id="pageLeavingTopBarInner"></div>
+    <div id="pageLeavingTopBarInner"></div>
 </div>
 <style>
-	#pageLeavingMask {
-		position: fixed; top:0; left:0; width:100vw; height:100vh;
-		background: #fff; z-index: 1111110;
-		display: flex; justify-content: center; align-items: center; flex-direction: column;
-		opacity: 1;
-		transition: opacity 0.38s cubic-bezier(.4,0,.2,1);
-		pointer-events: auto;
-		overflow: hidden;
-		touch-action: none;
-	}
-	#pageLeavingQuoteWrapper { width: 100%; text-align: center; }
-	#pageLeavingQuote {
-		font-family: "行楷", "楷体", "STKaiti", "华文楷体", "仿宋", "STFangsong", "黑体", "STHeiti", sans-serif;
-		font-size: 28px; color: #333; padding: 20px; max-width: 80%; margin: 0 auto; line-height: 1.8; letter-spacing: 1px;
-	}
-	#pageLeavingTopBar {
-		position: fixed; left: 0; top: 0; width: 100vw; height: 4px;
-		background: transparent;
-		z-index: 1111111;
-		display: block;
-		pointer-events: none;
-	}
-	#pageLeavingTopBarInner {
-		height: 100%; width: 0%;
-		background: #2196f3;
-		transition: width 0.2s linear;
-	}
+    #pageLeavingMask {
+        position: fixed; top:0; left:0; width:100vw; height:100vh;
+        background: #fff; z-index: 1111110;
+        display: flex; justify-content: center; align-items: center; flex-direction: column;
+        opacity: 1;
+        transition: opacity 0.38s cubic-bezier(.4,0,.2,1);
+        pointer-events: auto;
+        overflow: hidden;
+        touch-action: none;
+    }
+    #pageLeavingLoadingCircleWrapper {
+        width: 100%; text-align: center; margin-bottom: 18px;
+    }
+    #pageLeavingLoadingCircle {
+        display: inline-block;
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        border: 4px dashed #2196f3;
+        border-top: 4px dotted #2196f3;
+        box-sizing: border-box;
+        position: relative;
+        animation: hyplus-rotating 1.2s linear infinite;
+    }
+    @keyframes hyplus-rotating {
+        0% { transform: rotate(0deg);}
+        100% { transform: rotate(360deg);}
+    }
+    #pageLeavingQuoteWrapper { width: 100%; text-align: center; }
+    #pageLeavingQuote {
+        font-family: "行楷", "楷体", "STKaiti", "华文楷体", "仿宋", "STFangsong", "黑体", "STHeiti", sans-serif;
+        font-size: 28px; color: #333; padding: 20px; max-width: 80%; margin: 0 auto; line-height: 1.8; letter-spacing: 1px;
+    }
+    #pageLeavingTopBar {
+        position: fixed; left: 0; top: 0; width: 100vw; height: 4px;
+        background: transparent;
+        z-index: 1111111;
+        display: block;
+        pointer-events: none;
+    }
+    #pageLeavingTopBarInner {
+        height: 100%; width: 0%;
+        background: #2196f3;
+        transition: width 0.2s linear;
+    }
 </style>
 <script>
 (function(){
-	const MASK_ID = 'pageLeavingMask';
-	const QUOTE_STORAGE_KEY = 'localQuotes';
-	const QUOTE_URL = 'https://www.hyperplasma.top/hpsrc/selection.txt';
-	const QUOTE_CUR_KEY = 'pageLeavingQuoteCur';
-	const LEAVING_FLAG = 'pageLeavingNeedShow';
-	const LEAVING_PROGRESS = 'pageLeavingProgress';
-	const RELOAD_FLAG = 'pageLeavingManualReload';
+    const MASK_ID = 'pageLeavingMask';
+    const QUOTE_STORAGE_KEY = 'localQuotes';
+    const QUOTE_URL = 'https://www.hyperplasma.top/hpsrc/selection.txt';
+    const QUOTE_CUR_KEY = 'pageLeavingQuoteCur';
+    const LEAVING_FLAG = 'pageLeavingNeedShow';
+    const LEAVING_PROGRESS = 'pageLeavingProgress';
+    const RELOAD_FLAG = 'pageLeavingManualReload';
+    const FIRST_VISIT_FLAG = 'pageLeavingFlagged';
 
-	const mask = document.getElementById(MASK_ID);
-	const quoteEl = document.getElementById('pageLeavingQuote');
-	const topBar = document.getElementById('pageLeavingTopBar');
-	const topBarInner = document.getElementById('pageLeavingTopBarInner');
+    const mask = document.getElementById(MASK_ID);
+    const quoteEl = document.getElementById('pageLeavingQuote');
+    const topBar = document.getElementById('pageLeavingTopBar');
+    const topBarInner = document.getElementById('pageLeavingTopBarInner');
 
-	let quotesCache = null;
-	let progressRaf = null;
-	let jumping = false;
+    let quotesCache = null;
+    let progressRaf = null;
+    let jumping = false;
 
-	// 动画参数（进度条初始随机25%~30%）
-	const PROGRESS_RAND_MIN = 25;
-	const PROGRESS_RAND_MAX = 30;
-	const PROGRESS_ANIM_TIME_BEFORE = 250;
-	const PROGRESS_ANIM_TIME_AFTER = 250;
+    // 动画参数（进度条初始随机25%~30%）
+    const PROGRESS_RAND_MIN = 25;
+    const PROGRESS_RAND_MAX = 30;
+    const PROGRESS_ANIM_TIME_BEFORE = 250;
+    const PROGRESS_ANIM_TIME_AFTER = 250;
 
-	function blockScroll() {
-		mask.addEventListener('wheel', blockScrollHandler, {passive: false});
-		mask.addEventListener('touchmove', blockScrollHandler, {passive: false});
-	}
-	function unblockScroll() {
-		mask.removeEventListener('wheel', blockScrollHandler, {passive: false});
-		mask.removeEventListener('touchmove', blockScrollHandler, {passive: false});
-	}
-	function blockScrollHandler(e) {
-		e.preventDefault();
-		return false;
-	}
+    function blockScroll() {
+        mask.addEventListener('wheel', blockScrollHandler, {passive: false});
+        mask.addEventListener('touchmove', blockScrollHandler, {passive: false});
+    }
+    function unblockScroll() {
+        mask.removeEventListener('wheel', blockScrollHandler, {passive: false});
+        mask.removeEventListener('touchmove', blockScrollHandler, {passive: false});
+    }
+    function blockScrollHandler(e) {
+        e.preventDefault();
+        return false;
+    }
 
-	function getCurQuote() {
-		return sessionStorage.getItem(QUOTE_CUR_KEY);
-	}
-	function setCurQuote(val) {
-		if (val) sessionStorage.setItem(QUOTE_CUR_KEY, val);
-		else sessionStorage.removeItem(QUOTE_CUR_KEY);
-	}
-	function showQuote(q) {
-		quoteEl.textContent = q || '正在加载...';
-	}
-	function getLocalQuotes() {
-		const stored = localStorage.getItem(QUOTE_STORAGE_KEY);
-		if (!stored) return null;
-		try {
-			const arr = JSON.parse(stored);
-			return Array.isArray(arr) && arr.length ? arr : null;
-		} catch(e) { localStorage.removeItem(QUOTE_STORAGE_KEY); return null; }
-	}
-	function setLocalQuotes(arr) {
-		try { if (Array.isArray(arr) && arr.length) localStorage.setItem(QUOTE_STORAGE_KEY, JSON.stringify(arr)); } catch(e){}
-	}
-	function randomQuote(arr) {
-		if (!arr || !arr.length) return '正在加载...';
-		return arr[Math.floor(Math.random() * arr.length)];
-	}
-	function loadAndCacheQuotes(cb) {
-		if (quotesCache) { cb(quotesCache); return; }
-		const localQuotes = getLocalQuotes();
-		if (localQuotes) { quotesCache = localQuotes; cb(localQuotes); return; }
-		fetch(QUOTE_URL).then(res => res.text()).then(text => {
-			const arr = text.split('\n').map(q => q.trim()).filter(Boolean);
-			if (arr.length) { setLocalQuotes(arr); quotesCache = arr; cb(arr); }
-			else { cb(['正在加载...']); }
-		}).catch(() => cb(['正在加载...']));
-	}
+    function getCurQuote() {
+        return sessionStorage.getItem(QUOTE_CUR_KEY);
+    }
+    function setCurQuote(val) {
+        if (val) sessionStorage.setItem(QUOTE_CUR_KEY, val);
+        else sessionStorage.removeItem(QUOTE_CUR_KEY);
+    }
+    function showQuote(q) {
+        quoteEl.textContent = q || '正在加载...';
+    }
+    function getLocalQuotes() {
+        const stored = localStorage.getItem(QUOTE_STORAGE_KEY);
+        if (!stored) return null;
+        try {
+            const arr = JSON.parse(stored);
+            return Array.isArray(arr) && arr.length ? arr : null;
+        } catch(e) { localStorage.removeItem(QUOTE_STORAGE_KEY); return null; }
+    }
+    function setLocalQuotes(arr) {
+        try { if (Array.isArray(arr) && arr.length) localStorage.setItem(QUOTE_STORAGE_KEY, JSON.stringify(arr)); } catch(e){}
+    }
+    function randomQuote(arr) {
+        if (!arr || !arr.length) return '正在加载...';
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+    function loadAndCacheQuotes(cb) {
+        if (quotesCache) { cb(quotesCache); return; }
+        const localQuotes = getLocalQuotes();
+        if (localQuotes) { quotesCache = localQuotes; cb(localQuotes); return; }
+        fetch(QUOTE_URL).then(res => res.text()).then(text => {
+            const arr = text.split('\n').map(q => q.trim()).filter(Boolean);
+            if (arr.length) { setLocalQuotes(arr); quotesCache = arr; cb(arr); }
+            else { cb(['正在加载...']); }
+        }).catch(() => cb(['正在加载...']));
+    }
 
-	function setTopBarProgress(val) {
-		val = Math.max(0, Math.min(100, Math.round(val)));
-		topBarInner.style.width = val + '%';
-	}
-	function clearAllAnim() {
-		if (progressRaf !== null) {
-			cancelAnimationFrame(progressRaf);
-			progressRaf = null;
-		}
-	}
-	function showMaskAndQuote(fadeIn = true) {
-		mask.style.display = 'flex';
-		if (fadeIn) {
-			mask.style.opacity = '0';
-			void mask.offsetWidth;
-			mask.style.opacity = '1';
-		} else {
-			mask.style.opacity = '1';
-		}
-		blockScroll();
-		const cur = getCurQuote();
-		if (cur) showQuote(cur);
-		else {
-			loadAndCacheQuotes(arr => {
-				const q = randomQuote(arr);
-				setCurQuote(q);
-				showQuote(q);
-			});
-		}
-	}
-	function fadeAndHideMask(cb) {
-		mask.style.opacity = '0';
-		setTimeout(function(){
-			mask.style.display = 'none';
-			unblockScroll();
-			clearAllAnim();
-			if (cb) cb();
-		}, 400);
-	}
+    function setTopBarProgress(val) {
+        val = Math.max(0, Math.min(100, Math.round(val)));
+        topBarInner.style.width = val + '%';
+    }
+    function clearAllAnim() {
+        if (progressRaf !== null) {
+            cancelAnimationFrame(progressRaf);
+            progressRaf = null;
+        }
+    }
+    function showMaskAndQuote(fadeIn = true) {
+        mask.style.display = 'flex';
+        if (fadeIn) {
+            mask.style.opacity = '0';
+            void mask.offsetWidth;
+            mask.style.opacity = '1';
+        } else {
+            mask.style.opacity = '1';
+        }
+        blockScroll();
+        const cur = getCurQuote();
+        if (cur) showQuote(cur);
+        else {
+            loadAndCacheQuotes(arr => {
+                const q = randomQuote(arr);
+                setCurQuote(q);
+                showQuote(q);
+            });
+        }
+    }
+    function fadeAndHideMask(cb) {
+        mask.style.opacity = '0';
+        setTimeout(function(){
+            mask.style.display = 'none';
+            unblockScroll();
+            clearAllAnim();
+            if (cb) cb();
+        }, 400);
+    }
 
-	function showTopBar(startVal = 0) {
-		topBar.style.display = 'block';
-		setTopBarProgress(startVal);
-		void topBarInner.offsetWidth;
-	}
-	function hideTopBar(cb) {
-		topBar.style.display = 'none';
-		setTopBarProgress(0);
-		if (cb) cb();
-	}
+    function showTopBar(startVal = 0) {
+        topBar.style.display = 'block';
+        setTopBarProgress(startVal);
+        void topBarInner.offsetWidth;
+    }
+    function hideTopBar(cb) {
+        topBar.style.display = 'none';
+        setTopBarProgress(0);
+        if (cb) cb();
+    }
 
-	// 关键：requestAnimationFrame动画+每一帧写入
-	function animateTopBar(from, to, duration, cb) {
-		clearAllAnim();
-		let start = from, end = to;
-		let t0 = performance.now();
-		function step(now) {
-			let dt = now - t0;
-			let percent = Math.min(1, dt/duration);
-			let val = Math.round(start + (end-start)*percent);
-			setTopBarProgress(val);
-			try {
-				sessionStorage.setItem(LEAVING_PROGRESS, val);
-			} catch(e){}
-			if (percent < 1) {
-				progressRaf = requestAnimationFrame(step);
-			} else {
-				setTopBarProgress(end);
-				sessionStorage.setItem(LEAVING_PROGRESS, end);
-				progressRaf = null;
-				if (cb) cb();
-			}
-		}
-		progressRaf = requestAnimationFrame(step);
-	}
+    // 关键：requestAnimationFrame动画+每一帧写入
+    function animateTopBar(from, to, duration, cb) {
+        clearAllAnim();
+        let start = from, end = to;
+        let t0 = performance.now();
+        function step(now) {
+            let dt = now - t0;
+            let percent = Math.min(1, dt/duration);
+            let val = Math.round(start + (end-start)*percent);
+            setTopBarProgress(val);
+            try {
+                sessionStorage.setItem(LEAVING_PROGRESS, val);
+            } catch(e){}
+            if (percent < 1) {
+                progressRaf = requestAnimationFrame(step);
+            } else {
+                setTopBarProgress(end);
+                sessionStorage.setItem(LEAVING_PROGRESS, end);
+                progressRaf = null;
+                if (cb) cb();
+            }
+        }
+        progressRaf = requestAnimationFrame(step);
+    }
 
-	function animateAndJump(href) {
-		if (jumping) return; jumping = true;
-		const randTarget = Math.floor(PROGRESS_RAND_MIN + Math.random() * (PROGRESS_RAND_MAX - PROGRESS_RAND_MIN + 1));
-		showTopBar(0);
-		animateTopBar(0, randTarget, PROGRESS_ANIM_TIME_BEFORE, function(){
-			sessionStorage.setItem(LEAVING_FLAG, '1');
-			// LEAVING_PROGRESS已在动画帧实时设置
-			window.location.href = href;
-		});
-	}
-	window.animateAndJump = animateAndJump;
+    function animateAndJump(href) {
+        if (jumping) return; jumping = true;
+        const randTarget = Math.floor(PROGRESS_RAND_MIN + Math.random() * (PROGRESS_RAND_MAX - PROGRESS_RAND_MIN + 1));
+        showTopBar(0);
+        animateTopBar(0, randTarget, PROGRESS_ANIM_TIME_BEFORE, function(){
+            sessionStorage.setItem(LEAVING_FLAG, '1');
+            // LEAVING_PROGRESS已在动画帧实时设置
+            window.location.href = href;
+        });
+    }
+    window.animateAndJump = animateAndJump;
 
-	function handleNewPage() {
-		if (sessionStorage.getItem(LEAVING_FLAG) === '1') {
-			let prog = parseInt(sessionStorage.getItem(LEAVING_PROGRESS), 10);
-			if (isNaN(prog)) prog = PROGRESS_RAND_MIN + 1;
-			showMaskAndQuote(false);
-			showTopBar(prog);
+    // 新增：首次访问检测
+    function isFirstVisit() {
+        return !sessionStorage.getItem(FIRST_VISIT_FLAG);
+    }
+    function setFirstVisitFlag() {
+        try { sessionStorage.setItem(FIRST_VISIT_FLAG, '1'); } catch(e){}
+    }
 
-			let finished = false;
-			function finishProgress() {
-				if (finished) return;
-				finished = true;
-				animateTopBar(prog, 100, PROGRESS_ANIM_TIME_AFTER, function(){
-					setTimeout(function(){
-						hideTopBar();
-						fadeAndHideMask(function(){
-							sessionStorage.removeItem(LEAVING_FLAG);
-							sessionStorage.removeItem(LEAVING_PROGRESS);
-							loadAndCacheQuotes(arr => setCurQuote(randomQuote(arr)));
-						});
-					}, 120);
-				});
-			}
-			window.addEventListener('load', finishProgress);
-			setTimeout(finishProgress, 25000); // 25秒兜底
+    function handleNewPage() {
+        if (sessionStorage.getItem(LEAVING_FLAG) === '1') {
+            let prog = parseInt(sessionStorage.getItem(LEAVING_PROGRESS), 10);
+            if (isNaN(prog)) prog = PROGRESS_RAND_MIN + 1;
+            showMaskAndQuote(false);
+            showTopBar(prog);
 
-		}
-		else if (sessionStorage.getItem(RELOAD_FLAG) === '1') {
-			sessionStorage.removeItem(RELOAD_FLAG);
-			showMaskAndQuote(false);
-			showTopBar(0);
+            let finished = false;
+            function finishProgress() {
+                if (finished) return;
+                finished = true;
+                animateTopBar(prog, 100, PROGRESS_ANIM_TIME_AFTER, function(){
+                    setTimeout(function(){
+                        hideTopBar();
+                        fadeAndHideMask(function(){
+                            sessionStorage.removeItem(LEAVING_FLAG);
+                            sessionStorage.removeItem(LEAVING_PROGRESS);
+                            loadAndCacheQuotes(arr => setCurQuote(randomQuote(arr)));
+                        });
+                    }, 120);
+                });
+            }
+            window.addEventListener('load', finishProgress);
+            setTimeout(finishProgress, 25000); // 25秒兜底
 
-			let finished = false;
-			function finishProgress() {
-				if (finished) return;
-				finished = true;
-				animateTopBar(0, 100, PROGRESS_ANIM_TIME_AFTER, function(){
-					setTimeout(function(){
-						hideTopBar();
-						fadeAndHideMask(function(){
-							loadAndCacheQuotes(arr => setCurQuote(randomQuote(arr)));
-						});
-					}, 120);
-				});
-			}
-			window.addEventListener('load', finishProgress);
-			setTimeout(finishProgress, 25000); // 25秒兜底
-		}
-	}
-	handleNewPage();
+        }
+        else if (sessionStorage.getItem(RELOAD_FLAG) === '1') {
+            sessionStorage.removeItem(RELOAD_FLAG);
+            showMaskAndQuote(false);
+            showTopBar(0);
 
-	function isRealPageJump(a) {
-		if (!a || a.tagName !== 'A') return false;
-		const href = a.getAttribute('href');
-		if (!href) return false;
-		if (/^#/.test(href)) return false;
-		if (/^javascript:/i.test(href)) return false;
-		if (!a.href.startsWith(location.origin)) return false;
-		return true;
-	}
-	function isSearchLink(href) {
-		return href && href.includes('?s=');
-	}
-	function isLoginRelated(target) {
-		if (target.tagName === 'A') {
-			const href = target.getAttribute('href');
-			return href && (href.includes('login') || href.includes('logout') || href.includes('register'));
-		} else if (target.closest('form')) {
-			const form = target.closest('form');
-			const action = form.getAttribute('action') || '';
-			return action.includes('login') || action.includes('logout') || action.includes('register') || 
-				   form.classList.contains('login-form') || form.id === 'login-form';
-		}
-		return false;
-	}
-	function isCommentForm(form) {
-		return form && (
-			form.id === 'commentform' ||
-			form.classList.contains('comment-form') ||
-			form.querySelector('textarea[name="comment"]') ||
-			form.querySelector('input[name="submit"][value="发表评论"]') ||
-			form.closest('#respond')
-		);
-	}
+            let finished = false;
+            function finishProgress() {
+                if (finished) return;
+                finished = true;
+                animateTopBar(0, 100, PROGRESS_ANIM_TIME_AFTER, function(){
+                    setTimeout(function(){
+                        hideTopBar();
+                        fadeAndHideMask(function(){
+                            loadAndCacheQuotes(arr => setCurQuote(randomQuote(arr)));
+                        });
+                    }, 120);
+                });
+            }
+            window.addEventListener('load', finishProgress);
+            setTimeout(finishProgress, 25000); // 25秒兜底
+        }
+        // 新增：首次访问时也显示加载
+        else if (isFirstVisit()) {
+            setFirstVisitFlag();
+            showMaskAndQuote(false);
+            showTopBar(0);
 
-	document.addEventListener('click', function(e){
-		let t = e.target;
-		while (t && t !== document) {
-			if (t.closest('#primary-menu > ul > li > a') || t.closest('.site-logo')) break;
-			if (t.tagName === 'A') {
-				const href = t.getAttribute('href');
-				if (isSearchLink(href) || isLoginRelated(t)) break;
-			}
-			if (
-				t.tagName === 'A' &&
-				isRealPageJump(t) &&
-				t.target !== '_blank' &&
-				!t.hasAttribute('download')
-			) {
-				if (e.ctrlKey || e.shiftKey || e.metaKey || e.altKey || e.button !== 0) break;
-				e.preventDefault();
-				animateAndJump(t.href);
-				return;
-			}
-			if (t.hasAttribute && t.hasAttribute('data-href')) {
-				e.preventDefault();
-				animateAndJump(t.getAttribute('data-href'));
-				return;
-			}
-			t = t.parentNode;
-		}
-	}, true);
+            let finished = false;
+            function finishProgress() {
+                if (finished) return;
+                finished = true;
+                animateTopBar(0, 100, PROGRESS_ANIM_TIME_AFTER, function(){
+                    setTimeout(function(){
+                        hideTopBar();
+                        fadeAndHideMask(function(){
+                            loadAndCacheQuotes(arr => setCurQuote(randomQuote(arr)));
+                        });
+                    }, 120);
+                });
+            }
+            window.addEventListener('load', finishProgress);
+            setTimeout(finishProgress, 25000); // 25秒兜底
+        }
+    }
+    handleNewPage();
 
-	document.addEventListener('submit', function(e){
-		const form = e.target.closest('form');
-		if (!form) return;
-		const isSearchForm = form.getAttribute('action')?.includes('?s=') || form.querySelector('input[name="s"]');
-		const isLoginForm = form.getAttribute('action')?.includes('login') || 
-							form.classList.contains('login-form') || 
-							form.id === 'login-form';
-		const isCommentForm = 
-			form.id === 'commentform' ||
-			form.classList.contains('comment-form') ||
-			form.querySelector('textarea[name="comment"]') ||
-			form.querySelector('input[name="submit"][value="发表评论"]') ||
-			form.closest('#respond');
-		if (isSearchForm || isLoginForm || isCommentForm) {
-			return;
-		}
-		e.preventDefault();
-		animateAndJump(location.href);
-	}, true);
+    function isRealPageJump(a) {
+        if (!a || a.tagName !== 'A') return false;
+        const href = a.getAttribute('href');
+        if (!href) return false;
+        if (/^#/.test(href)) return false;
+        if (/^javascript:/i.test(href)) return false;
+        if (!a.href.startsWith(location.origin)) return false;
+        return true;
+    }
+    function isSearchLink(href) {
+        return href && href.includes('?s=');
+    }
+    function isLoginRelated(target) {
+        if (target.tagName === 'A') {
+            const href = target.getAttribute('href');
+            return href && (href.includes('login') || href.includes('logout') || href.includes('register'));
+        } else if (target.closest('form')) {
+            const form = target.closest('form');
+            const action = form.getAttribute('action') || '';
+            return action.includes('login') || action.includes('logout') || action.includes('register') || 
+                   form.classList.contains('login-form') || form.id === 'login-form';
+        }
+        return false;
+    }
+    function isCommentForm(form) {
+        return form && (
+            form.id === 'commentform' ||
+            form.classList.contains('comment-form') ||
+            form.querySelector('textarea[name="comment"]') ||
+            form.querySelector('input[name="submit"][value="发表评论"]') ||
+            form.closest('#respond')
+        );
+    }
 
-	window.addEventListener('beforeunload', function(e) {
-		if (!sessionStorage.getItem(LEAVING_FLAG)) {
-			try {
-				sessionStorage.setItem(RELOAD_FLAG, '1');
-			} catch(e){}
-		}
-	});
+    document.addEventListener('click', function(e){
+        let t = e.target;
+        while (t && t !== document) {
+            if (t.closest('#primary-menu > ul > li > a') || t.closest('.site-logo')) break;
+            if (t.tagName === 'A') {
+                const href = t.getAttribute('href');
+                if (isSearchLink(href) || isLoginRelated(t)) break;
+            }
+            if (
+                t.tagName === 'A' &&
+                isRealPageJump(t) &&
+                t.target !== '_blank' &&
+                !t.hasAttribute('download')
+            ) {
+                if (e.ctrlKey || e.shiftKey || e.metaKey || e.altKey || e.button !== 0) break;
+                e.preventDefault();
+                animateAndJump(t.href);
+                return;
+            }
+            if (t.hasAttribute && t.hasAttribute('data-href')) {
+                e.preventDefault();
+                animateAndJump(t.getAttribute('data-href'));
+                return;
+            }
+            t = t.parentNode;
+        }
+    }, true);
+
+    document.addEventListener('submit', function(e){
+        const form = e.target.closest('form');
+        if (!form) return;
+        const isSearchForm = form.getAttribute('action')?.includes('?s=') || form.querySelector('input[name="s"]');
+        const isLoginForm = form.getAttribute('action')?.includes('login') || 
+                            form.classList.contains('login-form') || 
+                            form.id === 'login-form';
+        const isCommentForm = 
+            form.id === 'commentform' ||
+            form.classList.contains('comment-form') ||
+            form.querySelector('textarea[name="comment"]') ||
+            form.querySelector('input[name="submit"][value="发表评论"]') ||
+            form.closest('#respond');
+        if (isSearchForm || isLoginForm || isCommentForm) {
+            return;
+        }
+        e.preventDefault();
+        animateAndJump(location.href);
+    }, true);
+
+    window.addEventListener('beforeunload', function(e) {
+        if (!sessionStorage.getItem(LEAVING_FLAG)) {
+            try {
+                sessionStorage.setItem(RELOAD_FLAG, '1');
+            } catch(e){}
+        }
+    });
 })();
 </script>
