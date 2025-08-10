@@ -4,15 +4,18 @@
  */
 /* 修改密码保护标题 */
 add_filter('protected_title_format', function($title) {
-	$lock = "\u{1F510}";
-	$emoji = json_decode('"' . $lock . '"');
-	return $emoji . "%s" . $emoji;
+	// $lock = "\u{1F510}";
+	// $emoji = json_decode('"' . $lock . '"');
+	// return $emoji . "%s" . $emoji;
+	return "%s";
 });
 
 /* 移除密码保护文章摘要 */
 add_filter('the_excerpt', function($excerpt) {
 	if (post_password_required()) {
-		return '此内容受密码保护。如需查阅，请先输入此内容的临时保护密码。';
+		$lock = "\u{1F510}";
+		$emoji = json_decode('"' . $lock . '"');
+		return $emoji . '此内容受密码保护。如需查阅，请先输入此内容的临时保护密码。' . $emoji;
 	}
 	return $excerpt;
 });
