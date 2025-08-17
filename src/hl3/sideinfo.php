@@ -89,18 +89,68 @@ function hyplus_sideinfo_shortcode() {
 </style>
 
 <script>
+// Cookie操作函数
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+// 页面加载时恢复状态
+document.addEventListener('DOMContentLoaded', function() {
+    const savedState = getCookie('hyplus_sideinfo_state');
+    if (savedState) {
+        const sideinfoContainer = document.querySelector('.hyplus-sideinfo');
+        if (sideinfoContainer) {
+            const btn = sideinfoContainer.querySelector('.sideinfo-toggle');
+            const cat = sideinfoContainer.querySelector('.sideinfo-cat');
+            const toc = sideinfoContainer.querySelector('.sideinfo-toc');
+            
+            if (savedState === 'toc') {
+                cat.style.display = 'none';
+                toc.style.display = 'block';
+                btn.textContent = '目录';
+            } else {
+                cat.style.display = 'block';
+                toc.style.display = 'none';
+                btn.textContent = '分类';
+            }
+        }
+    }
+});
+
 function toggleSideinfo(btn) {
     const parent = btn.parentNode.parentNode;
     const cat = parent.querySelector('.sideinfo-cat');
     const toc = parent.querySelector('.sideinfo-toc');
+    
     if (cat.style.display !== 'none') {
+        // 切换到目录
         cat.style.display = 'none';
         toc.style.display = 'block';
         btn.textContent = '目录';
+        setCookie('hyplus_sideinfo_state', 'toc', 30); // 保存30天
     } else {
+        // 切换到分类
         cat.style.display = 'block';
         toc.style.display = 'none';
         btn.textContent = '分类';
+        setCookie('hyplus_sideinfo_state', 'cat', 30); // 保存30天
     }
 }
 </script>
