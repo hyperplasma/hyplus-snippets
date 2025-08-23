@@ -44,3 +44,5 @@ pnpm-lock.yaml
 
 # 缓存目录
 .cache/
+
+test/

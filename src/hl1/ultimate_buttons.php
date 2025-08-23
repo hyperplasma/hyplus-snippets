@@ -61,8 +61,7 @@
 						</div>
 						<div class="hyplus-nav-group">
 							<a href="https://www.hyperplasma.top/category/dev/server/" class="hyplus-nav-link">服务端综合</a>
-							<a href="https://www.hyperplasma.top/category/dev/frontend/" class="hyplus-nav-link">前端·Node.js</a>
-							<a href="https://www.hyperplasma.top/category/dev/devops/" class="hyplus-nav-link">PHP·WP运维</a>
+							<a href="https://www.hyperplasma.top/category/dev/devops/" class="hyplus-nav-link">前端·WP运维</a>
 							<a href="https://www.hyperplasma.top/category/algorithm/" class="hyplus-nav-link">算法题库</a>
 							<a href="https://www.hyperplasma.top/category/dev/ruankao/" class="hyplus-nav-link">系统架构设计</a>
 						</div>
