@@ -469,15 +469,15 @@ table:not(.hyplus-excluded-table) {
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
 	box-sizing: border-box;
-	/* 移除所有边框 */
 	border: none !important;
 }
 
 /* 手动为表格添加所需的边框 */
 table:not(.hyplus-excluded-table) td,
 table:not(.hyplus-excluded-table) th {
-	border: 1px solid #ddd; /* 你可以调整颜色以匹配你的主题 */
+	border: 1px solid #ddd;
 	border-collapse: collapse;
+	background-color: #fbfdfe;
 }
 
 /* 可选：如果需要调整边框样式 */
