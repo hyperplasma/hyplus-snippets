@@ -5,12 +5,11 @@
 -->
 
 <!-- HyButton按钮群 -->
-<div id="refreshButton" title="刷新页面（⌘R）">↻</div>
+<div id="scrollToTopButton" title="返回顶部（⌘↑）">⇧</div>
+<div id="navButton" onclick="navOnClickFunc()" title="HyNav面板（⌥S）">⌘</div>
 <div id="goBackButton" title="返回上一页（⌘←）">❮</div>
 <div id="goForwardButton" title="前往下一页（⌘→）">❯</div>
-<div id="scrollToTopButton" title="返回顶部（⌘↑）">⬆︎</div>
-<div id="toggleButtonsButton" title="收放Hyplus按钮群">×</div>
-<div id="navButton" onclick="navOnClickFunc()" title="HyNav面板（⌥S）">NAV</div>
+<div id="refreshButton" title="刷新页面（⌘R）">↻</div>
 
 <!-- 导航弹出框 -->
 <div id="navContainer">
@@ -194,10 +193,7 @@
 						<input type="checkbox" id="headerFooterToggle" />
 						<label for="headerFooterToggle">隐藏页眉页脚　<span class="shortcut-key">⌥⇧H</span></label>
 					</div>
-					<div class="config-item">
-						<input type="checkbox" id="tempHideButtons" />
-						<label for="tempHideButtons">临时隐藏Hyplus按钮群　<span class="shortcut-key">⌥⇧B</span></label>
-					</div>
+
 				</div>
 			</div>
 
@@ -320,85 +316,86 @@
 
     /* 按钮通用样式 */
     #scrollToTopButton,
-    #toggleButtonsButton,
     #navButton,
     #goBackButton,
     #goForwardButton,
     #refreshButton {
         position: fixed;
-        width: 53px;
-        height: 53px;
+        width: 30px;
+        height: 50px;
         color: white;
         text-align: center;
-        line-height: 53px;
-        border-radius: 50%;
+        line-height: 50px;
         cursor: pointer;
         z-index: 119;
         font-family: Arial, sans-serif;
         font-weight: bold;
-        box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5);
+        box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.3);
         transition: transform 0.2s ease, background-color 0.5s ease;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        right: 0;
+        border: none;
+        margin: 0;
     }
 
     #scrollToTopButton {
         font-size: 18px;
-        bottom: 10px;
-        right: 130px;
-        background-color: rgba(84, 126, 239, 1);
-    }
-
-    #toggleButtonsButton {
-        font-size: 26px;
-        bottom: 10px;
-        right: 10px;
-        background-color: red;
+        bottom: 300px;
+        background-color: rgb(33, 182, 137);
+        border-radius: 8px 0 0 0;
     }
 
     #navButton {
-        font-size: 17px;
-        bottom: 10px;
-        right: 70px;
-        background-color: rgba(84, 126, 239, 1);
+        font-size: 16px;
+        bottom: 250px;
+        background-color: rgba(220, 38, 127, 1);
+        border-radius: 0;
     }
 
     #goBackButton {
         font-size: 18px;
-        bottom: 70px;
-        right: 70px;
+        bottom: 200px;
         background-color: rgba(84, 126, 239, 1);
+        border-radius: 0;
     }
 
     #goForwardButton {
         font-size: 18px;
-        bottom: 70px;
-        right: 10px;
+        bottom: 150px;
         background-color: rgba(84, 126, 239, 1);
+        border-radius: 0;
     }
 
     #refreshButton {
-        font-size: 24px;
-        bottom: 130px;
-        right: 10px;
-        background-color: rgba(84, 126, 239, 1);
+        font-size: 20px;
+        bottom: 100px;
+        background-color: rgba(40, 167, 69, 1);
+        border-radius: 0 0 0 8px;
     }
 
     /* 鼠标悬停效果 */
-    #scrollToTopButton:hover,
-    #navButton:hover,
+    #scrollToTopButton:hover {
+        transform: scale(1.05);
+        background-color: rgba(52, 211, 161, 1);
+    }
+
+    #navButton:hover {
+        transform: scale(1.05);
+        background-color: rgba(240, 58, 147, 1);
+    }
+
     #goBackButton:hover,
-    #goForwardButton:hover,
-    #refreshButton:hover {
-        transform: scale(1.12);
+    #goForwardButton:hover {
+        transform: scale(1.05);
         background-color: rgba(94, 136, 249, 1);
     }
 
-    #toggleButtonsButton:hover {
-        transform: scale(1.12);
-        background-color: rgba(255, 51, 51, 1);
+    #refreshButton:hover {
+        transform: scale(1.05);
+        background-color: rgba(60, 187, 89, 1);
     }
 
     /* 导航框样式 */
@@ -1145,31 +1142,7 @@
 		window.scrollTo({top: 0, behavior: 'smooth'});
 	}
 
-	function toggleButtons(show) {
-		const buttons = {
-			scrollToTopButton: document.getElementById('scrollToTopButton'),
-			navButton: document.getElementById('navButton'),
-			toggleButtonsButton: document.getElementById('toggleButtonsButton'),
-			goBackButton: document.getElementById('goBackButton'),
-			goForwardButton: document.getElementById('goForwardButton'),
-			refreshButton: document.getElementById('refreshButton')
-		};
 
-		if (show) {
-			Object.values(buttons).forEach(button => { 
-				if (button) button.style.display = 'block';
-			});
-			buttons.toggleButtonsButton.textContent = '×';
-		} else {
-			Object.values(buttons).forEach(button => {
-				if (button && button !== buttons.toggleButtonsButton) {
-					button.style.display = 'none';
-				}
-			});
-			buttons.toggleButtonsButton.textContent = '···';
-		}
-		localStorage.setItem('buttonsShown', show);
-	}
 
 	// 侧边栏控制
 	function showSidebar() {
@@ -1197,20 +1170,7 @@
 		}
 	}
 
-	function handleTempHideButtons(event) {
-		const buttons = [
-			'scrollToTopButton',
-			'toggleButtonsButton',
-			'navButton',
-			'goBackButton',
-			'goForwardButton',
-			'refreshButton'
-		];
-		buttons.forEach(buttonId => {
-			const button = document.getElementById(buttonId);
-			if (button) button.style.display = event.target.checked ? 'none' : 'block';
-		});
-	}
+
 
 	// 字体大小控制
 	function initFontSizeControls() {
@@ -1436,17 +1396,7 @@
 						handleHeaderFooterToggle({ target: headerFooterToggle });
 					}
 					break;
-				case 'B':
-				case 'ı':
-				case 'b':
-					event.preventDefault();
-					event.stopPropagation();
-					const tempHideButtons = document.getElementById('tempHideButtons');
-					if (tempHideButtons) {
-						tempHideButtons.checked = !tempHideButtons.checked;
-						handleTempHideButtons({ target: tempHideButtons });
-					}
-					break;
+
 			}
 		}
 	});
@@ -1531,8 +1481,6 @@
 
 	// 页面加载完成后的初始化
 	window.onload = function() {
-		const buttonsShown = localStorage.getItem('buttonsShown') !== 'false';
-		toggleButtons(buttonsShown);
 
 		// 侧边栏单选项初始化
 		let sidebarSetting = 'right';
@@ -1563,9 +1511,7 @@
 		if (isHeaderFooterHidden) hideHeaderFooter();
 		headerFooterToggle.addEventListener('change', handleHeaderFooterToggle);
 
-		// 临时隐藏按钮控制初始化
-		const tempHideButtons = document.getElementById('tempHideButtons');
-		tempHideButtons.addEventListener('change', handleTempHideButtons);
+
 
 		// 笔记和字体控制初始化
 		initFontSizeControls();
@@ -1700,14 +1646,13 @@
 		window.addEventListener('resize', debouncedResize);
 
 		// 浏览按钮事件绑定
-		['goBackButton', 'goForwardButton', 'refreshButton', 'toggleButtonsButton', 'scrollToTopButton'].forEach(id => {
+		['goBackButton', 'goForwardButton', 'refreshButton', 'scrollToTopButton'].forEach(id => {
 			const button = document.getElementById(id);
 			if (button) {
 				button.addEventListener('click', {
 					goBackButton: () => window.history.back(),
 					goForwardButton: () => window.history.forward(),
 					refreshButton: () => window.location.reload(),
-					toggleButtonsButton: () => toggleButtons(localStorage.getItem('buttonsShown') !== 'true'),
 					scrollToTopButton: scrollToTop
 				}[id]);
 			}
