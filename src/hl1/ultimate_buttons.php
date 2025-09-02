@@ -290,7 +290,7 @@
 				iframe版<a href="https://kina.hyperplasma.top" target="_blank">KINA</a>在各浏览器中存在轻微问题，Safari浏览器无法共享网页版存储与图片上传功能，Edge浏览器可能发生轻微布局错误
 			</div>
 			<div style="color: gray; margin-top: 2px; font-size: 11px; text-align: center;">
-				通过<a href="https://www.hyperplasma.top/article/13242/">Hyplusite Exporter</a>导出的页面不支持在线服务，且部分由PHP预生成的JS组件存在显示问题
+				通过<a href="https://www.hyperplasma.top/?p=13242">Hyplusite Exporter</a>导出的页面不支持在线服务，且部分由PHP预生成的JS组件存在显示问题
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
