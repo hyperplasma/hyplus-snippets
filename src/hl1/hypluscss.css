@@ -161,7 +161,7 @@ body {
 }
 
 /* Unselectable */
-.hyplus-unselectable, .inside-header, .copy-button {
+.hyplus-unselectable, details summary, .inside-header, .copy-button {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
