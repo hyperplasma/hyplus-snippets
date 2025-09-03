@@ -55,20 +55,20 @@
 					<h3><a href="https://www.hyperplasma.top/random">随机博文</a>&nbsp;·&nbsp;<a href="https://www.hyperplasma.top/hyplus/">应用导航</a></h3>
 					<div class="hyplus-nav-links">
 						<div class="hyplus-nav-group">
-							<a href="https://www.hyperplasma.top/category/general/guide/" class="hyplus-nav-link">软硬件指南</a>
-							<a href="https://www.hyperplasma.top/category/general/hypress/" class="hyplus-nav-link">HyPress EX</a>
+							<a href="https://www.hyperplasma.top/topics/general/guide/" class="hyplus-nav-link">软硬件指南</a>
+							<a href="https://www.hyperplasma.top/topics/general/hypress/" class="hyplus-nav-link">HyPress EX</a>
 						</div>
 						<div class="hyplus-nav-group">
-							<a href="https://www.hyperplasma.top/category/dev/server/" class="hyplus-nav-link">服务端综合</a>
-							<a href="https://www.hyperplasma.top/category/dev/devops/" class="hyplus-nav-link">前端·WP运维</a>
-							<a href="https://www.hyperplasma.top/category/algorithm/" class="hyplus-nav-link">算法题库</a>
-							<a href="https://www.hyperplasma.top/category/dev/ruankao/" class="hyplus-nav-link">系统架构设计</a>
+							<a href="https://www.hyperplasma.top/topics/dev/server/" class="hyplus-nav-link">服务端综合</a>
+							<a href="https://www.hyperplasma.top/topics/dev/devops/" class="hyplus-nav-link">前端·WP运维</a>
+							<a href="https://www.hyperplasma.top/topics/algorithm/" class="hyplus-nav-link">算法题库</a>
+							<a href="https://www.hyperplasma.top/topics/dev/ruankao/" class="hyplus-nav-link">系统架构设计</a>
 						</div>
 						<div class="hyplus-nav-group">
-							<a href="https://www.hyperplasma.top/category/ai/python/" class="hyplus-nav-link">Python数据分析</a>
-							<a href="https://www.hyperplasma.top/category/ai/math/" class="hyplus-nav-link">数学建模课程</a>
-							<a href="https://www.hyperplasma.top/category/ai/dl/" class="hyplus-nav-link">深度学习</a>
-							<a href="https://www.hyperplasma.top/category/ai/scholar/" class="hyplus-nav-link">论文精读存档</a>
+							<a href="https://www.hyperplasma.top/topics/ai/python/" class="hyplus-nav-link">Python数据分析</a>
+							<a href="https://www.hyperplasma.top/topics/ai/math/" class="hyplus-nav-link">数学建模课程</a>
+							<a href="https://www.hyperplasma.top/topics/ai/dl/" class="hyplus-nav-link">深度学习</a>
+							<a href="https://www.hyperplasma.top/topics/ai/scholar/" class="hyplus-nav-link">论文精读存档</a>
 						</div>
 					</div>
 				</div>
