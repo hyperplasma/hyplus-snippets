@@ -1,193 +1,33 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!doctype html>
+<html lang=zh-CN>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>路径未找到 - Hyperplasma</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            font-family: 'JetBrains Mono', monospace;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #f0f0f0;
-            color: #333333;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        .container {
-            max-width: 800px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .error-code {
-            font-size: 6rem;
-            font-weight: 700;
-            color: #4a90e2;
-            margin-bottom: 1rem;
-            opacity: 0.9;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .hyplus-unselectable {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        .message {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            color: #333333;
-        }
-
-        .nav-links {
-            margin: 2rem 0;
-        }
-
-        .nav-links a {
-            display: inline-block;
-            margin: 0 1rem 1rem;
-            padding: 0.8rem 1.5rem;
-            background: #4a90e2;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            border: 1px solid #d0d0d0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-links a:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .search-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 1rem;
-            width: 100%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        input[type="search"] {
-            flex: 1;
-            background: #ffffff;
-            color: #333333;
-            border: 1px solid #ccc;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-            transition: box-shadow 0.3s ease;
-            padding: 0.8rem 1.5rem;
-            border-radius: 4px 0 0 4px;
-            border-right: none;
-        }
-
-        input[type="search"]:focus {
-            outline: none;
-            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
-        }
-
-        button[type="submit"] {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.8rem 1rem;
-            background: #4a90e2;
-            color: white;
-            border: 1px solid #d0d0d0;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            min-width: 48px;
-        }
-
-        button[type="submit"]:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .footer {
-            margin-top: 3rem;
-            opacity: 0.8;
-            font-size: 0.9rem;
-            color: #333333;
-        }
-
-        .footer a {
-            color: #4a90e2;
-            text-decoration: none;
-        }
-
-        @media (max-width: 600px) {
-            .error-code {
-                font-size: 4rem;
-            }
-            .message {
-                font-size: 1rem;
-            }
-            .nav-links a {
-                margin: 0 0.5rem 1rem;
-                width: 80%;
-            }
-            .search-container {
-                width: 90%;
-            }
-        }
-    </style>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>路径未找到 - Hyperplasma</title>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css>
+<style>*{margin:0;padding:0;font-family:'JetBrains Mono',monospace;box-sizing:border-box}body{background:#f0f0f0;color:#333;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem}.container{max-width:800px;width:100%;text-align:center}.error-code{font-size:6rem;font-weight:700;color:#4a90e2;margin-bottom:1rem;opacity:.9;text-shadow:0 2px 4px rgba(0,0,0,.1)}.hyplus-unselectable{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.message{font-size:1.2rem;margin-bottom:2rem;color:#333}.nav-links{margin:2rem 0}.nav-links a{display:inline-block;margin:0 1rem 1rem;padding:.8rem 1.5rem;background:#4a90e2;color:#fff;text-decoration:none;border-radius:4px;transition:all .3s ease;border:1px solid #d0d0d0;box-shadow:0 2px 5px rgba(0,0,0,.1)}.nav-links a:hover{transform:scale(1.05);box-shadow:0 4px 8px rgba(0,0,0,.15)}.search-container{display:flex;align-items:center;justify-content:center;margin-top:1rem;width:100%;max-width:500px;margin-left:auto;margin-right:auto}input[type=search]{flex:1;background:#fff;color:#333;border:1px solid #ccc;box-shadow:0 2px 5px rgba(0,0,0,.08);transition:box-shadow .3s ease;padding:.8rem 1.5rem;border-radius:4px 0 0 4px;border-right:none}input[type=search]:focus{outline:0;box-shadow:0 2px 8px rgba(74,144,226,.2)}button[type=submit]{display:flex;align-items:center;justify-content:center;padding:.8rem 1rem;background:#4a90e2;color:#fff;border:1px solid #d0d0d0;border-radius:0 4px 4px 0;cursor:pointer;transition:all .3s ease;box-shadow:0 2px 5px rgba(0,0,0,.1);min-width:48px}button[type=submit]:hover{transform:scale(1.05);box-shadow:0 4px 8px rgba(0,0,0,.15)}.footer{margin-top:3rem;opacity:.8;font-size:.9rem;color:#333}.footer a{color:#4a90e2;text-decoration:none}@media (max-width:600px){.error-code{font-size:4rem}.message{font-size:1rem}.nav-links a{margin:0 .5rem 1rem;width:80%}.search-container{width:90%}}</style>
 </head>
 <body>
-    <div class="container">
-        <div class="error-code hyplus-unselectable">404</div>
-        <p class="message">
-            抱歉，您寻找的路径似乎迷失在Hyplus森林中 🌲<br>
-            （技术提示：我们已记录此异常，工程师正在赶来的路上）
-        </p>
-
-        <div class="nav-links">
-            <a href="/">返回主页</a>
-            <a href="/hyplus">进入导航</a>
-            
-            <form action="/" method="get" class="search-container">
-                <input type="search" name="s" placeholder="Hyplus Search...">
-                <button type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </form>
-        </div>
-
-        <div class="footer">
-            2024-2025 | Hyperplasma<br>
-            <a href="/about">关于我们</a> | <a href="/privacy">隐私政策</a>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const code = document.querySelector('.error-code');
-            code.style.opacity = 0;
-            code.animate([
-                { opacity: 0, transform: 'scale(0.9)' },
-                { opacity: 1, transform: 'scale(1)' }
-            ], { duration: 600, fill: 'forwards' });
-        });
-    </script>
+<div class=container>
+<div class="error-code hyplus-unselectable">404</div>
+<p class=message>
+🌲 抱歉，您寻找的路径似乎迷失在Hyplus森林中 🌲<br>
+若本链接位于您的书签中，请将其提交至Hyplus管理员，以便为您及时更换收藏
+</p>
+<div class=nav-links>
+<a href=/ >返回主页</a>
+<a href=/hyplus>进入导航</a>
+<form action=/ class=search-container>
+<input type=search name=s placeholder="Hyplus Search...">
+<button type=submit>
+<i class="fas fa-search"></i>
+</button>
+</form>
+</div>
+<div class=footer>
+© 2024-2025 <a href="/about">Hyperplasma</a> · <a href=/privacy>隐私政策</a> · <a href=/terms>服务条款</a>
+</div>
+</div>
+<script>document.addEventListener("DOMContentLoaded",(()=>{const e=document.querySelector(".error-code");e.style.opacity=0,e.animate([{opacity:0,transform:"scale(0.9)"},{opacity:1,transform:"scale(1)"}],{duration:600,fill:"forwards"})}))</script>
 </body>
 </html>
-    
