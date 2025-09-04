@@ -39,10 +39,6 @@ function hyplus_sideinfo_shortcode() {
 <style>
 .hyplus-sideinfo {
     width: 100%;
-    /* 可调整变量 */
-    --sideinfo-fade-bg: #fff; /* 根据主题背景自行覆盖 */
-    --toc-fade-size: 58px;    /* 淡出高度（增大范围） */
-    --toc-max-height: 530px;  /* 目录最大高度 */
 }
 
 .sideinfo-toggle {
@@ -89,48 +85,6 @@ function hyplus_sideinfo_shortcode() {
 
 .toc-wrapper {
     width: 100%;
-    max-height: var(--toc-max-height);
-    overflow: auto;
-    -ms-overflow-style: none;       /* IE/Edge */
-    scrollbar-width: none;          /* Firefox */
-}
-.toc-wrapper::-webkit-scrollbar {   /* WebKit */
-    display: none;
-}
-
-.sideinfo-toc {
-    position: relative;
-}
-
-/* 顶部/底部淡出遮罩，按需显示 */
-.sideinfo-toc::before,
-.sideinfo-toc::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: var(--toc-fade-size);
-    pointer-events: none;
-    z-index: 1;
-    display: none;
-}
-.sideinfo-toc.has-overflow:not(.at-top)::before {
-    display: block;
-    top: 0;
-    background: linear-gradient(
-        to bottom,
-        var(--sideinfo-fade-bg) 0%,
-        rgba(255, 255, 255, 0) 100%
-    );
-}
-.sideinfo-toc.has-overflow:not(.at-bottom)::after {
-    display: block;
-    bottom: 0;
-    background: linear-gradient(
-        to top,
-        var(--sideinfo-fade-bg) 0%,
-        rgba(255, 255, 255, 0) 100%
-    );
 }
 </style>
 
@@ -166,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const btn = sideinfoContainer.querySelector('.sideinfo-toggle');
             const cat = sideinfoContainer.querySelector('.sideinfo-cat');
             const toc = sideinfoContainer.querySelector('.sideinfo-toc');
-
+            
             if (savedState === 'toc') {
                 cat.style.display = 'none';
                 toc.style.display = 'block';
@@ -178,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-    initTocFade();
 });
 
 function toggleSideinfo(btn) {
@@ -191,69 +144,14 @@ function toggleSideinfo(btn) {
         cat.style.display = 'none';
         toc.style.display = 'block';
         btn.textContent = '目录';
-        setCookie('hyplus_sideinfo_state', 'toc', 60); // 保存60天
+        setCookie('hyplus_sideinfo_state', 'toc', 30); // 保存30天
     } else {
         // 切换到分类
         cat.style.display = 'block';
         toc.style.display = 'none';
         btn.textContent = '分类';
-        setCookie('hyplus_sideinfo_state', 'cat', 60); // 保存60天
+        setCookie('hyplus_sideinfo_state', 'cat', 30); // 保存30天
     }
-    // 切换后更新淡出状态
-    updateTocFade(toc);
-}
-
-// 初始化与更新淡出状态
-function initTocFade() {
-    const sideinfoContainer = document.querySelector('.hyplus-sideinfo');
-    if (!sideinfoContainer) return;
-    const tocPane = sideinfoContainer.querySelector('.sideinfo-toc');
-    const tocWrapper = sideinfoContainer.querySelector('.toc-wrapper');
-    if (!tocPane || !tocWrapper) return;
-
-    const refresh = () => updateTocFade(tocPane);
-    // 绑定滚动与尺寸变化事件
-    tocWrapper.addEventListener('scroll', refresh, { passive: true });
-    window.addEventListener('resize', refresh);
-
-    // 使用 ResizeObserver 监听容器/内容变化
-    if (window.ResizeObserver) {
-        const ro = new ResizeObserver(refresh);
-        ro.observe(tocWrapper);
-        ro.observe(tocPane);
-    }
-
-    // 初始计算
-    refresh();
-}
-
-function updateTocFade(tocPane) {
-    if (!tocPane) return;
-    const tocWrapper = tocPane.querySelector('.toc-wrapper');
-    if (!tocWrapper) return;
-
-    // 若目录隐藏，则移除状态并返回
-    if (tocPane.style.display === 'none') {
-        tocPane.classList.remove('has-overflow', 'at-top', 'at-bottom');
-        return;
-    }
-
-    const scrollTop = tocWrapper.scrollTop;
-    const maxScroll = tocWrapper.scrollHeight - tocWrapper.clientHeight;
-    const hasOverflow = maxScroll > 0;
-
-    if (!hasOverflow) {
-        tocPane.classList.remove('has-overflow', 'at-top', 'at-bottom');
-        return;
-    }
-
-    tocPane.classList.add('has-overflow');
-
-    const nearTop = scrollTop <= 1;
-    const nearBottom = maxScroll - scrollTop <= 1;
-
-    if (nearTop) tocPane.classList.add('at-top'); else tocPane.classList.remove('at-top');
-    if (nearBottom) tocPane.classList.add('at-bottom'); else tocPane.classList.remove('at-bottom');
 }
 </script>
 
