@@ -191,13 +191,13 @@ function toggleSideinfo(btn) {
         cat.style.display = 'none';
         toc.style.display = 'block';
         btn.textContent = '目录';
-        setCookie('hyplus_sideinfo_state', 'toc', 30); // 保存30天
+        setCookie('hyplus_sideinfo_state', 'toc', 60); // 保存60天
     } else {
         // 切换到分类
         cat.style.display = 'block';
         toc.style.display = 'none';
         btn.textContent = '分类';
-        setCookie('hyplus_sideinfo_state', 'cat', 30); // 保存30天
+        setCookie('hyplus_sideinfo_state', 'cat', 60); // 保存60天
     }
     // 切换后更新淡出状态
     updateTocFade(toc);
