@@ -3,7 +3,7 @@
  * Name: Hyplus TOC
  * Description: 生成Ultimate Buttons风格的目录，支持短代码[toc mode=ub|widget|post hideparent=true|false]，可自动插入正文第一个标题前。
  * Code type: PHP
- * Shortcode: [toc mode=post]
+ * Shortcode: [toc mode=post | ub | widget]
  */
 
 // 自动在正文第一个被TOC捕获的标题前插入[toc]（仅文章页且未手动插入时）
@@ -35,14 +35,121 @@ function hyplus_render_toc_shortcode($atts) {
     $emptymsg = ($atts['emptymsg'] === 'false') ? 'false' : 'true'; // 默认为true
     ob_start();
     ?>
-    <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>" data-hideparent="<?php echo esc_attr($hideparent); ?>" data-emptymsg="<?php echo esc_attr($emptymsg); ?>">
+    <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>" data-hideparent="<?php echo esc_attr($hideparent); ?>" data-emptymsg="<?php echo esc_attr($emptymsg); ?>"<?php if ($mode === 'post') { echo ' data-post-id="' . esc_attr(get_the_ID()) . '"'; } ?>>
         <?php if ($mode !== 'widget'): ?>
-            <div class="hyplus-toc-header">Hyplus目录</div>
+            <div class="hyplus-toc-header">Hyplus目录<?php if ($mode === 'post'): ?><button type="button" class="hyplus-toc-toggle" aria-label="折叠" title="折叠">-</button><?php endif; ?></div>
         <?php endif; ?>
         <div class="hyplus-toc-content"></div>
     </div>
+    <style>
+    .hyplus-toc-header { position: relative; display: block; text-align: center; padding-right: 44px; }
+    .hyplus-toc-header::after { content: ""; display: inline-block; width: 44px; height: 1px; vertical-align: middle; }
+    .hyplus-toc-toggle { z-index: 1; }
+    /* 容器宽度随内容而定，避免 100% 铺满 */
+    .hyplus-toc-container {
+        display: inline-block;
+        width: auto;
+        max-width: 100%;
+        box-sizing: border-box;
+        vertical-align: top;
+    }
+    /* 仅用 emoji 显示，不要背景与边框 */
+    .hyplus-toc-toggle {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        float: none !important;
+        background: none !important;
+        border: none !important;
+        border-radius: 0;
+        cursor: pointer;
+        padding: 0 6px;
+        margin-left: 0;
+        line-height: 1;
+        font-size: 0; /* 隐藏按钮文字，由伪元素显示 emoji */
+        color: transparent !important; /* 隐藏实际文本 + / - */
+        -webkit-text-fill-color: transparent; /* Safari */
+        user-select: none;
+    }
+    .hyplus-toc-toggle:hover,
+    .hyplus-toc-toggle:focus,
+    .hyplus-toc-toggle:active {
+        background: none !important;
+        border: none !important;
+        color: transparent !important;
+        -webkit-text-fill-color: transparent;
+    }
+    .hyplus-toc-toggle::after {
+        content: '➖';
+        font-size: 18px;
+        color: #333; /* 指定可见颜色，避免继承透明导致不可见 */
+        -webkit-text-fill-color: #333; /* Safari */
+        display: inline-block;
+        transform: translateY(1px);
+        transition: transform 0.15s ease;
+    }
+    .hyplus-toc-toggle[aria-label="显示"]::after { content: '➕'; }
+    /* .hyplus-toc-toggle:hover::after { transform: translateY(1px) scale(1.1); } */
+    /* .hyplus-toc-toggle:active::after { transform: translateY(1px) scale(0.95); } */
+    @media (prefers-color-scheme: dark) {
+        .hyplus-toc-toggle::after {
+            color: #eee;
+            -webkit-text-fill-color: #eee;
+        }
+    }
+
+    /* 平滑过渡（仅 CSS 控制）；强制显示由 max-height/opacity 管理隐藏 */
+    .hyplus-toc-content {
+        display: block !important; /* 块级，避免 baseline 造成额外行高 */
+        overflow: hidden !important;
+        max-height: 9999px !important; /* 展开上限，避免高度跳变 */
+        opacity: 1 !important;
+        will-change: max-height, opacity;
+        transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease !important;
+    }
+    .hyplus-toc-content ul, .hyplus-toc-content ol { margin: 0; }
+    /* 当按钮处于“显示”（即当前折叠）状态时，折叠内容 */
+    .hyplus-toc-container:has(.hyplus-toc-toggle[aria-label="显示"]) .hyplus-toc-content {
+        max-height: 0 !important;
+        opacity: 0 !important;
+        width: 0 !important;            /* 横向也收缩 */
+        height: 0 !important;
+        line-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 0 !important;
+        display: block !important;
+        transition: none !important;     /* 折叠时不需要缓慢动画，立即隐藏 */
+    }
+    .hyplus-toc-container:has(.hyplus-toc-toggle[aria-label="显示"]) {
+        max-width: max-content !important; /* 仅容纳标题与按钮 */
+    }
+    /* 移除之前在折叠时强制控制容器宽度的规则，让两种状态都由内容决定 */
+    </style>
     <script>
     (function(){
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
         function generateToc(container, mode, hideParent, emptyMsg) {
             var article = document.querySelector('article') || document.getElementById('main') || document.body;
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
@@ -139,6 +246,90 @@ function hyplus_render_toc_shortcode($atts) {
             var hideParent = container.getAttribute('data-hideparent');
             var emptyMsg = container.getAttribute('data-emptymsg') || 'true';
             generateToc(container, 'post', hideParent, emptyMsg);
+
+            // 初始化折叠按钮与状态（默认展示）
+            var header = container.querySelector('.hyplus-toc-header');
+            var content = container.querySelector('.hyplus-toc-content');
+            if (!header || !content) return;
+            var toggleBtn = header.querySelector('.hyplus-toc-toggle');
+            if (!toggleBtn) {
+                toggleBtn = document.createElement('button');
+                toggleBtn.type = 'button';
+                toggleBtn.className = 'hyplus-toc-toggle';
+                header.appendChild(toggleBtn);
+            }
+
+            var postId = container.getAttribute('data-post-id') || 'global';
+            var cookieKey = 'hyplus_toc_post_' + postId + '_collapsed';
+            var collapsed = getCookie(cookieKey) === '1';
+
+            // 动画辅助函数
+            function animateOpen(element) {
+                element.style.display = 'block';
+                element.style.overflow = 'hidden';
+                element.style.maxHeight = '0px';
+                element.style.opacity = '0';
+                element.style.transition = 'max-height 0.25s ease, opacity 0.25s ease';
+                var target = element.scrollHeight + 'px';
+                requestAnimationFrame(function(){
+                    element.style.maxHeight = target;
+                    element.style.opacity = '1';
+                });
+                setTimeout(function(){
+                    element.style.maxHeight = '';
+                    element.style.overflow = '';
+                    element.style.transition = '';
+                }, 300);
+            }
+
+            function animateClose(element) {
+                element.style.overflow = 'hidden';
+                element.style.maxHeight = element.scrollHeight + 'px';
+                element.style.opacity = '1';
+                element.style.transition = 'max-height 0.25s ease, opacity 0.25s ease';
+                requestAnimationFrame(function(){
+                    element.style.maxHeight = '0px';
+                    element.style.opacity = '0';
+                });
+                setTimeout(function(){
+                    element.style.display = 'none';
+                    element.style.maxHeight = '';
+                    element.style.overflow = '';
+                    element.style.transition = '';
+                }, 300);
+            }
+
+            function applyState() {
+                if (collapsed) {
+                    content.style.display = 'none';
+                    toggleBtn.textContent = '+'; // 显示
+                    toggleBtn.setAttribute('aria-label', '显示');
+                    toggleBtn.setAttribute('title', '显示');
+                } else {
+                    content.style.display = '';
+                    toggleBtn.textContent = '-'; // 折叠
+                    toggleBtn.setAttribute('aria-label', '折叠');
+                    toggleBtn.setAttribute('title', '折叠');
+                }
+            }
+
+            applyState();
+
+            toggleBtn.addEventListener('click', function(){
+                collapsed = !collapsed;
+                setCookie(cookieKey, collapsed ? '1' : '0', 365);
+                if (collapsed) {
+                    animateClose(content);
+                    toggleBtn.textContent = '+';
+                    toggleBtn.setAttribute('aria-label', '显示');
+                    toggleBtn.setAttribute('title', '显示');
+                } else {
+                    animateOpen(content);
+                    toggleBtn.textContent = '-';
+                    toggleBtn.setAttribute('aria-label', '折叠');
+                    toggleBtn.setAttribute('title', '折叠');
+                }
+            });
         }
 
         function initToc() {
