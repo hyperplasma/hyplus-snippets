@@ -1448,7 +1448,7 @@
 	 */
 	function goToRandomPost(type, min, max) {
 		var num = Math.floor(Math.random() * (max - min + 1)) + min;
-		var url = `https://www.hyperplasma.top/?s=%5B${type}%5D+${num}`;
+		var url = `https://www.hyperplasma.top/${type}-${num}`;
 		window.location.href = url;
 	}
 
