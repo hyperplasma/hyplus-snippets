@@ -259,8 +259,7 @@ function hyplus_render_toc_shortcode($atts) {
                 header.appendChild(toggleBtn);
             }
 
-            var postId = container.getAttribute('data-post-id') || 'global';
-            var cookieKey = 'hyplus_toc_post_' + postId + '_collapsed';
+            var cookieKey = 'hyplus_toc_post_collapsed';
             var collapsed = getCookie(cookieKey) === '1';
 
             // 动画辅助函数
