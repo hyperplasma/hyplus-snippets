@@ -1,6 +1,6 @@
 <?php
 /**
- * Enable HTML in Category Descriptions PHP
+ * Enable HTML in Category Descriptions And Bigger textarea PHP
  * 启用分类描述中的HTML代码支持，并保持换行（故请谨慎换行）
  */
 
@@ -21,3 +21,16 @@ function hyperplasma_preserve_linebreaks($description) {
     return $description;
 }
 add_filter('term_description', 'hyperplasma_preserve_linebreaks', 1);
+
+// 修改后台分类编辑页面 description textarea 的高度
+add_action('admin_head', function() {
+    $screen = get_current_screen();
+    if ($screen && $screen->id === 'edit-category' || $screen->id === 'term' || $screen->id === 'edit-tags') {
+        echo '<style>
+            #description.large-text {
+                height: 800px !important;
+            }
+        </style>';
+    }
+});
+?>
