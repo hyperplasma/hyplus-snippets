@@ -45,10 +45,7 @@ add_action('wp_footer', function() {
                 // 悬浮显示文章ID
                 const penIcon = div.querySelector('span[data-postid]');
                 if (penIcon) {
-                    const postId = penIcon.getAttribute('data-postid');
-                    penIcon.addEventListener('mouseenter', function() {
-                        penIcon.setAttribute('title', '文章ID: ' + postId);
-                    });
+                    penIcon.setAttribute('title', '编辑文章');
                 }
                 break;
             }

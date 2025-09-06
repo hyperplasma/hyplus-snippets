@@ -3,11 +3,6 @@
  * Counters of Pages and Apps PHP
  * Shortcode: [site_content_counts]
  */
-add_action('wp_footer', function() {
-    ?>
-<script>function shareArticle(r,e){navigator.share?navigator.share({title:e,url:r}).then((()=>console.log("分享成功"))).catch((r=>console.error("分享失败",r))):alert("您的浏览器不支持此分享功能")}</script>
-    <?php
-});
 
 // 注册短代码
 add_shortcode('site_content_counts', 'display_site_content_counts');
