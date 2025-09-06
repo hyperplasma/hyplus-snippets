@@ -9,10 +9,10 @@ This repository contains custom Hyplus code snippets of our WordPress site ([www
 * `hl3`: Site-wide middlewares or containers
 * `hl10`: Legacy components that are currently unused
 * `minor`: Simple non-Hyplus components
-  * `hytemplate`: PHP snippets that directly modifying WP templates
+  * `hytemplate`: PHP snippets that directly modify WP templates, or overhaul to the default pages
   * `qol`: Solutions to what WP unbearably sucks at
   * `security`: Site security enhancements
-  * `shortcodes`: WP shortcodes of custom blocks
+  * `shortcodes`: WP shortcodes of simple custom blocks
 
 ## Related plugins
 
