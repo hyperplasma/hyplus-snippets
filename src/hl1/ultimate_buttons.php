@@ -830,11 +830,13 @@
             flex-direction: column;
             gap: 10px;
         }
-
         .toc-section {
             width: 100%;
             border-left: none;
             padding-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 400px;
         }
 
         .resizable-textarea {
