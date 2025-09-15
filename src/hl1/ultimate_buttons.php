@@ -20,8 +20,8 @@
 
 	<!-- 切换按钮群 -->
 	<div id="navSwitchButtons" class="nav-switch-buttons hyplus-unselectable">
-		<button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button>
 		<button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">服务</button>
+		<button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button>
 		<button id="navPageButton" class="switch-button active" onclick="switchNavContent('nav')">导航</button>
 		<button id="notePageButton" class="switch-button" onclick="switchNavContent('note')">目录</button>
 		<button id="settingsPageButton" class="switch-button" onclick="switchNavContent('settings')">设置</button>
@@ -1130,15 +1130,15 @@
 		const contents = {
 			nav: document.getElementById('navContent'),
 			chat: document.getElementById('chatContent'),
-			settings: document.getElementById('settingsContent'),
 			ai: document.getElementById('aiContent'),
+			settings: document.getElementById('settingsContent'),
 			note: document.getElementById('noteContent')
 		};
 		const buttons = {
 			nav: document.getElementById('navPageButton'),
 			chat: document.getElementById('chatPageButton'),
-			settings: document.getElementById('settingsPageButton'),
 			ai: document.getElementById('aiPageButton'),
+			settings: document.getElementById('settingsPageButton'),
 			note: document.getElementById('notePageButton')
 		};
 
@@ -1238,7 +1238,7 @@
 			)) {
 				event.preventDefault();
 				const currentActive = document.querySelector('.switch-button.active');
-				const pages = ['ai', 'chat', 'nav', 'note', 'settings'];
+				const pages = ['chat', 'ai', 'nav', 'note', 'settings'];
 				const currentIndex = pages.indexOf(currentActive.id.replace('PageButton', ''));
 				if (event.key === 'z' || event.key === 'Ω' || event.key === 'ArrowLeft') {
 					const prevIndex = (currentIndex - 1 + pages.length) % pages.length;
