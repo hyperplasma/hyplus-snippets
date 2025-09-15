@@ -36,8 +36,8 @@ function hyplus_render_toc_shortcode($atts) {
     ob_start();
     ?>
     <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>" data-hideparent="<?php echo esc_attr($hideparent); ?>" data-emptymsg="<?php echo esc_attr($emptymsg); ?>"<?php if ($mode === 'post') { echo ' data-post-id="' . esc_attr(get_the_ID()) . '"'; } ?>>
-        <?php if ($mode !== 'widget'): ?>
-            <div class="hyplus-toc-header">Hyplus目录<?php if ($mode === 'post'): ?><button type="button" class="hyplus-toc-toggle" aria-label="折叠" title="折叠">-</button><?php endif; ?></div>
+        <?php if ($mode === 'post'): ?>
+            <div class="hyplus-toc-header">Hyplus目录<button type="button" class="hyplus-toc-toggle" aria-label="折叠" title="折叠">-</button></div>
         <?php endif; ?>
         <div class="hyplus-toc-content"></div>
     </div>
@@ -165,9 +165,10 @@ function hyplus_render_toc_shortcode($atts) {
 
             var tocSection = (mode === 'ub') ? container.closest('.toc-section') : container;
             if (validHeaders.length === 0) {
-                if (mode === 'widget' && emptyMsg === 'true') {
+                if ((mode === 'widget' || mode === 'ub') && emptyMsg === 'true') {
                     if (tocHeader) tocHeader.style.display = 'block';
-                    tocContent.innerHTML = '<div class="hyplus-toc-empty hyplus-unselectable" style="margin-top:10px;text-align:center;color:#999;font-style:italic;">当前无可用目录</div>';
+                    var style = mode === 'ub' ? 'margin-top:20px;text-align:center;color:gray;font-style:italic;font-size:1.25em;' : 'margin-top:10px;text-align:center;color:#999;font-style:italic;';
+                    tocContent.innerHTML = '<div class="hyplus-toc-empty hyplus-unselectable" style="' + style + '">当前无可用目录</div>';
                     if (tocSection) tocSection.style.display = 'block';
                 } else {
                     if (tocHeader) tocHeader.style.display = 'none';

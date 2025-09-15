@@ -23,7 +23,7 @@
 		<button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button>
 		<button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">服务</button>
 		<button id="navPageButton" class="switch-button active" onclick="switchNavContent('nav')">导航</button>
-		<button id="notePageButton" class="switch-button" onclick="switchNavContent('note')">文本</button>
+		<button id="notePageButton" class="switch-button" onclick="switchNavContent('note')">目录</button>
 		<button id="settingsPageButton" class="switch-button" onclick="switchNavContent('settings')">设置</button>
 	</div>
 
@@ -45,40 +45,11 @@
 				></iframe>
 	</div>
 
-	<!-- 文本页面 -->
-	<div id="noteContent" class="nav-content" style="display: none; padding: 0 15px">
-		<!-- 左列：Tutorials和TOC布局容器 -->
-		<div class="note-toc-container">
-			<div class="note-section hyplus-unselectable">
-				<!-- Tutorials -->
-				<div class="hyplus-nav-section">
-					<h3><a href="https://www.hyperplasma.top/random">随机博文</a>&nbsp;·&nbsp;<a href="https://www.hyperplasma.top/hyplus/">应用导航</a></h3>
-					<div class="hyplus-nav-links">
-						<div class="hyplus-nav-group">
-							<a href="https://www.hyperplasma.top/topics/general/guide/" class="hyplus-nav-link">软硬件指南</a>
-							<a href="https://www.hyperplasma.top/topics/general/hypress/" class="hyplus-nav-link">HyPress EX</a>
-						</div>
-						<div class="hyplus-nav-group">
-							<a href="https://www.hyperplasma.top/topics/dev/server/" class="hyplus-nav-link">服务端综合</a>
-							<a href="https://www.hyperplasma.top/topics/dev/devops/" class="hyplus-nav-link">前端·WP运维</a>
-							<a href="https://www.hyperplasma.top/topics/algorithm/" class="hyplus-nav-link">算法题库</a>
-							<a href="https://www.hyperplasma.top/topics/dev/ruankao/" class="hyplus-nav-link">系统架构设计</a>
-						</div>
-						<div class="hyplus-nav-group">
-							<a href="https://www.hyperplasma.top/topics/ai/python/" class="hyplus-nav-link">Python数据分析</a>
-							<a href="https://www.hyperplasma.top/topics/ai/math/" class="hyplus-nav-link">数学建模课程</a>
-							<a href="https://www.hyperplasma.top/topics/ai/dl/" class="hyplus-nav-link">深度学习</a>
-							<a href="https://www.hyperplasma.top/topics/ai/scholar/" class="hyplus-nav-link">论文精读存档</a>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- TOC -->
-			<div class="toc-section hyplus-unselectable" id="tocSection">
-				<?php echo do_shortcode('[toc mode="ub"]'); ?>
-				<br>
-			</div>
+	<!-- 目录页面（原“文本”页面） -->
+	<div id="noteContent" class="nav-content hyplus-unselectable" style="display: none;">
+		<div id="settingsHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus目录</div>
+		<div class="directory-toc-content hyplus-unselectable" id="tocSection">
+			<?php echo do_shortcode('[toc mode="ub"]'); ?>
 		</div>
 	</div>
 
@@ -576,36 +547,19 @@
         line-height: 1.4;
     }
 
-    /* 笔记和目录布局 */
-    .note-toc-container {
-        display: flex;
-        gap: 20px;
-        height: calc(100% - 20px);
-        /* padding: 0 15px; */
-        max-width: 1200px;
-        margin: 0 auto;
-        padding-bottom: 20px;
-    }
 
-    .note-section {
-        flex: 1;
-        min-width: 0;
-    }
-
-    /* 目录侧栏样式（保留） */
-    .toc-section {
-        width: 350px;
-        padding: 0 10px;
-        background: none;
-        border: none;
-        border-radius: 0;
-        box-sizing: border-box;
-    }
-
-    .note-toc-container:has(> .toc-section:empty) .note-section {
-        flex: 1;
-        width: 100%;
-    }
+	/* 目录内容样式 */
+	.directory-toc-content {
+		font-size: 1.25em;
+		min-width: 220px;
+		max-width: 600px;
+		margin: 0 auto;
+		text-align: left;
+		word-break: break-all;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
     /* 目录内容样式（兼容旧实现，推荐使用hyplus-toc样式） */
     #tocContent ul {
@@ -825,59 +779,16 @@
     }
 
     /* 响应式布局 */
-    @media screen and (max-width: 768px) {
-        .note-toc-container {
-            flex-direction: column;
-            gap: 10px;
-        }
-        .toc-section {
-            width: 100%;
-            border-left: none;
-            padding-top: 10px;
-            margin-left: auto;
-            margin-right: auto;
-            max-width: 400px;
-        }
-
-        .resizable-textarea {
-            height: 200px;
-            min-height: 150px;
-        }
-
-        .settings-columns-container {
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .settings-column {
-            width: 100%;
-        }
-
-        .nav-switch-buttons {
-            width: calc(100% - 40px);
-        }
-
-        .shortcuts-column {
-            flex: 100%;
-        }
-
-        .shortcuts-column:first-child {
-            border-right: none;
-        }
-
-        .shortcuts-column:first-child .shortcut-item:last-child {
-            border-bottom: 1px solid #eee;
-        }
-
-        .tools-grid {
-            grid-template-columns: repeat(2, 1fr);
-            padding: 15px;
-        }
-
-        .tool-card {
-            padding: 15px;
-        }
-    }
+	@media screen and (max-width: 768px) {
+		.directory-toc-center {
+			margin-top: 8px;
+			margin-bottom: 16px;
+		}
+		.directory-toc-content {
+			max-width: 98vw;
+			font-size: 1.05em;
+		}
+	}
 
     /* 杂项样式 */
     body.nav-open {
@@ -1483,6 +1394,9 @@
 
 	// 页面加载完成后的初始化
 	window.onload = function() {
+		// 首先切换到上次访问的页面（确保切换功能正常工作）
+		const lastVisitedPage = localStorage.getItem('lastVisitedNavPage') || 'nav';
+		switchNavContent(lastVisitedPage);
 
 		// 侧边栏单选项初始化
 		let sidebarSetting = 'right';
