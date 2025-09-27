@@ -143,6 +143,11 @@ footer {
 	margin-bottom: -2px;
 }
 
+@media (min-width: 769px) {
+	.sub-menu {
+		width: 215px !important;
+	}
+}
 
 /**
  * HY-Body main architecture CSS
