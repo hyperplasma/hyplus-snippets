@@ -165,9 +165,9 @@ function hyplus_render_toc_shortcode($atts) {
 
             var tocSection = (mode === 'ub') ? container.closest('.toc-section') : container;
             if (validHeaders.length === 0) {
-                if ((mode === 'widget' || mode === 'ub') && emptyMsg === 'true') {
+                if (mode === 'ub' && emptyMsg === 'true') {
                     if (tocHeader) tocHeader.style.display = 'block';
-                    var style = mode === 'ub' ? 'margin-top:20px;text-align:center;color:gray;font-style:italic;font-size:1.25em;' : 'margin-top:10px;text-align:center;color:#999;font-style:italic;';
+                    var style = 'margin-top:20px;text-align:center;color:gray;font-style:italic;font-size:1.25em;';
                     tocContent.innerHTML = '<div class="hyplus-toc-empty hyplus-unselectable" style="' + style + '">当前无可用目录</div>';
                     if (tocSection) tocSection.style.display = 'block';
                 } else {
