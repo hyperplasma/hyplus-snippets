@@ -432,6 +432,10 @@ ul li {
 	text-align: center;
 }
 
+/* header .entry-title, header .entry-meta {
+	text-align: center;
+} */
+
 /* ul style */
 ul ul {
 	list-style-type: circle;
