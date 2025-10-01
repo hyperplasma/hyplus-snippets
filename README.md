@@ -21,6 +21,7 @@ This repository contains custom Hyplus code snippets of our WordPress site ([www
 * Ultimate Member
 * WP Code
 * WP Githuber MD
+* ...
 
 ---
 
