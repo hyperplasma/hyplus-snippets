@@ -1,0 +1,13 @@
+/**
+ * HyplusCSS-Admin by www.hyperplasma.top (only run at wp-admin)
+ * Version: 0.1
+ * Usage: search with "HY-"!
+*/
+
+/**
+ * HY-WP Githuber MD fix
+ */
+/* hide that bugged close button */
+.editormd-preview-close-btn, li a .fa-desktop {
+	display: none !important;
+}
