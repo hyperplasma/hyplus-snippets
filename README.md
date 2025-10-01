@@ -1,6 +1,6 @@
 # Hyplus Snippets
 
-This repository contains custom Hyplus code snippets of our WordPress site ([www.hyperplasma.top](https://www.hyperplasma.top)), grouped by level and usage.
+This repository contains custom Hyplus code snippets of our WordPress site ([www.hyperplasma.top](https://www.hyperplasma.top)), grouped by level and usage. Compress the codes before implementing them.
 
 ## Categories
 
