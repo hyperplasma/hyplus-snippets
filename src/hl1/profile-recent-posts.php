@@ -1,5 +1,5 @@
 <!-- Hyplus 导航 - Profile - Recent Posts
- Code type: HTML
+ Code type: Universal Snippet (HTML + PHP)
  Shortcode: [wpcode id="14382"]
 -->
 <div class="profile-main-row">
