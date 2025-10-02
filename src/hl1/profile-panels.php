@@ -1,6 +1,7 @@
 <!-- Hyplus 导航 - Profile - Panels
  Code type: Universal Snippet (HTML + JS + PHP)
  Shortcode: [wpcode id="14381"]
+ Current status: unused
 -->
 <div class="profile-main-row">
     <div class="profile-panel">
