@@ -226,6 +226,11 @@
             align-items: center;
         }
     }
+    @media screen and (min-width: 769px) {
+        .profile-card-mobile-categories {
+            display: none;
+        }
+    }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap" rel="stylesheet" />
 <div class="profile-main-row">
