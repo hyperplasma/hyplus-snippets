@@ -147,7 +147,7 @@
 				<div class="language-selector" id="sidebarRadioGroup">
 					<div class="config-item">
 						<input type="radio" id="sidebarRightRadio" name="sidebarPosition" value="right">
-						<label for="sidebarRightRadio">侧边栏位于右侧　<span class="shortcut-key">⌥⇧S</span></label>
+						<label for="sidebarRightRadio">侧边栏位于右侧</label>
 					</div>
 					<div class="config-item">
 						<input type="radio" id="sidebarLeftRadio" name="sidebarPosition" value="left">
@@ -502,7 +502,7 @@
 
     .tools-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(3, 1fr);
         gap: 20px;
         padding: 20px;
         max-width: 1200px;
@@ -841,6 +841,34 @@
             display: none !important;
         }
     }
+
+	/* Responsive tweaks for tools and settings: collapse to single column on small screens */
+	@media screen and (max-width: 768px) {
+		.tools-grid {
+			grid-template-columns: 1fr !important;
+			gap: 12px;
+			padding: 12px;
+		}
+
+		.tool-card {
+			padding: 14px;
+		}
+
+		.settings-columns-container {
+			flex-direction: column;
+			gap: 12px;
+			padding: 0 12px;
+			align-items: stretch;
+		}
+
+		.settings-column {
+			width: 100%;
+		}
+
+		.language-selector {
+			padding: 10px;
+		}
+	}
 </style>
 
 <script>
@@ -1213,15 +1241,15 @@
 	document.addEventListener('keydown', function(event) {
 		const navContainer = document.getElementById('navContainer');
 
-		// Nav框显示/隐藏 (Alt+S)
-		if (event.altKey && (event.key === 's' || event.key === 'ß')) {
+		// Nav框显示/隐藏 (Alt+S) - only when Shift is NOT pressed so Alt+Shift combos can be handled separately
+		if (event.altKey && !event.shiftKey && (event.key === 's' || event.key === 'ß')) {
 			event.preventDefault();
 			navOnClickFunc();
 			event.stopPropagation();
 		}
 
-		// 最大化切换 (Alt+M)
-		if (event.altKey && (event.key === 'm' || event.key === 'µ')) {
+		// 最大化切换 (Alt+M) - avoid intercepting Alt+Shift+M
+		if (event.altKey && !event.shiftKey && (event.key === 'm' || event.key === 'µ')) {
 			event.preventDefault();
 			if (navContainer.style.display === 'block') {
 				toggleMaximize(event);
@@ -1251,8 +1279,8 @@
 			}
 		}
 
-		// 字体大小控制
-		if (event.altKey) {
+		// 字体大小控制 (Alt + key) - only when Shift is NOT pressed to leave Alt+Shift combos for other handlers
+		if (event.altKey && !event.shiftKey) {
 			switch (event.key) {
 				case '-':
 				case '_':
@@ -1277,41 +1305,44 @@
 			}
 			}
 
-					// Alt+Shift 组合键
+					// Alt+Shift 组合键（轮询侧边栏位置和切换页眉页脚）
 					if (event.altKey && event.shiftKey) {
-					switch (event.key) {
-					case 'S':
-					case 'Í':
-					case 's':
-					event.preventDefault();
-					event.stopPropagation();
+						// normalize key to lower-case letter when applicable
+						const k = (event.key || '').toString();
+						const keyLower = k.length === 1 ? k.toLowerCase() : k;
 
-					if (window.innerWidth <= 768) return;
+						switch (keyLower) {
+							case 's':
+								// 在移动端不切换
+								if (window.innerWidth <= 768) {
+									event.preventDefault();
+									event.stopPropagation();
+									return;
+								}
+								event.preventDefault();
+								event.stopPropagation();
+								const order = ['right', 'left', 'hide'];
+								let current = 'right';
+								if (document.getElementById('sidebarLeftRadio').checked) {
+									current = 'left';
+								} else if (document.getElementById('sidebarHideRadio').checked) {
+									current = 'hide';
+								}
+								const nextIndex = (order.indexOf(current) + 1) % order.length;
+								setSidebarPosition(order[nextIndex]);
+								break;
 
-					const order = ['right', 'left', 'hide'];
-					let current = 'right';
-					if (document.getElementById('sidebarLeftRadio').checked) {
-						current = 'left';
-					} else if (document.getElementById('sidebarHideRadio').checked) {
-						current = 'hide';
+							case 'h':
+								event.preventDefault();
+								event.stopPropagation();
+								const headerFooterToggle = document.getElementById('headerFooterToggle');
+								if (headerFooterToggle) {
+									headerFooterToggle.checked = !headerFooterToggle.checked;
+									handleHeaderFooterToggle({ target: headerFooterToggle });
+								}
+								break;
+						}
 					}
-					const nextIndex = (order.indexOf(current) + 1) % order.length;
-					setSidebarPosition(order[nextIndex]);
-					break;
-				case 'H':
-				case 'Ó':
-				case 'h':
-					event.preventDefault();
-					event.stopPropagation();
-					const headerFooterToggle = document.getElementById('headerFooterToggle');
-					if (headerFooterToggle) {
-						headerFooterToggle.checked = !headerFooterToggle.checked;
-						handleHeaderFooterToggle({ target: headerFooterToggle });
-					}
-					break;
-
-			}
-		}
 	});
 
 	/**
