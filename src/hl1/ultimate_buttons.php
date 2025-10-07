@@ -72,11 +72,6 @@
 					<div class="tool-desc" style="color: red;">登录后可用</div>
 				</div>
 				<?php endif; ?>
-				<div class="tool-card" onclick="switchTool('wordcount')">
-					<div class="tool-icon">📝</div>
-					<div class="tool-name">字数统计</div>
-					<div class="tool-desc">快速多规则文本计数</div>
-				</div>
 				<div class="tool-card" onclick="switchTool('calculator')">
 					<div class="tool-icon">🧮</div>
 					<div class="tool-name">综合计算器</div>
@@ -87,20 +82,10 @@
 					<div class="tool-name">加密/编码器</div>
 					<div class="tool-desc">文本加密与内容生成</div>
 				</div>
-				<div class="tool-card" onclick="switchTool('apigod')">
-					<div class="tool-icon">🚀</div>
-					<div class="tool-name">API-GOD</div>
-					<div class="tool-desc">网络测试综合工具</div>
-				</div>
 				<div class="tool-card" onclick="switchTool('hypreview')">
 					<div class="tool-icon">📷</div>
 					<div class="tool-name">图片预览</div>
 					<div class="tool-desc">媒体文件在线演示</div>
-				</div>
-				<div class="tool-card" onclick="switchTool('hycompress')">
-					<div class="tool-icon">🛁</div>
-					<div class="tool-name">代码压缩</div>
-					<div class="tool-desc">前端代码去格式化</div>
 				</div>
 			</div>
 		</div>
@@ -113,23 +98,14 @@
 				case 'better_messages':
 					echo do_shortcode('[better_messages]');
 					break;
-				case 'wordcount':
-					echo do_shortcode('[wpcode id="12689"]');
-					break;
 				case 'calculator':
 					echo do_shortcode('[wpcode id="12585"]');
 					break;
 				case 'encoder':
 					echo do_shortcode('[wpcode id="12640"]');
 					break;
-				case 'apigod':
-					echo do_shortcode('[wpcode id="12802"]');
-					break;
 				case 'hypreview':
 					echo do_shortcode('[wpcode id="14220"]');
-					break;
-				case 'hycompress':
-					echo do_shortcode('[wpcode id="14230"]');
 					break;
 			}
 			?>
