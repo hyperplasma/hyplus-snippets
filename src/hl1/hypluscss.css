@@ -397,6 +397,29 @@ padding-left: 3px;
 	.main-nav .sub-menu a {
 		cursor: pointer;
 	}
+
+    .main-nav .sub-menu,
+    .main-navigation .main-nav ul.sub-menu {
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+        position: absolute !important; /* 确保是绝对定位的下拉菜单 */
+        z-index: 9999 !important;
+    }
+    .main-nav .sub-menu::-webkit-scrollbar,
+    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar {
+        width: 8px;
+        background: #f0f0f0;
+    }
+    .main-nav .sub-menu::-webkit-scrollbar-thumb,
+    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar-thumb {
+        background: #bbb;
+        border-radius: 4px;
+    }
+    .main-nav .sub-menu::-webkit-scrollbar-track,
+    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar-track {
+        background: #fff;
+    }
 }
 
 /**
