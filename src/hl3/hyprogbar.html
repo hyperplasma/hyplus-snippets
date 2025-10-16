@@ -93,6 +93,8 @@
         z-index: 1111111;
         display: block;
         pointer-events: none;
+        opacity: 1;
+        transition: opacity 0.2s ease-out;
     }
     #pageLeavingTopBarInner {
         height: 100%;
@@ -215,9 +217,8 @@
                 mask.style.display = "none";
             }, 400);
         }
-        // 顶部条消失时调用
-        function fadeAndHideTopBar(cb) {
-            topBar.style.display = "none";
+        // 重置顶部条进度
+        function resetTopBar(cb) {
             setTopBarProgress(0);
             if (cb) cb();
         }
@@ -248,24 +249,84 @@
         }
         function handleNewPage() {
             showMaskAndQuote();
-            // 初始即显示xx%进度
             showTopBar(1);
-            let finished = false;
-            function finishProgress() {
-                if (finished) return;
-                finished = true;
-                animateTopBar(5, 100, 250, function () {
-                    setTimeout(function () {
-                        fadeAndHideTopBar(function () {
-                            loadAndCacheQuotes((arr) => sessionStorage.setItem(QUOTE_CUR_KEY, randomQuote(arr)));
-                        });
-                        // 页面加载完成时也隐藏中央内容和白色背景
-                        hideMaskCenter();
-                    }, 120);
+
+            let resourcesTotal = 0;
+            let resourcesLoaded = 0;
+            let lastProgress = 5;
+
+            // 监听所有资源的加载情况
+            const observer = new PerformanceObserver((list) => {
+                for (const entry of list.getEntries()) {
+                    if (entry.entryType === "resource") {
+                        resourcesTotal++;
+                    }
+                }
+            });
+            observer.observe({ entryTypes: ["resource"] });
+
+            // 监听各个资源加载完成事件
+            const onResourceLoad = () => {
+                resourcesLoaded++;
+                const progress = Math.min(95, 5 + Math.round((resourcesLoaded / Math.max(1, resourcesTotal)) * 90));
+                if (progress > lastProgress) {
+                    animateTopBar(lastProgress, progress, 200);
+                    lastProgress = progress;
+                }
+            };
+
+            // 监听图片加载
+            document.querySelectorAll("img").forEach((img) => {
+                if (!img.complete) {
+                    resourcesTotal++;
+                    img.addEventListener("load", onResourceLoad);
+                    img.addEventListener("error", onResourceLoad);
+                }
+            });
+
+            // 监听样式表加载
+            document.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+                if (!link.sheet) {
+                    resourcesTotal++;
+                    link.addEventListener("load", onResourceLoad);
+                    link.addEventListener("error", onResourceLoad);
+                }
+            });
+
+            // 监听脚本加载
+            document.querySelectorAll("script[src]").forEach((script) => {
+                if (!script.loaded) {
+                    resourcesTotal++;
+                    script.addEventListener("load", onResourceLoad);
+                    script.addEventListener("error", onResourceLoad);
+                }
+            });
+
+            // DOMContentLoaded 事件
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", () => {
+                    const progress = Math.max(lastProgress, 30);
+                    animateTopBar(lastProgress, progress, 200);
+                    lastProgress = progress;
                 });
             }
-            window.addEventListener("load", finishProgress);
-            setTimeout(finishProgress, 25000); // 25秒兜底
+
+            // 页面完全加载完成
+            window.addEventListener("load", () => {
+                animateTopBar(lastProgress, 100, 250, function () {
+                    observer.disconnect();
+                    // 等待一小段时间后淡出进度条
+                    setTimeout(() => {
+                        topBar.style.opacity = "0";
+                        setTimeout(() => {
+                            topBar.style.display = "none";
+                            setTopBarProgress(0);
+                        }, 200);
+                    }, 100);
+                });
+                // 隐藏中央内容和白色背景
+                hideMaskCenter();
+            });
         }
         handleNewPage();
     })();
