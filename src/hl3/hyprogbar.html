@@ -248,12 +248,13 @@
         }
         function handleNewPage() {
             showMaskAndQuote();
-            showTopBar(0);
+            // 初始即显示xx%进度
+            showTopBar(1);
             let finished = false;
             function finishProgress() {
                 if (finished) return;
                 finished = true;
-                animateTopBar(0, 100, 250, function () {
+                animateTopBar(5, 100, 250, function () {
                     setTimeout(function () {
                         fadeAndHideTopBar(function () {
                             loadAndCacheQuotes((arr) => sessionStorage.setItem(QUOTE_CUR_KEY, randomQuote(arr)));
