@@ -6,7 +6,7 @@
 
 <!-- HyButton按钮群 -->
 <div id="scrollToTopButton" title="返回顶部（⌘↑）">⇧</div>
-<div id="navButton" onclick="navOnClickFunc()" title="HyNav面板（⌥S）">⌘</div>
+<div id="navButton" onclick="navOnClickFunc()" title="HyNav面板（⌥S）">✬</div>
 <div id="goBackButton" title="返回上一页（⌘←）">❮</div>
 <div id="goForwardButton" title="前往下一页（⌘→）">❯</div>
 <div id="refreshButton" title="刷新页面（⌘R）">↻</div>
@@ -296,7 +296,7 @@
     }
 
     #navButton {
-        font-size: 16px;
+        font-size: 20px;
         bottom: 250px;
         background-color: rgba(220, 38, 127, 1);
         border-radius: 0;
