@@ -12,8 +12,8 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
     if (!is_singular('post')) return $content;
     if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
 
-    // 匹配第一个被TOC捕获的标题（带数字序号的h1-h6）
-    if (preg_match('/(<h[1-6][^>]*>\s*\d+(\.\d+)*(\)|\.)?\s.*?<\/h[1-6]>)/i', $content, $matches, PREG_OFFSET_CAPTURE)) {
+    // 匹配第一个被TOC捕获的标题（以数字或大写字母序号的h1-h6，支持用点分段，如 B.1 或 C.D.3）
+    if (preg_match('/(<h[1-6][^>]*>\s*[0-9A-Z]+(\.[0-9A-Z]+)*(\)|\.)?\s.*?<\/h[1-6]>)/', $content, $matches, PREG_OFFSET_CAPTURE)) {
         $pos = $matches[0][1];
         $toc = '[toc]';
         // 在第一个被TOC捕获的标题前插入
@@ -155,7 +155,8 @@ function hyplus_render_toc_shortcode($atts) {
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
             var tocContent = container.querySelector('.hyplus-toc-content');
             var tocHeader = container.querySelector('.hyplus-toc-header');
-            var pattern = /^[0-9]+(\.[0-9]+)*(\)|\.)?[\s]/;
+            // 匹配以数字或大写字母开头的序号，支持点分段，例如: 1.2, B, B.1, C.D.3
+            var pattern = /^[0-9A-Z]+(\.[0-9A-Z]+)*(\)|\.)?[\s]/;
             var anchorMap = {};
 
             var validHeaders = [];
