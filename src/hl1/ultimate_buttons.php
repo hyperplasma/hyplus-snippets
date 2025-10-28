@@ -135,6 +135,17 @@
 					</div>
 				</div>
 
+				<div class="language-selector" id="navButtonsRadioGroup" style="margin-top: 12px;">
+					<div class="config-item">
+						<input type="radio" id="navButtonsLeftRadio" name="navButtonsPosition" value="left">
+						<label for="navButtonsLeftRadio">导航按钮群位于左侧</label>
+					</div>
+					<div class="config-item">
+						<input type="radio" id="navButtonsRightRadio" name="navButtonsPosition" value="right">
+						<label for="navButtonsRightRadio">导航按钮群位于右侧</label>
+					</div>
+				</div>
+
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="config-item">
 						<input type="checkbox" id="headerFooterToggle" />
@@ -277,50 +288,88 @@
         z-index: 119;
         font-family: Arial, sans-serif;
         font-weight: bold;
-        box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 6px 1px rgba(102, 139, 139, 0.45);
         transition: transform 0.2s ease, background-color 0.5s ease;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        right: 0;
         border: none;
         margin: 0;
+    }
+
+    /* 右侧布局（默认） */
+    body:not(.nav-buttons-left) #scrollToTopButton,
+    body:not(.nav-buttons-left) #navButton,
+    body:not(.nav-buttons-left) #goBackButton,
+    body:not(.nav-buttons-left) #goForwardButton,
+    body:not(.nav-buttons-left) #refreshButton {
+        right: 0;
+    }
+
+    /* 左侧布局 */
+    body.nav-buttons-left #scrollToTopButton,
+    body.nav-buttons-left #navButton,
+    body.nav-buttons-left #goBackButton,
+    body.nav-buttons-left #goForwardButton,
+    body.nav-buttons-left #refreshButton {
+        left: 0;
     }
 
     #scrollToTopButton {
         font-size: 18px;
         bottom: 300px;
         background-color: rgb(33, 182, 137);
-        border-radius: 8px 0 0 0;
     }
 
     #navButton {
         font-size: 20px;
         bottom: 250px;
         background-color: rgba(220, 38, 127, 1);
-        border-radius: 0;
     }
 
     #goBackButton {
         font-size: 18px;
         bottom: 200px;
         background-color: rgba(84, 126, 239, 1);
-        border-radius: 0;
     }
 
     #goForwardButton {
         font-size: 18px;
         bottom: 150px;
         background-color: rgba(84, 126, 239, 1);
-        border-radius: 0;
     }
 
     #refreshButton {
         font-size: 20px;
         bottom: 100px;
         background-color: rgba(40, 167, 69, 1);
+    }
+
+    /* 右侧布局圆角（默认） */
+    body:not(.nav-buttons-left) #scrollToTopButton {
+        border-radius: 8px 0 0 0;
+    }
+    body:not(.nav-buttons-left) #navButton,
+    body:not(.nav-buttons-left) #goBackButton,
+    body:not(.nav-buttons-left) #goForwardButton {
+        border-radius: 0;
+    }
+    body:not(.nav-buttons-left) #refreshButton {
         border-radius: 0 0 0 8px;
+    }
+
+    /* 左侧布局圆角 */
+    body.nav-buttons-left #scrollToTopButton {
+        border-radius: 0 8px 0 0;
+    }
+    body.nav-buttons-left #navButton,
+    body.nav-buttons-left #goBackButton,
+    body.nav-buttons-left #goForwardButton {
+        border-radius: 0;
+    }
+    body.nav-buttons-left #refreshButton {
+        border-radius: 0 0 8px 0;
     }
 
     /* 鼠标悬停效果 */
@@ -1425,6 +1474,31 @@
 		});
 		document.getElementById('sidebarHideRadio').addEventListener('change', function() {
 			if (this.checked) setSidebarPosition('hide');
+		});
+
+		// 设置导航按钮位置
+		function setNavButtonsPosition(position) {
+			if (position === 'left') {
+				document.body.classList.add('nav-buttons-left');
+				localStorage.setItem('navButtonsPosition', 'left');
+			} else {
+				document.body.classList.remove('nav-buttons-left');
+				localStorage.setItem('navButtonsPosition', 'right');
+			}
+		}
+
+		// 初始化导航按钮位置
+		const savedNavButtonsPosition = localStorage.getItem('navButtonsPosition') || 'left';
+		setNavButtonsPosition(savedNavButtonsPosition);
+		document.getElementById('navButtonsLeftRadio').checked = (savedNavButtonsPosition === 'left');
+		document.getElementById('navButtonsRightRadio').checked = (savedNavButtonsPosition === 'right');
+
+		// 绑定导航按钮位置单选事件
+		document.getElementById('navButtonsLeftRadio').addEventListener('change', function() {
+			if (this.checked) setNavButtonsPosition('left');
+		});
+		document.getElementById('navButtonsRightRadio').addEventListener('change', function() {
+			if (this.checked) setNavButtonsPosition('right');
 		});
 
 		// 页头页尾控制初始化
