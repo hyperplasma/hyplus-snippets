@@ -157,8 +157,22 @@
 
 			<!-- 右列 -->
 			<div class="settings-column">
-				<!-- 字体缩放控制区 -->
+				<!-- 字体选择区 -->
 				<div class="language-selector">
+					<div class="language-selector-row">
+						<span class="language-label">字体选择:</span>
+						<select id="fontSelect" class="font-select">
+							<option value="default">默认字体</option>
+							<option value="times">Times New Roman</option>
+							<option value="bilibili">HarmonyOS Sans</option>
+							<option value="monaco">Monaco</option>
+							<option value="cursive">Ma Shan Zheng</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- 字体缩放控制区 -->
+				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
 						<span class="language-label">字体缩放:</span>
 						<div class="font-size-controls">
@@ -172,7 +186,7 @@
 
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<label class="language-label">选择语言:</label>
+						<label class="language-label">全文翻译:</label>
 						<label id="languageLabel" class="language-label">
 							<!-- php
 							echo do_shortcode('[gtranslate]'); // Need GTranslate Plugin
@@ -763,6 +777,35 @@
     }
 
     /* 字体控制样式 */
+    .font-select {
+        max-width: 180px;
+        padding: 4px 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 14px !important;
+        flex: 1;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 16px;
+        padding-right: 32px;
+    }
+
+    .font-select:focus {
+        outline: none;
+        border-color: #b6dded;
+        box-shadow: 0 0 0 2px rgba(182, 221, 237, 0.25);
+    }
+
+    .font-select:hover {
+        border-color: #b6dded;
+    }
+
     .font-size-controls {
         display: flex;
         align-items: center;
@@ -902,6 +945,37 @@
 	let chatContent = null;
 	let navContainer = null;
 	let isNavMaximized = localStorage.getItem('isNavMaximized') === 'true';
+	let defaultBodyFont = window.getComputedStyle(document.body).fontFamily;
+
+	// 字体控制函数
+	function setFontFamily(font) {
+		switch (font) {
+			case 'default':
+				document.body.style.fontFamily = defaultBodyFont;
+				document.body.style.fontWeight = "400";
+				break;
+			case 'times':
+				document.body.style.fontFamily = "'Times New Roman', Times, serif";
+				document.body.style.fontWeight = "500";
+				break;
+			case 'bilibili':
+				document.body.style.fontFamily = "'HarmonyOS Sans', 'HarmonyOS Sans SC', 'Source Han Sans CN', sans-serif";
+				document.body.style.fontWeight = "400";
+				break;
+			case 'monaco':
+				document.body.style.fontFamily = "Monaco, Consolas, 'Courier New', monospace";
+				document.body.style.fontWeight = "400";
+				break;
+			case 'cursive':
+				document.body.style.fontFamily = "'Ma Shan Zheng', 'Xingkai SC', 'Kaiti SC', 'STKaiti', 'Segoe Script', 'Bradley Hand', cursive, sans-serif";
+				document.body.style.fontWeight = "400";
+				break;
+			default:
+				document.body.style.fontFamily = defaultBodyFont;
+				document.body.style.fontWeight = "400";
+		}
+		localStorage.setItem('selectedFont', font);
+	}
 
 	// 工具菜单相关函数
 	function showToolSelector() {
@@ -1453,6 +1527,18 @@
 		// 首先切换到上次访问的页面（确保切换功能正常工作）
 		const lastVisitedPage = localStorage.getItem('lastVisitedNavPage') || 'nav';
 		switchNavContent(lastVisitedPage);
+
+		// 初始化字体选择
+		const fontSelect = document.getElementById('fontSelect');
+		if (fontSelect) {
+			const savedFont = localStorage.getItem('selectedFont') || 'default';
+			fontSelect.value = savedFont;
+			setFontFamily(savedFont);
+
+			fontSelect.addEventListener('change', function() {
+				setFontFamily(this.value);
+			});
+		}
 
 		// 侧边栏单选项初始化
 		let sidebarSetting = 'right';
