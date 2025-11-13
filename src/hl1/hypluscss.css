@@ -36,9 +36,9 @@ a {
 	overflow-y: auto;
 }
 
-.sidebar::-webkit-scrollbar {
+/* .sidebar::-webkit-scrollbar {
 	display: none;
-}
+} */
 
 
 /**
