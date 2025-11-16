@@ -4,7 +4,7 @@
  * Code type: JavaScript
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 	// 创建 Lightbox 元素
 	const lightboxWrapper = document.createElement('div');
 	lightboxWrapper.className = 'my-lightbox-wrapper';
@@ -272,26 +272,28 @@ pointer-events: none;
 	let isPainting = false; // 是否正在绘图
 	let rotationAngle = 0;
 
-	// 处理所有图片
-	document.querySelectorAll('img:not(.my-lightbox-image)').forEach(img => {
-		img.style.cssText = `
-cursor: zoom-in;
-transition: transform 0.2s ease;
-`;
-
-		img.addEventListener('mouseenter', function() {
-			this.style.cursor = 'zoom-in';
-		});
-
-		img.addEventListener('mouseleave', function() {
-			this.style.cursor = 'auto';
-		});
-
-		img.addEventListener('click', function(e) {
+	// 性能优化：使用事件委托，只绑定一次事件
+	document.body.addEventListener('click', function (e) {
+		const target = e.target;
+		if (target.tagName === 'IMG' && !target.classList.contains('my-lightbox-image')) {
 			e.preventDefault();
-			openLightbox(this.src);
-		});
+			openLightbox(target.src);
+		}
 	});
+
+	document.body.addEventListener('mouseenter', function (e) {
+		const target = e.target;
+		if (target.tagName === 'IMG' && !target.classList.contains('my-lightbox-image')) {
+			target.style.cursor = 'zoom-in';
+		}
+	}, true);
+
+	document.body.addEventListener('mouseleave', function (e) {
+		const target = e.target;
+		if (target.tagName === 'IMG' && !target.classList.contains('my-lightbox-image')) {
+			target.style.cursor = 'auto';
+		}
+	}, true);
 
 	// 打开 Lightbox
 	function openLightbox(src) {
@@ -299,7 +301,7 @@ transition: transform 0.2s ease;
 		document.body.style.overflow = 'hidden';
 
 		const tempImg = new Image();
-		tempImg.onload = function() {
+		tempImg.onload = function () {
 			originalWidth = this.width;
 			originalHeight = this.height;
 			lightboxImage.src = src;
@@ -473,16 +475,16 @@ transition: transform 0.2s ease;
 
 	// 按钮事件和悬停效果
 	[zoomInBtn, zoomOutBtn, closeButton, helpButton, rotateButton, rotateCounterButton].forEach(btn => {
-		btn.addEventListener('mouseenter', function() {
+		btn.addEventListener('mouseenter', function () {
 			this.style.opacity = '0.8';
 		});
-		btn.addEventListener('mouseleave', function() {
+		btn.addEventListener('mouseleave', function () {
 			this.style.opacity = '1';
 		});
 	});
 
 	// 帮助按钮事件
-	helpButton.addEventListener('click', function(e) {
+	helpButton.addEventListener('click', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		isHelpVisible = !isHelpVisible;
@@ -490,7 +492,7 @@ transition: transform 0.2s ease;
 	});
 
 	// 点击其他区域关闭帮助提示
-	lightboxWrapper.addEventListener('click', function(e) {
+	lightboxWrapper.addEventListener('click', function (e) {
 		if (isHelpVisible && !helpTooltip.contains(e.target) && e.target !== helpButton) {
 			isHelpVisible = false;
 			helpTooltip.style.display = 'none';
@@ -501,9 +503,9 @@ transition: transform 0.2s ease;
 	});
 
 	// 添加键盘事件监听
-	document.addEventListener('keydown', function(e) {
+	document.addEventListener('keydown', function (e) {
 		if (lightboxWrapper.style.display === 'block') {
-			switch(e.key) {
+			switch (e.key) {
 				case '+':
 				case '=':
 					e.preventDefault();
@@ -546,35 +548,35 @@ transition: transform 0.2s ease;
 					rotationAngle -= 45;
 					updateImageTransform();
 					break;
-				case 'ArrowUp':    yOffset += 30; updateImageTransform(); break;
-				case 'ArrowDown':  yOffset -= 30; updateImageTransform(); break;
-				case 'ArrowLeft':  xOffset += 30; updateImageTransform(); break;
+				case 'ArrowUp': yOffset += 30; updateImageTransform(); break;
+				case 'ArrowDown': yOffset -= 30; updateImageTransform(); break;
+				case 'ArrowLeft': xOffset += 30; updateImageTransform(); break;
 				case 'ArrowRight': xOffset -= 30; updateImageTransform(); break;
 			}
 		}
 	});
 
 	// 事件监听
-	zoomInBtn.addEventListener('click', function(e) {
+	zoomInBtn.addEventListener('click', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		zoomIn();
 	});
 
-	zoomOutBtn.addEventListener('click', function(e) {
+	zoomOutBtn.addEventListener('click', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		zoomOut();
 	});
 
-	rotateButton.addEventListener('click', function(e) {
+	rotateButton.addEventListener('click', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		rotationAngle += 45;
 		updateImageTransform();
 	});
 
-	rotateCounterButton.addEventListener('click', function(e) {
+	rotateCounterButton.addEventListener('click', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		rotationAngle -= 45;
@@ -588,13 +590,13 @@ transition: transform 0.2s ease;
 	lightboxWrapper.addEventListener('mouseleave', dragEnd);
 
 	// 鼠标样式事件
-	lightboxImage.addEventListener('mouseenter', function() {
+	lightboxImage.addEventListener('mouseenter', function () {
 		if (!isDragging && !isDrawing) {
 			this.style.cursor = 'grab';
 		}
 	});
 
-	lightboxImage.addEventListener('mouseleave', function() {
+	lightboxImage.addEventListener('mouseleave', function () {
 		if (!isDragging && !isDrawing) {
 			this.style.cursor = 'grab';
 		}
@@ -609,12 +611,12 @@ transition: transform 0.2s ease;
 	closeButton.addEventListener('click', closeLightbox);
 
 	// 阻止默认行为
-	lightboxImage.addEventListener('dragstart', function(e) {
+	lightboxImage.addEventListener('dragstart', function (e) {
 		e.preventDefault();
 	});
 
 	// 禁用页面缩放
-	document.addEventListener('touchmove', function(e) {
+	document.addEventListener('touchmove', function (e) {
 		if (lightboxWrapper.style.display === 'block') {
 			e.preventDefault();
 		}
@@ -654,10 +656,10 @@ transition: transform 0.2s ease;
 	canvas.addEventListener('mouseup', stopPainting);
 	canvas.addEventListener('mouseout', stopPainting);
 
-	canvas.addEventListener('touchstart', function(e) {
+	canvas.addEventListener('touchstart', function (e) {
 		startPainting(e.touches[0]);
 	});
-	canvas.addEventListener('touchmove', function(e) {
+	canvas.addEventListener('touchmove', function (e) {
 		paint(e.touches[0]);
 	});
 	canvas.addEventListener('touchend', stopPainting);
