@@ -151,6 +151,10 @@
 						<input type="checkbox" id="headerFooterToggle" />
 						<label for="headerFooterToggle">隐藏页眉页脚　<span class="shortcut-key">⌥⇧H</span></label>
 					</div>
+					<div class="config-item">
+						<input type="checkbox" id="hideButtonsToggle" />
+						<label for="hideButtonsToggle">临时隐藏Hyplus按钮群　<span class="shortcut-key">⌥⇧Y</span></label>
+					</div>
 
 				</div>
 			</div>
@@ -1094,6 +1098,41 @@
 		}
 	}
 
+	// 隐藏/显示Hyplus按钮群
+	function hideHyplusButtons() {
+		const buttons = [
+			document.getElementById('scrollToTopButton'),
+			document.getElementById('navButton'),
+			document.getElementById('goBackButton'),
+			document.getElementById('goForwardButton'),
+			document.getElementById('refreshButton')
+		];
+		buttons.forEach(btn => {
+			if (btn) btn.style.display = 'none';
+		});
+	}
+
+	function showHyplusButtons() {
+		const buttons = [
+			document.getElementById('scrollToTopButton'),
+			document.getElementById('navButton'),
+			document.getElementById('goBackButton'),
+			document.getElementById('goForwardButton'),
+			document.getElementById('refreshButton')
+		];
+		buttons.forEach(btn => {
+			if (btn) btn.style.display = 'block';
+		});
+	}
+
+	function handleHideButtonsToggle(event) {
+		if (event.target.checked) {
+			hideHyplusButtons();
+		} else {
+			showHyplusButtons();
+		}
+	}
+
 	// 导航框控制
 	function updateTocVisibility() {
 		const tocSection = document.getElementById('tocSection');
@@ -1440,6 +1479,16 @@
 									handleHeaderFooterToggle({ target: headerFooterToggle });
 								}
 								break;
+
+							case 'y':
+								event.preventDefault();
+								event.stopPropagation();
+								const hideButtonsToggle = document.getElementById('hideButtonsToggle');
+								if (hideButtonsToggle) {
+									hideButtonsToggle.checked = !hideButtonsToggle.checked;
+									handleHideButtonsToggle({ target: hideButtonsToggle });
+								}
+								break;
 						}
 					}
 	});
@@ -1594,7 +1643,9 @@
 		if (isHeaderFooterHidden) hideHeaderFooter();
 		headerFooterToggle.addEventListener('change', handleHeaderFooterToggle);
 
-
+		// 隐藏按钮群控制初始化
+		const hideButtonsToggle = document.getElementById('hideButtonsToggle');
+		hideButtonsToggle.addEventListener('change', handleHideButtonsToggle);
 
 		// 笔记和字体控制初始化
 		initFontSizeControls();
