@@ -23,7 +23,7 @@
 		<button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">服务</button>
 		<button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button>
 		<button id="navPageButton" class="switch-button active" onclick="switchNavContent('nav')">导航</button>
-		<button id="notePageButton" class="switch-button" onclick="switchNavContent('note')">目录</button>
+		<button id="notePageButton" class="switch-button" onclick="switchNavContent('note')">检索</button>
 		<button id="settingsPageButton" class="switch-button" onclick="switchNavContent('settings')">设置</button>
 	</div>
 
@@ -45,9 +45,36 @@
 				></iframe>
 	</div>
 
-	<!-- 目录页面（原“文本”页面） -->
+	<!-- 检索页面（原“目录”页面） -->
 	<div id="noteContent" class="nav-content hyplus-unselectable" style="display: none;">
-		<div id="settingsHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus目录</div>
+		<div id="searchHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus检索</div>
+		<!-- 搜索栏 -->
+		<div id="hyplusSearchBar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; margin-top: 18px; margin-bottom: 15px; max-width: 600px; margin-left: auto; margin-right: auto;">
+			<div style="display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;">
+				<input id="searchInput" type="text" placeholder="Hyplus Search Plus..." style="flex: 1; min-width: 180px; max-width: 400px; padding: 4px 12px; border-radius: 6px; border: 1.5px solid #c4e0f7; background: #fff; color: #175082; font-size: 16px; font-weight: 500; outline: none;" />
+				<button id="searchBtn" class="hyplus-search-btn" title="搜索">
+					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="7" stroke="#155a99" stroke-width="2"/><line x1="14.2929" y1="14.7071" x2="18" y2="18.4142" stroke="#155a99" stroke-width="2" stroke-linecap="round"/></svg>
+				</button>
+			</div>
+			<div id="searchEngineOptions" style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+				<label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #175082; cursor: pointer;">
+					<input type="radio" name="searchEngine" value="hyplus" checked style="cursor: pointer;" />
+					<span>Hyplus</span>
+				</label>
+				<label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #175082; cursor: pointer;">
+					<input type="radio" name="searchEngine" value="baidu" style="cursor: pointer;" />
+					<span>Baidu</span>
+				</label>
+				<label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #175082; cursor: pointer;">
+					<input type="radio" name="searchEngine" value="google" style="cursor: pointer;" />
+					<span>Google</span>
+				</label>
+				<label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #175082; cursor: pointer;">
+					<input type="radio" name="searchEngine" value="bing" style="cursor: pointer;" />
+					<span>Bing</span>
+				</label>
+			</div>
+		</div>
 		<div class="directory-toc-content hyplus-unselectable" id="tocSection">
 			<?php echo do_shortcode('[toc mode="ub"]'); ?>
 		</div>
@@ -270,12 +297,42 @@
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.4 by Akira37
+			Ultimate Buttons v1.4.1 by Akira37
 		</div>
 	</div>
 </div>
 
 <style>
+/* Hyplus 检索栏搜索按钮美化与交互动画 */
+.hyplus-search-btn {
+	background: #eaf6ff;
+	border: 1.5px solid #8ecafc;
+	border-radius: 6px;
+	padding: 4px 12px;
+	cursor: pointer;
+	color: #155a99;
+	font-size: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.12s;
+	box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.07);
+	outline: none;
+}
+.hyplus-search-btn:hover, .hyplus-search-btn:focus {
+	background: #e0f0ff;
+	color: #0d4a7a;
+	border-color: #43a5f5;
+	box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.13);
+	transform: translateY(-2px) scale(1.04);
+}
+.hyplus-search-btn:active {
+	background: #dbeaf5;
+	color: #155a99;
+	border-color: #2e8ad6;
+	box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.10);
+	transform: translateY(1px) scale(0.97);
+}
     /* 基础字体缩放 */
     :root {
         --font-scale: 1;
@@ -1569,6 +1626,77 @@
 		chatBtn = document.getElementById('chatPageButton');
 		chatContent = document.getElementById('chatContent');
 		navContainer = document.getElementById('navContainer');
+
+		// 搜索引擎配置
+		const searchEngines = {
+			hyplus: {
+				name: 'Hyplus',
+				url: 'https://www.hyperplasma.top/?s={q}'
+			},
+			baidu: {
+				name: 'Baidu',
+				url: 'https://www.baidu.com/s?wd={q}'
+			},
+			bing: {
+				name: 'Bing',
+				url: 'https://www.bing.com/search?q={q}'
+			},
+			google: {
+				name: 'Google',
+				url: 'https://www.google.com/search?q={q}'
+			}
+		};
+
+		const searchInput = document.getElementById('searchInput');
+		const searchBtn = document.getElementById('searchBtn');
+		const searchEngineRadios = document.querySelectorAll('input[name="searchEngine"]');
+
+		// 读取cookie
+		function getCookie(name) {
+			const value = `; ${document.cookie}`;
+			const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) return parts.pop().split(';').shift();
+		}
+		// 设置cookie
+		function setCookie(name, value, days) {
+			let expires = '';
+			if (days) {
+				const date = new Date();
+				date.setTime(date.getTime() + (days*24*60*60*1000));
+				expires = "; expires=" + date.toUTCString();
+			}
+			document.cookie = name + "=" + value + expires + "; path=/";
+		}
+
+		// 初始化搜索引擎选择
+		const savedEngine = getCookie('hyplus_search_engine');
+		if (savedEngine && searchEngines[savedEngine]) {
+			document.querySelector(`input[name="searchEngine"][value="${savedEngine}"]`).checked = true;
+		}
+
+		searchEngineRadios.forEach(radio => {
+			radio.addEventListener('change', function() {
+				if (this.checked) {
+					setCookie('hyplus_search_engine', this.value, 365);
+				}
+			});
+		});
+
+		// 搜索执行
+		function doSearch() {
+			const engine = document.querySelector('input[name="searchEngine"]:checked').value;
+			const query = encodeURIComponent(searchInput.value.trim());
+			if (!query) {
+				searchInput.focus();
+				return;
+			}
+			const url = searchEngines[engine].url.replace('{q}', query);
+			window.open(url, '_blank');
+		}
+		searchBtn.addEventListener('click', doSearch);
+		searchInput.addEventListener('keydown', function(e) {
+			if (e.key === 'Enter') doSearch();
+		});
 	});
 
 	// 页面加载完成后的初始化
