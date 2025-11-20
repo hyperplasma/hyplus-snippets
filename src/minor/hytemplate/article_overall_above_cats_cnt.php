@@ -5,11 +5,21 @@
 add_action('generate_before_entry_title', 'lh_single_cats_above_title');
 
 // 统计预估阅读时间
-function count_words_read_time () {
+function count_words_read_time() {
     global $post;
-    $text_num = mb_strlen(preg_replace('/\s/','',html_entity_decode(strip_tags($post->post_content))),'UTF-8');
-    $read_time = ceil($text_num/300);
-    $output = '&nbsp;&nbsp;' . $text_num . '字&nbsp;&nbsp;' . $read_time  . '分钟';
+    $text = html_entity_decode($post->post_content);
+    
+    // 按照 Typora 的方式计数：汉字1个算1个词，连续的非空白字符（字母、数字、符号等）也算1个词
+    $chinese_chars = preg_match_all('/[\x{4E00}-\x{9FFF}]/u', $text);
+    
+    // 移除汉字后，统计连续的非空白字符序列
+    $text_without_chinese = preg_replace('/[\x{4E00}-\x{9FFF}]/u', '', $text);
+    $other_words = preg_match_all('/[^\s]+/u', $text_without_chinese);
+    
+    $text_num = $chinese_chars + $other_words;
+    
+    $read_time = $text_num > 0 ? ceil($text_num / 200) : 0;
+    $output = '&nbsp;<span title="每个汉字或其他连续非空白字符算1个字">' . $text_num . '字</span>&nbsp;&nbsp;<span title="预估阅读时间（200字/分钟）">' . $read_time . '分钟</span>';
     return $output;
 }
 
