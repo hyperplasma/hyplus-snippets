@@ -8,7 +8,7 @@
  * 3. 通过修改登陆错误提示和隐藏登陆页面链接来增强安全性
  */
 
-// ========== 1. 隐藏 wp-login.php 页面 ==========
+// ========== 隐藏 wp-login.php 页面 ==========
 // 任何用户（包括已登录用户）直接访问 wp-login.php 时，重定向到自定义登录页面
 add_action( 'login_init', function() {
     // 获取当前页面URL
@@ -38,18 +38,7 @@ add_action( 'login_init', function() {
 }, 10 );
 
 
-// ========== 2. 隐藏 wp-admin 页面 ==========
-// 当非登录用户直接访问 wp-admin 时，重定向到自定义登录页面
-add_action( 'admin_init', function() {
-    // 检查是否是登录用户
-    if ( ! is_user_logged_in() ) {
-        wp_redirect( home_url( '/login' ) );
-        exit;
-    }
-}, 10 );
-
-
-// ========== 3. 登陆错误提示隐藏 ==========
+// ========== 登陆错误提示隐藏 ==========
 // 隐藏登陆错误信息（防止用户信息泄露）
 add_filter( 'login_errors', function( $error ) {
     // 只显示通用错误提示
@@ -57,7 +46,7 @@ add_filter( 'login_errors', function( $error ) {
 }, 10, 1 );
 
 
-// ========== 4. 隐藏登陆相关的wp-json端点 ==========
+// ========== 隐藏登陆相关的wp-json端点 ==========
 // 禁用REST API登陆相关端点，防止API扫描
 add_filter( 'rest_authentication_errors', function( $result ) {
     if ( ! is_user_logged_in() ) {
@@ -67,14 +56,14 @@ add_filter( 'rest_authentication_errors', function( $result ) {
 }, 10, 1 );
 
 
-// ========== 5. 替换WordPress登陆URL ==========
+// ========== 替换WordPress登陆URL ==========
 // 将所有指向 wp-login.php 的链接重定向到自定义登录页面
 add_filter( 'login_url', function( $login_url, $redirect, $force_reauth ) {
     return home_url( '/login' );
 }, 10, 3 );
 
 
-// ========== 6. 防止通过wp-login.php?action=register进行注册 ==========
+// ========== 防止通过wp-login.php?action=register进行注册 ==========
 add_action( 'login_init', function() {
     if ( ! is_user_logged_in() && isset( $_GET['action'] ) && $_GET['action'] === 'register' ) {
         wp_redirect( home_url( '/login' ) );
