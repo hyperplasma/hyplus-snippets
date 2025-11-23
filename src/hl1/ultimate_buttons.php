@@ -1216,7 +1216,15 @@
 	function toggleMaximize(event) {
 		event.stopPropagation();
 		const navContainer = document.getElementById('navContainer');
-		const maximizeButton = document.getElementById('maximizeButton');
+		// 缓存最大化、关闭、返回工具按钮为全局变量
+		if (!window._hyplusNavBtnCache) {
+			window._hyplusNavBtnCache = {
+				maximizeButton: document.getElementById('maximizeButton'),
+				backToTools: document.getElementById('backToTools'),
+				closeButton: document.getElementById('closeButton')
+			};
+		}
+		const maximizeButton = window._hyplusNavBtnCache.maximizeButton;
 		isNavMaximized = !isNavMaximized;
 		localStorage.setItem('isNavMaximized', isNavMaximized);
 
@@ -1893,7 +1901,10 @@
 				}
 				if (navigator.clipboard) {
 					navigator.clipboard.writeText(content).then(function() {
-						const tip = document.getElementById('copySuccessTip');
+						if (!window._hyplusCopyTipCache) {
+							window._hyplusCopyTipCache = document.getElementById('copySuccessTip');
+						}
+						const tip = window._hyplusCopyTipCache;
 						if (tip) {
 							tip.style.display = 'inline';
 							setTimeout(() => { tip.style.display = 'none'; }, 1500);
