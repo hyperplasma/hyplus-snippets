@@ -1129,13 +1129,15 @@
 	}
 
 	// 基础工具函数
-	function debounce(func, wait) {
-		let timeout;
+	// throttle: 每wait毫秒最多执行一次
+	function throttle(func, wait) {
+		let lastTime = 0;
 		return function() {
-			const context = this;
-			const args = arguments;
-			clearTimeout(timeout);
-			timeout = setTimeout(() => func.apply(context, args), wait);
+			const now = Date.now();
+			if (now - lastTime >= wait) {
+				lastTime = now;
+				func.apply(this, arguments);
+			}
 		}
 	}
 
@@ -1618,22 +1620,23 @@
 		window.location.href = url;
 	}
 
-	// 主体点击事件处理
+	// 主体点击事件处理（优化条件判断顺序，避免不必要的计算）
 	document.body.addEventListener('click', function(event) {
 		if (event.altKey) return;
 		const nav = document.getElementById('navContainer');
+		// 快速判断nav是否显示，避免不必要的getBoundingClientRect计算
+		if (nav.style.display !== 'block') return;
 		const navButton = document.getElementById('navButton');
-		if (nav.style.display === 'block') {
-			const rectNav = nav.getBoundingClientRect();
-			const isInNav = event.clientX >= rectNav.left &&
-				  event.clientX <= rectNav.right &&
-				  event.clientY >= rectNav.top &&
-				  event.clientY <= rectNav.bottom;
-			const isNavButtonClicked = navButton.contains(event.target);
-			if (!isInNav && !isNavButtonClicked) {
-				nav.style.display = 'none';
-				document.body.classList.remove('nav-open');
-			}
+		// 先判断是否点击了navButton，避免getBoundingClientRect计算
+		if (navButton.contains(event.target)) return;
+		const rectNav = nav.getBoundingClientRect();
+		const isInNav = event.clientX >= rectNav.left &&
+			  event.clientX <= rectNav.right &&
+			  event.clientY >= rectNav.top &&
+			  event.clientY <= rectNav.bottom;
+		if (!isInNav) {
+			nav.style.display = 'none';
+			document.body.classList.remove('nav-open');
 		}
 	});
 
@@ -1675,23 +1678,18 @@
 				refreshButton: document.getElementById('refreshButton')
 			};
 		}
-		const hyButtons = [
-			window._hyplusBtnCache.scrollToTopButton,
-			window._hyplusBtnCache.navButton,
-			window._hyplusBtnCache.goBackButton,
-			window._hyplusBtnCache.goForwardButton,
-			window._hyplusBtnCache.refreshButton
-		];
-		hyButtons.forEach(button => {
-			if (button) {
-				button.addEventListener('mouseenter', function() {
-					isScrollDisabled = true;
-				});
-				button.addEventListener('mouseleave', function() {
-					isScrollDisabled = false;
-				});
+		// 优化：使用事件委托，只注册1对mouseenter/mouseleave，将5个按钮视作整体
+		const hyButtonIds = new Set(['scrollToTopButton', 'navButton', 'goBackButton', 'goForwardButton', 'refreshButton']);
+		document.addEventListener('mouseenter', function(event) {
+			if (hyButtonIds.has(event.target.id)) {
+				isScrollDisabled = true;
 			}
-		});
+		}, true);
+		document.addEventListener('mouseleave', function(event) {
+			if (hyButtonIds.has(event.target.id)) {
+				isScrollDisabled = false;
+			}
+		}, true);
 
 		// 搜索引擎配置
 		const searchEngines = {
@@ -1748,12 +1746,11 @@
 			document.querySelector(`input[name="searchEngine"][value="${savedEngine}"]`).checked = true;
 		}
 
-		searchEngineRadios.forEach(radio => {
-			radio.addEventListener('change', function() {
-				if (this.checked) {
-					setCookie('hyplus_search_engine', this.value, 365);
-				}
-			});
+		// 优化：搜索引擎单选框用事件委托，只注册1个change监听
+		document.addEventListener('change', function(event) {
+			if (event.target.name === 'searchEngine' && event.target.checked) {
+				setCookie('hyplus_search_engine', event.target.value, 365);
+			}
 		});
 
 		// 搜索执行
@@ -1837,18 +1834,13 @@
 		document.getElementById('navButtonsLeftRadio').checked = (savedNavButtonsPosition === 'left');
 		document.getElementById('navButtonsRightRadio').checked = (savedNavButtonsPosition === 'right');
 
-		// 缓存导航按钮位置单选按钮为全局变量
-		if (!window._navButtonsRadioCache) {
-			window._navButtonsRadioCache = {
-				left: document.getElementById('navButtonsLeftRadio'),
-				right: document.getElementById('navButtonsRightRadio')
-			};
-		}
-		window._navButtonsRadioCache.left && window._navButtonsRadioCache.left.addEventListener('change', function() {
-			if (this.checked) setNavButtonsPosition('left');
-		});
-		window._navButtonsRadioCache.right && window._navButtonsRadioCache.right.addEventListener('change', function() {
-			if (this.checked) setNavButtonsPosition('right');
+		// 优化：侧边栏和导航按钮位置单选框使用事件委托，各注册1个change监听
+		document.addEventListener('change', function(event) {
+			if (event.target.name === 'sidebarPosition' && event.target.checked) {
+				setSidebarPosition(event.target.value);
+			} else if (event.target.name === 'navButtonsPosition' && event.target.checked) {
+				setNavButtonsPosition(event.target.value);
+			}
 		});
 
 		// 缓存设置区复选框为全局变量
@@ -1863,12 +1855,17 @@
 		if (headerFooterToggle) {
 			headerFooterToggle.checked = isHeaderFooterHidden;
 			if (isHeaderFooterHidden) hideHeaderFooter();
-			headerFooterToggle.addEventListener('change', handleHeaderFooterToggle);
 		}
 		const hideButtonsToggle = window._hyplusSettingsCheckboxCache.hideButtonsToggle;
-		if (hideButtonsToggle) {
-			hideButtonsToggle.addEventListener('change', handleHideButtonsToggle);
-		}
+
+		// 优化：页头页尾和隐藏按钮群复选框使用事件委托，只注册1个change监听
+		document.addEventListener('change', function(event) {
+			if (event.target.id === 'headerFooterToggle') {
+				handleHeaderFooterToggle(event);
+			} else if (event.target.id === 'hideButtonsToggle') {
+				handleHideButtonsToggle(event);
+			}
+		});
 
 		// 笔记和字体控制初始化
 		initFontSizeControls();
@@ -1969,7 +1966,7 @@
 		updateTocVisibility();
 
 		// 响应式布局
-		const debouncedResize = debounce(function() {
+		const throttledResize = throttle(function() {
 			const contentArea = document.querySelector('.content-area');
 			const mainContent = document.querySelector('.site-main');
 			const maximizeButton = document.querySelector('.maximize-button');
@@ -2009,22 +2006,26 @@
 				}
 			}
 			updateTocVisibility();
-		}, 15);
+		}, 50);
 
-		window.addEventListener('resize', debouncedResize);
+		window.addEventListener('resize', throttledResize);
 
-		// 浏览按钮事件绑定
-		['goBackButton', 'goForwardButton', 'refreshButton', 'scrollToTopButton'].forEach(id => {
-			const button = document.getElementById(id);
-			if (button) {
-				button.addEventListener('click', {
-					goBackButton: () => window.history.back(),
-					goForwardButton: () => window.history.forward(),
-					refreshButton: () => window.location.reload(),
-					scrollToTopButton: scrollToTop
-				}[id]);
-			}
-		});
+		// 浏览按钮事件绑定（优化：使用事件委托和缓存节点）
+		const buttonActions = {
+			goBackButton: () => window.history.back(),
+			goForwardButton: () => window.history.forward(),
+			refreshButton: () => window.location.reload(),
+			scrollToTopButton: scrollToTop
+		};
+		// 使用缓存的节点绑定事件
+		if (window._hyplusBtnCache) {
+			Object.entries(buttonActions).forEach(([buttonId, action]) => {
+				const button = window._hyplusBtnCache[buttonId];
+				if (button) {
+					button.addEventListener('click', action);
+				}
+			});
+		}
 	};
 
 	// 导出需要的全局函数
