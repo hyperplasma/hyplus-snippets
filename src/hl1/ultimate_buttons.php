@@ -1638,7 +1638,10 @@
 		// 初始化全局变量
 		chatBtn = document.getElementById('chatPageButton');
 		chatContent = document.getElementById('chatContent');
-		navContainer = document.getElementById('navContainer');
+		if (!window._navContainerCache) {
+			window._navContainerCache = document.getElementById('navContainer');
+		}
+		navContainer = window._navContainerCache;
 		// HyButton按钮群滚轮禁用
 		const hyButtons = [
 			'scrollToTopButton',
