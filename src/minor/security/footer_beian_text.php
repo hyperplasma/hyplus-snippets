@@ -1,9 +1,15 @@
 <?php
 /**
- * Footer Beian Text PHP
- * 在页脚添加备案信息和相关链接
+ * Hide Version Footer + Footer Beian Text PHP
+ * 隐藏WordPress版本号 + 在页脚添加备案信息和相关链接
  * Current status: beian text unused (and erased)
  */
+//隐藏版本号
+function wpbeginner_remove_version() {
+	return '';
+}
+add_filter('the_generator', 'wpbeginner_remove_version');
+
 add_filter( 'generate_copyright','tu_custom_copyright' );
 function tu_custom_copyright() {
     ?>
