@@ -1,6 +1,6 @@
 <?php
 /**
- * Articles Overall - Display Category and Buttons above - PHP
+ * Articles Overall - Display cats, cnt and sth else above - PHP
  */
 add_action('generate_before_entry_title', 'lh_single_cats_above_title');
 
@@ -28,6 +28,12 @@ function lh_single_cats_above_title() {
         $categories_list = get_the_category_list(_x(' | ', 'Used between list items, there is a space after the comma.', 'generatepress'));
         if ($categories_list) {
             $counter_str = count_words_read_time();
+            $emoji = '';
+            global $post;
+            // 检查是否为密码保护的文章
+            if (!empty($post->post_password)) {
+                $emoji .= '🔐';
+            }
 
             ob_start();
             ?>
@@ -36,7 +42,7 @@ function lh_single_cats_above_title() {
                     <span class="screen-reader-text"><?php echo _x('Categories', 'Used before category names.', 'generatepress'); ?> </span>
                     <?php echo $categories_list; ?>
                     <span style="color: green;">
-                        <?php echo $counter_str; ?>
+                        <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '&nbsp;&nbsp;' . $emoji : ''; ?></span>
                     </span>
                 </span>
             </div>
