@@ -47,7 +47,7 @@
 
 	<!-- 检索页面（原“目录”页面） -->
 	<div id="noteContent" class="nav-content hyplus-unselectable" style="display: none;">
-		<div id="searchHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus检索</div>
+		<div id="searchHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus检索&amp;目录</div>
 		<!-- 搜索栏 -->
 		<div id="hyplusSearchBar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; margin-top: 18px; margin-bottom: 15px; max-width: 600px; margin-left: auto; margin-right: auto;">
 			<div style="display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;">
