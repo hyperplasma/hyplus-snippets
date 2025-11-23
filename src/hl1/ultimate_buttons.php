@@ -1705,9 +1705,17 @@
 			}
 		};
 
-		const searchInput = document.getElementById('searchInput');
-		const searchBtn = document.getElementById('searchBtn');
-		const searchEngineRadios = document.querySelectorAll('input[name="searchEngine"]');
+		// 缓存搜索栏相关控件为全局变量
+		if (!window._hyplusSearchCache) {
+			window._hyplusSearchCache = {
+				searchInput: document.getElementById('searchInput'),
+				searchBtn: document.getElementById('searchBtn'),
+				searchEngineRadios: document.querySelectorAll('input[name="searchEngine"]')
+			};
+		}
+		const searchInput = window._hyplusSearchCache.searchInput;
+		const searchBtn = window._hyplusSearchCache.searchBtn;
+		const searchEngineRadios = window._hyplusSearchCache.searchEngineRadios;
 
 		// 读取cookie
 		function getCookie(name) {
@@ -1857,35 +1865,43 @@
 		// 笔记和字体控制初始化
 		initFontSizeControls();
 
-		// 复制本页面正文按钮事件绑定
-		document.getElementById('copyContentBtn').addEventListener('click', function() {
-			let content = '';
-			// 获取正文
-			const article = document.querySelector('#main');
-			if (article) {
-				content = article.innerText;
-			} else {
-				content = document.body.innerText;
-			}
-
-			// 检查复选框是否选中
-			const addPrompt = document.getElementById('addPromptCheckbox').checked;
-			if (addPrompt) {
-				const before = '请你认真阅读学习以下内容，然后回答问题：\n```\n';
-				const after = '\n```\n';
-				content = before + content + after;
-			}
-
-			if (navigator.clipboard) {
-				navigator.clipboard.writeText(content).then(function() {
-					const tip = document.getElementById('copySuccessTip');
-					if (tip) {
-						tip.style.display = 'inline';
-						setTimeout(() => { tip.style.display = 'none'; }, 1500);
-					}
-				});
-			}
-		});
+		// 缓存复制正文按钮和附加提问提示词复选框为全局变量
+		if (!window._hyplusCopyCache) {
+			window._hyplusCopyCache = {
+				copyContentBtn: document.getElementById('copyContentBtn'),
+				addPromptCheckbox: document.getElementById('addPromptCheckbox')
+			};
+		}
+		const copyContentBtn = window._hyplusCopyCache.copyContentBtn;
+		const addPromptCheckbox = window._hyplusCopyCache.addPromptCheckbox;
+		if (copyContentBtn) {
+			copyContentBtn.addEventListener('click', function() {
+				let content = '';
+				// 获取正文
+				const article = document.querySelector('#main');
+				if (article) {
+					content = article.innerText;
+				} else {
+					content = document.body.innerText;
+				}
+				// 检查复选框是否选中
+				const addPrompt = addPromptCheckbox && addPromptCheckbox.checked;
+				if (addPrompt) {
+					const before = '请你认真阅读学习以下内容，然后回答问题：\n```````````````````````````\n';
+					const after = '\n```````````````````````````\n';
+					content = before + content + after;
+				}
+				if (navigator.clipboard) {
+					navigator.clipboard.writeText(content).then(function() {
+						const tip = document.getElementById('copySuccessTip');
+						if (tip) {
+							tip.style.display = 'inline';
+							setTimeout(() => { tip.style.display = 'none'; }, 1500);
+						}
+					});
+				}
+			});
+		}
 
 		// 移动端禁用侧边栏单选群
 		function setSidebarRadioGroupEnabled(enabled) {
