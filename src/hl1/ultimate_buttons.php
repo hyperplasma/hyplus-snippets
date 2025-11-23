@@ -1636,22 +1636,37 @@
 	}, { passive: false });
 	document.addEventListener('DOMContentLoaded', function() {
 		// 初始化全局变量
-		chatBtn = document.getElementById('chatPageButton');
-		chatContent = document.getElementById('chatContent');
+		if (!window._chatBtnCache) {
+			window._chatBtnCache = document.getElementById('chatPageButton');
+		}
+		chatBtn = window._chatBtnCache;
+		if (!window._chatContentCache) {
+			window._chatContentCache = document.getElementById('chatContent');
+		}
+		chatContent = window._chatContentCache;
 		if (!window._navContainerCache) {
 			window._navContainerCache = document.getElementById('navContainer');
 		}
 		navContainer = window._navContainerCache;
 		// HyButton按钮群滚轮禁用
+		// 缓存HyButton按钮群五个按钮为全局变量
+		if (!window._hyplusBtnCache) {
+			window._hyplusBtnCache = {
+				scrollToTopButton: document.getElementById('scrollToTopButton'),
+				navButton: document.getElementById('navButton'),
+				goBackButton: document.getElementById('goBackButton'),
+				goForwardButton: document.getElementById('goForwardButton'),
+				refreshButton: document.getElementById('refreshButton')
+			};
+		}
 		const hyButtons = [
-			'scrollToTopButton',
-			'navButton',
-			'goBackButton',
-			'goForwardButton',
-			'refreshButton'
+			window._hyplusBtnCache.scrollToTopButton,
+			window._hyplusBtnCache.navButton,
+			window._hyplusBtnCache.goBackButton,
+			window._hyplusBtnCache.goForwardButton,
+			window._hyplusBtnCache.refreshButton
 		];
-		hyButtons.forEach(buttonId => {
-			const button = document.getElementById(buttonId);
+		hyButtons.forEach(button => {
 			if (button) {
 				button.addEventListener('mouseenter', function() {
 					isScrollDisabled = true;
@@ -1763,14 +1778,21 @@
 			setSidebarPosition(sidebarSetting);
 		}
 
-		// 绑定侧边栏单选事件
-		document.getElementById('sidebarRightRadio').addEventListener('change', function() {
+		// 缓存侧边栏单选按钮为全局变量
+		if (!window._sidebarRadioCache) {
+			window._sidebarRadioCache = {
+				right: document.getElementById('sidebarRightRadio'),
+				left: document.getElementById('sidebarLeftRadio'),
+				hide: document.getElementById('sidebarHideRadio')
+			};
+		}
+		window._sidebarRadioCache.right && window._sidebarRadioCache.right.addEventListener('change', function() {
 			if (this.checked) setSidebarPosition('right');
 		});
-		document.getElementById('sidebarLeftRadio').addEventListener('change', function() {
+		window._sidebarRadioCache.left && window._sidebarRadioCache.left.addEventListener('change', function() {
 			if (this.checked) setSidebarPosition('left');
 		});
-		document.getElementById('sidebarHideRadio').addEventListener('change', function() {
+		window._sidebarRadioCache.hide && window._sidebarRadioCache.hide.addEventListener('change', function() {
 			if (this.checked) setSidebarPosition('hide');
 		});
 
@@ -1791,11 +1813,17 @@
 		document.getElementById('navButtonsLeftRadio').checked = (savedNavButtonsPosition === 'left');
 		document.getElementById('navButtonsRightRadio').checked = (savedNavButtonsPosition === 'right');
 
-		// 绑定导航按钮位置单选事件
-		document.getElementById('navButtonsLeftRadio').addEventListener('change', function() {
+		// 缓存导航按钮位置单选按钮为全局变量
+		if (!window._navButtonsRadioCache) {
+			window._navButtonsRadioCache = {
+				left: document.getElementById('navButtonsLeftRadio'),
+				right: document.getElementById('navButtonsRightRadio')
+			};
+		}
+		window._navButtonsRadioCache.left && window._navButtonsRadioCache.left.addEventListener('change', function() {
 			if (this.checked) setNavButtonsPosition('left');
 		});
-		document.getElementById('navButtonsRightRadio').addEventListener('change', function() {
+		window._navButtonsRadioCache.right && window._navButtonsRadioCache.right.addEventListener('change', function() {
 			if (this.checked) setNavButtonsPosition('right');
 		});
 
