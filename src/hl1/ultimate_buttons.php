@@ -1635,20 +1635,28 @@
 		if (isScrollDisabled) e.preventDefault();
 	}, { passive: false });
 	document.addEventListener('DOMContentLoaded', function() {
-		// 初始化全局变量
-		if (!window._chatBtnCache) {
-			window._chatBtnCache = document.getElementById('chatPageButton');
+		// 缓存字体选择和缩放相关控件为全局变量
+		if (!window._hyplusFontCache) {
+			window._hyplusFontCache = {
+				fontSelect: document.getElementById('fontSelect'),
+				decreaseFontBtn: document.getElementById('decreaseFontBtn'),
+				increaseFontBtn: document.getElementById('increaseFontBtn'),
+				resetFontBtn: document.getElementById('resetFontBtn'),
+				fontSizeDisplay: document.getElementById('fontSizeDisplay')
+			};
 		}
-		chatBtn = window._chatBtnCache;
-		if (!window._chatContentCache) {
-			window._chatContentCache = document.getElementById('chatContent');
+		// 初始化字体选择
+		const fontSelect = window._hyplusFontCache.fontSelect;
+		if (fontSelect) {
+			const savedFont = localStorage.getItem('selectedFont') || 'default';
+			fontSelect.value = savedFont;
+			setFontFamily(savedFont);
+			fontSelect.addEventListener('change', function() {
+				setFontFamily(this.value);
+			});
 		}
-		chatContent = window._chatContentCache;
-		if (!window._navContainerCache) {
-			window._navContainerCache = document.getElementById('navContainer');
-		}
-		navContainer = window._navContainerCache;
-		// HyButton按钮群滚轮禁用
+		// 笔记和字体控制初始化
+		initFontSizeControls();
 		// 缓存HyButton按钮群五个按钮为全局变量
 		if (!window._hyplusBtnCache) {
 			window._hyplusBtnCache = {
@@ -1827,16 +1835,24 @@
 			if (this.checked) setNavButtonsPosition('right');
 		});
 
-		// 页头页尾控制初始化
+		// 缓存设置区复选框为全局变量
+		if (!window._hyplusSettingsCheckboxCache) {
+			window._hyplusSettingsCheckboxCache = {
+				headerFooterToggle: document.getElementById('headerFooterToggle'),
+				hideButtonsToggle: document.getElementById('hideButtonsToggle')
+			};
+		}
 		const isHeaderFooterHidden = localStorage.getItem('headerFooterAlwaysHidden') === 'true';
-		const headerFooterToggle = document.getElementById('headerFooterToggle');
-		headerFooterToggle.checked = isHeaderFooterHidden;
-		if (isHeaderFooterHidden) hideHeaderFooter();
-		headerFooterToggle.addEventListener('change', handleHeaderFooterToggle);
-
-		// 隐藏按钮群控制初始化
-		const hideButtonsToggle = document.getElementById('hideButtonsToggle');
-		hideButtonsToggle.addEventListener('change', handleHideButtonsToggle);
+		const headerFooterToggle = window._hyplusSettingsCheckboxCache.headerFooterToggle;
+		if (headerFooterToggle) {
+			headerFooterToggle.checked = isHeaderFooterHidden;
+			if (isHeaderFooterHidden) hideHeaderFooter();
+			headerFooterToggle.addEventListener('change', handleHeaderFooterToggle);
+		}
+		const hideButtonsToggle = window._hyplusSettingsCheckboxCache.hideButtonsToggle;
+		if (hideButtonsToggle) {
+			hideButtonsToggle.addEventListener('change', handleHideButtonsToggle);
+		}
 
 		// 笔记和字体控制初始化
 		initFontSizeControls();
