@@ -176,11 +176,11 @@
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="config-item">
 						<input type="checkbox" id="headerFooterToggle" />
-						<label for="headerFooterToggle">隐藏页眉页脚　<span class="shortcut-key">⌥⇧H</span></label>
+						<label for="headerFooterToggle">隐藏页眉页脚&nbsp;<span class="shortcut-key">⌥⇧H</span></label>
 					</div>
 					<div class="config-item">
 						<input type="checkbox" id="hideButtonsToggle" />
-						<label for="hideButtonsToggle">临时隐藏Hyplus按钮群　<span class="shortcut-key">⌥⇧Y</span></label>
+						<label for="hideButtonsToggle">临时隐藏HyButton按钮群&nbsp;<span class="shortcut-key">⌥⇧Y</span></label>
 					</div>
 
 				</div>
@@ -467,6 +467,15 @@
     #refreshButton:hover {
         transform: scale(1.05);
         background-color: rgba(60, 187, 89, 1);
+    }
+
+    /* 按钮组悬浮时禁用滚轮 */
+    #scrollToTopButton:hover,
+    #navButton:hover,
+    #goBackButton:hover,
+    #goForwardButton:hover,
+    #refreshButton:hover {
+        pointer-events: auto;
     }
 
     /* 导航框样式 */
@@ -1620,12 +1629,48 @@
 		}
 	});
 
+	// 全局滚轮禁用状态标志
+	let isScrollDisabled = false;
+
+	// 全局滚轮事件处理函数（仅定义一次，提高性能）
+	function preventScroll(e) {
+		if (isScrollDisabled) {
+			e.preventDefault();
+		}
+	}
+
 	// 页面加载初始化
 	document.addEventListener('DOMContentLoaded', function() {
 		// 初始化全局变量
 		chatBtn = document.getElementById('chatPageButton');
 		chatContent = document.getElementById('chatContent');
 		navContainer = document.getElementById('navContainer');
+
+		// 初始化 HyButton 按钮组悬浮禁用滚轮功能
+		const hyButtons = [
+			'scrollToTopButton',
+			'navButton',
+			'goBackButton',
+			'goForwardButton',
+			'refreshButton'
+		];
+
+		// 仅注册一次滚轮事件监听器（使用passive: false以便能够preventDefault）
+		document.addEventListener('wheel', preventScroll, { passive: false });
+
+		// 为每个按钮添加鼠标进入和离开事件
+		hyButtons.forEach(buttonId => {
+			const button = document.getElementById(buttonId);
+			if (button) {
+				button.addEventListener('mouseenter', function() {
+					isScrollDisabled = true;
+				});
+
+				button.addEventListener('mouseleave', function() {
+					isScrollDisabled = false;
+				});
+			}
+		});
 
 		// 搜索引擎配置
 		const searchEngines = {
