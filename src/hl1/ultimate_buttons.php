@@ -297,7 +297,7 @@
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.4.2 by Akira37
+			Ultimate Buttons v1.4.2.1 by Akira37
 		</div>
 	</div>
 </div>
@@ -1829,7 +1829,7 @@
 		}
 
 		// 初始化导航按钮位置
-		const savedNavButtonsPosition = localStorage.getItem('navButtonsPosition') || 'left';
+		const savedNavButtonsPosition = localStorage.getItem('navButtonsPosition') || 'right';
 		setNavButtonsPosition(savedNavButtonsPosition);
 		document.getElementById('navButtonsLeftRadio').checked = (savedNavButtonsPosition === 'left');
 		document.getElementById('navButtonsRightRadio').checked = (savedNavButtonsPosition === 'right');
