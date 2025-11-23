@@ -1629,24 +1629,17 @@
 		}
 	});
 
-	// 全局滚轮禁用状态标志
+	// HyButton按钮群滚轮禁用性能优化（单一监听器+状态标志，风险极低）
 	let isScrollDisabled = false;
-
-	// 全局滚轮事件处理函数（仅定义一次，提高性能）
-	function preventScroll(e) {
-		if (isScrollDisabled) {
-			e.preventDefault();
-		}
-	}
-
-	// 页面加载初始化
+	document.addEventListener('wheel', function(e) {
+		if (isScrollDisabled) e.preventDefault();
+	}, { passive: false });
 	document.addEventListener('DOMContentLoaded', function() {
 		// 初始化全局变量
 		chatBtn = document.getElementById('chatPageButton');
 		chatContent = document.getElementById('chatContent');
 		navContainer = document.getElementById('navContainer');
-
-		// 初始化 HyButton 按钮组悬浮禁用滚轮功能
+		// HyButton按钮群滚轮禁用
 		const hyButtons = [
 			'scrollToTopButton',
 			'navButton',
@@ -1654,18 +1647,12 @@
 			'goForwardButton',
 			'refreshButton'
 		];
-
-		// 仅注册一次滚轮事件监听器（使用passive: false以便能够preventDefault）
-		document.addEventListener('wheel', preventScroll, { passive: false });
-
-		// 为每个按钮添加鼠标进入和离开事件
 		hyButtons.forEach(buttonId => {
 			const button = document.getElementById(buttonId);
 			if (button) {
 				button.addEventListener('mouseenter', function() {
 					isScrollDisabled = true;
 				});
-
 				button.addEventListener('mouseleave', function() {
 					isScrollDisabled = false;
 				});
