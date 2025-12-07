@@ -39,10 +39,10 @@ function lh_single_cats_above_title() {
             ?>
             <div class="post-buttons">
                 <span class="entry-meta cat-links">
-                    <span class="screen-reader-text"><?php echo _x('Categories', 'Used before category names.', 'generatepress'); ?> </span>
+                <!--    <span class="screen-reader-text"></?php echo _x('Categories', 'Used before category names.', 'generatepress'); ?> </span> -->
                     <?php echo $categories_list; ?>
                     <span style="color: green;">
-                        <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '&nbsp;&nbsp;' . $emoji : ''; ?></span>
+                        <?php echo $counter_str; ?><span class="hyplus-unselectable" title="受限内容"><?php echo $emoji ? '&nbsp;&nbsp;' . $emoji : ''; ?></span>
                     </span>
                 </span>
             </div>
