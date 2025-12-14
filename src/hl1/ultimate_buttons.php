@@ -49,30 +49,15 @@
 	<div id="noteContent" class="nav-content hyplus-unselectable" style="display: none;">
 		<div id="searchHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus检索&amp;目录</div>
 		<!-- 搜索栏 -->
-		<div id="hyplusSearchBar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; margin-top: 18px; margin-bottom: 15px; max-width: 600px; margin-left: auto; margin-right: auto;">
+		<div id="hyplusSearchBar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; margin-bottom: 18px; max-width: 600px; margin-left: auto; margin-right: auto;">
 			<div style="display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;">
-				<input id="searchInput" type="text" placeholder="Hyplus Search Plus..." style="flex: 1; min-width: 180px; max-width: 400px; padding: 4px 12px; border-radius: 6px; border: 1.5px solid #c4e0f7; background: #fff; color: #175082; font-size: 16px; font-weight: 500; outline: none;" />
-				<button id="searchBtn" class="hyplus-search-btn" title="搜索">
-					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="7" stroke="#155a99" stroke-width="2"/><line x1="14.2929" y1="14.7071" x2="18" y2="18.4142" stroke="#155a99" stroke-width="2" stroke-linecap="round"/></svg>
-				</button>
+				<input id="searchInput" type="text" placeholder="Hyplus Search Plus..." class="hyplus-search-input" style="flex: 1; min-width: 180px; max-width: 100%; padding: 10px 18px; border-radius: 999px; border: 1.5px solid #c4e0f7; background: #fff; color: #175082; font-size: 18px; font-weight: 500; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03);" />
 			</div>
-			<div id="searchEngineOptions" style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-				<label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #175082; cursor: pointer;">
-					<input type="radio" name="searchEngine" value="hyplus" checked style="cursor: pointer;" />
-					<span>Hyplus</span>
-				</label>
-				<label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #175082; cursor: pointer;">
-					<input type="radio" name="searchEngine" value="baidu" style="cursor: pointer;" />
-					<span>Baidu</span>
-				</label>
-				<label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #175082; cursor: pointer;">
-					<input type="radio" name="searchEngine" value="google" style="cursor: pointer;" />
-					<span>Google</span>
-				</label>
-				<label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #175082; cursor: pointer;">
-					<input type="radio" name="searchEngine" value="bing" style="cursor: pointer;" />
-					<span>Bing</span>
-				</label>
+			<div id="searchEngineOptions" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%;">
+				<button type="button" class="sideinfo-toggle engine-btn" data-engine="hyplus">Hyplus</button>
+				<button type="button" class="sideinfo-toggle engine-btn" data-engine="baidu">Baidu</button>
+				<button type="button" class="sideinfo-toggle engine-btn" data-engine="google">Google</button>
+				<button type="button" class="sideinfo-toggle engine-btn" data-engine="bing">Bing</button>
 			</div>
 		</div>
 		<div class="directory-toc-content hyplus-unselectable" id="tocSection">
@@ -303,36 +288,51 @@
 </div>
 
 <style>
-/* Hyplus 检索栏搜索按钮美化与交互动画 */
-.hyplus-search-btn {
-	background: #eaf6ff;
-	border: 1.5px solid #8ecafc;
-	border-radius: 6px;
+/* 使用 sideinfo 的切换按钮样式作为搜索引擎按钮样式（复制自 sideinfo.php） */
+.sideinfo-toggle {
 	padding: 4px 12px;
-	cursor: pointer;
-	color: #155a99;
-	font-size: 18px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.12s;
-	box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.07);
+	background: #ecf5f8;
+	color: #175082;
+	border-radius: 16px;
+	border: 1.5px solid #c4e0f7;
+	box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.17), 0 1px 2px 0 rgba(33, 118, 193, 0.09);
+	font-weight: 600;
+	min-width: fit-content;
+	transition: background 0.18s cubic-bezier(0.4,0,0.2,1), color 0.18s cubic-bezier(0.4,0,0.2,1), box-shadow 0.18s cubic-bezier(0.4,0,0.2,1), transform 0.18s cubic-bezier(0.4,0,0.2,1);
 	outline: none;
+	cursor: pointer;
 }
-.hyplus-search-btn:hover, .hyplus-search-btn:focus {
-	background: #e0f0ff;
-	color: #0d4a7a;
-	border-color: #43a5f5;
-	box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.13);
-	transform: translateY(-2px) scale(1.04);
+
+.sideinfo-toggle.disabled {
+	background: #f0f0f0 !important;
+	color: #999 !important;
+	border-color: #ddd !important;
+	box-shadow: none !important;
+	cursor: default !important;
+	transform: none !important;
+	pointer-events: none;
+	margin-bottom: 12px;
+	user-select: none;
 }
-.hyplus-search-btn:active {
+
+.sideinfo-toggle:hover,
+.sideinfo-toggle:focus {
+	background: #eaf6ff;
+	color: #155a99;
+	border-color: #8ecafc;
+	box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.20), 0 1.5px 4px 0 rgba(33, 118, 193, 0.13);
+	transform: translateY(-1px) scale(1.025);
+	z-index: 2;
+}
+
+.sideinfo-toggle:active {
 	background: #dbeaf5;
 	color: #155a99;
-	border-color: #2e8ad6;
-	box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.10);
-	transform: translateY(1px) scale(0.97);
+	box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
+	transform: translateY(1px) scale(0.98);
 }
+
+.engine-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 90px; }
     /* 基础字体缩放 */
     :root {
         --font-scale: 1;
@@ -1711,63 +1711,46 @@
 			}
 		};
 
-		// 缓存搜索栏相关控件为全局变量
+		// 缓存搜索栏相关控件为全局变量（不再使用 cookie 或单选框）
 		if (!window._hyplusSearchCache) {
 			window._hyplusSearchCache = {
 				searchInput: document.getElementById('searchInput'),
-				searchBtn: document.getElementById('searchBtn'),
-				searchEngineRadios: document.querySelectorAll('input[name="searchEngine"]')
+				engineButtons: document.querySelectorAll('.engine-btn')
 			};
 		}
 		const searchInput = window._hyplusSearchCache.searchInput;
-		const searchBtn = window._hyplusSearchCache.searchBtn;
-		const searchEngineRadios = window._hyplusSearchCache.searchEngineRadios;
+		const engineButtons = window._hyplusSearchCache.engineButtons;
 
-		// 读取cookie
-		function getCookie(name) {
-			const value = `; ${document.cookie}`;
-			const parts = value.split(`; ${name}=`);
-			if (parts.length === 2) return parts.pop().split(';').shift();
-		}
-		// 设置cookie
-		function setCookie(name, value, days) {
-			let expires = '';
-			if (days) {
-				const date = new Date();
-				date.setTime(date.getTime() + (days*24*60*60*1000));
-				expires = "; expires=" + date.toUTCString();
-			}
-			document.cookie = name + "=" + value + expires + "; path=/";
-		}
-
-		// 初始化搜索引擎选择
-		const savedEngine = getCookie('hyplus_search_engine');
-		if (savedEngine && searchEngines[savedEngine]) {
-			document.querySelector(`input[name="searchEngine"][value="${savedEngine}"]`).checked = true;
-		}
-
-		// 优化：搜索引擎单选框用事件委托，只注册1个change监听
-		document.addEventListener('change', function(event) {
-			if (event.target.name === 'searchEngine' && event.target.checked) {
-				setCookie('hyplus_search_engine', event.target.value, 365);
-			}
-		});
-
-		// 搜索执行
-		function doSearch() {
-			const engine = document.querySelector('input[name="searchEngine"]:checked').value;
-			const query = encodeURIComponent(searchInput.value.trim());
+		// 搜索执行（传入引擎 key）
+		function doSearch(engine) {
+			engine = engine || 'hyplus';
+			const query = encodeURIComponent((searchInput && searchInput.value || '').trim());
 			if (!query) {
-				searchInput.focus();
+				searchInput && searchInput.focus();
 				return;
 			}
-			const url = searchEngines[engine].url.replace('{q}', query);
+			const cfg = searchEngines[engine] || searchEngines.hyplus;
+			const url = cfg.url.replace('{q}', query);
 			window.open(url, '_blank');
 		}
-		searchBtn.addEventListener('click', doSearch);
-		searchInput.addEventListener('keydown', function(e) {
-			if (e.key === 'Enter') doSearch();
-		});
+
+		// 绑定引擎按钮点击事件（每个按钮会直接以该引擎执行搜索）
+		if (engineButtons && engineButtons.length) {
+			engineButtons.forEach(btn => {
+				btn.addEventListener('click', function(e) {
+					e.stopPropagation();
+					const eng = this.dataset.engine;
+					doSearch(eng);
+				});
+			});
+		}
+
+		// 在输入框按 Enter 时，默认使用 Hyplus 搜索
+		if (searchInput) {
+			searchInput.addEventListener('keydown', function(e) {
+				if (e.key === 'Enter') doSearch('hyplus');
+			});
+		}
 	});
 
 	// 页面加载完成后的初始化
