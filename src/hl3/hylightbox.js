@@ -218,7 +218,7 @@ align-items: center;
 justify-content: center;
 line-height: 0;
 padding-bottom: 2px;
-margin-left: 10px;  // 添加左边距，与顺时针按钮分开
+margin-left: 10px;
 `;
 
 	// 组装控制栏和按钮

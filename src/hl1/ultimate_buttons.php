@@ -49,15 +49,17 @@
 	<div id="noteContent" class="nav-content hyplus-unselectable" style="display: none;">
 		<div id="searchHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus检索&amp;目录</div>
 		<!-- 搜索栏 -->
-		<div id="hyplusSearchBar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; margin-bottom: 18px; max-width: 600px; margin-left: auto; margin-right: auto;">
+		<div id="hyplusSearchBar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; margin-bottom: 12px; max-width: 600px; margin-left: auto; margin-right: auto;">
 			<div style="display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;">
 				<input id="searchInput" type="text" placeholder="Hyplus Search Plus..." class="hyplus-search-input" style="flex: 1; min-width: 180px; max-width: 100%; padding: 10px 18px; border-radius: 999px; border: 1.5px solid #c4e0f7; background: #fff; color: #175082; font-size: 18px; font-weight: 500; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03);" />
 			</div>
-			<div id="searchEngineOptions" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%;">
+			<div id="searchEngineOptions" style="display: flex; margin-top:2px; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%;">
 				<button type="button" class="sideinfo-toggle engine-btn" data-engine="hyplus">Hyplus</button>
 				<button type="button" class="sideinfo-toggle engine-btn" data-engine="baidu">Baidu</button>
 				<button type="button" class="sideinfo-toggle engine-btn" data-engine="google">Google</button>
 				<button type="button" class="sideinfo-toggle engine-btn" data-engine="bing">Bing</button>
+				<button type="button" class="sideinfo-toggle engine-btn" data-engine="scholar">谷歌学术</button>
+				<button type="button" class="sideinfo-toggle engine-btn" data-engine="github">GitHub仓库</button>
 			</div>
 		</div>
 		<div class="directory-toc-content hyplus-unselectable" id="tocSection">
@@ -282,7 +284,7 @@
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.4.2.1 by Akira37
+			Ultimate Buttons v1.5 by Akira37
 		</div>
 	</div>
 </div>
@@ -1695,19 +1697,33 @@
 		const searchEngines = {
 			hyplus: {
 				name: 'Hyplus',
-				url: 'https://www.hyperplasma.top/?s={q}'
+				url: 'https://www.hyperplasma.top/?s={q}',
+				homepage: 'https://www.hyperplasma.top'
 			},
 			baidu: {
 				name: 'Baidu',
-				url: 'https://www.baidu.com/s?wd={q}'
+				url: 'https://www.baidu.com/s?wd={q}',
+				homepage: 'https://www.baidu.com'
 			},
 			bing: {
 				name: 'Bing',
-				url: 'https://www.bing.com/search?q={q}'
+				url: 'https://www.bing.com/search?q={q}',
+				homepage: 'https://www.bing.com'
 			},
 			google: {
 				name: 'Google',
-				url: 'https://www.google.com/search?q={q}'
+				url: 'https://www.google.com/search?q={q}',
+				homepage: 'https://www.google.com'
+			},
+			scholar: {
+				name: '谷歌学术',
+				url: 'https://scholar.google.com/scholar?q={q}',
+				homepage: 'https://scholar.google.com'
+			},
+			github: {
+				name: 'GitHub仓库',
+				url: 'https://github.com/search?q={q}',
+				homepage: 'https://github.com/search'
 			}
 		};
 
@@ -1723,14 +1739,17 @@
 
 		// 搜索执行（传入引擎 key）
 		function doSearch(engine) {
-			engine = engine || 'hyplus';
+			engine = engine || 'bing';
 			const query = encodeURIComponent((searchInput && searchInput.value || '').trim());
-			if (!query) {
-				searchInput && searchInput.focus();
-				return;
-			}
 			const cfg = searchEngines[engine] || searchEngines.hyplus;
-			const url = cfg.url.replace('{q}', query);
+			let url;
+			if (query) {
+				// 有查询内容时，使用搜索 URL
+				url = cfg.url.replace('{q}', query);
+			} else {
+				// 查询为空时，跳转到首页
+				url = cfg.homepage;
+			}
 			window.open(url, '_blank');
 		}
 
@@ -1745,10 +1764,10 @@
 			});
 		}
 
-		// 在输入框按 Enter 时，默认使用 Hyplus 搜索
+		// 在输入框按 Enter 时，默认使用 bing 搜索
 		if (searchInput) {
 			searchInput.addEventListener('keydown', function(e) {
-				if (e.key === 'Enter') doSearch('hyplus');
+				if (e.key === 'Enter') doSearch('bing');
 			});
 		}
 	});
