@@ -411,12 +411,14 @@ padding-left: 3px;
 		cursor: pointer;
 	}
 
+	/* far right */
 	.dropdown-hover .main-navigation:not(.toggled) ul .far-right ul {
 		left: auto;
 		right: 0;
 	}
 
-	.dropdown-hover .main-navigation:not(.toggled) ul .open-left li:hover>ul {
+	/* drop left */
+	.dropdown-hover .main-navigation:not(.toggled) ul .open-left li>ul {
 		left: auto;
 		right: 100%;
 	}
@@ -424,18 +426,18 @@ padding-left: 3px;
 	/* .main-navigation .main-nav ul .open-left ul li.menu-item-has-children > a {
 		padding-left: 0;
 		padding-right: 20px;
-	}
+	} */
 
-	.main-navigation ul .open-left ul .menu-item-has-children .dropdown-menu-toggle {
+	/* .main-navigation ul .open-left ul .menu-item-has-children .dropdown-menu-toggle {
 		float: left;
 		padding-left: 20px;
 		padding-right: 15px;
 	} */
 
-	.main-navigation .open-left .children .dropdown-menu-toggle:before, 
+	/* .main-navigation .open-left .children .dropdown-menu-toggle:before, 
 	.main-navigation .open-left .sub-menu .dropdown-menu-toggle:before {
 		content: "\f104";
-	}
+	} */
 
 	.dropdown-hover .open-left .sub-menu .dropdown-menu-toggle .gp-icon svg {
 		transform: rotate(180deg);
