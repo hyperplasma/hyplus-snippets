@@ -14,13 +14,13 @@
 <!-- 导航弹出框 -->
 <div id="navContainer">
 	<!-- 标题栏按钮 -->
-	<div id="backToTools" class="control-button back-button" title="返回工具选择" onclick="showToolSelector()" style="display: none; left: 10px; top: 10px;"></div>
+	<div id="backToTools" class="control-button back-button" title="进入Hyplus导航 Mk.II" onclick="window.location.href='https://www.hyperplasma.top/hyplus/';" style="left: 10px; top: 10px;"></div>
 	<div id="maximizeButton" class="control-button maximize-button" title="缩放（⌥M）" onclick="toggleMaximize(event)" style="right: 30px; top: 10px;"></div>
 	<div id="closeButton" class="control-button close-button" title="关闭（⌥S）" onclick="closeNavContainer(event)" style="right: 10px; top: 10px;"></div>
 
 	<!-- 切换按钮群 -->
 	<div id="navSwitchButtons" class="nav-switch-buttons hyplus-unselectable">
-		<button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">服务</button>
+		<button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">通讯</button>
 		<button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button>
 		<button id="navPageButton" class="switch-button active" onclick="switchNavContent('nav')">导航</button>
 		<button id="notePageButton" class="switch-button" onclick="switchNavContent('note')">检索</button>
@@ -67,63 +67,11 @@
 		</div>
 	</div>
 
-	<!-- Tools -->
+	<!-- 即时通讯页面 -->
 	<div id="chatContent" class="nav-content hyplus-unselectable" style="display: none;">
-		<!-- 工具选择界面 -->
-		<div id="toolSelector" class="tool-selector">
-			<h2 class="tools-header">Hyplus服务</h2>
-			<div class="tools-grid">
-				<?php if (is_user_logged_in()) : ?>
-				<div class="tool-card" onclick="switchTool('better_messages')">
-					<div class="tool-icon">💬</div>
-					<div class="tool-name">即时通讯</div>
-					<div class="tool-desc">与站内好友聊天交流</div>
-				</div>
-				<?php else : ?>
-				<div class="tool-card" onclick="window.location.href='https://www.hyperplasma.top/login/'">
-					<div class="tool-icon">💬</div>
-					<div class="tool-name">即时通讯</div>
-					<div class="tool-desc" style="color: red;">登录后可用</div>
-				</div>
-				<?php endif; ?>
-				<div class="tool-card" onclick="switchTool('calculator')">
-					<div class="tool-icon">🧮</div>
-					<div class="tool-name">综合计算器</div>
-					<div class="tool-desc">多功能科学计算工具</div>
-				</div>
-				<div class="tool-card" onclick="switchTool('encoder')">
-					<div class="tool-icon">🗄️</div>
-					<div class="tool-name">加密/编码器</div>
-					<div class="tool-desc">文本加密与内容生成</div>
-				</div>
-				<div class="tool-card" onclick="switchTool('hypreview')">
-					<div class="tool-icon">📷</div>
-					<div class="tool-name">图片预览</div>
-					<div class="tool-desc">媒体文件在线演示</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- 工具内容展示区 -->
-		<div id="toolContentContainer" style="display: none;">
-			<?php
-			$tool = isset($_GET['tool']) ? $_GET['tool'] : '';
-			switch($tool) {
-				case 'better_messages':
-					echo do_shortcode('[better_messages]');
-					break;
-				case 'calculator':
-					echo do_shortcode('[wpcode id="12585"]');
-					break;
-				case 'encoder':
-					echo do_shortcode('[wpcode id="12640"]');
-					break;
-				case 'hypreview':
-					echo do_shortcode('[wpcode id="14220"]');
-					break;
-			}
-			?>
-		</div>
+		<?php
+		echo do_shortcode('[better_messages]');
+		?>
 	</div>
 
 	<!-- 设置 -->
@@ -602,62 +550,6 @@
         padding-bottom: 20px;
     }
 
-    /* 工具选择界面样式 */
-    .tools-header {
-        text-align: center;
-        font-size: 24px;
-        font-weight: bold;
-        margin: 15px 0;
-        color: #333;
-    }
-
-    .tools-grid {
-        display: grid;
-		grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .tool-card {
-        background: #ffffff;
-        border: 1px solid #b6dded;
-        border-radius: 12px;
-        padding: 20px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .tool-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        border-color: #4a90e2;
-    }
-
-    .tool-icon {
-        font-size: 36px;
-        margin-bottom: 10px;
-    }
-
-    .tool-name {
-        font-size: 18px;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 8px;
-    }
-
-    .tool-desc {
-        font-size: 14px;
-        color: #666;
-        line-height: 1.4;
-    }
-
 
 	/* 目录内容样式 */
 	.directory-toc-content {
@@ -982,18 +874,8 @@
         }
     }
 
-	/* Responsive tweaks for tools and settings: collapse to single column on small screens */
+	/* Responsive tweaks for settings */
 	@media screen and (max-width: 768px) {
-		.tools-grid {
-			grid-template-columns: 1fr !important;
-			gap: 12px;
-			padding: 12px;
-		}
-
-		.tool-card {
-			padding: 14px;
-		}
-
 		.settings-columns-container {
 			flex-direction: column;
 			gap: 12px;
@@ -1047,87 +929,6 @@
 				document.body.style.fontWeight = "400";
 		}
 		localStorage.setItem('selectedFont', font);
-	}
-
-	// 工具菜单相关函数
-	function showToolSelector() {
-		// 获取当前 URL 并解析
-		const currentUrl = new URL(window.location.href);
-
-		// 移除 tool 参数但保留其他参数和路径
-		currentUrl.searchParams.delete('tool');
-
-		// 构建新的 URL，保留路径、参数和锚点
-		let newUrl = currentUrl.pathname;  // 首先获取路径
-
-		// 添加查询参数（如果有）
-		const searchParams = currentUrl.searchParams.toString();
-		if (searchParams) {
-			newUrl += '?' + searchParams;
-		}
-
-		// 添加锚点（如果有）
-		if (currentUrl.hash) {
-			newUrl += currentUrl.hash;
-		}
-
-		// 设置标志以在页面重载后保持 Nav 框显示
-		localStorage.setItem('keepNavOpen', 'true');
-		//		window.location.href = newUrl;
-		if (typeof window.animateAndJump === 'function') {
-			window.animateAndJump(newUrl);
-		} else {
-			window.location.href = newUrl;
-		}
-	}
-
-	function switchTool(toolKey) {
-		// 获取当前 URL 并解析
-		const currentUrl = new URL(window.location.href);
-
-		// 设置 tool 参数
-		currentUrl.searchParams.set('tool', toolKey);
-
-		// 构建新的 URL，保留路径和锚点
-		let newUrl = currentUrl.pathname;
-
-		// 添加查询参数
-		const searchParams = currentUrl.searchParams.toString();
-		if (searchParams) {
-			newUrl += '?' + searchParams;
-		}
-
-		// 添加锚点（如果有）
-		if (currentUrl.hash) {
-			newUrl += currentUrl.hash;
-		}
-
-		// 设置标志以在页面重载后保持 Nav 框显示
-		localStorage.setItem('keepNavOpen', 'true');
-		//		window.location.href = newUrl;
-		if (typeof window.animateAndJump === 'function') {
-			window.animateAndJump(newUrl);
-		} else {
-			window.location.href = newUrl;
-		}
-	}
-
-	// 检查 URL 参数并显示相应界面
-	function checkAndLoadTool() {
-		const urlParams = new URLSearchParams(window.location.search);
-		const tool = urlParams.get('tool');
-
-		if (tool) {
-			// 如果有工具参数，显示工具内容和返回按钮
-			document.getElementById('toolSelector').style.display = 'none';
-			document.getElementById('toolContentContainer').style.display = 'block';
-			document.getElementById('backToTools').style.display = 'block';
-		} else {
-			// 否则显示工具选择界面
-			document.getElementById('toolSelector').style.display = 'block';
-			document.getElementById('toolContentContainer').style.display = 'none';
-			document.getElementById('backToTools').style.display = 'none';
-		}
 	}
 
 	// 基础工具函数
