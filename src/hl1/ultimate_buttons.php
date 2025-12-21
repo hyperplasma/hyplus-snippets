@@ -50,8 +50,9 @@
 		<div id="searchHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus检索&amp;目录</div>
 		<!-- 搜索栏 -->
 		<div id="hyplusSearchBar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; margin-bottom: 12px; max-width: 600px; margin-left: auto; margin-right: auto;">
-			<div style="display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;">
-				<input id="searchInput" type="text" placeholder="Hyplus Search Plus..." class="hyplus-search-input" style="flex: 1; min-width: 180px; max-width: 100%; padding: 10px 18px; border-radius: 999px; border: 1.5px solid #c4e0f7; background: #fff; color: #175082; font-size: 18px; font-weight: 500; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03);" />
+			<div style="display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; position: relative;">
+				<input id="searchInput" type="text" placeholder="Hyplus Search Plus..." class="hyplus-search-input" style="flex: 1; min-width: 180px; max-width: 100%; padding: 10px 18px; border-radius: 999px; border: 1.5px solid #c4e0f7; background: #fff; color: #175082; font-size: 18px; font-weight: 500; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03); pointer-events: auto;" />
+				<button id="clearSearchBtn" type="button" style="display: none; position: absolute; right: 12px; background: none; border: none; color: #175082; font-size: 20px; cursor: pointer; padding: 0; width: 24px; height: 24px; line-height: 24px; text-align: center; font-weight: bold; opacity: 0.6; transition: opacity 0.2s ease; pointer-events: auto; z-index: 10;" title="清空搜索框">×</button>
 			</div>
 			<div id="searchEngineOptions" style="display: flex; margin-top:2px; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%;">
 				<button type="button" class="sideinfo-toggle engine-btn" data-engine="hyplus">Hyplus</button>
@@ -1207,6 +1208,12 @@
 			if (page === 'chat') {
 				checkAndLoadTool();
 			}
+			if (page === 'note') {
+				const searchInput = document.getElementById('searchInput');
+				if (searchInput) {
+					setTimeout(() => searchInput.focus(), 0);
+				}
+			}
 		}
 		localStorage.setItem('lastVisitedNavPage', page);
 	}
@@ -1571,6 +1578,69 @@
 				if (e.key === 'Enter') doSearch('bing');
 			});
 		}
+
+		// 清空按钮逻辑
+		const clearSearchBtn = document.getElementById('clearSearchBtn');
+		const searchInputElement = document.getElementById('searchInput');
+		if (searchInputElement && clearSearchBtn) {
+			// 更新清空按钮的显示状态
+			function updateClearBtnVisibility() {
+				if (searchInputElement.value.trim()) {
+					clearSearchBtn.style.display = 'block';
+				} else {
+					clearSearchBtn.style.display = 'none';
+				}
+			}
+
+			// 输入框输入事件
+			searchInputElement.addEventListener('input', updateClearBtnVisibility);
+
+			// 输入框获得焦点时，如果有内容就显示清空按钮
+			searchInputElement.addEventListener('focus', updateClearBtnVisibility);
+
+			// 输入框失焦时隐藏清空按钮
+			searchInputElement.addEventListener('blur', function() {
+				clearSearchBtn.style.display = 'none';
+			});
+
+			// 清空按钮点击事件 - 使用mousedown以确保捕获点击
+			clearSearchBtn.addEventListener('mousedown', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				searchInputElement.value = '';
+				searchInputElement.focus();
+				updateClearBtnVisibility();
+				return false;
+			});
+
+			// 清空按钮点击事件 - 备用
+			clearSearchBtn.addEventListener('click', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				searchInputElement.value = '';
+				searchInputElement.focus();
+				updateClearBtnVisibility();
+				return false;
+			});
+
+			// 清空按钮悬停效果
+			clearSearchBtn.addEventListener('mouseenter', function() {
+				this.style.opacity = '1';
+			});
+
+			clearSearchBtn.addEventListener('mouseleave', function() {
+				this.style.opacity = '0.6';
+			});
+
+			// ESC键清空搜索框
+			searchInputElement.addEventListener('keydown', function(e) {
+				if (e.key === 'Escape' && searchInputElement.value.trim()) {
+					e.preventDefault();
+					searchInputElement.value = '';
+					updateClearBtnVisibility();
+				}
+			});
+		}
 	});
 
 	// 页面加载完成后的初始化
@@ -1826,6 +1896,69 @@
 				const button = window._hyplusBtnCache[buttonId];
 				if (button) {
 					button.addEventListener('click', action);
+				}
+			});
+		}
+
+		// 清空按钮逻辑 (window.onload中的初始化)
+		const clearSearchBtnOnLoad = document.getElementById('clearSearchBtn');
+		const searchInputOnLoad = document.getElementById('searchInput');
+		if (searchInputOnLoad && clearSearchBtnOnLoad) {
+			// 更新清空按钮的显示状态
+			function updateClearBtnVisibilityOnLoad() {
+				if (searchInputOnLoad.value.trim()) {
+					clearSearchBtnOnLoad.style.display = 'block';
+				} else {
+					clearSearchBtnOnLoad.style.display = 'none';
+				}
+			}
+
+			// 输入框输入事件
+			searchInputOnLoad.addEventListener('input', updateClearBtnVisibilityOnLoad);
+
+			// 输入框获得焦点时，如果有内容就显示清空按钮
+			searchInputOnLoad.addEventListener('focus', updateClearBtnVisibilityOnLoad);
+
+			// 输入框失焦时隐藏清空按钮
+			searchInputOnLoad.addEventListener('blur', function() {
+				clearSearchBtnOnLoad.style.display = 'none';
+			});
+
+			// 清空按钮点击事件 - 使用mousedown以确保捕获点击
+			clearSearchBtnOnLoad.addEventListener('mousedown', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				searchInputOnLoad.value = '';
+				searchInputOnLoad.focus();
+				updateClearBtnVisibilityOnLoad();
+				return false;
+			});
+
+			// 清空按钮点击事件 - 备用
+			clearSearchBtnOnLoad.addEventListener('click', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				searchInputOnLoad.value = '';
+				searchInputOnLoad.focus();
+				updateClearBtnVisibilityOnLoad();
+				return false;
+			});
+
+			// 清空按钮悬停效果
+			clearSearchBtnOnLoad.addEventListener('mouseenter', function() {
+				this.style.opacity = '1';
+			});
+
+			clearSearchBtnOnLoad.addEventListener('mouseleave', function() {
+				this.style.opacity = '0.6';
+			});
+
+			// ESC键清空搜索框
+			searchInputOnLoad.addEventListener('keydown', function(e) {
+				if (e.key === 'Escape' && searchInputOnLoad.value.trim()) {
+					e.preventDefault();
+					searchInputOnLoad.value = '';
+					updateClearBtnVisibilityOnLoad();
 				}
 			});
 		}
