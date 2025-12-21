@@ -1,6 +1,6 @@
 /**
  * HyplusCSS by www.hyperplasma.top (外观 > 自定义 > 额外CSS)
- * Version: 1.2
+ * Version: 1.1
  * Usage: search with "HY-"!
 */
 a:hover {
@@ -10,6 +10,7 @@ a:hover {
 a {
 	text-decoration: none;
 }
+
 
 /**
  * HY-submenu CSS 子菜单
@@ -335,6 +336,10 @@ padding-left: 3px;
 	height: 24px !important;
 }
 
+.main-navigation {
+	transition: all 0.5s ease;
+}
+
 .return-home-button {
 	display: inline-flex;
 	align-items: center;
@@ -382,10 +387,6 @@ padding-left: 3px;
 		overflow-y: auto;
 		overscroll-behavior: contain;
 	}
-
-	.main-navigation {
-		transition: all 0.5s ease;
-	}
 }
 
 .main-navigation .sub-menu::-webkit-scrollbar {
@@ -398,48 +399,32 @@ padding-left: 3px;
 }
 
 @media screen and (min-width: 769px) {
-	/* 0s transition for sub-menu in desktop-mode */
-	.main-navigation:not(.toggled) ul ul {
-		transition: opacity 0ms linear;
-	}
-
-	.dropdown-hover .main-navigation:not(.toggled) ul li:hover > ul {
-		transition-delay: 0ms;
-	}
-
 	.main-nav .sub-menu a {
 		cursor: pointer;
 	}
 
-	.dropdown-hover .main-navigation:not(.toggled) ul .far-right ul {
-		left: auto;
-		right: 0;
-	}
-
-	.dropdown-hover .main-navigation:not(.toggled) ul .open-left li:hover>ul {
-		left: auto;
-		right: 100%;
-	}
-
-	/* .main-navigation .main-nav ul .open-left ul li.menu-item-has-children > a {
-		padding-left: 0;
-		padding-right: 20px;
-	}
-
-	.main-navigation ul .open-left ul .menu-item-has-children .dropdown-menu-toggle {
-		float: left;
-		padding-left: 20px;
-		padding-right: 15px;
-	} */
-
-	.main-navigation .open-left .children .dropdown-menu-toggle:before, 
-	.main-navigation .open-left .sub-menu .dropdown-menu-toggle:before {
-		content: "\f104";
-	}
-
-	.dropdown-hover .open-left .sub-menu .dropdown-menu-toggle .gp-icon svg {
-		transform: rotate(180deg);
-	}
+    .main-nav .sub-menu,
+    .main-navigation .main-nav ul.sub-menu {
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+        position: absolute !important; /* 确保是绝对定位的下拉菜单 */
+        z-index: 9999 !important;
+    }
+    .main-nav .sub-menu::-webkit-scrollbar,
+    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar {
+        width: 8px;
+        background: #f0f0f0;
+    }
+    .main-nav .sub-menu::-webkit-scrollbar-thumb,
+    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar-thumb {
+        background: #bbb;
+        border-radius: 4px;
+    }
+    .main-nav .sub-menu::-webkit-scrollbar-track,
+    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar-track {
+        background: #fff;
+    }
 }
 
 /**
