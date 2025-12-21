@@ -20,8 +20,8 @@
 
 	<!-- 切换按钮群 -->
 	<div id="navSwitchButtons" class="nav-switch-buttons hyplus-unselectable">
-		<button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">通讯</button>
-		<button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button>
+		<!-- [隐藏] <button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">通讯</button> -->
+		<!-- [隐藏] <button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button> -->
 		<button id="navPageButton" class="switch-button active" onclick="switchNavContent('nav')">导航</button>
 		<button id="notePageButton" class="switch-button" onclick="switchNavContent('note')">检索</button>
 		<button id="settingsPageButton" class="switch-button" onclick="switchNavContent('settings')">设置</button>
@@ -35,7 +35,7 @@
 		<div id="navMessage" class="hyplus-unselectable" style="color: gray; font-style: italic; text-align: center; margin-top: 16px;">Explore your Hyplusite!</div>
 	</div>
 
-	<!-- AI内容 -->
+	<!-- [隐藏] AI内容
 	<div id="aiContent" class="nav-content" style="display: none; padding: 0 15px;">
 		<iframe id="kinaIframe" 
 				src="about:blank" 
@@ -44,6 +44,7 @@
 				referrerpolicy="origin"
 				></iframe>
 	</div>
+	[隐藏] -->
 
 	<!-- 检索页面（原“目录”页面） -->
 	<div id="noteContent" class="nav-content hyplus-unselectable" style="display: none;">
@@ -68,12 +69,13 @@
 		</div>
 	</div>
 
-	<!-- 即时通讯页面 -->
+	<!-- [隐藏] 即时通讯页面
 	<div id="chatContent" class="nav-content hyplus-unselectable" style="display: none;">
-		<?php
+		</?php
 		echo do_shortcode('[better_messages]');
-		?>
+		?/>
 	</div>
+	[隐藏] -->
 
 	<!-- 设置 -->
 	<div id="settingsContent" class="nav-content hyplus-unselectable" style="display: none;">
@@ -1290,7 +1292,8 @@
 			)) {
 				event.preventDefault();
 				const currentActive = document.querySelector('.switch-button.active');
-				const pages = ['chat', 'ai', 'nav', 'note', 'settings'];
+				// [隐藏] 原始: const pages = ['chat', 'ai', 'nav', 'note', 'settings'];
+				const pages = ['nav', 'note', 'settings'];
 				const currentIndex = pages.indexOf(currentActive.id.replace('PageButton', ''));
 				if (event.key === 'z' || event.key === 'Ω' || event.key === 'ArrowLeft') {
 					const prevIndex = (currentIndex - 1 + pages.length) % pages.length;
