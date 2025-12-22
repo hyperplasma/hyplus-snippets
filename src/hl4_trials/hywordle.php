@@ -320,7 +320,7 @@ $ajax_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 
 		<!-- Game Status -->
 		<div class="wordle-status hyplus-unselectable" id="wordleStatus" style="display: none;">
 			<div class="status-message" id="statusMessage"></div>
-			<button class="wordle-restart-btn" onclick="location.reload();">Restart</button>
+			<button class="wordle-restart-btn" onclick="if(confirm('Return to Mode Selection?')) location.reload();">Return to Menu</button>
 		</div>
 
 		<!-- Game Guide -->
