@@ -80,16 +80,41 @@ if ($is_wordle_ajax_request) {
 	// ===== 检查猜测 =====
 	if ($action === 'check_guess') {
 		$guess = isset($_POST['guess']) ? strtoupper(trim($_POST['guess'])) : '';
+		$mode = isset($_POST['mode']) ? sanitize_text_field($_POST['mode']) : 'standard';
 		
-		// 获取答案
-		if (!isset($_SESSION['hywordle_answer'])) {
-			$words = getWordleWordList();
-			if (empty($words)) {
-				$_SESSION['hywordle_answer'] = 'ABOUT';
-			} else {
-				$_SESSION['hywordle_answer'] = $words[array_rand($words)];
+		// 为AJAX请求定义所需函数
+		if (!function_exists('getDailyWordle')) {
+			function getDailyWordle() {
+				$words = getWordleWordList();
+				if (empty($words)) {
+					return 'HYPER';
+				}
+				// 使用今天的日期作为随机种子
+				$seed = (int)date('Ymd');
+				srand($seed);
+				return $words[array_rand($words)];
 			}
 		}
+		
+		if (!function_exists('getRandomWordle')) {
+			function getRandomWordle() {
+				$words = getWordleWordList();
+				if (empty($words)) {
+					return 'HYPER';
+				}
+				return $words[array_rand($words)];
+			}
+		}
+		
+		// 检查答案是否已初始化，如果没有则根据模式初始化
+		if (!isset($_SESSION['hywordle_answer'])) {
+			if ($mode === 'daily') {
+				$_SESSION['hywordle_answer'] = getDailyWordle();
+			} else {
+				$_SESSION['hywordle_answer'] = getRandomWordle();
+			}
+		}
+		
 		$answer = $_SESSION['hywordle_answer'];
 		
 		if (strlen($guess) !== 5) {
@@ -202,38 +227,87 @@ function getRandomWordle() {
 	return $words[array_rand($words)];
 }
 
+// 根据日期获取今日单词（确定性）
+function getDailyWordle() {
+	$words = getWordleWordList();
+	
+	if (empty($words)) {
+		return 'HYPER'; // 最后的备用词
+	}
+	
+	// 使用今天的日期作为随机种子
+	$seed = (int)date('Ymd'); // 例如：20251222
+	srand($seed);
+	
+	// 现在调用 array_rand 会基于固定种子生成相同的随机数
+	return $words[array_rand($words)];
+}
+
 // 初始化或获取当前游戏的答案
-function getGameAnswer() {
+function getGameAnswer($mode = 'standard') {
 	if (!isset($_SESSION['hywordle_answer'])) {
-		$_SESSION['hywordle_answer'] = getRandomWordle();
+		if ($mode === 'daily') {
+			$_SESSION['hywordle_answer'] = getDailyWordle();
+		} else {
+			$_SESSION['hywordle_answer'] = getRandomWordle();
+		}
 	}
 	return $_SESSION['hywordle_answer'];
 }
 
 // ===== 正常页面加载 =====
-// 为每次页面加载生成唯一的游戏ID，用来检测新游戏的开始
-$gameId = bin2hex(random_bytes(8));
+// 获取游戏模式（如果有GET参数，否则从session获取）
+$gameMode = isset($_GET['mode']) ? sanitize_text_field($_GET['mode']) : (isset($_SESSION['hywordle_mode']) ? $_SESSION['hywordle_mode'] : 'standard');
+
+// 为每次页面加载生成游戏ID
+// 对于Daily模式，使用日期作为ID以确保整天内固定答案
+// 对于Standard模式，使用随机ID以每次获得不同答案
+if ($gameMode === 'daily') {
+	$gameId = date('Ymd'); // 日期作为ID：20251222
+} else {
+	$gameId = bin2hex(random_bytes(8)); // 随机ID
+}
 
 // 如果是新游戏，清除旧的答案和游戏状态
 if (!isset($_SESSION['hywordle_game_id']) || $_SESSION['hywordle_game_id'] !== $gameId) {
 	$_SESSION['hywordle_game_id'] = $gameId;
+	$_SESSION['hywordle_mode'] = $gameMode;
 	unset($_SESSION['hywordle_answer']);
 	unset($_SESSION['hywordle_guesses']);
 }
 
-// 获取当前游戏答案（用于初始化前端）
-$answer = getGameAnswer();
+// 获取当前游戏答案
+$answer = isset($_SESSION['hywordle_answer']) ? $_SESSION['hywordle_answer'] : '';
 // 获取AJAX处理URL（当前页面URL）
 $ajax_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
 
 <div class="hywordle-container">
-	<div class="hywordle-game">
-		<!-- Header (currently hidden) -->
-		<!-- <div class="wordle-header">
-			<h1 class="wordle-title">Guess the word!</h1>
-		<p class="wordle-subtitle">5-letter word</p>
-		</div> -->
+	<!-- Mode Selection Screen -->
+	<div class="hywordle-mode-selection" id="wordleModeSelection">
+		<div class="mode-selection-content">
+			<h2 class="mode-selection-title">Choose Game Mode</h2>
+			<div class="mode-cards-container">
+				<button class="mode-card" id="modeStandard" onclick="selectGameMode('standard')">
+					<div class="mode-icon">🎲</div>
+					<div class="mode-name">Standard</div>
+					<div class="mode-description">Guess a random 5-letter word!</div>
+				</button>
+				<button class="mode-card" id="modeDaily" onclick="selectGameMode('daily')">
+					<div class="mode-icon">📅</div>
+					<div class="mode-name">Daily Word</div>
+					<div class="mode-description">Progress every day!</div>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="hywordle-game" id="wordleGameContainer" style="display: none;">
+		<!-- Header -->
+		<div class="wordle-header">
+			<h1 class="wordle-title" id="wordleTitle">Standard</h1>
+			<p class="wordle-subtitle" id="wordleSubtitle">Guess a random 5-letter word!</p>
+		</div>
 
 		<!-- Game Board -->
 		<div class="wordle-board">
@@ -274,6 +348,122 @@ $ajax_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 
 		max-width: 1000px;
 		margin: 20px auto;
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+	}
+
+	/* Mode Selection Styles */
+	.hywordle-mode-selection {
+		width: 100%;
+		max-width: 1000px;
+		margin: 20px auto;
+		padding: 20px;
+		background: #f9f9f9;
+		border-radius: 12px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.mode-selection-content {
+		width: 100%;
+		text-align: center;
+	}
+
+	.mode-selection-title {
+		margin: 0 0 30px 0;
+		font-size: 28px;
+		font-weight: 800;
+		color: #3b4d7a;
+		letter-spacing: 1px;
+	}
+
+	.mode-cards-container {
+		display: flex;
+		gap: 20px;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+
+	.mode-card {
+		flex: 0 1 auto;
+		width: 200px;
+		padding: 30px 20px;
+		border: 2px solid #d3d6da;
+		border-radius: 12px;
+		background: white;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		font-family: inherit;
+		outline: none;
+	}
+
+	.mode-card:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+		border-color: #1976d2;
+		background: white;
+	}
+
+	.mode-card:active {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		background: white;
+	}
+
+	.mode-icon {
+		font-size: 48px;
+		margin-bottom: 8px;
+	}
+
+	.mode-name {
+		font-size: 20px;
+		font-weight: 700;
+		color: #1a1a1a;
+		letter-spacing: 0.5px;
+	}
+
+	.mode-description {
+		font-size: 13px;
+		color: #666;
+		line-height: 1.4;
+	}
+
+	@media (max-width: 568px) {
+		.hywordle-mode-selection {
+			padding: 15px;
+		}
+
+		.mode-selection-title {
+			font-size: 22px;
+			margin-bottom: 20px;
+		}
+
+		.mode-cards-container {
+			gap: 12px;
+		}
+
+		.mode-card {
+			width: 160px;
+			padding: 20px 15px;
+			gap: 10px;
+		}
+
+		.mode-icon {
+			font-size: 36px;
+			margin-bottom: 4px;
+		}
+
+		.mode-name {
+			font-size: 16px;
+		}
+
+		.mode-description {
+			font-size: 12px;
+		}
 	}
 
 	.hywordle-game {
@@ -791,6 +981,9 @@ $ajax_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 
 	// 从PHP获取AJAX处理URL
 	const WORDLE_AJAX_URL = "<?php echo esc_attr($ajax_url); ?>";
 	
+	// 游戏模式（全局变量，由选择模式时设置）
+	let WORDLE_GAME_MODE = 'standard';
+	
 	// Game constants
 	const MAX_ATTEMPTS = 6;
 	const WORD_LENGTH = 5;
@@ -802,8 +995,35 @@ $ajax_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 
 		['Z', 'X', 'C', 'V', 'B', 'N', 'M']
 	];
 
+	// 选择游戏模式
+	function selectGameMode(mode) {
+		WORDLE_GAME_MODE = mode;
+		const modeSelectionDiv = document.getElementById('wordleModeSelection');
+		const gameContainerDiv = document.getElementById('wordleGameContainer');
+		
+		// 更新Header中的模式信息
+		const wordleTitle = document.getElementById('wordleTitle');
+		const wordleSubtitle = document.getElementById('wordleSubtitle');
+		
+		if (mode === 'daily') {
+			wordleTitle.textContent = 'Daily Word';
+			wordleSubtitle.textContent = 'Progress every day!';
+		} else {
+			wordleTitle.textContent = 'Standard';
+			wordleSubtitle.textContent = 'Guess a random 5-letter word!';
+		}
+		
+		// 隐藏模式选择，显示游戏
+		modeSelectionDiv.style.display = 'none';
+		gameContainerDiv.style.display = 'flex';
+		
+		// 初始化游戏
+		game = new WordleGame(mode);
+	}
+
 	class WordleGame {
-		constructor() {
+		constructor(mode = 'standard') {
+			this.mode = mode;
 			this.attempts = 0;
 			this.currentGuess = '';
 			this.guesses = [];
@@ -995,7 +1215,7 @@ $ajax_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded',
 					},
-					body: `hywordle_action=check_guess&guess=${encodeURIComponent(this.currentGuess)}`
+					body: `hywordle_action=check_guess&guess=${encodeURIComponent(this.currentGuess)}&mode=${encodeURIComponent(this.mode)}`
 				});
 				
 				const result = await response.json();
@@ -1072,8 +1292,35 @@ $ajax_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 
 			
 			// 添加答案展示（只有在游戏结束时才会收到答案）
 			if (answer) {
-				const wiktionaryUrl = `https://en.wiktionary.org/wiki/${encodeURIComponent(answer.toLowerCase())}`;
-				resultHTML += `<br><span style="font-size: 16px; margin-top: 12px; display: block;">ANSWER: <a href="${wiktionaryUrl}" target="_blank" style="color: #6aaa64; text-decoration: none; font-weight: bold; cursor: pointer;">${answer}</a></span>`;
+				resultHTML += `<br><span style="font-size: 16px; margin-top: 12px; display: block;">ANSWER: <span style="color: #6aaa64; font-weight: bold;">${answer}</span></span>`;
+				
+				// 词典链接
+				const dictionaries = [
+					{
+						name: 'Wiktionary',
+						url: `https://en.wiktionary.org/wiki/${encodeURIComponent(answer.toLowerCase())}`
+					},
+					{
+						name: 'Merriam-Webster',
+						url: `https://www.merriam-webster.com/dictionary/${answer.toLowerCase()}`
+					},
+					{
+						name: 'Oxford',
+						url: `https://www.oxfordlearnersdictionaries.com/definition/english/${answer.toLowerCase()}`
+					},
+					{
+						name: 'Cambridge',
+						url: `https://dictionary.cambridge.org/dictionary/english/${answer.toLowerCase()}`
+					}
+				];
+				
+				let dictLinksHTML = '<span style="font-size: 12px; margin-top: 8px; display: block;">';
+				dictLinksHTML += dictionaries.map(dict => 
+					`<a href="${dict.url}" target="_blank" style="color: #0066cc; text-decoration: underline; cursor: pointer; margin: 0 4px;">${dict.name}</a>`
+				).join(' ');
+				dictLinksHTML += '</span>';
+				
+				resultHTML += dictLinksHTML;
 			}
 			
 			messageDiv.innerHTML = resultHTML;
@@ -1098,6 +1345,10 @@ $ajax_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 
 			console.error('AJAX test failed:', e);
 		});
 		
-		game = new WordleGame();
+		// 显示模式选择界面
+		const modeSelectionDiv = document.getElementById('wordleModeSelection');
+		const gameContainerDiv = document.getElementById('wordleGameContainer');
+		modeSelectionDiv.style.display = 'flex';
+		gameContainerDiv.style.display = 'none';
 	});
 </script>
