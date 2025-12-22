@@ -4,36 +4,236 @@
 -->
 
 <?php
-// 获取随机单词
-function getRandomWordle() {
+// 启动 session
+if (session_status() === PHP_SESSION_NONE) {
+	session_start();
+}
+
+// ===== 最优先：检查AJAX请求 =====
+$is_wordle_ajax_request = (isset($_POST['hywordle_action']) || isset($_GET['hywordle_action']));
+
+if ($is_wordle_ajax_request) {
+	// 防止任何额外输出
+	error_reporting(0);
+	ini_set('display_errors', 0);
+	
+	// 清除缓冲区
+	while (ob_get_level() > 0) {
+		ob_end_clean();
+	}
+	
+	// 设置JSON响应
+	header('Content-Type: application/json; charset=utf-8');
+	header('Cache-Control: no-cache, no-store, must-revalidate');
+	
+	// 获取动作
+	$action = isset($_POST['hywordle_action']) ? $_POST['hywordle_action'] : $_GET['hywordle_action'];
+	
+	// 定义所需函数（在AJAX请求中）
+	if (!function_exists('getWordleWordList')) {
+		function getWordleWordList() {
+			static $GLOBALS_cache = null;
+			if (!empty($GLOBALS_cache)) {
+				return $GLOBALS_cache;
+			}
+			
+			$url = 'https://www.hyperplasma.top/hpsrc/valid-wordle-words.txt';
+			$words = @file($url, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			
+			if ($words === false || empty($words)) {
+				$GLOBALS_cache = array('HYPER');
+				return $GLOBALS_cache;
+			}
+			
+			$cleanWords = array();
+			foreach ($words as $word) {
+				$cleanWord = strtoupper(trim($word));
+				if (strlen($cleanWord) === 5 && !empty($cleanWord)) {
+					$cleanWords[] = $cleanWord;
+				}
+			}
+			
+			if (empty($cleanWords)) {
+				$cleanWords = array('HYPER');
+			}
+			
+			$GLOBALS_cache = $cleanWords;
+			return $cleanWords;
+		}
+	}
+	
+	// ===== 测试AJAX连接 =====
+	if ($action === 'test') {
+		echo json_encode(['status' => 'ok', 'message' => 'AJAX working']);
+		exit;
+	}
+	
+	// ===== 验证单词 =====
+	if ($action === 'validate_word') {
+		$word = isset($_POST['word']) ? strtoupper(trim($_POST['word'])) : '';
+		$wordList = getWordleWordList();
+		$valid = (strlen($word) === 5) && in_array($word, $wordList, true);
+		echo json_encode(['valid' => $valid]);
+		exit;
+	}
+	
+	// ===== 检查猜测 =====
+	if ($action === 'check_guess') {
+		$guess = isset($_POST['guess']) ? strtoupper(trim($_POST['guess'])) : '';
+		
+		// 获取答案
+		if (!isset($_SESSION['hywordle_answer'])) {
+			$words = getWordleWordList();
+			if (empty($words)) {
+				$_SESSION['hywordle_answer'] = 'ABOUT';
+			} else {
+				$_SESSION['hywordle_answer'] = $words[array_rand($words)];
+			}
+		}
+		$answer = $_SESSION['hywordle_answer'];
+		
+		if (strlen($guess) !== 5) {
+			echo json_encode(['error' => 'Invalid word length']);
+			exit;
+		}
+		
+		// 计算状态
+		$states = array_fill(0, 5, 'absent');
+		$answerLetters = str_split($answer);
+		$guessLetters = str_split($guess);
+		$usedLetters = array_fill(0, 5, false);
+		
+		// 第一遍：正确位置
+		for ($i = 0; $i < 5; $i++) {
+			if ($guessLetters[$i] === $answerLetters[$i]) {
+				$states[$i] = 'correct';
+				$usedLetters[$i] = true;
+			}
+		}
+		
+		// 第二遍：错误位置
+		for ($i = 0; $i < 5; $i++) {
+			if ($states[$i] === 'absent') {
+				for ($j = 0; $j < 5; $j++) {
+					if (!$usedLetters[$j] && $guessLetters[$i] === $answerLetters[$j]) {
+						$states[$i] = 'present';
+						$usedLetters[$j] = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		// 初始化猜测历史（如果还没有）
+		if (!isset($_SESSION['hywordle_guesses'])) {
+			$_SESSION['hywordle_guesses'] = array();
+		}
+		$_SESSION['hywordle_guesses'][] = $guess;
+		
+		// 判断游戏是否真正结束
+		$guessCount = count($_SESSION['hywordle_guesses']);
+		$isCorrect = ($guess === $answer);
+		$gameEnded = $isCorrect || ($guessCount >= 6);
+		
+		$response = [
+			'states' => $states,
+			'correct' => $isCorrect
+		];
+		
+		// 只在游戏结束时才返回答案（防止玩家通过浏览器开发者工具偷看）
+		if ($gameEnded) {
+			$response['answer'] = $answer;
+		}
+		
+		echo json_encode($response);
+		exit;
+	}
+	
+	// 未知动作
+	echo json_encode(['error' => 'Unknown action: ' . htmlspecialchars($action)]);
+	exit;
+}
+
+// 使用全局变量缓存词库（对每个请求有效）
+$GLOBALS['_hywordle_word_list'] = null;
+
+function getWordleWordList() {
+	// 尝试从全局缓存获取
+	if (!empty($GLOBALS['_hywordle_word_list'])) {
+		return $GLOBALS['_hywordle_word_list'];
+	}
+	
 	$url = 'https://www.hyperplasma.top/hpsrc/valid-wordle-words.txt';
 	$words = @file($url, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	
 	if ($words === false || empty($words)) {
-		return 'WORDLE'; // 默认备用词
+		// 如果加载失败，使用备用单词
+		$GLOBALS['_hywordle_word_list'] = array('HYPER');
+		return $GLOBALS['_hywordle_word_list'];
 	}
 	
-	$word = trim(strtoupper($words[array_rand($words)]));
-	
-	// 确保是5字母词
-	if (strlen($word) !== 5) {
-		return getRandomWordle(); // 递归直到找到5字母词
+	// 转换为大写并清理
+	$cleanWords = array();
+	foreach ($words as $word) {
+		$cleanWord = strtoupper(trim($word));
+		// 只添加5字母的单词
+		if (strlen($cleanWord) === 5 && !empty($cleanWord)) {
+			$cleanWords[] = $cleanWord;
+		}
 	}
 	
-	return $word;
+	// 如果最终没有有效单词，使用备用单词
+	if (empty($cleanWords)) {
+		$cleanWords = array('HYPER');
+	}
+	
+	$GLOBALS['_hywordle_word_list'] = $cleanWords;
+	return $cleanWords;
 }
 
-$answer = getRandomWordle();
-$answerHash = hash('sha256', $answer);
-$answerJson = json_encode($answer);
+// 获取随机单词
+function getRandomWordle() {
+	$words = getWordleWordList();
+	
+	if (empty($words)) {
+		return 'HYPER'; // 最后的备用词
+	}
+	
+	return $words[array_rand($words)];
+}
+
+// 初始化或获取当前游戏的答案
+function getGameAnswer() {
+	if (!isset($_SESSION['hywordle_answer'])) {
+		$_SESSION['hywordle_answer'] = getRandomWordle();
+	}
+	return $_SESSION['hywordle_answer'];
+}
+
+// ===== 正常页面加载 =====
+// 为每次页面加载生成唯一的游戏ID，用来检测新游戏的开始
+$gameId = bin2hex(random_bytes(8));
+
+// 如果是新游戏，清除旧的答案和游戏状态
+if (!isset($_SESSION['hywordle_game_id']) || $_SESSION['hywordle_game_id'] !== $gameId) {
+	$_SESSION['hywordle_game_id'] = $gameId;
+	unset($_SESSION['hywordle_answer']);
+	unset($_SESSION['hywordle_guesses']);
+}
+
+// 获取当前游戏答案（用于初始化前端）
+$answer = getGameAnswer();
+// 获取AJAX处理URL（当前页面URL）
+$ajax_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
 
 <div class="hywordle-container">
 	<div class="hywordle-game">
-		<div class="wordle-header">
+		<!-- Header (currently hidden) -->
+		<!-- <div class="wordle-header">
 			<h1 class="wordle-title">Guess the word!</h1>
 		<p class="wordle-subtitle">5-letter word</p>
-		</div>
+		</div> -->
 
 		<!-- Game Board -->
 		<div class="wordle-board">
@@ -588,9 +788,10 @@ $answerJson = json_encode($answer);
 </style>
 
 <script>
-	// Pass answer from PHP to JS
-	const CORRECT_ANSWER = <?php echo $answerJson; ?>;
-	const ANSWER_HASH = "<?php echo $answerHash; ?>";
+	// 从PHP获取AJAX处理URL
+	const WORDLE_AJAX_URL = "<?php echo esc_attr($ajax_url); ?>";
+	
+	// Game constants
 	const MAX_ATTEMPTS = 6;
 	const WORD_LENGTH = 5;
 
@@ -609,6 +810,7 @@ $answerJson = json_encode($answer);
 			this.gameOver = false;
 			this.won = false;
 			this.keyStates = {};
+			this.submitting = false; // 防止快速重复提交
 			this.initUI();
 			this.setupEventListeners();
 		}
@@ -682,7 +884,7 @@ $answerJson = json_encode($answer);
 		}
 
 		onKeyClick(letter) {
-			if (this.gameOver || this.currentGuess.length >= WORD_LENGTH) {
+			if (this.gameOver || this.currentGuess.length >= WORD_LENGTH || this.submitting) {
 				return;
 			}
 			this.currentGuess += letter;
@@ -690,7 +892,7 @@ $answerJson = json_encode($answer);
 		}
 
 		onBackspace() {
-			if (this.gameOver || this.currentGuess.length === 0) {
+			if (this.gameOver || this.currentGuess.length === 0 || this.submitting) {
 				return;
 			}
 			this.currentGuess = this.currentGuess.slice(0, -1);
@@ -712,75 +914,128 @@ $answerJson = json_encode($answer);
 		}
 
 		async onSubmit() {
-			if (this.gameOver) return;
+			if (this.gameOver || this.submitting) return;
 			if (this.currentGuess.length !== WORD_LENGTH) {
 				this.showMessage('Word needs 5 letters');
 				return;
 			}
 
-			// Validate word (allow any 5-letter combination for now)
+			// 设置提交标志，防止重复提交
+			this.submitting = true;
+
+			// 通过AJAX验证单词有效性
+			const isValid = await this.validateWord(this.currentGuess);
+			if (!isValid) {
+				this.showMessage('Not a valid word');
+				this.submitting = false;
+				return;
+			}
+
+			// 提交猜测并获取结果
 			this.guesses.push(this.currentGuess);
-			await this.revealGuess();
+			const result = await this.revealGuess();
 			
-			if (this.currentGuess === CORRECT_ANSWER) {
+			if (result.correct) {
 				this.won = true;
 				this.gameOver = true;
-				this.showResult(true);
+				this.showResult(true, result.answer);
 			} else if (this.attempts >= MAX_ATTEMPTS - 1) {
 				this.gameOver = true;
-				this.showResult(false);
+				this.showResult(false, result.answer);
 			} else {
 				this.attempts++;
 				this.currentGuess = '';
 				this.updateDisplay();
 			}
+			
+			// 重置提交标志
+			this.submitting = false;
+		}
+
+		// 通过AJAX验证单词有效性
+		async validateWord(word) {
+			try {
+				console.log('Sending validation request for:', word, 'to URL:', WORDLE_AJAX_URL);
+				const response = await fetch(WORDLE_AJAX_URL, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: `hywordle_action=validate_word&word=${encodeURIComponent(word)}`
+				});
+				
+				const text = await response.text();
+				console.log('Raw response text:', text);
+				
+				let data;
+				try {
+					data = JSON.parse(text);
+				} catch (e) {
+					console.error('JSON parse error:', e);
+					console.error('Response was:', text);
+					return false;
+				}
+				
+				console.log('Parsed validation response:', data);
+				return data.valid === true;
+			} catch (error) {
+				console.error('Validation fetch error:', error);
+				alert('检查浏览器控制台获取详细错误信息');
+				return false;
+			}
 		}
 
 		async revealGuess() {
-			const answer = CORRECT_ANSWER;
 			const rowIndex = this.attempts;
-			const answerLetters = answer.split('');
-			const guessLetters = this.currentGuess.split('');
-			const states = new Array(WORD_LENGTH).fill('absent');
-
-			// 第一遍：找到正确位置的字母
-			for (let i = 0; i < WORD_LENGTH; i++) {
-				if (guessLetters[i] === answerLetters[i]) {
-					states[i] = 'correct';
-					answerLetters[i] = null; // Mark as used
+			
+			try {
+				// 通过AJAX向后端提交猜测，获取字母状态
+				const response = await fetch(WORDLE_AJAX_URL, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: `hywordle_action=check_guess&guess=${encodeURIComponent(this.currentGuess)}`
+				});
+				
+				const result = await response.json();
+				
+				if (result.error) {
+					console.error('Check guess error:', result.error);
+					return { correct: false };
 				}
-			}
-
-			// Second pass: find letters in word but wrong position
-			for (let i = 0; i < WORD_LENGTH; i++) {
-				if (states[i] === 'absent') {
-					const idx = answerLetters.indexOf(guessLetters[i]);
-					if (idx !== -1) {
-						states[i] = 'present';
-						answerLetters[idx] = null; // Mark as used
+				
+				const states = result.states;
+				
+				// 更新键盘状态
+				for (let i = 0; i < WORD_LENGTH; i++) {
+					const letter = this.currentGuess[i];
+					const state = states[i];
+					const keyBtn = document.getElementById(`key-${letter}`);
+					if (keyBtn) {
+						// 只在更好的状态时更新
+						if (!this.keyStates[letter] || 
+							(state === 'correct') ||
+							(state === 'present' && this.keyStates[letter] !== 'correct')) {
+							this.keyStates[letter] = state;
+							keyBtn.classList.remove('correct', 'present', 'absent');
+							keyBtn.classList.add(state);
+						}
 					}
 				}
-			}
 
-			// Update keyboard state
-			for (let i = 0; i < WORD_LENGTH; i++) {
-				const letter = guessLetters[i];
-				const state = states[i];
-				const keyBtn = document.getElementById(`key-${letter}`);
-				if (keyBtn) {
-					// Only update if this is a better state
-					if (!this.keyStates[letter] || 
-						(state === 'correct') ||
-						(state === 'present' && this.keyStates[letter] !== 'correct')) {
-						this.keyStates[letter] = state;
-						keyBtn.classList.remove('correct', 'present', 'absent');
-						keyBtn.classList.add(state);
-					}
-				}
+				// 显示tile动画
+				await this.revealTiles(rowIndex, states);
+				
+				// 返回结果和答案（如果游戏已结束）
+				return { 
+					correct: result.correct === true,
+					answer: result.answer || null
+				};
+			} catch (error) {
+				console.error('Reveal guess error:', error);
+				return { correct: false, answer: null };
 			}
-
-			// Reveal tiles with animation
-			await this.revealTiles(rowIndex, states);
 		}
 
 		revealTiles(rowIndex, states) {
@@ -798,28 +1053,30 @@ $answerJson = json_encode($answer);
 		}
 
 		showMessage(message) {
-			// Simple implementation: show as status message without blocking game
-			const statusDiv = document.getElementById('wordleStatus');
-			const messageDiv = document.getElementById('statusMessage');
-			messageDiv.textContent = message;
-			statusDiv.style.display = 'block';
-			setTimeout(() => {
-				statusDiv.style.display = 'none';
-			}, 2000);
+			// 使用浏览器 alert 显示错误信息
+			alert(message);
 		}
 
-		async showResult(won) {
-			const answer = CORRECT_ANSWER;
+		async showResult(won, answer) {
 			const statusDiv = document.getElementById('wordleStatus');
 			const messageDiv = document.getElementById('statusMessage');
 			
+			let resultHTML = '';
 			if (won) {
 				const attempts = this.attempts + 1;
 				const message = attempts === 1 ? 'Perfect! First attempt!' : `Congratulations! You solved it in ${attempts} tries!`;
-				messageDiv.textContent = message;
+				resultHTML = message;
 			} else {
-				messageDiv.innerHTML = `Game Over!<br>Answer: <strong>${answer}</strong>`;
+				resultHTML = `Game Over! Better luck next time!`;
 			}
+			
+			// 添加答案展示（只有在游戏结束时才会收到答案）
+			if (answer) {
+				const wiktionaryUrl = `https://en.wiktionary.org/wiki/${encodeURIComponent(answer.toLowerCase())}`;
+				resultHTML += `<br><span style="font-size: 16px; margin-top: 12px; display: block;">ANSWER: <a href="${wiktionaryUrl}" target="_blank" style="color: #6aaa64; text-decoration: none; font-weight: bold; cursor: pointer;">${answer}</a></span>`;
+			}
+			
+			messageDiv.innerHTML = resultHTML;
 			statusDiv.style.display = 'block';
 		}
 	}
@@ -827,6 +1084,20 @@ $answerJson = json_encode($answer);
 	// Initialize game
 	let game;
 	document.addEventListener('DOMContentLoaded', () => {
+		console.log('HyWordle initialized');
+		console.log('AJAX URL:', WORDLE_AJAX_URL);
+		
+		// Test AJAX connectivity
+		fetch(WORDLE_AJAX_URL, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: 'hywordle_action=test'
+		}).then(r => r.text()).then(text => {
+			console.log('AJAX test response:', text);
+		}).catch(e => {
+			console.error('AJAX test failed:', e);
+		});
+		
 		game = new WordleGame();
 	});
 </script>
