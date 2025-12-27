@@ -12,6 +12,7 @@ function hyperplasma_modify_menu_items($items) {
         'https://www.hyperplasma.top/wp-admin/',
         'https://www.hyperplasma.top/wp-admin/edit.php',
         'https://www.hyperplasma.top/wp-admin/edit.php?post_type=page',
+        'https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647',
         'https://www.hyperplasma.top/wp-admin/plugins.php',
         'https://www.hyperplasma.top:27782/39933f96'
     );

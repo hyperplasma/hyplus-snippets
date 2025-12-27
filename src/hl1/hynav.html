@@ -1,11 +1,5 @@
-<!-- HyNav: Hyplus Nav Page, Ultimate Button popup addon
- Description: currently only implemented in Ultimate Button, but the CSS is shared with other components.
- Code type: HTML (no need to compress the codes)
- Shortcode: [wpcode id="11647"] (auto-generated)
--->
-
+<!-- A simple demo of HyNav -->
 <div class="hyplus-nav-container hyplus-unselectable">
-	<!-- AI大模型 -->
 	<div class="hyplus-nav-section">
 		<h3>综合大模型</h3>
 		<div class="hyplus-nav-links">
@@ -27,7 +21,6 @@
 		</div>
 	</div>
 
-	<!-- 控制台 -->
 	<div class="hyplus-nav-section">
 		<h3>控制台</h3>
 		<div class="hyplus-nav-links">
@@ -50,7 +43,6 @@
 		</div>
 	</div>
 
-	<!-- 实用工具 -->
 	<div class="hyplus-nav-section">
 		<h3>实用工具</h3>
 		<div class="hyplus-nav-links">
@@ -77,7 +69,6 @@
 		</div>
 	</div>
 
-	<!-- 信息检索 -->
 	<div class="hyplus-nav-section">
 		<h3>信息检索</h3>
 		<div class="hyplus-nav-links">
@@ -123,6 +114,7 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="hyplus-nav-section">
 		<h3>非常规搜索引擎</h3>
 		<div class="hyplus-nav-links">
@@ -139,125 +131,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.hyplus-nav-container {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 20px;
-	}
-
-	.hyplus-nav-section {
-		background: #fbfdfe;
-		border: 1px solid #b6dded;
-		border-radius: 14px;
-		padding: 15px;
-		box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
-	}
-
-	.hyplus-nav-section h3 {
-		text-align: center;
-		margin: 0 0 12px 0;
-		color: #2d3a4b;
-		font-size: 20px;
-		font-weight: 600;
-	}
-
-	.hyplus-nav-links {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		justify-content: center;
-	}
-
-	.hyplus-nav-group {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
-		margin-top: -3px;
-		margin-bottom: 4px;
-		justify-content: center;
-		width: 100%;
-		border-bottom: 1px solid rgba(30, 120, 200, 0.07);
-		padding-bottom: 9px;
-	}
-
-	.hyplus-nav-group:last-child {
-		margin-bottom: 0;
-		border-bottom: none;
-		padding-bottom: 0;
-	}
-
-	.hyplus-nav-link {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 4px 10px;
-		background: #ecf5f8;
-		color: #175082;
-		text-decoration: none;
-		border-radius: 16px;
-		font-size: 16px;
-		font-weight: 600;
-		transition:
-			background 0.18s cubic-bezier(0.4,0,0.2,1),
-			color 0.18s cubic-bezier(0.4,0,0.2,1),
-			box-shadow 0.18s cubic-bezier(0.4,0,0.2,1),
-			transform 0.18s cubic-bezier(0.4,0,0.2,1);
-		box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.17), 0 1px 2px 0 rgba(33, 118, 193, 0.09);
-		min-width: fit-content;
-		text-align: center;
-		margin: 0;
-		border: 1.5px solid #c4e0f7;
-		position: relative;
-		overflow: hidden;
-		will-change: transform, box-shadow;
-	}
-	.hyplus-nav-link:active {
-		background: #dbeaf5;
-		color: #155a99;
-		box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
-		transform: translateY(1px) scale(0.98);
-	}
-	.hyplus-nav-link:hover,
-	.hyplus-nav-link:focus {
-		background: #eaf6ff;
-		color: #155a99;
-		border-color: #8ecafc;
-		box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.20), 0 1.5px 4px 0 rgba(33, 118, 193, 0.13);
-		transform: translateY(-1px) scale(1.025);
-		text-decoration: none;
-		z-index: 2;
-	}
-
-	/* favo-color按钮主色渐变 */
-	.hyplus-nav-link.favo-color {
-		color: #fff;
-		background: linear-gradient(90deg, #43a5f5 0%, #64e0d6 100%);
-		border: 1.5px solid #43a5f5;
-		box-shadow: 0 2.5px 10px 0 rgba(67, 165, 245, 0.17), 0 1px 2px 0 rgba(67, 165, 245, 0.09);
-		border-radius: 6px;
-		padding: 4px 10px;
-	}
-
-	.hyplus-nav-link.favo-color:hover,
-	.hyplus-nav-link.favo-color:focus {
-		background: linear-gradient(90deg, #53b6ff 0%, #71f0e7 100%);
-		border-color: #2e8ad6;
-		color: #fff;
-		box-shadow: 0 4px 14px 0 rgba(67, 165, 245, 0.20), 0 1.5px 4px 0 rgba(67, 165, 245, 0.13);
-		transform: translateY(-1px) scale(1.025);
-		z-index: 2;
-		border-radius: 6px;
-		padding: 4px 10px;
-	}
-
-	@media screen and (max-width: 768px) {
-		.hyplus-nav-container {
-			grid-template-columns: 1fr;
-		}
-		.hyplus-nav-section {
-			padding: 12px;
-		}
-	}
-</style>

@@ -29,6 +29,12 @@
 
 	<!-- 导航内容 -->
 	<div id="navContent" class="nav-content">
+		<!-- HyNav: Hyplus Nav Page, Ultimate Button popup addon (Desc is moved here for easier editing in Code Snippets)
+		Description: currently only implemented in Ultimate Button, but the CSS is shared with other components.
+		Code type: HTML (no need to compress the codes)
+		Special Permissions: Direct Edit; No Header Desc; No Formatting
+		Shortcode: [wpcode id="11647"] (auto-generated)
+		-->
 		<?php
 		echo do_shortcode('[wpcode id="11647"]');
 		?>
