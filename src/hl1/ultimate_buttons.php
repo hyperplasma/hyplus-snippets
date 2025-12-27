@@ -165,7 +165,7 @@
 						<label id="languageLabel" class="language-label">
 							<!-- php
 							echo do_shortcode('[gtranslate]'); // Need GTranslate Plugin
-		-->Currently unavailable
+		-->WORK IN PROGRESS
 						</label>
 					</div>
 				</div>
@@ -183,6 +183,25 @@
 						</label>
 					</div>
 				</div>
+
+			<?php
+				if (current_user_can('administrator')) :
+			?>
+				<div class="language-selector" style="margin-top: 12px;">
+					<div class="language-selector-row">
+						<label class="language-label">编辑HyNav页面:</label>
+						<label id="languageLabel" class="language-label">
+							<button class="font-size-btn"
+								onclick="window.open('https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647', '_blank');"
+							>
+								进入后台
+							</button>
+						</label>
+					</div>
+				</div>
+			<?php
+				endif;
+			?>
 			</div>
 		</div>
 
