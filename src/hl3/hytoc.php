@@ -9,7 +9,7 @@
 // 自动在正文第一个被TOC捕获的标题前插入[toc]（仅文章页且未手动插入时）
 add_filter('the_content', 'hyplus_auto_insert_toc_before_first_toc_heading');
 function hyplus_auto_insert_toc_before_first_toc_heading($content) {
-    if (!is_singular('post')) return $content;
+    // if (!is_singular('post')) return $content;
     if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
 
     // 匹配第一个被TOC捕获的标题（以数字或大写字母序号的h1-h6，支持用点分段，如 B.1 或 C.D.3）
