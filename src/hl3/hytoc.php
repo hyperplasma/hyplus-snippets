@@ -219,16 +219,7 @@ function hyplus_render_toc_shortcode($atts) {
 
             tocContent.addEventListener('click', function(e){
                 if (e.target.tagName.toLowerCase() === 'a') {
-                    e.preventDefault();
-                    var targetId = e.target.getAttribute('href').substring(1);
-                    var targetElement = document.getElementById(targetId);
-                    if (targetElement) {
-                        // 获取目标元素距离页面顶部的绝对位置，减去 sticky header 高度
-                        var rect = targetElement.getBoundingClientRect();
-                        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                        var targetY = rect.top + scrollTop - 65;    // 减去 sticky header 高度
-                        window.scrollTo({top: targetY, behavior: "smooth"});
-                    }
+                    // 全局锚点处理函数会统一处理滚动，这里只处理 UB 模式的导航隐藏
                     if (mode === 'ub') {
                         var navContainer = document.getElementById('navContainer');
                         if (navContainer) {
@@ -344,9 +335,46 @@ function hyplus_render_toc_shortcode($atts) {
             });
         }
 
+        // 全局处理所有锚点链接点击事件，减去 sticky header 高度
+        function handleAllAnchorLinks() {
+            var HEADER_HEIGHT = 65; // Sticky header height
+            document.addEventListener('click', function(e){
+                var target = e.target.closest('a[href*="#"]');
+                if (!target) return;
+                
+                var href = target.getAttribute('href');
+                if (href === '#' || !href.includes('#')) return;
+                
+                var anchorId = href.substring(1);
+                var targetElement = document.getElementById(anchorId);
+                if (!targetElement) return;
+                
+                e.preventDefault();
+                var rect = targetElement.getBoundingClientRect();
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                var targetY = rect.top + scrollTop - HEADER_HEIGHT;
+                window.scrollTo({top: targetY, behavior: "smooth"});
+            }, true);
+            
+            // 处理页面加载时的哈希导航
+            if (window.location.hash) {
+                var targetId = window.location.hash.substring(1);
+                var targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    setTimeout(function(){
+                        var rect = targetElement.getBoundingClientRect();
+                        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        var targetY = rect.top + scrollTop - HEADER_HEIGHT;
+                        window.scrollTo({top: targetY});
+                    }, 100);
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function(){
             insertPostToc();
             initToc();
+            handleAllAnchorLinks();
         });
     })();
     </script>
