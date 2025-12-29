@@ -171,7 +171,7 @@ body {
 
 /* Mathjax / KaTeX */
 pre {
-	margin-bottom: 0.5em;
+	margin-bottom: 0.05em;
 }
 
 .footnotes ol {
