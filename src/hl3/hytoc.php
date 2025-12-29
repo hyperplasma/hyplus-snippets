@@ -337,7 +337,7 @@ function hyplus_render_toc_shortcode($atts) {
 
         // 全局处理所有锚点链接点击事件，减去 sticky header 高度
         function handleAllAnchorLinks() {
-            var HEADER_HEIGHT = 65; // Sticky header height
+            var HEADER_HEIGHT = 70; // Sticky header height with a little extra offset
             document.addEventListener('click', function(e){
                 var target = e.target.closest('a[href*="#"]');
                 if (!target) return;
@@ -383,3 +383,4 @@ function hyplus_render_toc_shortcode($atts) {
 }
 
 add_shortcode('toc', 'hyplus_render_toc_shortcode');
+?>
