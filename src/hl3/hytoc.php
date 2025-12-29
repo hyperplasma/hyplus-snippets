@@ -150,6 +150,17 @@ function hyplus_render_toc_shortcode($atts) {
             return null;
         }
 
+        // 提取节点下所有TextNode内容，忽略标签
+        function getPureText(node) {
+            var text = '';
+            node.childNodes.forEach(function(child) {
+                if (child.nodeType === Node.TEXT_NODE) {
+                    text += child.textContent;
+                }
+            });
+            return text.trim();
+        }
+
         function generateToc(container, mode, hideParent, emptyMsg) {
             var article = document.querySelector('article') || document.getElementById('main') || document.body;
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
@@ -161,7 +172,8 @@ function hyplus_render_toc_shortcode($atts) {
 
             var validHeaders = [];
             headers.forEach(function(header){
-                if (header.textContent.trim().match(pattern)) validHeaders.push(header);
+                var pureText = getPureText(header);
+                if (pureText.match(pattern)) validHeaders.push({header: header, pureText: pureText});
             });
 
             var tocSection = (mode === 'ub') ? container.closest('.toc-section') : container;
@@ -193,8 +205,9 @@ function hyplus_render_toc_shortcode($atts) {
             }
 
             var ul = document.createElement('ul');
-            validHeaders.forEach(function(header){
-                var titleText = header.textContent.trim();
+            validHeaders.forEach(function(item){
+                var header = item.header;
+                var titleText = item.pureText;
                 var baseAnchor = titleText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
                 var anchor = baseAnchor;
                 var suffix = 2;
