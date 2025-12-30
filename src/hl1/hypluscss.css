@@ -732,7 +732,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	max-width: 400px;
 	background: #fbfcfcff;
 	color: #222;
-	border: 1px solid #b6dded;
+	/* border: 1px solid #b6dded; */
 	border-radius: 14px;
 	box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
 	padding: 15px;
