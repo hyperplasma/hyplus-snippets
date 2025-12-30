@@ -30,21 +30,21 @@ add_action('wp_footer', function () {
 			// 尝试直接ID查找
 			var li = document.getElementById(fnId);
 			
-			// 如果找不到，尝试用querySelector查询
-			if (!li) {
-				li = document.querySelector('#' + fnId);
-			}
+			// // 如果找不到，尝试用querySelector查询
+			// if (!li) {
+			// 	li = document.querySelector('#' + fnId);
+			// }
 			
-			if (!li) {
-				// 最后尝试在整个文档中搜索所有li元素
-				var allLis = document.querySelectorAll('li');
-				for (var i = 0; i < allLis.length; i++) {
-					if (allLis[i].id === fnId) {
-						li = allLis[i];
-						break;
-					}
-				}
-			}
+			// if (!li) {
+			// 	// 最后尝试在整个文档中搜索所有li元素
+			// 	var allLis = document.querySelectorAll('li');
+			// 	for (var i = 0; i < allLis.length; i++) {
+			// 		if (allLis[i].id === fnId) {
+			// 			li = allLis[i];
+			// 			break;
+			// 		}
+			// 	}
+			// }
 			
 			if (!li) {
 				return null;
@@ -60,11 +60,11 @@ add_action('wp_footer', function () {
 			
 			var clone = content.cloneNode(true);
 			
-			// 移除各种可能的返回箭头类名
-			var backref = clone.querySelector('[class*="backref"], [class*="back-ref"], [rel="footnote"]');
-			if (backref) {
+			// 移除所有返回箭头链接（可能有多个）
+			var backrefs = clone.querySelectorAll('[class*="backref"], [class*="back-ref"], [rel="footnote"]');
+			backrefs.forEach(function(backref) {
 				backref.remove();
-			}
+			});
 			
 			var html = clone.innerHTML.trim();
 			contentCache[href] = html;
