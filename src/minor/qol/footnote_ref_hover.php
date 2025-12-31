@@ -1,7 +1,7 @@
 <?php
 /*
  * WordPress 脚注ref(fnref)悬浮显示脚注内容
- * 适用于 WP Githuber MD 插件生成的脚注格式
+ * 注：适用于WP Githuber MD等Markdown to HTML插件生成的脚注格式；popup样式详见HyplusCSS之HyNav相关衍生样式
  * 将此文件作为功能片段引入即可
  */
 
