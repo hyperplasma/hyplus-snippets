@@ -1,6 +1,7 @@
 <?php
 /**
  * 显示在线用户数量（Snippet中仅注册短代码，函数实现位于function.php）
+ * 注：每天早上8点重置每日访问量
  * Shortcode: [wpcode id="2514"]
  */
 wb_echo_site_count();
