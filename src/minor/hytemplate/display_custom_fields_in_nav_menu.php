@@ -29,7 +29,7 @@ function yh_display_custom_fields_wp_menu($menu_items) {
                     }
                 }
                 
-                $username = ($current_length >= 7) ? $truncated_username . '...' : $username;
+                $username = ($current_length > 7) ? $truncated_username . '...' : $username;
             }
             
             $menu_item->title = str_replace('{{username}}', $username, $menu_item->title);
