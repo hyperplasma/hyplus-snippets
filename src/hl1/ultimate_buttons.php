@@ -189,12 +189,19 @@
 			?>
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<label class="language-label">编辑HyNav页面:</label>
-						<label id="languageLabel" class="language-label">
+						<label class="language-label">编辑组件:</label>
+						<label id="edit-hynav" class="language-label">
 							<button class="font-size-btn"
 								onclick="window.open('https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647', '_blank');"
 							>
-								进入后台
+								HyNav
+							</button>
+						</label>
+						<label id="edit-nav-menu" class="language-label">
+							<button class="font-size-btn"
+								onclick="window.open('https://www.hyperplasma.top/wp-admin/nav-menus.php', '_blank');"
+							>
+								菜单
 							</button>
 						</label>
 					</div>
