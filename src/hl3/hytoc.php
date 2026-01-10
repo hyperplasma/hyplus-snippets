@@ -53,6 +53,9 @@ function hyplus_render_toc_shortcode($atts) {
         box-sizing: border-box;
         vertical-align: top;
     }
+    /* 在post模式下的特定样式
+     .hyplus-toc-container[data-toc-mode=post] in ultimate_buttons.php */
+
     /* 仅用 emoji 显示，不要背景与边框 */
     .hyplus-toc-toggle {
         position: absolute;
@@ -247,7 +250,7 @@ function hyplus_render_toc_shortcode($atts) {
         }
 
         function insertPostToc() {
-            var container = document.querySelector('.hyplus-toc-container[data-toc-mode="post"]');
+            var container = document.querySelector('.hyplus-toc-container[data-toc-mode=post]');
             if (!container) return;
             var hideParent = container.getAttribute('data-hideparent');
             var emptyMsg = container.getAttribute('data-emptymsg') || 'true';

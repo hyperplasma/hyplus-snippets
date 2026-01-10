@@ -663,9 +663,10 @@
 
     /* post模式专用样式 */
 	.hyplus-toc-container[data-toc-mode="post"] {
-		background: #fff;
-		border: 1.5px solid #b6dded;
-		border-radius: 12px;
+		background: #fbfdfe;
+		border: 1px solid #b6dded;
+		border-radius: 14px;
+		box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
 		padding: 16px 22px 12px 22px;
 		display: inline-block;
 		max-width: 100%;
