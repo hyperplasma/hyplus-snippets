@@ -12,7 +12,7 @@ function hyplus_sideinfo_shortcode() {
 <div class="hyplus-sideinfo">
     <!-- 切换按钮 -->
     <div style="text-align: center;">
-        <button class="sideinfo-toggle hyplus-nav-link hyplus-unselectable" onclick="toggleSideinfo(this)">分类</button>
+        <button class="sideinfo-toggle hyplus-nav-link hyplus-unselectable" onclick="toggleSideinfo(this)" hidden aria-label="切换分类和目录">分类</button>
     </div>
     
     <!-- 分类内容 -->
@@ -64,15 +64,15 @@ function hyplus_sideinfo_shortcode() {
     color: #999 !important;
     border-color: #ddd !important;
     box-shadow: none !important;
-    cursor: default !important;
+    cursor: not-allowed !important;
     transform: none !important;
     pointer-events: none;
     margin-bottom: 12px;
     user-select: none;
 }
 
-.sideinfo-toggle.hyplus-nav-link:hover,
-.sideinfo-toggle.hyplus-nav-link:focus {
+.sideinfo-toggle:not(.disabled):hover,
+.sideinfo-toggle:not(.disabled):focus-visible {
     background: #eaf6ff;
     color: #155a99;
     border-color: #8ecafc;
@@ -81,7 +81,7 @@ function hyplus_sideinfo_shortcode() {
     z-index: 2;
 }
 
-.sideinfo-toggle.hyplus-nav-link:active {
+.sideinfo-toggle:not(.disabled):active {
     background: #dbeaf5;
     color: #155a99;
     box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
@@ -99,44 +99,13 @@ function hyplus_sideinfo_shortcode() {
 </style>
 
 <script>
-// Cookie操作函数
-function setCookie(name, value, days) {
-    let expires = "";
-    if (days) {
-        const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/";
-}
-
-function removeCookie(name) {
-    document.cookie = name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-}
-
-// 保存显示状态到cookie（仅在用户主动切换时调用）
-function saveDisplayState(state) {
-    setCookie('hyplus_sideinfo_state', state, 30); // 保存30天
-}
-
-function getCookie(name) {
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-}
-
 // 检查目录是否可用
 function checkTocAvailable() {
     const toc = document.querySelector('.sideinfo-toc .toc-wrapper');
     return toc && toc.querySelector('ul') !== null;
 }
 
-// 页面加载时恢复状态
+// 页面加载时初始化状态
 document.addEventListener('DOMContentLoaded', function() {
     const sideinfoContainer = document.querySelector('.hyplus-sideinfo');
     if (!sideinfoContainer) return;
@@ -148,34 +117,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // 检查目录是否可用
     const isTocAvailable = checkTocAvailable();
     
-    if (!isTocAvailable) {
-        // 如果目录不可用，强制显示分类，禁用按钮
-        // 但不改变 cookie 中存储的状态！
-        cat.style.display = 'block';
-        toc.style.display = 'none';
-        btn.textContent = '分类';
-        btn.classList.add('disabled');
-        btn.disabled = true;
-        // 不删除 cookie，这样切回有目录的页面时才能恢复之前的状态
-        return;
-    }
-
-    // 目录可用时，恢复正常状态
-    const savedState = getCookie('hyplus_sideinfo_state');
-    btn.classList.remove('disabled');
-    btn.disabled = false;
-    
-    if (savedState === 'toc') {
+    if (isTocAvailable) {
+        // 目录可用，优先显示目录
         cat.style.display = 'none';
         toc.style.display = 'block';
         btn.textContent = '目录';
         btn.dataset.state = 'toc';
+        btn.classList.remove('disabled');
+        btn.disabled = false;
+        btn.setAttribute('aria-disabled', 'false');
     } else {
+        // 目录不可用，显示分类并禁用按钮
         cat.style.display = 'block';
         toc.style.display = 'none';
         btn.textContent = '分类';
         btn.dataset.state = 'cat';
+        btn.classList.add('disabled');
+        btn.disabled = true;
+        btn.setAttribute('aria-disabled', 'true');
     }
+    
+    // 初始化完成，显示按钮
+    btn.removeAttribute('hidden');
 });
 
 function toggleSideinfo(btn) {
@@ -185,32 +148,18 @@ function toggleSideinfo(btn) {
     const cat = parent.querySelector('.sideinfo-cat');
     const toc = parent.querySelector('.sideinfo-toc');
     
-    // 检查目录是否可用
-    if (!checkTocAvailable()) {
-        // 如果目录不可用，强制显示分类并禁用按钮，但不改变存储的状态
-        cat.style.display = 'block';
-        toc.style.display = 'none';
-        btn.textContent = '分类';
-        btn.classList.add('disabled');
-        btn.disabled = true;
-        btn.dataset.state = 'cat';
-        return;
-    }
-    
     if (btn.dataset.state === 'cat') {
         // 切换到目录
         cat.style.display = 'none';
         toc.style.display = 'block';
         btn.textContent = '目录';
         btn.dataset.state = 'toc';
-        saveDisplayState('toc'); // 用户主动切换，保存状态
     } else {
         // 切换到分类
         cat.style.display = 'block';
         toc.style.display = 'none';
         btn.textContent = '分类';
         btn.dataset.state = 'cat';
-        saveDisplayState('cat'); // 用户主动切换，保存状态
     }
 }
 </script>
