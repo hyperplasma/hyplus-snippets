@@ -5,27 +5,39 @@
  * 包括文章内容和导航菜单中的链接
  */
 
-// 定义网站域名常量（用于全局替换）
-if (!defined('HYPERPLASMA_SITE_DOMAIN')) {
-    define('HYPERPLASMA_SITE_DOMAIN', 'https://www.hyperplasma.top');
+// 定义需要在新标签页打开的特定链接路径（相对于网站根目录）
+if (!defined('HYPERPLASMA_SPECIAL_LINK_PATHS')) {
+    define('HYPERPLASMA_SPECIAL_LINK_PATHS', serialize(array(
+        '/wp-admin/',
+        '/wp-admin/edit.php',
+        '/wp-admin/edit.php?post_type=page',
+        '/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647',
+        '/wp-admin/plugins.php',
+        ':27782/39933f96'
+    )));
 }
 
-// 定义需要在新标签页打开的特定链接（外部链接和特定内部链接）
-if (!defined('HYPERPLASMA_SPECIAL_LINKS')) {
-    define('HYPERPLASMA_SPECIAL_LINKS', serialize(array(
-        HYPERPLASMA_SITE_DOMAIN . '/wp-admin/',
-        HYPERPLASMA_SITE_DOMAIN . '/wp-admin/edit.php',
-        HYPERPLASMA_SITE_DOMAIN . '/wp-admin/edit.php?post_type=page',
-        HYPERPLASMA_SITE_DOMAIN . '/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647',
-        HYPERPLASMA_SITE_DOMAIN . '/wp-admin/plugins.php',
-        HYPERPLASMA_SITE_DOMAIN . ':27782/39933f96'
-    )));
+// 获取特定需要在新标签页打开的完整链接数组
+function hyperplasma_get_special_internal_links() {
+    $site_domain = site_url();
+    $special_link_paths = unserialize(HYPERPLASMA_SPECIAL_LINK_PATHS);
+    
+    $special_internal_links = array();
+    foreach ($special_link_paths as $path) {
+        $special_internal_links[] = $site_domain . $path;
+    }
+    
+    return array(
+        'site_domain' => $site_domain,
+        'links' => $special_internal_links
+    );
 }
 
 // 处理导航菜单项的函数
 function hyperplasma_modify_menu_items($items) {
-    $site_domain = HYPERPLASMA_SITE_DOMAIN;
-    $special_internal_links = unserialize(HYPERPLASMA_SPECIAL_LINKS);
+    $data = hyperplasma_get_special_internal_links();
+    $site_domain = $data['site_domain'];
+    $special_internal_links = $data['links'];
 
     foreach ($items as $item) {
         if (!empty($item->url)) {
@@ -55,16 +67,15 @@ function hyperplasma_modify_content_links($content) {
         return $content;
     }
 
-    $site_domain = HYPERPLASMA_SITE_DOMAIN;
-    $special_internal_links = unserialize(HYPERPLASMA_SPECIAL_LINKS);
+    $data = hyperplasma_get_special_internal_links();
+    $site_domain = $data['site_domain'];
+    $special_internal_links = $data['links'];
 
     // 使用正则表达式处理链接
     $pattern = '/<a([^>]*?)href=[\'"]([^\'"]+)[\'"]([^>]*?)>/i';
     return preg_replace_callback($pattern, function($matches) use ($site_domain, $special_internal_links) {
         $full_match = $matches[0];
-        $attr_before = $matches[1];
         $url = $matches[2];
-        $attr_after = $matches[3];
 
         // 检查是否是外部链接或特定的内部链接
         if (
