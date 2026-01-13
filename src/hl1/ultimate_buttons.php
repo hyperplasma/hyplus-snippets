@@ -1804,7 +1804,7 @@
 				// 检查复选框是否选中
 				const addPrompt = addPromptCheckbox && addPromptCheckbox.checked;
 				if (addPrompt) {
-					const before = '请你认真阅读学习以下内容（其中第1行和第3行是元信息，第2行是标题，之后为正文；最后几行可能有分类/tag信息、网友评论等额外内容），准备据此回答问题：\n```````````````````````````\n';
+					const before = '请你认真阅读学习以下内容（其中第1行和第3行是元信息，第2行是标题，之后为正文；最后几行可能有若干注解(以返回符`↩`结尾)、分类/tag信息、评论栏、网友评论等额外内容），准备据此回答问题：\n```````````````````````````\n';
 					const after = '\n```````````````````````````\n';
 					content = before + content + after;
 				}
