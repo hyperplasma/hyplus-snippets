@@ -170,21 +170,23 @@
 					</div>
 				</div>
 
+			<?php
+				if (is_single()) :
+			?>
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<span class="language-label">复制本页面正文:</span>
+						<span class="language-label">复制本文内容:</span>
 						<button id="copyContentBtn" class="font-size-btn">复制</button>
-						<span id="copySuccessTip" style="color: #4CAF50; display: none;">✔︎</span>
 					</div>
 					<div class="language-selector-row">
 						<input type="checkbox" id="addPromptCheckbox" />
 						<label for="addPromptCheckbox">
-							<span class="language-label">附加提问提示词（适用于<a href="https://kina.hyperplasma.top" target="_blank">KINA</a>）</span>
+							<span class="language-label">附加问答提示词（适用于<a href="https://kina.hyperplasma.top" target="_blank">KINA</a>）</span>
 						</label>
 					</div>
 				</div>
-
 			<?php
+				endif;
 				if (current_user_can('administrator')) :
 			?>
 				<div class="language-selector" style="margin-top: 12px;">
@@ -1802,20 +1804,15 @@
 				// 检查复选框是否选中
 				const addPrompt = addPromptCheckbox && addPromptCheckbox.checked;
 				if (addPrompt) {
-					const before = '请你认真阅读学习以下内容，然后回答问题：\n```````````````````````````\n';
+					const before = '请你认真阅读学习以下内容（其中第1行和第3行是元信息，第2行是标题，之后为正文；最后几行可能有分类/tag信息、网友评论等额外内容），准备据此回答问题：\n```````````````````````````\n';
 					const after = '\n```````````````````````````\n';
 					content = before + content + after;
 				}
 				if (navigator.clipboard) {
 					navigator.clipboard.writeText(content).then(function() {
-						if (!window._hyplusCopyTipCache) {
-							window._hyplusCopyTipCache = document.getElementById('copySuccessTip');
-						}
-						const tip = window._hyplusCopyTipCache;
-						if (tip) {
-							tip.style.display = 'inline';
-							setTimeout(() => { tip.style.display = 'none'; }, 1500);
-						}
+						alert('✓ 页面正文已复制到剪贴板');
+					}).catch(function() {
+						alert('✗ 复制失败，请重试');
 					});
 				}
 			});
