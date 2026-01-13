@@ -1244,9 +1244,10 @@
 				checkAndLoadTool();
 			}
 			if (page === 'note') {
-				const searchInput = document.getElementById('searchInput');
-				if (searchInput) {
-					setTimeout(() => searchInput.focus(), 0);
+				// 仅在非移动端（min-width: 769px）下将光标定位到搜索栏
+				if (window.matchMedia('(min-width: 769px)').matches) {
+					const searchInput = window._hyplusSearchCache?.searchInput || document.getElementById('searchInput');
+					searchInput?.focus();
 				}
 			}
 		}
