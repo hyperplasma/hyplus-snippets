@@ -41,6 +41,9 @@ function hyplus_render_toc_shortcode($atts) {
         <?php endif; ?>
         <div class="hyplus-toc-content"></div>
     </div>
+    <?php if ($mode === 'post'): ?>
+        <br>
+    <?php endif; ?>
     <style>
     .hyplus-toc-header { position: relative; display: block; text-align: center; padding-right: 44px; }
     .hyplus-toc-header::after { content: ""; display: inline-block; width: 44px; height: 1px; vertical-align: middle; }
