@@ -357,7 +357,7 @@ function hyplus_output_toc_scripts() {
             
             function updateActive() {
                 var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                var scrollOffset = scrollTop + HEADER_HEIGHT + 15;
+                var scrollOffset = scrollTop + HEADER_HEIGHT + 25;  // 多加若干px作为缓冲
                 var nextActiveLink = null;
                 var minDistance = Infinity;
                 
