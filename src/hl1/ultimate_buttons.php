@@ -120,11 +120,11 @@
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="config-item">
 						<input type="checkbox" id="headerFooterToggle" />
-						<label for="headerFooterToggle">隐藏页眉页脚&nbsp;<span class="shortcut-key">⌥⇧H</span></label>
+						<label for="headerFooterToggle">隐藏页眉页脚</label>
 					</div>
 					<div class="config-item">
 						<input type="checkbox" id="hideButtonsToggle" />
-						<label for="hideButtonsToggle">临时隐藏HyButton按钮群&nbsp;<span class="shortcut-key">⌥⇧Y</span></label>
+						<label for="hideButtonsToggle">临时隐藏HyButton按钮群</label>
 					</div>
 
 				</div>
