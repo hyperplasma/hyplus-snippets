@@ -99,7 +99,11 @@ function hyplus_output_toc_scripts() {
         transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease !important;
     }
     .hyplus-toc-content ul, .hyplus-toc-content ol { margin: 0; }
-    /* 当按钮处于“显示”（即当前折叠）状态时，折叠内容 */
+    /* 当前位置的目录项高亮为粗体 */
+    .hyplus-toc-content a.hyplus-toc-active {
+        font-weight: bold;
+    }
+    /* 当按钮处于"显示"（即当前折叠）状态时，折叠内容 */
     .hyplus-toc-container:has(.hyplus-toc-toggle[aria-label="显示"]) .hyplus-toc-content {
         max-height: 0 !important;
         opacity: 0 !important;
@@ -328,15 +332,74 @@ function hyplus_output_toc_scripts() {
             });
         }
 
-        function initToc() {
-            var containers = document.querySelectorAll('.hyplus-toc-container');
-            containers.forEach(function(container){
-                var mode = container.getAttribute('data-toc-mode');
-                var hideParent = container.getAttribute('data-hideparent');
-                var emptyMsg = container.getAttribute('data-emptymsg') || 'true';
-                if (mode === 'post') return;
-                generateToc(container, mode, hideParent, emptyMsg);
+        // 更新当前活跃的导航项（高亮为粗体）
+        function updateActiveNavItem(container) {
+            var HEADER_HEIGHT = 70;
+            var links = container.querySelectorAll('.hyplus-toc-content a');
+            
+            // 缓存：初始化时建立链接和目标元素的映射，避免重复 DOM 查询
+            var linkElementMap = [];
+            links.forEach(function(link){
+                var href = link.getAttribute('href');
+                var anchorId = href.substring(1);
+                var targetElement = document.getElementById(anchorId);
+                if (targetElement) {
+                    linkElementMap.push({
+                        link: link,
+                        element: targetElement
+                    });
+                }
             });
+            
+            if (linkElementMap.length === 0) return; // 没有有效的链接，无需监听
+            
+            var currentActiveLink = null;
+            
+            function updateActive() {
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                var scrollOffset = scrollTop + HEADER_HEIGHT + 15;
+                var nextActiveLink = null;
+                var minDistance = Infinity;
+                
+                // 单次遍历：找到最接近顶部的链接
+                linkElementMap.forEach(function(item){
+                    var rect = item.element.getBoundingClientRect();
+                    var headerTop = rect.top + scrollTop;
+                    var distance = Math.abs(headerTop - scrollOffset);
+                    
+                    if (headerTop <= scrollOffset && distance < minDistance) {
+                        nextActiveLink = item.link;
+                        minDistance = distance;
+                    }
+                });
+                
+                // 只在活跃链接真的改变时才更新 DOM，避免不必要的重排
+                if (nextActiveLink !== currentActiveLink) {
+                    if (currentActiveLink) {
+                        currentActiveLink.classList.remove('hyplus-toc-active');
+                    }
+                    if (nextActiveLink) {
+                        nextActiveLink.classList.add('hyplus-toc-active');
+                    }
+                    currentActiveLink = nextActiveLink;
+                }
+            }
+            
+            // 使用节流防止频繁更新
+            var scrollTimeout;
+            function throttledUpdate() {
+                if (scrollTimeout) return;
+                scrollTimeout = setTimeout(function(){
+                    updateActive();
+                    scrollTimeout = null;
+                }, 300);
+            }
+            
+            // 初始更新
+            updateActive();
+            
+            // 监听滚动事件
+            window.addEventListener('scroll', throttledUpdate, false);
         }
 
         // 全局处理所有锚点链接点击事件，减去 sticky header 高度
@@ -373,6 +436,22 @@ function hyplus_output_toc_scripts() {
                     }, 100);
                 }
             }
+        }
+
+        function initToc() {
+            var containers = document.querySelectorAll('.hyplus-toc-container');
+            containers.forEach(function(container){
+                var mode = container.getAttribute('data-toc-mode');
+                var hideParent = container.getAttribute('data-hideparent');
+                var emptyMsg = container.getAttribute('data-emptymsg') || 'true';
+                if (mode === 'post') return;
+                generateToc(container, mode, hideParent, emptyMsg);
+                
+                // 仅在 ub 和 widget 模式下启用活跃导航项高亮
+                if (mode === 'ub' || mode === 'widget') {
+                    updateActiveNavItem(container);
+                }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function(){
