@@ -1050,6 +1050,25 @@
 		}
 	}
 
+	// 设置导航框最大化样式
+	function setNavMaximizedStyle(nav, maximizeButton, isMaximized) {
+		if (isMaximized) {
+			nav.classList.add('maximized');
+			maximizeButton.classList.add('maximized');
+			nav.style.width = '100%';
+			nav.style.height = '100%';
+			nav.style.maxWidth = 'none';
+			nav.style.borderRadius = '0';
+		} else {
+			nav.classList.remove('maximized');
+			maximizeButton.classList.remove('maximized');
+			nav.style.width = '85%';
+			nav.style.height = '85%';
+			nav.style.maxWidth = '850px';
+			nav.style.borderRadius = '12px';
+		}
+	}
+
 	function toggleMaximize(event) {
 		event.stopPropagation();
 		const navContainer = document.getElementById('navContainer');
@@ -1064,22 +1083,7 @@
 		const maximizeButton = window._hyplusNavBtnCache.maximizeButton;
 		isNavMaximized = !isNavMaximized;
 		localStorage.setItem('isNavMaximized', isNavMaximized);
-
-		if (!isNavMaximized) {
-			navContainer.classList.remove('maximized');
-			maximizeButton.classList.remove('maximized');
-			navContainer.style.width = '85%';
-			navContainer.style.height = '85%';
-			navContainer.style.maxWidth = '850px';
-			navContainer.style.borderRadius = '12px';
-		} else {
-			navContainer.classList.add('maximized');
-			maximizeButton.classList.add('maximized');
-			navContainer.style.width = '100%';
-			navContainer.style.height = '100%';
-			navContainer.style.maxWidth = 'none';
-			navContainer.style.borderRadius = '0';
-		}
+		setNavMaximizedStyle(navContainer, maximizeButton, isNavMaximized);
 	}
 
 	function navOnClickFunc() {
@@ -1097,20 +1101,10 @@
 			if (window.innerWidth <= 568) {
 				isNavMaximized = true;
 				localStorage.setItem('isNavMaximized', true);
-				nav.classList.add('maximized');
-				document.getElementById('maximizeButton').classList.add('maximized');
-				nav.style.width = '100%';
-				nav.style.height = '100%';
-				nav.style.maxWidth = 'none';
-				nav.style.borderRadius = '0';
+				setNavMaximizedStyle(nav, maximizeButton, true);
 				maximizeButton.style.display = 'none';
 			} else if (isNavMaximized) {
-				nav.classList.add('maximized');
-				document.getElementById('maximizeButton').classList.add('maximized');
-				nav.style.width = '100%';
-				nav.style.height = '100%';
-				nav.style.maxWidth = 'none';
-				nav.style.borderRadius = '0';
+				setNavMaximizedStyle(nav, maximizeButton, true);
 			}
 
 			// 如果在工具页面，检查并加载相应工具
@@ -1134,30 +1128,33 @@
 
 
 
-	// 侧边栏控制
-	function showSidebar() {
+	// 侧边栏控制（通用函数）
+	function setSidebarDisplay(isVisible) {
 		const sidebar = document.querySelector('.sidebar');
 		const mainContent = document.querySelector('.site-main');
 		const contentArea = document.querySelector('.content-area');
-		if (sidebar) {
+		if (!sidebar) return;
+
+		if (isVisible) {
 			sidebar.style.display = 'block';
 			sidebar.style.marginLeft = '13px';
 			contentArea.style.width = '70%';
 			mainContent.style.paddingRight = '0';
 			mainContent.style.width = 'calc(100% + 8px)';
-		}
-	}
-
-	function hideSidebar() {
-		const sidebar = document.querySelector('.sidebar');
-		const mainContent = document.querySelector('.site-main');
-		const contentArea = document.querySelector('.content-area');
-		if (sidebar) {
+		} else {
 			sidebar.style.display = 'none';
 			mainContent.style.paddingRight = '0px';
 			contentArea.style.width = 'calc(100%)';
 			mainContent.style.width = 'calc(100%)';
 		}
+	}
+
+	function showSidebar() {
+		setSidebarDisplay(true);
+	}
+
+	function hideSidebar() {
+		setSidebarDisplay(false);
 	}
 
 
@@ -1204,20 +1201,26 @@
 
 	// 页面切换
 	function switchNavContent(page) {
-		const contents = {
-			nav: document.getElementById('navContent'),
-			chat: document.getElementById('chatContent'),
-			ai: document.getElementById('aiContent'),
-			settings: document.getElementById('settingsContent'),
-			note: document.getElementById('noteContent')
-		};
-		const buttons = {
-			nav: document.getElementById('navPageButton'),
-			chat: document.getElementById('chatPageButton'),
-			ai: document.getElementById('aiPageButton'),
-			settings: document.getElementById('settingsPageButton'),
-			note: document.getElementById('notePageButton')
-		};
+		// 缓存 contents 和 buttons 对象
+		if (!window._navContentCache) {
+			window._navContentCache = {
+				contents: {
+					nav: document.getElementById('navContent'),
+					chat: document.getElementById('chatContent'),
+					ai: document.getElementById('aiContent'),
+					settings: document.getElementById('settingsContent'),
+					note: document.getElementById('noteContent')
+				},
+				buttons: {
+					nav: document.getElementById('navPageButton'),
+					chat: document.getElementById('chatPageButton'),
+					ai: document.getElementById('aiPageButton'),
+					settings: document.getElementById('settingsPageButton'),
+					note: document.getElementById('notePageButton')
+				}
+			};
+		}
+		const { contents, buttons } = window._navContentCache;
 
 		Object.values(contents).forEach(content => { 
 			if (content) content.style.display = 'none';
@@ -1250,19 +1253,15 @@
 		localStorage.setItem('lastVisitedNavPage', page);
 	}
 
-	function toggleSidebarPosition(isLeft) {
-		if (isLeft) {
-			document.body.classList.add('sidebar-left');
-		} else {
-			document.body.classList.remove('sidebar-left');
-		}
-	}
-
 	// 通用位置设置函数
 	function setUIPosition(type, position) {
 		const isLeft = position === 'left';
 		if (type === 'sidebar') {
-			toggleSidebarPosition(isLeft);
+			if (isLeft) {
+				document.body.classList.add('sidebar-left');
+			} else {
+				document.body.classList.remove('sidebar-left');
+			}
 			localStorage.setItem('sidebarPosition', position);
 		} else if (type === 'navButtons') {
 			if (isLeft) {
@@ -1342,80 +1341,65 @@
 			}
 		}
 
-		// 字体大小控制 (Alt + key) - only when Shift is NOT pressed to leave Alt+Shift combos for other handlers
+		// 字体大小控制 (Alt + key) - 使用对象映射替代 switch
 		if (event.altKey && !event.shiftKey) {
-			switch (event.key) {
-				case '-':
-				case '_':
-				case '–':
-					event.preventDefault();
-					event.stopPropagation();
-					document.getElementById('decreaseFontBtn')?.click();
-					break;
-					case '=':
-					case '+':
-					case '≠':
-					event.preventDefault();
-					event.stopPropagation();
-					document.getElementById('increaseFontBtn')?.click();
-					break;
-					case '0':
-					case 'º':
-					event.preventDefault();
-					event.stopPropagation();
-					document.getElementById('resetFontBtn')?.click();
-					break;
+			const fontKeyMap = {
+				'-': 'decreaseFontBtn',
+				'_': 'decreaseFontBtn',
+				'–': 'decreaseFontBtn',
+				'=': 'increaseFontBtn',
+				'+': 'increaseFontBtn',
+				'≠': 'increaseFontBtn',
+				'0': 'resetFontBtn',
+				'º': 'resetFontBtn'
+			};
+
+			if (fontKeyMap[event.key]) {
+				event.preventDefault();
+				event.stopPropagation();
+				document.getElementById(fontKeyMap[event.key])?.click();
 			}
-			}
+		}
 
-					// Alt+Shift 组合键（轮询侧边栏位置和切换页眉页脚）
-					if (event.altKey && event.shiftKey) {
-						// normalize key to lower-case letter when applicable
-						const k = (event.key || '').toString();
-						const keyLower = k.length === 1 ? k.toLowerCase() : k;
+		// Alt+Shift 组合键（轮询侧边栏位置和切换页眉页脚）
+		if (event.altKey && event.shiftKey) {
+			const keyLower = (event.key || '').toLowerCase();
 
-						switch (keyLower) {
-							case 's':
-								// 在移动端不切换
-								if (window.innerWidth <= 768) {
-									event.preventDefault();
-									event.stopPropagation();
-									return;
-								}
-								event.preventDefault();
-								event.stopPropagation();
-								const order = ['right', 'left', 'hide'];
-								let current = 'right';
-								if (document.getElementById('sidebarLeftRadio').checked) {
-									current = 'left';
-								} else if (document.getElementById('sidebarHideRadio').checked) {
-									current = 'hide';
-								}
-								const nextIndex = (order.indexOf(current) + 1) % order.length;
-								setSidebarPosition(order[nextIndex]);
-								break;
-
-							case 'h':
-								event.preventDefault();
-								event.stopPropagation();
-								const headerFooterToggle = document.getElementById('headerFooterToggle');
-								if (headerFooterToggle) {
-									headerFooterToggle.checked = !headerFooterToggle.checked;
-									handleHeaderFooterToggle({ target: headerFooterToggle });
-								}
-								break;
-
-							case 'y':
-								event.preventDefault();
-								event.stopPropagation();
-								const hideButtonsToggle = document.getElementById('hideButtonsToggle');
-								if (hideButtonsToggle) {
-									hideButtonsToggle.checked = !hideButtonsToggle.checked;
-									handleHideButtonsToggle({ target: hideButtonsToggle });
-								}
-								break;
-						}
+			// Alt+Shift 快捷键映射
+			const altShiftKeyMap = {
+				's': () => {
+					// 在移动端不切换
+					if (window.innerWidth <= 768) return;
+					const order = ['right', 'left', 'hide'];
+					let current = 'right';
+					if (document.getElementById('sidebarLeftRadio').checked) {
+						current = 'left';
 					}
+					const nextIndex = (order.indexOf(current) + 1) % order.length;
+					setSidebarPosition(order[nextIndex]);
+				},
+				'h': () => {
+					const headerFooterToggle = document.getElementById('headerFooterToggle');
+					if (headerFooterToggle) {
+						headerFooterToggle.checked = !headerFooterToggle.checked;
+						handleHeaderFooterToggle({ target: headerFooterToggle });
+					}
+				},
+				'y': () => {
+					const hideButtonsToggle = document.getElementById('hideButtonsToggle');
+					if (hideButtonsToggle) {
+						hideButtonsToggle.checked = !hideButtonsToggle.checked;
+						handleHideButtonsToggle({ target: hideButtonsToggle });
+					}
+				}
+			};
+
+			if (altShiftKeyMap[keyLower]) {
+				event.preventDefault();
+				event.stopPropagation();
+				altShiftKeyMap[keyLower]();
+			}
+		}
 	});
 
 	/**
@@ -1873,10 +1857,10 @@
 					setSidebarRadioGroupEnabled(true);
 					if (sidebarSetting === 'left') {
 						showSidebar();
-						toggleSidebarPosition(true);
+						setUIPosition('sidebar', 'left');
 					} else {
 						showSidebar();
-						toggleSidebarPosition(false);
+						setUIPosition('sidebar', 'right');
 					}
 				}
 
