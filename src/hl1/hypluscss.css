@@ -12,9 +12,9 @@ a {
 }
 
 /* Bold Text 加粗文本 */
-b, strong {
+/* b, strong {
 	font-weight: 900;
-}
+} */
 
 /**
  * HY-submenu CSS 子菜单
