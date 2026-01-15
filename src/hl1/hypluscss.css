@@ -35,7 +35,7 @@ b, strong {
 /* 确保 sidebar 是 sticky 的 */
 .sidebar {
 	position: sticky;
-	top: 0;
+	top: 58px;	/* offset */
 	height: 100vh;
 	overflow-y: auto;
 }
@@ -188,6 +188,10 @@ pre {
 	user-select: none;
 }
 
+#nav-below {
+	display: none;
+}
+
 .hyplus-button-shadowier, .hyplus-button, .search-submit, .submit, .button, .post-password-form > p > input {
 	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 	border-radius: 6px;
@@ -326,9 +330,9 @@ padding-left: 3px;
 	}
 }
 
-.wp-classic-calender {
+/* .wp-classic-calender {
 	text-align: center;
-}
+} */
 
 /* custom widget styles */
 .hy-widget-pad {
