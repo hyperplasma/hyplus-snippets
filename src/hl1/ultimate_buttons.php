@@ -929,39 +929,24 @@
 
 <script>
 	// 全局变量声明
-	let chatBtn = null;
-	let chatContent = null;
-	let navContainer = null;
 	let isNavMaximized = localStorage.getItem('isNavMaximized') === 'true';
 	let defaultBodyFont = window.getComputedStyle(document.body).fontFamily;
 
+	// 字体配置映射
+	const FONT_FAMILIES = {
+		default: { family: () => defaultBodyFont, weight: '400' },
+		times: { family: "'Times New Roman', Times, serif", weight: '500' },
+		bilibili: { family: "'HarmonyOS Sans', 'HarmonyOS Sans SC', 'Source Han Sans CN', sans-serif", weight: '400' },
+		monaco: { family: "Monaco, Consolas, 'Courier New', monospace", weight: '400' },
+		cursive: { family: "'Ma Shan Zheng', 'Xingkai SC', 'Kaiti SC', 'STKaiti', 'Segoe Script', 'Bradley Hand', cursive, sans-serif", weight: '400' }
+	};
+
 	// 字体控制函数
 	function setFontFamily(font) {
-		switch (font) {
-			case 'default':
-				document.body.style.fontFamily = defaultBodyFont;
-				document.body.style.fontWeight = "400";
-				break;
-			case 'times':
-				document.body.style.fontFamily = "'Times New Roman', Times, serif";
-				document.body.style.fontWeight = "500";
-				break;
-			case 'bilibili':
-				document.body.style.fontFamily = "'HarmonyOS Sans', 'HarmonyOS Sans SC', 'Source Han Sans CN', sans-serif";
-				document.body.style.fontWeight = "400";
-				break;
-			case 'monaco':
-				document.body.style.fontFamily = "Monaco, Consolas, 'Courier New', monospace";
-				document.body.style.fontWeight = "400";
-				break;
-			case 'cursive':
-				document.body.style.fontFamily = "'Ma Shan Zheng', 'Xingkai SC', 'Kaiti SC', 'STKaiti', 'Segoe Script', 'Bradley Hand', cursive, sans-serif";
-				document.body.style.fontWeight = "400";
-				break;
-			default:
-				document.body.style.fontFamily = defaultBodyFont;
-				document.body.style.fontWeight = "400";
-		}
+		const config = FONT_FAMILIES[font] || FONT_FAMILIES.default;
+		const fontFamily = typeof config.family === 'function' ? config.family() : config.family;
+		document.body.style.fontFamily = fontFamily;
+		document.body.style.fontWeight = config.weight;
 		localStorage.setItem('selectedFont', font);
 	}
 
@@ -1219,14 +1204,15 @@
 			};
 		}
 		const { contents, buttons } = window._navContentCache;
+		const pages = Object.keys(contents);
 
-		Object.values(contents).forEach(content => { 
-			if (content) content.style.display = 'none';
-		});
-		Object.values(buttons).forEach(button => { 
-			if (button) button.classList.remove('active');
-		});
+		// 隐藏所有页面，移除所有按钮的active状态
+		for (const p of pages) {
+			if (contents[p]) contents[p].style.display = 'none';
+			if (buttons[p]) buttons[p].classList.remove('active');
+		}
 
+		// 显示选中页面
 		if (contents[page]) {
 			contents[page].style.display = 'block';
 			buttons[page].classList.add('active');
@@ -1272,8 +1258,15 @@
 	}
 
 	function setSidebarRadioGroupEnabled(enabled) {
-		const radioGroup = document.getElementById('sidebarRadioGroup');
-		const radios = radioGroup.querySelectorAll('input[type="radio"]');
+		// 缓存元素
+		if (!window._sidebarRadioGroupCache) {
+			window._sidebarRadioGroupCache = {
+				radioGroup: document.getElementById('sidebarRadioGroup'),
+				radios: document.querySelectorAll('#sidebarRadioGroup input[type="radio"]')
+			};
+		}
+		const { radioGroup, radios } = window._sidebarRadioGroupCache;
+		
 		if (enabled) {
 			radioGroup.classList.remove('disabled');
 			radios.forEach(radio => radio.disabled = false);
@@ -1399,40 +1392,25 @@
 	 * Alt + Click to Open Links in New Tab
 	 */
 	document.addEventListener('click', function (event) {
-		// 只响应鼠标左键点击
-		if (event.button !== 0) return;
-
-		// 检查是否按下了 Alt/Option 键
-		if (!event.altKey) return;
+		// 只响应鼠标左键 + Alt 点击
+		if (event.button !== 0 || !event.altKey) return;
 
 		// 查找可能的跳转元素（a标签或带有 data-href 属性等）
 		let el = event.target;
 		while (el && el !== document.body) {
-			if (
-				(el.tagName === 'A' && el.href) ||
-				el.hasAttribute('data-href') ||
-				el.onclick
-			) {
+			if ((el.tagName === 'A' && el.href) || el.hasAttribute('data-href') || el.onclick) {
 				break;
 			}
 			el = el.parentElement;
 		}
 		if (!el || el === document.body) return;
 
-		// 获取目标链接
-		let url = '';
-		if (el.tagName === 'A' && el.href) {
-			url = el.href;
-		} else if (el.hasAttribute('data-href')) {
-			url = el.getAttribute('data-href');
-		}
-
-		// 如未获取到URL，则不处理
+		// 获取目标链接（优化：直接赋值 URL）
+		const url = el.href || el.getAttribute('data-href');
 		if (!url) return;
 
-		// 阻止默认跳转
+		// 阻止默认跳转，在新标签页打开
 		event.preventDefault();
-		// 新标签页打开
 		window.open(url, '_blank');
 	}, true);
 
@@ -1441,8 +1419,8 @@
 	 * Random post function for PAT category page
 	 */
 	function goToRandomPost(type, min, max) {
-		var num = Math.floor(Math.random() * (max - min + 1)) + min;
-		var url = `https://www.hyperplasma.top/${type}-${num}`;
+		const num = Math.floor(Math.random() * (max - min + 1)) + min;
+		const url = `https://www.hyperplasma.top/${type}-${num}`;
 		window.location.href = url;
 	}
 
@@ -1580,61 +1558,42 @@
 		if (!searchInput || !clearSearchBtn) return;
 
 		// 更新清空按钮的显示状态
-		function updateClearBtnVisibility() {
-			if (searchInput.value.trim()) {
-				clearSearchBtn.style.display = 'block';
-			} else {
-				clearSearchBtn.style.display = 'none';
-			}
-		}
+		const updateClearBtnVisibility = () => {
+			clearSearchBtn.style.display = searchInput.value.trim() ? 'block' : 'none';
+		};
 
-		// 输入框输入事件
+		// 清空搜索框并恢复焦点
+		const clearSearchInput = (e) => {
+			e?.preventDefault();
+			e?.stopPropagation();
+			searchInput.value = '';
+			searchInput.focus();
+			updateClearBtnVisibility();
+			return false;
+		};
+
+		// 输入框事件
 		searchInput.addEventListener('input', updateClearBtnVisibility);
-
-		// 输入框获得焦点时，如果有内容就显示清空按钮
 		searchInput.addEventListener('focus', updateClearBtnVisibility);
-
-		// 输入框失焦时隐藏清空按钮
-		searchInput.addEventListener('blur', function() {
+		searchInput.addEventListener('blur', () => {
 			clearSearchBtn.style.display = 'none';
 		});
-
-		// 清空按钮点击事件 - 使用mousedown以确保捕获点击
-		clearSearchBtn.addEventListener('mousedown', function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			searchInput.value = '';
-			searchInput.focus();
-			updateClearBtnVisibility();
-			return false;
+		searchInput.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && searchInput.value.trim()) {
+				clearSearchInput(e);
+			}
 		});
 
-		// 清空按钮点击事件 - 备用
-		clearSearchBtn.addEventListener('click', function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			searchInput.value = '';
-			searchInput.focus();
-			updateClearBtnVisibility();
-			return false;
-		});
+		// 清空按钮事件（mousedown 和 click 用同一个函数）
+		clearSearchBtn.addEventListener('mousedown', clearSearchInput);
+		clearSearchBtn.addEventListener('click', clearSearchInput);
 
 		// 清空按钮悬停效果
 		clearSearchBtn.addEventListener('mouseenter', function() {
 			this.style.opacity = '1';
 		});
-
 		clearSearchBtn.addEventListener('mouseleave', function() {
 			this.style.opacity = '0.6';
-		});
-
-		// ESC键清空搜索框
-		searchInput.addEventListener('keydown', function(e) {
-			if (e.key === 'Escape' && searchInput.value.trim()) {
-				e.preventDefault();
-				searchInput.value = '';
-				updateClearBtnVisibility();
-			}
 		});
 	}
 
