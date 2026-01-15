@@ -1024,14 +1024,6 @@
 		});
 	}
 
-	function hideHyplusButtons() {
-		setHyplusButtonsDisplay(false);
-	}
-
-	function showHyplusButtons() {
-		setHyplusButtonsDisplay(true);
-	}
-
 	function handleHideButtonsToggle(event) {
 		setHyplusButtonsDisplay(!event.target.checked);
 	}
@@ -1161,14 +1153,20 @@
 
 	// 字体大小控制
 	function initFontSizeControls() {
-		const decreaseBtn = document.getElementById('decreaseFontBtn');
-		const increaseBtn = document.getElementById('increaseFontBtn');
-		const resetBtn = document.getElementById('resetFontBtn');
-		const display = document.getElementById('fontSizeDisplay');
+		// 缓存按钮元素
+		if (!window._hyplusFontCache) {
+			window._hyplusFontCache = {
+				decreaseFontBtn: document.getElementById('decreaseFontBtn'),
+				increaseFontBtn: document.getElementById('increaseFontBtn'),
+				resetFontBtn: document.getElementById('resetFontBtn'),
+				fontSizeDisplay: document.getElementById('fontSizeDisplay')
+			};
+		}
+		const { decreaseFontBtn, increaseFontBtn, resetFontBtn } = window._hyplusFontCache;
 		let scalePercent = parseInt(localStorage.getItem('fontScalePercent')) || 100;
 		updateFontScale(scalePercent);
 
-		decreaseBtn.addEventListener('click', (event) => {
+		decreaseFontBtn?.addEventListener('click', (event) => {
 			event.stopPropagation();
 			if (scalePercent > 50) {
 				scalePercent -= 2;
@@ -1176,7 +1174,7 @@
 			}
 		});
 
-		increaseBtn.addEventListener('click', (event) => {
+		increaseFontBtn?.addEventListener('click', (event) => {
 			event.stopPropagation();
 			if (scalePercent < 150) {
 				scalePercent += 2;
@@ -1184,7 +1182,7 @@
 			}
 		});
 
-		resetBtn.addEventListener('click', (event) => {
+		resetFontBtn?.addEventListener('click', (event) => {
 			event.stopPropagation();
 			scalePercent = 100;
 			updateFontScale(scalePercent);
@@ -1298,6 +1296,16 @@
 		document.getElementById('sidebarLeftRadio').checked = (position === 'left');
 	}
 
+	// 页面导航名称数组（用于Alt+Z/X快捷键）
+	const NAV_PAGES = ['nav', 'note', 'settings'];
+	
+	// 字体控制快捷键映射
+	const FONT_KEY_MAP = {
+		'-': 'decreaseFontBtn', '_': 'decreaseFontBtn', '–': 'decreaseFontBtn',
+		'=': 'increaseFontBtn', '+': 'increaseFontBtn', '≠': 'increaseFontBtn',
+		'0': 'resetFontBtn', 'º': 'resetFontBtn'
+	};
+
 	// 键盘快捷键处理
 	document.addEventListener('keydown', function(event) {
 		const navContainer = document.getElementById('navContainer');
@@ -1327,38 +1335,23 @@
 			)) {
 				event.preventDefault();
 				const currentActive = document.querySelector('.switch-button.active');
-				// [隐藏] 原始: const pages = ['chat', 'ai', 'nav', 'note', 'settings'];
-				const pages = ['nav', 'note', 'settings'];
-				const currentIndex = pages.indexOf(currentActive.id.replace('PageButton', ''));
+				const currentIndex = NAV_PAGES.indexOf(currentActive.id.replace('PageButton', ''));
 				if (event.key === 'z' || event.key === 'Ω' || event.key === 'ArrowLeft') {
-					const prevIndex = (currentIndex - 1 + pages.length) % pages.length;
-					switchNavContent(pages[prevIndex]);
+					const prevIndex = (currentIndex - 1 + NAV_PAGES.length) % NAV_PAGES.length;
+					switchNavContent(NAV_PAGES[prevIndex]);
 				} else {
-					const nextIndex = (currentIndex + 1) % pages.length;
-					switchNavContent(pages[nextIndex]);
+					const nextIndex = (currentIndex + 1) % NAV_PAGES.length;
+					switchNavContent(NAV_PAGES[nextIndex]);
 				}
 				event.stopPropagation();
 			}
 		}
 
 		// 字体大小控制 (Alt + key) - 使用对象映射替代 switch
-		if (event.altKey && !event.shiftKey) {
-			const fontKeyMap = {
-				'-': 'decreaseFontBtn',
-				'_': 'decreaseFontBtn',
-				'–': 'decreaseFontBtn',
-				'=': 'increaseFontBtn',
-				'+': 'increaseFontBtn',
-				'≠': 'increaseFontBtn',
-				'0': 'resetFontBtn',
-				'º': 'resetFontBtn'
-			};
-
-			if (fontKeyMap[event.key]) {
-				event.preventDefault();
-				event.stopPropagation();
-				document.getElementById(fontKeyMap[event.key])?.click();
-			}
+		if (event.altKey && !event.shiftKey && FONT_KEY_MAP[event.key]) {
+			event.preventDefault();
+			event.stopPropagation();
+			document.getElementById(FONT_KEY_MAP[event.key])?.click();
 		}
 
 		// Alt+Shift 组合键（轮询侧边栏位置和切换页眉页脚）
@@ -1551,14 +1544,7 @@
 			engine = engine || 'bing';
 			const query = encodeURIComponent((searchInput && searchInput.value || '').trim());
 			const cfg = searchEngines[engine] || searchEngines.hyplus;
-			let url;
-			if (query) {
-				// 有查询内容时，使用搜索 URL
-				url = cfg.url.replace('{q}', query);
-			} else {
-				// 查询为空时，跳转到首页
-				url = cfg.homepage;
-			}
+			const url = query ? cfg.url.replace('{q}', query) : cfg.homepage;
 			window.open(url, '_blank');
 		}
 
@@ -1583,8 +1569,14 @@
 
 	// 通用清空搜索框函数
 	function setupClearSearchButton() {
-		const clearSearchBtn = document.getElementById('clearSearchBtn');
-		const searchInput = document.getElementById('searchInput');
+		// 缓存搜索元素
+		if (!window._hyplusSearchCache) {
+			window._hyplusSearchCache = {
+				clearSearchBtn: document.getElementById('clearSearchBtn'),
+				searchInput: document.getElementById('searchInput')
+			};
+		}
+		const { clearSearchBtn, searchInput } = window._hyplusSearchCache;
 		if (!searchInput || !clearSearchBtn) return;
 
 		// 更新清空按钮的显示状态
@@ -1773,17 +1765,6 @@
 		}
 
 		// 移动端禁用侧边栏单选群
-		function setSidebarRadioGroupEnabled(enabled) {
-			const radioGroup = document.getElementById('sidebarRadioGroup');
-			const radios = radioGroup.querySelectorAll('input[type="radio"]');
-			if (enabled) {
-				radioGroup.classList.remove('disabled');
-				radios.forEach(radio => radio.disabled = false);
-			} else {
-				radioGroup.classList.add('disabled');
-				radios.forEach(radio => radio.disabled = true);
-			}
-		}
 		if (window.innerWidth <= 768) {
 			setSidebarRadioGroupEnabled(false);
 		} else {
