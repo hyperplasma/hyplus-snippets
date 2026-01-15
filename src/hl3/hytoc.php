@@ -22,28 +22,12 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
     return $content;
 }
 
-// 短代码处理函数
-function hyplus_render_toc_shortcode($atts) {
-    $atts = shortcode_atts([
-        'mode' => 'post',
-        'hideparent' => 'true',
-        'emptymsg' => 'true'
-    ], $atts);
-
-    $mode = $atts['mode'];
-    $hideparent = ($atts['hideparent'] === 'false') ? 'false' : 'true'; // 默认为true
-    $emptymsg = ($atts['emptymsg'] === 'false') ? 'false' : 'true'; // 默认为true
-    ob_start();
+// 输出 TOC 脚本和样式（仅一次）
+function hyplus_output_toc_scripts() {
+    static $scripts_output = false;
+    if ($scripts_output) return;
+    $scripts_output = true;
     ?>
-    <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>" data-hideparent="<?php echo esc_attr($hideparent); ?>" data-emptymsg="<?php echo esc_attr($emptymsg); ?>"<?php if ($mode === 'post') { echo ' data-post-id="' . esc_attr(get_the_ID()) . '"'; } ?>>
-        <?php if ($mode === 'post'): ?>
-            <div class="hyplus-toc-header">Hyplus目录<button type="button" class="hyplus-toc-toggle" aria-label="折叠" title="折叠">-</button></div>
-        <?php endif; ?>
-        <div class="hyplus-toc-content"></div>
-    </div>
-    <?php if ($mode === 'post'): ?>
-        <br>
-    <?php endif; ?>
     <style>
     .hyplus-toc-header { position: relative; display: block; text-align: center; padding-right: 44px; }
     .hyplus-toc-header::after { content: ""; display: inline-block; width: 44px; height: 1px; vertical-align: middle; }
@@ -135,6 +119,7 @@ function hyplus_render_toc_shortcode($atts) {
     </style>
     <script>
     (function(){
+        // ============ TOC 核心工具函数 ============
         function setCookie(name, value, days) {
             var expires = "";
             if (days) {
@@ -397,6 +382,35 @@ function hyplus_render_toc_shortcode($atts) {
         });
     })();
     </script>
+    <?php
+}
+
+// 短代码处理函数
+function hyplus_render_toc_shortcode($atts) {
+    $atts = shortcode_atts([
+        'mode' => 'post',
+        'hideparent' => 'true',
+        'emptymsg' => 'true'
+    ], $atts);
+
+    $mode = $atts['mode'];
+    $hideparent = ($atts['hideparent'] === 'false') ? 'false' : 'true'; // 默认为true
+    $emptymsg = ($atts['emptymsg'] === 'false') ? 'false' : 'true'; // 默认为true
+    
+    // 在第一个短代码时输出脚本和样式
+    hyplus_output_toc_scripts();
+    
+    ob_start();
+    ?>
+    <div class="hyplus-toc-container" data-toc-mode="<?php echo esc_attr($mode); ?>" data-hideparent="<?php echo esc_attr($hideparent); ?>" data-emptymsg="<?php echo esc_attr($emptymsg); ?>"<?php if ($mode === 'post') { echo ' data-post-id="' . esc_attr(get_the_ID()) . '"'; } ?>>
+        <?php if ($mode === 'post'): ?>
+            <div class="hyplus-toc-header">Hyplus目录<button type="button" class="hyplus-toc-toggle" aria-label="折叠" title="折叠">-</button></div>
+        <?php endif; ?>
+        <div class="hyplus-toc-content"></div>
+    </div>
+    <?php if ($mode === 'post'): ?>
+        <br>
+    <?php endif; ?>
     <?php
     return ob_get_clean();
 }
