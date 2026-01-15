@@ -978,19 +978,21 @@
 		}
 	}
 
-	// 页头页尾控制
-	function hideHeaderFooter() {
+	// 页头页尾控制（通用函数）
+	function setHeaderFooterDisplay(isVisible) {
 		const header = document.querySelector('.site-header');
 		const footer = document.querySelector('.site-footer');
-		if (header) header.style.display = 'none';
-		if (footer) footer.style.display = 'none';
+		const display = isVisible ? 'block' : 'none';
+		if (header) header.style.display = display;
+		if (footer) footer.style.display = display;
+	}
+
+	function hideHeaderFooter() {
+		setHeaderFooterDisplay(false);
 	}
 
 	function showHeaderFooter() {
-		const header = document.querySelector('.site-header');
-		const footer = document.querySelector('.site-footer');
-		if (header) header.style.display = 'block';
-		if (footer) footer.style.display = 'block';
+		setHeaderFooterDisplay(true);
 	}
 
 	function handleHeaderFooterToggle(event) {
@@ -1007,8 +1009,8 @@
 		}
 	}
 
-	// 隐藏/显示Hyplus按钮群
-	function hideHyplusButtons() {
+	// 隐藏/显示Hyplus按钮群（通用函数）
+	function setHyplusButtonsDisplay(isVisible) {
 		const buttons = [
 			document.getElementById('scrollToTopButton'),
 			document.getElementById('navButton'),
@@ -1016,30 +1018,22 @@
 			document.getElementById('goForwardButton'),
 			document.getElementById('refreshButton')
 		];
+		const display = isVisible ? 'block' : 'none';
 		buttons.forEach(btn => {
-			if (btn) btn.style.display = 'none';
+			if (btn) btn.style.display = display;
 		});
+	}
+
+	function hideHyplusButtons() {
+		setHyplusButtonsDisplay(false);
 	}
 
 	function showHyplusButtons() {
-		const buttons = [
-			document.getElementById('scrollToTopButton'),
-			document.getElementById('navButton'),
-			document.getElementById('goBackButton'),
-			document.getElementById('goForwardButton'),
-			document.getElementById('refreshButton')
-		];
-		buttons.forEach(btn => {
-			if (btn) btn.style.display = 'block';
-		});
+		setHyplusButtonsDisplay(true);
 	}
 
 	function handleHideButtonsToggle(event) {
-		if (event.target.checked) {
-			hideHyplusButtons();
-		} else {
-			showHyplusButtons();
-		}
+		setHyplusButtonsDisplay(!event.target.checked);
 	}
 
 	// 导航框控制
@@ -1264,6 +1258,22 @@
 		}
 	}
 
+	// 通用位置设置函数
+	function setUIPosition(type, position) {
+		const isLeft = position === 'left';
+		if (type === 'sidebar') {
+			toggleSidebarPosition(isLeft);
+			localStorage.setItem('sidebarPosition', position);
+		} else if (type === 'navButtons') {
+			if (isLeft) {
+				document.body.classList.add('nav-buttons-left');
+			} else {
+				document.body.classList.remove('nav-buttons-left');
+			}
+			localStorage.setItem('navButtonsPosition', position);
+		}
+	}
+
 	function setSidebarRadioGroupEnabled(enabled) {
 		const radioGroup = document.getElementById('sidebarRadioGroup');
 		const radios = radioGroup.querySelectorAll('input[type="radio"]');
@@ -1279,12 +1289,10 @@
 	function setSidebarPosition(position) {
 		if (position === 'left' && window.innerWidth > 768) {
 			showSidebar();
-			toggleSidebarPosition(true);
-			localStorage.setItem('sidebarPosition', 'left');
+			setUIPosition('sidebar', 'left');
 		} else if (window.innerWidth > 768) { // right
 			showSidebar();
-			toggleSidebarPosition(false);
-			localStorage.setItem('sidebarPosition', 'right');
+			setUIPosition('sidebar', 'right');
 		}
 		// 设置radio选中状态（防止快捷键切换时UI不同步）
 		document.getElementById('sidebarRightRadio').checked = (position === 'right');
@@ -1487,28 +1495,6 @@
 		if (isScrollDisabled) e.preventDefault();
 	}, { passive: false });
 	document.addEventListener('DOMContentLoaded', function() {
-		// 缓存字体选择和缩放相关控件为全局变量
-		if (!window._hyplusFontCache) {
-			window._hyplusFontCache = {
-				fontSelect: document.getElementById('fontSelect'),
-				decreaseFontBtn: document.getElementById('decreaseFontBtn'),
-				increaseFontBtn: document.getElementById('increaseFontBtn'),
-				resetFontBtn: document.getElementById('resetFontBtn'),
-				fontSizeDisplay: document.getElementById('fontSizeDisplay')
-			};
-		}
-		// 初始化字体选择
-		const fontSelect = window._hyplusFontCache.fontSelect;
-		if (fontSelect) {
-			const savedFont = localStorage.getItem('selectedFont') || 'default';
-			fontSelect.value = savedFont;
-			setFontFamily(savedFont);
-			fontSelect.addEventListener('change', function() {
-				setFontFamily(this.value);
-			});
-		}
-		// 笔记和字体控制初始化
-		initFontSizeControls();
 		// 缓存HyButton按钮群五个按钮为全局变量
 		if (!window._hyplusBtnCache) {
 			window._hyplusBtnCache = {
@@ -1609,76 +1595,81 @@
 				if (e.key === 'Enter') doSearch('bing');
 			});
 		}
-
-		// 清空按钮逻辑
-		const clearSearchBtn = document.getElementById('clearSearchBtn');
-		const searchInputElement = document.getElementById('searchInput');
-		if (searchInputElement && clearSearchBtn) {
-			// 更新清空按钮的显示状态
-			function updateClearBtnVisibility() {
-				if (searchInputElement.value.trim()) {
-					clearSearchBtn.style.display = 'block';
-				} else {
-					clearSearchBtn.style.display = 'none';
-				}
-			}
-
-			// 输入框输入事件
-			searchInputElement.addEventListener('input', updateClearBtnVisibility);
-
-			// 输入框获得焦点时，如果有内容就显示清空按钮
-			searchInputElement.addEventListener('focus', updateClearBtnVisibility);
-
-			// 输入框失焦时隐藏清空按钮
-			searchInputElement.addEventListener('blur', function() {
-				clearSearchBtn.style.display = 'none';
-			});
-
-			// 清空按钮点击事件 - 使用mousedown以确保捕获点击
-			clearSearchBtn.addEventListener('mousedown', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				searchInputElement.value = '';
-				searchInputElement.focus();
-				updateClearBtnVisibility();
-				return false;
-			});
-
-			// 清空按钮点击事件 - 备用
-			clearSearchBtn.addEventListener('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				searchInputElement.value = '';
-				searchInputElement.focus();
-				updateClearBtnVisibility();
-				return false;
-			});
-
-			// 清空按钮悬停效果
-			clearSearchBtn.addEventListener('mouseenter', function() {
-				this.style.opacity = '1';
-			});
-
-			clearSearchBtn.addEventListener('mouseleave', function() {
-				this.style.opacity = '0.6';
-			});
-
-			// ESC键清空搜索框
-			searchInputElement.addEventListener('keydown', function(e) {
-				if (e.key === 'Escape' && searchInputElement.value.trim()) {
-					e.preventDefault();
-					searchInputElement.value = '';
-					updateClearBtnVisibility();
-				}
-			});
-		}
 	});
+
+	// 通用清空搜索框函数
+	function setupClearSearchButton() {
+		const clearSearchBtn = document.getElementById('clearSearchBtn');
+		const searchInput = document.getElementById('searchInput');
+		if (!searchInput || !clearSearchBtn) return;
+
+		// 更新清空按钮的显示状态
+		function updateClearBtnVisibility() {
+			if (searchInput.value.trim()) {
+				clearSearchBtn.style.display = 'block';
+			} else {
+				clearSearchBtn.style.display = 'none';
+			}
+		}
+
+		// 输入框输入事件
+		searchInput.addEventListener('input', updateClearBtnVisibility);
+
+		// 输入框获得焦点时，如果有内容就显示清空按钮
+		searchInput.addEventListener('focus', updateClearBtnVisibility);
+
+		// 输入框失焦时隐藏清空按钮
+		searchInput.addEventListener('blur', function() {
+			clearSearchBtn.style.display = 'none';
+		});
+
+		// 清空按钮点击事件 - 使用mousedown以确保捕获点击
+		clearSearchBtn.addEventListener('mousedown', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			searchInput.value = '';
+			searchInput.focus();
+			updateClearBtnVisibility();
+			return false;
+		});
+
+		// 清空按钮点击事件 - 备用
+		clearSearchBtn.addEventListener('click', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			searchInput.value = '';
+			searchInput.focus();
+			updateClearBtnVisibility();
+			return false;
+		});
+
+		// 清空按钮悬停效果
+		clearSearchBtn.addEventListener('mouseenter', function() {
+			this.style.opacity = '1';
+		});
+
+		clearSearchBtn.addEventListener('mouseleave', function() {
+			this.style.opacity = '0.6';
+		});
+
+		// ESC键清空搜索框
+		searchInput.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape' && searchInput.value.trim()) {
+				e.preventDefault();
+				searchInput.value = '';
+				updateClearBtnVisibility();
+			}
+		});
+	}
 
 	// 页面加载完成后的初始化
 	window.onload = function() {
 		// 首先切换到上次访问的页面（确保切换功能正常工作）
 		const lastVisitedPage = localStorage.getItem('lastVisitedNavPage') || 'nav';
 		switchNavContent(lastVisitedPage);
+
+		// 初始化清空搜索框功能
+		setupClearSearchButton();
 
 		// 初始化字体选择
 		const fontSelect = document.getElementById('fontSelect');
@@ -1715,20 +1706,9 @@
 			if (this.checked) setSidebarPosition('left');
 		});
 
-		// 设置导航按钮位置
-		function setNavButtonsPosition(position) {
-			if (position === 'left') {
-				document.body.classList.add('nav-buttons-left');
-				localStorage.setItem('navButtonsPosition', 'left');
-			} else {
-				document.body.classList.remove('nav-buttons-left');
-				localStorage.setItem('navButtonsPosition', 'right');
-			}
-		}
-
 		// 初始化导航按钮位置
 		const savedNavButtonsPosition = localStorage.getItem('navButtonsPosition') || 'right';
-		setNavButtonsPosition(savedNavButtonsPosition);
+		setUIPosition('navButtons', savedNavButtonsPosition);
 		document.getElementById('navButtonsLeftRadio').checked = (savedNavButtonsPosition === 'left');
 		document.getElementById('navButtonsRightRadio').checked = (savedNavButtonsPosition === 'right');
 
@@ -1737,7 +1717,7 @@
 			if (event.target.name === 'sidebarPosition' && event.target.checked) {
 				setSidebarPosition(event.target.value);
 			} else if (event.target.name === 'navButtonsPosition' && event.target.checked) {
-				setNavButtonsPosition(event.target.value);
+				setUIPosition('navButtons', event.target.value);
 			}
 		});
 
@@ -1923,69 +1903,6 @@
 				const button = window._hyplusBtnCache[buttonId];
 				if (button) {
 					button.addEventListener('click', action);
-				}
-			});
-		}
-
-		// 清空按钮逻辑 (window.onload中的初始化)
-		const clearSearchBtnOnLoad = document.getElementById('clearSearchBtn');
-		const searchInputOnLoad = document.getElementById('searchInput');
-		if (searchInputOnLoad && clearSearchBtnOnLoad) {
-			// 更新清空按钮的显示状态
-			function updateClearBtnVisibilityOnLoad() {
-				if (searchInputOnLoad.value.trim()) {
-					clearSearchBtnOnLoad.style.display = 'block';
-				} else {
-					clearSearchBtnOnLoad.style.display = 'none';
-				}
-			}
-
-			// 输入框输入事件
-			searchInputOnLoad.addEventListener('input', updateClearBtnVisibilityOnLoad);
-
-			// 输入框获得焦点时，如果有内容就显示清空按钮
-			searchInputOnLoad.addEventListener('focus', updateClearBtnVisibilityOnLoad);
-
-			// 输入框失焦时隐藏清空按钮
-			searchInputOnLoad.addEventListener('blur', function() {
-				clearSearchBtnOnLoad.style.display = 'none';
-			});
-
-			// 清空按钮点击事件 - 使用mousedown以确保捕获点击
-			clearSearchBtnOnLoad.addEventListener('mousedown', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				searchInputOnLoad.value = '';
-				searchInputOnLoad.focus();
-				updateClearBtnVisibilityOnLoad();
-				return false;
-			});
-
-			// 清空按钮点击事件 - 备用
-			clearSearchBtnOnLoad.addEventListener('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				searchInputOnLoad.value = '';
-				searchInputOnLoad.focus();
-				updateClearBtnVisibilityOnLoad();
-				return false;
-			});
-
-			// 清空按钮悬停效果
-			clearSearchBtnOnLoad.addEventListener('mouseenter', function() {
-				this.style.opacity = '1';
-			});
-
-			clearSearchBtnOnLoad.addEventListener('mouseleave', function() {
-				this.style.opacity = '0.6';
-			});
-
-			// ESC键清空搜索框
-			searchInputOnLoad.addEventListener('keydown', function(e) {
-				if (e.key === 'Escape' && searchInputOnLoad.value.trim()) {
-					e.preventDefault();
-					searchInputOnLoad.value = '';
-					updateClearBtnVisibilityOnLoad();
 				}
 			});
 		}
