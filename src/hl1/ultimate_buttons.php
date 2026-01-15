@@ -100,10 +100,6 @@
 						<input type="radio" id="sidebarLeftRadio" name="sidebarPosition" value="left">
 						<label for="sidebarLeftRadio">侧边栏位于左侧</label>
 					</div>
-					<div class="config-item">
-						<input type="radio" id="sidebarHideRadio" name="sidebarPosition" value="hide">
-						<label for="sidebarHideRadio">始终隐藏侧边栏</label>
-					</div>
 				</div>
 
 				<div class="language-selector" id="navButtonsRadioGroup" style="margin-top: 12px;">
@@ -120,7 +116,7 @@
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="config-item">
 						<input type="checkbox" id="headerFooterToggle" />
-						<label for="headerFooterToggle">隐藏页眉页脚</label>
+						<label for="headerFooterToggle">隐藏页眉页脚与侧边栏</label>
 					</div>
 					<div class="config-item">
 						<input type="checkbox" id="hideButtonsToggle" />
@@ -1000,9 +996,13 @@
 	function handleHeaderFooterToggle(event) {
 		if (event.target.checked) {
 			hideHeaderFooter();
+			hideSidebar();
+			setSidebarRadioGroupEnabled(false);
 			localStorage.setItem('headerFooterAlwaysHidden', 'true');
 		} else {
 			showHeaderFooter();
+			showSidebar();
+			setSidebarRadioGroupEnabled(true);
 			localStorage.setItem('headerFooterAlwaysHidden', 'false');
 		}
 	}
@@ -1281,22 +1281,14 @@
 			showSidebar();
 			toggleSidebarPosition(true);
 			localStorage.setItem('sidebarPosition', 'left');
-			localStorage.setItem('sidebarAlwaysHidden', 'false');
-		} else if (position === 'hide') {
-			hideSidebar();
-			toggleSidebarPosition(false);
-			localStorage.setItem('sidebarAlwaysHidden', 'true');
-			localStorage.setItem('sidebarPosition', 'right');
 		} else if (window.innerWidth > 768) { // right
 			showSidebar();
 			toggleSidebarPosition(false);
 			localStorage.setItem('sidebarPosition', 'right');
-			localStorage.setItem('sidebarAlwaysHidden', 'false');
 		}
 		// 设置radio选中状态（防止快捷键切换时UI不同步）
 		document.getElementById('sidebarRightRadio').checked = (position === 'right');
 		document.getElementById('sidebarLeftRadio').checked = (position === 'left');
-		document.getElementById('sidebarHideRadio').checked = (position === 'hide');
 	}
 
 	// 键盘快捷键处理
@@ -1702,9 +1694,7 @@
 
 		// 侧边栏单选项初始化
 		let sidebarSetting = 'right';
-		if (localStorage.getItem('sidebarAlwaysHidden') === 'true' || window.innerWidth <= 768) {
-			sidebarSetting = 'hide';
-		} else if (window.innerWidth > 768 && localStorage.getItem('sidebarPosition') === 'left') {
+		if (window.innerWidth > 768 && localStorage.getItem('sidebarPosition') === 'left') {
 			sidebarSetting = 'left';
 		}
 		if (window.innerWidth > 768) {
@@ -1715,8 +1705,7 @@
 		if (!window._sidebarRadioCache) {
 			window._sidebarRadioCache = {
 				right: document.getElementById('sidebarRightRadio'),
-				left: document.getElementById('sidebarLeftRadio'),
-				hide: document.getElementById('sidebarHideRadio')
+				left: document.getElementById('sidebarLeftRadio')
 			};
 		}
 		window._sidebarRadioCache.right && window._sidebarRadioCache.right.addEventListener('change', function() {
@@ -1724,9 +1713,6 @@
 		});
 		window._sidebarRadioCache.left && window._sidebarRadioCache.left.addEventListener('change', function() {
 			if (this.checked) setSidebarPosition('left');
-		});
-		window._sidebarRadioCache.hide && window._sidebarRadioCache.hide.addEventListener('change', function() {
-			if (this.checked) setSidebarPosition('hide');
 		});
 
 		// 设置导航按钮位置
@@ -1766,7 +1752,11 @@
 		const headerFooterToggle = window._hyplusSettingsCheckboxCache.headerFooterToggle;
 		if (headerFooterToggle) {
 			headerFooterToggle.checked = isHeaderFooterHidden;
-			if (isHeaderFooterHidden) hideHeaderFooter();
+			if (isHeaderFooterHidden) {
+				hideHeaderFooter();
+				hideSidebar();
+				setSidebarRadioGroupEnabled(false);
+			}
 		}
 		const hideButtonsToggle = window._hyplusSettingsCheckboxCache.hideButtonsToggle;
 
@@ -1878,9 +1868,7 @@
 			const mainContent = document.querySelector('.site-main');
 			const maximizeButton = document.querySelector('.maximize-button');
 			let sidebarSetting = 'right';
-			if (localStorage.getItem('sidebarAlwaysHidden') === 'true') {
-				sidebarSetting = 'hide';
-			} else if (localStorage.getItem('sidebarPosition') === 'left') {
+			if (localStorage.getItem('sidebarPosition') === 'left') {
 				sidebarSetting = 'left';
 			}
 
@@ -1896,15 +1884,20 @@
 					maximizeButton.style.display = 'none';
 				}
 			} else {
-				setSidebarRadioGroupEnabled(true);
-				if (sidebarSetting === 'hide') {
+				const isHeaderFooterHidden = localStorage.getItem('headerFooterAlwaysHidden') === 'true';
+				
+				if (isHeaderFooterHidden) {
+					setSidebarRadioGroupEnabled(false);
 					hideSidebar();
-				} else if (sidebarSetting === 'left') {
-					showSidebar();
-					toggleSidebarPosition(true);
 				} else {
-					showSidebar();
-					toggleSidebarPosition(false);
+					setSidebarRadioGroupEnabled(true);
+					if (sidebarSetting === 'left') {
+						showSidebar();
+						toggleSidebarPosition(true);
+					} else {
+						showSidebar();
+						toggleSidebarPosition(false);
+					}
 				}
 
 				// 非移动端显示最大化按钮
