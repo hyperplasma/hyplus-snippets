@@ -14,7 +14,7 @@
 <!-- 导航弹出框 -->
 <div id="navContainer">
 	<!-- 标题栏按钮 -->
-	<div id="backToTools" class="control-button back-button" title="进入Hyplus导航 Mk.II" onclick="window.location.href='https://www.hyperplasma.top/hyplus/';" style="left: 10px; top: 10px;"></div>
+	<div id="backToTools" class="control-button back-button" title="进入Hyplus主页 Mk.II" onclick="window.location.href='https://www.hyperplasma.top/hyplus/';" style="left: 10px; top: 10px;"></div>
 	<div id="maximizeButton" class="control-button maximize-button" title="缩放（⌥M）" onclick="toggleMaximize(event)" style="right: 30px; top: 10px;"></div>
 	<div id="closeButton" class="control-button close-button" title="关闭（⌥S）" onclick="closeNavContainer(event)" style="right: 10px; top: 10px;"></div>
 
