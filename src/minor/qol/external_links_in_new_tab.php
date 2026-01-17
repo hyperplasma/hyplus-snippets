@@ -7,30 +7,43 @@
 
 // 定义需要在新标签页打开的特定链接路径（相对于网站根目录）
 if (!defined('HYPERPLASMA_SPECIAL_LINK_PATHS')) {
-    define('HYPERPLASMA_SPECIAL_LINK_PATHS', serialize(array(
+    define('HYPERPLASMA_SPECIAL_LINK_PATHS', array(
         '/wp-admin/',
         '/wp-admin/edit.php',
         '/wp-admin/edit.php?post_type=page',
         '/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647',
         '/wp-admin/plugins.php',
         ':27782/39933f96'
-    )));
+    ));
 }
 
-// 获取特定需要在新标签页打开的完整链接数组
+// 获取特定需要在新标签页打开的完整链接数组（使用缓存以提高性能）
 function hyperplasma_get_special_internal_links() {
+    // 尝试从缓存获取
+    $cache_key = 'hyperplasma_special_links';
+    $cached_data = wp_cache_get($cache_key);
+    
+    if ($cached_data !== false) {
+        return $cached_data;
+    }
+    
     $site_domain = site_url();
-    $special_link_paths = unserialize(HYPERPLASMA_SPECIAL_LINK_PATHS);
+    $special_link_paths = HYPERPLASMA_SPECIAL_LINK_PATHS;
     
     $special_internal_links = array();
     foreach ($special_link_paths as $path) {
         $special_internal_links[] = $site_domain . $path;
     }
     
-    return array(
+    $data = array(
         'site_domain' => $site_domain,
         'links' => $special_internal_links
     );
+    
+    // 缓存结果（有效期 1 小时）
+    wp_cache_set($cache_key, $data, '', HOUR_IN_SECONDS);
+    
+    return $data;
 }
 
 // 处理导航菜单项的函数
@@ -74,10 +87,13 @@ function hyperplasma_modify_content_links($content) {
     $data = hyperplasma_get_special_internal_links();
     $site_domain = $data['site_domain'];
     $special_internal_links = $data['links'];
+    
+    // 预编译正则表达式和转义的域名，避免在回调中重复处理
+    $site_domain_escaped = preg_quote($site_domain, '#');
 
     // 使用正则表达式处理链接
     $pattern = '/<a([^>]*?)href=[\'"]([^\'"]+)[\'"]([^>]*?)>/i';
-    return preg_replace_callback($pattern, function($matches) use ($site_domain, $special_internal_links) {
+    return preg_replace_callback($pattern, function($matches) use ($site_domain, $site_domain_escaped, $special_internal_links) {
         $full_match = $matches[0];
         $url = $matches[2];
 
@@ -88,8 +104,8 @@ function hyperplasma_modify_content_links($content) {
 
         // 检查是否是外部链接或特定的内部链接
         if (
-            !preg_match('#^' . preg_quote($site_domain, '#') . '#i', $url) ||
-            in_array($url, $special_internal_links)
+            !preg_match('#^' . $site_domain_escaped . '#i', $url) ||
+            in_array($url, $special_internal_links, true)
         ) {
             // 确保不重复添加属性
             if (strpos($full_match, 'target=') === false) {
@@ -108,5 +124,6 @@ function hyperplasma_modify_content_links($content) {
 add_filter('wp_nav_menu_objects', 'hyperplasma_modify_menu_items', 10, 1);
 add_filter('the_content', 'hyperplasma_modify_content_links', 999);
 add_filter('widget_text', 'hyperplasma_modify_content_links', 999);
-add_filter('term_description', 'hyperplasma_modify_content_links', 999);
+// 注：term_description 包含锚点链接，不应添加 target="_blank"，故移除此钩子
+// add_filter('term_description', 'hyperplasma_modify_content_links', 999);
 add_filter('the_excerpt', 'hyperplasma_modify_content_links', 999);
