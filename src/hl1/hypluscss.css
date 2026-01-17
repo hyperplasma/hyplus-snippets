@@ -1,7 +1,8 @@
 /**
- * HyplusCSS by www.hyperplasma.top (外观 > 自定义 > 额外CSS)
+ * HyplusCSS by www.hyperplasma.top
+ * Description: Overall style CSS for WordPress site using GeneratePress Theme (外观 > 自定义 > 额外CSS)
  * Version: 1.2
- * Usage: search with "HY-"!
+ * Quickstart: search with "HY-"!
 */
 a:hover {
 	color: #ff6780;
@@ -159,6 +160,14 @@ footer {
  */
 body {
 	background-color: rgba(187,255,255,0.05)
+}
+
+/**
+ * Disable overscroll effect (橡皮筋滚动效果禁用)
+ * 禁用在浏览器中滚动到顶部/底部时继续滑动导致页面越界的视觉效果
+ */
+html, body {
+	overscroll-behavior: none;
 }
 
 /* Inline Code */
