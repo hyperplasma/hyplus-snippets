@@ -167,7 +167,7 @@ body {
  * 禁用在浏览器中滚动到顶部/底部时继续滑动导致页面越界的视觉效果
  */
 html, body {
-	overscroll-behavior: none;
+	overscroll-behavior: contain;
 }
 
 /* Inline Code */
