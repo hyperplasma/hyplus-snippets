@@ -41,6 +41,10 @@ function hyperplasma_modify_menu_items($items) {
 
     foreach ($items as $item) {
         if (!empty($item->url)) {
+            // 忽略以 / 或 # 开头的链接（必定是内部链接）
+            if (preg_match('#^[/#]#', $item->url)) {
+                continue;
+            }
             // 检查是否是外部链接或特定的内部链接
             if (
                 !preg_match('#^' . preg_quote($site_domain, '#') . '#i', $item->url) ||
@@ -76,6 +80,11 @@ function hyperplasma_modify_content_links($content) {
     return preg_replace_callback($pattern, function($matches) use ($site_domain, $special_internal_links) {
         $full_match = $matches[0];
         $url = $matches[2];
+
+        // 忽略以 / 或 # 开头的链接（必定是内部链接）
+        if (preg_match('#^[/#]#', $url)) {
+            return $full_match;
+        }
 
         // 检查是否是外部链接或特定的内部链接
         if (
