@@ -186,24 +186,6 @@
         color: #f39c12;
         font-weight: bold;
     }
-    .profile-badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px 10px;
-        justify-content: center;
-    }
-    .profile-badge {
-        display: inline-block;
-        background: none;
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        margin: 0;
-    }
-    .profile-badge img {
-        display: inline-block;
-        vertical-align: middle;
-    }
     .recent-posts-block-title {
         font-size: 25px;
         font-weight: 600;
@@ -237,44 +219,9 @@
     <div class="profile-card profile-info-card">
         <img class="profile-avatar" src="https://www.hyperplasma.top/wp-content/uploads/2025/01/Snipaste_2023-12-08_19-40-36-150x150.png" alt="konoha" />
         <div class="profile-info-text">
-            <div class="profile-desc"><a href="https://www.hyperplasma.top/user/akira37/" target="_blank" rel="noopener">Akira&nbsp;-&nbsp;Hyperplasma&nbsp;-&nbsp;Hyplus</a></div>
-            <!-- <div class="hyplus-nav-container hyplus-unselectable" style="grid-template-columns: 1fr; padding-bottom: 16px">
-                <div class="hyplus-nav-links profile-links">
-                    <div class="hyplus-nav-group">
-                        <a href="https://github.com/hyperplasma" target="_blank" class="hyplus-nav-link">GitHub</a>
-                        <a href="https://gitee.com/hyperplasma" target="_blank" class="hyplus-nav-link">Gitee</a>
-                        <a href="https://akira.blog.csdn.net" target="_blank" class="hyplus-nav-link">CSDN</a>
-                    </div>
-                    <div class="hyplus-nav-group">
-                        <a href="https://steamcommunity.com/id/hyperplasma/" class="hyplus-nav-link">Steam</a>
-                        <a href="https://space.bilibili.com/12103859" target="_blank" class="hyplus-nav-link">Bilibili</a>
-                        <a href="http://hyperplasma.ysepan.com" target="_blank" class="hyplus-nav-link">开放网盘</a>
-                    </div>
-                    <div class="hyplus-nav-group">
-                        <a href="http://kina.hyperplasma.top" class="hyplus-nav-link">KINA-Next</a>
-                        <a href="https://www.hyperplasma.top/media/" class="hyplus-nav-link">媒体库</a>
-                        <a href="https://www.hyperplasma.top/game/" class="hyplus-nav-link">娱乐中心</a>
-                    </div>
-                </div>
-            </div> -->
-            <div class="profile-badges">
-                <span class="profile-badge"><img src="https://img.shields.io/badge/HP-Hyperplasma-blue" alt="Hyperplasma" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/Java-%23ED8B00.svg?logo=openjdk&logoColor=white" alt="Java" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?logo=springboot&logoColor=fff" alt="Spring Boot" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/Go-%2300ADD8.svg?&logo=go&logoColor=white" alt="Go" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white" alt="PHP" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/WordPress-%2321759B.svg?logo=wordpress&logoColor=white" alt="WordPress" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=fff" alt="MySQL" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/Redis-%23DD0031.svg?logo=redis&logoColor=white" alt="Redis" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white" alt="Cpp" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/Rust-%23000000.svg?e&logo=rust&logoColor=white" alt="Rust" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff" alt="Python" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/PyTorch-ee4c2c?logo=pytorch&logoColor=white" alt="PyTorch" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/HTML-%23E34F26.svg?logo=html5&logoColor=white" alt="HTML" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/CSS-639?logo=css&logoColor=fff" alt="CSS" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000" alt="JavaScript" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/Markdown-%23000000.svg?logo=markdown&logoColor=white" alt="Markdown" /></span>
-                <span class="profile-badge"><img src="https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=F0F0F0" alt="macOS" /></span>
+            <div class="profile-desc"><a href="https://www.hyperplasma.top/user/akira37/">Akira&nbsp;-&nbsp;Hyperplasma&nbsp;-&nbsp;Hyplus</a></div>
+            <div class="custom-randpost">
+                
             </div>
             <div class="profile-stats-counts"><?php echo do_shortcode('[site_content_counts]'); ?></div>
         </div>
