@@ -189,7 +189,7 @@ pre {
 	user-select: none;
 }
 
-#nav-below {
+.post-navigation {
 	display: none;
 }
 
