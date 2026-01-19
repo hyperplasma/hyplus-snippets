@@ -1,7 +1,10 @@
-<!-- File Viewer HTML
- Shortcode: [wpcode id="11754"]
- Current status: unused
--->
+<?php
+/**
+ * File Viewer HTML
+ * Shortcode: [wpcode id="11754"]
+ * Current status: unused
+ */
+?>
 <style>
 .wp-file-viewer {
     max-width: 800px;

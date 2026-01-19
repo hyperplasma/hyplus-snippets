@@ -1,11 +1,13 @@
-<!--
-HyCode - 在线IDE切换器
-Version: 0.1
-Created: 2025-05-26 04:09:19 UTC
-Author: hyperplasma
-Code type: HTML
-Current status: unused
--->
+<?php
+/**
+ * HyCode - 在线IDE切换器
+ * Version: 0.1
+ * Created: 2025-05-26 04:09:19 UTC
+ * Author: hyperplasma
+ * Code type: HTML
+ * Current status: unused
+ */
+?>
 <div class="hycode-container">
 	<div class="hycode-main">
 		<div class="hycode-main-container">
