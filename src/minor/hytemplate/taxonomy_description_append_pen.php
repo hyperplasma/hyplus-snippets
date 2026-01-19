@@ -22,20 +22,39 @@ add_action('wp_footer', function() {
         $term_url = get_term_link($term_id, $term->taxonomy);
         $term_name = $term->name;
         
-        // 获取该分类下最新修改的文章时间
-        $latest_posts = get_posts(array(
-            'cat' => $term_id,
-            'orderby' => 'modified',
-            'order' => 'DESC',
-            'posts_per_page' => 1,
-            'post_status' => 'publish',
-        ));
+        // 使用 Transients 缓存获取分类最后修改时间
+        $cache_key = 'hyplus_term_modified_' . $term_id;
+        $modified_time = get_transient($cache_key);
+        
+        if (false === $modified_time) {
+            // 缓存不存在，使用 WP_Query 查询该分类最新修改的文章
+            $query = new WP_Query(array(
+                'cat' => $term_id,
+                'posts_per_page' => 1,
+                'orderby' => 'modified',
+                'order' => 'DESC',
+                'post_status' => 'publish',
+                'fields' => 'ids',
+            ));
+            
+            if ($query->posts) {
+                $post_id = $query->posts[0];
+                // 获取 GMT 时间戳后转换为东八区
+                $post_modified_gmt = strtotime(get_the_modified_date('Y-m-d H:i:s', $post_id));
+                $timestamp_utc8 = $post_modified_gmt + 8 * 3600;
+                $modified_time = gmdate('Y-m-d H:i:s', $timestamp_utc8);
+                // 缓存 7 天
+                set_transient($cache_key, $modified_time, 7 * DAY_IN_SECONDS);
+            }
+            
+            wp_reset_postdata();
+        }
         
         $lastModifiedDate = '';
-        $lastModifiedTime = '';
-        if (!empty($latest_posts)) {
-            $lastModifiedDate = get_the_modified_date('Y年n月j日', $latest_posts[0]->ID);
-            $lastModifiedTime = get_the_modified_time('H:i', $latest_posts[0]->ID);
+        if (!empty($modified_time)) {
+            // 东八区时间格式化（仅显示日期）
+            $timestamp = strtotime($modified_time);
+            $lastModifiedDate = date_i18n('Y年n月j日', $timestamp);
         }
         
         $term_id_js = esc_js($term_id);
@@ -51,9 +70,8 @@ add_action('wp_footer', function() {
         $update_info = '';
         if (!empty($lastModifiedDate)) {
             $update_info = sprintf(
-                '&nbsp;<span class="updated-on" style="display: inline; color: #575760;">更新于 %s %s</span><span class="hyplus-unselectable">&nbsp;</span>',
-                esc_html($lastModifiedDate),
-                esc_html($lastModifiedTime)
+                '&nbsp;<span class="updated-on" style="display: inline; color: #575760;">更新于 %s</span><span class="hyplus-unselectable">&nbsp;</span>',
+                esc_html($lastModifiedDate)
             );
         }
         
