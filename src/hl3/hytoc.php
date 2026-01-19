@@ -12,8 +12,8 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
     // if (!is_singular('post')) return $content;
     if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
 
-    // 匹配第一个被TOC捕获的标题（以数字或大写字母序号的h1-h6，支持用点分段，如 B.1 或 C.D.3）
-    if (preg_match('/(<h[1-6][^>]*>\s*[0-9A-Z]+(\.[0-9A-Z]+)*(\)|\.)?\s.*?<\/h[1-6]>)/', $content, $matches, PREG_OFFSET_CAPTURE)) {
+    // 匹配第一个被TOC捕获的标题（以数字/大写字母/“第1”“第2”等中文序号开头的h1-h6，支持用点分段，如 B.1 或 C.D.3 或 第1.2）
+    if (preg_match('/(<h[1-6][^>]*>\s*((第[一二三四五六七八九十百千万0-9]+)|(第\d+)|[0-9A-Z]+)(\.[一二三四五六七八九十百千万0-9A-Z]+)*(\)|\.)?.*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
         $pos = $matches[0][1];
         $toc = '[toc]';
         // 在第一个被TOC捕获的标题前插入
@@ -101,7 +101,8 @@ function hyplus_output_toc_scripts() {
     .hyplus-toc-content ul, .hyplus-toc-content ol { margin: 0; }
     /* 当前位置的目录项高亮为粗体 */
     .hyplus-toc-content a.hyplus-toc-active {
-        font-weight: bold;
+        /* font-weight: bold; */
+        color: #3000aa;
     }
     /* 当按钮处于"显示"（即当前折叠）状态时，折叠内容 */
     .hyplus-toc-container:has(.hyplus-toc-toggle[aria-label="显示"]) .hyplus-toc-content {
@@ -161,8 +162,8 @@ function hyplus_output_toc_scripts() {
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
             var tocContent = container.querySelector('.hyplus-toc-content');
             var tocHeader = container.querySelector('.hyplus-toc-header');
-            // 匹配以数字或大写字母开头的序号，支持点分段，例如: 1.2, B, B.1, C.D.3
-            var pattern = /^[0-9A-Z]+(\.[0-9A-Z]+)*(\)|\.)?[\s]/;
+            // 匹配以数字、大写字母或“第1”“第2”等中文序号开头的序号，支持点分段，例如: 1.2, B, B.1, C.D.3, 第1, 第1.2
+            var pattern = /^(第[一二三四五六七八九十百千万0-9]+|第\d+|[0-9A-Z]+)(\.[一二三四五六七八九十百千万0-9A-Z]+)*(\)|\.)?/u;
             var anchorMap = {};
 
             var validHeaders = [];
@@ -357,7 +358,7 @@ function hyplus_output_toc_scripts() {
             
             function updateActive() {
                 var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                var scrollOffset = scrollTop + HEADER_HEIGHT + 25;  // 多加若干px作为缓冲
+                var scrollOffset = scrollTop + HEADER_HEIGHT + 45;  // 多加若干px作为缓冲
                 var nextActiveLink = null;
                 var minDistance = Infinity;
                 
