@@ -164,15 +164,18 @@ function hyplus_output_toc_scripts() {
             var tocHeader = container.querySelector('.hyplus-toc-header');
             // 只捕获两种格式：1. 数字/字母+点分段（如1、2.1、3.A.4、B.1.3）；2. “第”+阿拉伯数字（如第1、第2、第3）
             var pattern = /^(第\d+|[0-9A-Z]+(\.[0-9A-Z]+)*)/;
-            var anchorMap = {};
+            var anchorSet = new Set();
 
-            var validHeaders = [];
-            headers.forEach(function(header){
-                // 跳过 class 包含 entry-title 的标题
-                if (header.classList && header.classList.contains('entry-title')) return;
-                var pureText = getPureText(header);
-                if (pureText.match(pattern)) validHeaders.push({header: header, pureText: pureText});
-            });
+            // 先过滤掉含entry-title的header
+            var validHeaders = Array.prototype.filter.call(headers, function(header) {
+                return !(header.classList && header.classList.contains('entry-title'));
+            }).map(function(header) {
+                var pureText = header.textContent.trim();
+                if (pattern.test(pureText)) {
+                    return {header: header, pureText: pureText};
+                }
+                return null;
+            }).filter(Boolean);
 
             var tocSection = (mode === 'ub') ? container.closest('.toc-section') : container;
             if (validHeaders.length === 0) {
@@ -209,11 +212,11 @@ function hyplus_output_toc_scripts() {
                 var baseAnchor = titleText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
                 var anchor = baseAnchor;
                 var suffix = 2;
-                while (anchorMap[anchor]) {
+                while (anchorSet.has(anchor)) {
                     anchor = baseAnchor + '_' + suffix;
                     suffix++;
                 }
-                anchorMap[anchor] = true;
+                anchorSet.add(anchor);
                 header.id = anchor;
 
                 var li = document.createElement('li');
