@@ -13,7 +13,7 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
     if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
 
     // 只捕获两种格式：1. 数字/字母+点分段（如1、2.1、3.A.4、B.1.3）；2. “第”+阿拉伯数字（如第1、第2、第3）
-    if (preg_match('/(<h[1-6][^>]*>\s*((第\d+)|([0-9A-Z]+(\.[0-9A-Z]+)*))\s.*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
+    if (preg_match('/(<h[1-6][^>]*>\s*((第\d+)|([0-9A-Z]+(\.[0-9A-Z]+)*)).*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
         $pos = $matches[0][1];
         $toc = '[toc]';
         // 在第一个被TOC捕获的标题前插入
@@ -163,7 +163,7 @@ function hyplus_output_toc_scripts() {
             var tocContent = container.querySelector('.hyplus-toc-content');
             var tocHeader = container.querySelector('.hyplus-toc-header');
             // 只捕获两种格式：1. 数字/字母+点分段（如1、2.1、3.A.4、B.1.3）；2. “第”+阿拉伯数字（如第1、第2、第3）
-            var pattern = /^(第\d+|[0-9A-Z]+(\.[0-9A-Z]+)*)\s/;
+            var pattern = /^(第\d+|[0-9A-Z]+(\.[0-9A-Z]+)*)/;
             var anchorMap = {};
 
             var validHeaders = [];
