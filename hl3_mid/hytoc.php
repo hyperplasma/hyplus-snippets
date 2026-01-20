@@ -12,8 +12,8 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
     // if (!is_singular('post')) return $content;
     if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
 
-    // 匹配第一个被TOC捕获的标题（严格要求以序号开头，后面可有括号/点/空格/中文等，避免误捕无序号标题）
-    if (preg_match('/(<h[1-6][^>]*>\s*((第[一二三四五六七八九十百千万0-9]+)|(第\d+)|[0-9A-Z]+)(\.[一二三四五六七八九十百千万0-9A-Z]+)*(\)|\.)?(\s|　|：|:|、|．|\.|\)|\(|（|）|[\u4e00-\u9fa5]).*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
+    // 只捕获两种格式：1. 数字/字母+点分段（如1、2.1、3.A.4、B.1.3）；2. “第”+阿拉伯数字（如第1、第2、第3）
+    if (preg_match('/(<h[1-6][^>]*>\s*((第\d+)|([0-9A-Z]+(\.[0-9A-Z]+)*))\s.*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
         $pos = $matches[0][1];
         $toc = '[toc]';
         // 在第一个被TOC捕获的标题前插入
@@ -162,8 +162,8 @@ function hyplus_output_toc_scripts() {
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
             var tocContent = container.querySelector('.hyplus-toc-content');
             var tocHeader = container.querySelector('.hyplus-toc-header');
-            // 匹配以数字、大写字母或“第1”“第2”等中文序号开头，后面紧跟括号/点/空格/中文等，避免误捕无序号标题
-            var pattern = /^(第[一二三四五六七八九十百千万0-9]+|第\d+|[0-9A-Z]+)(\.[一二三四五六七八九十百千万0-9A-Z]+)*(\)|\.)?(\s|　|：|:|、|．|\.|\)|\(|（|）|[\u4e00-\u9fa5])/u;
+            // 只捕获两种格式：1. 数字/字母+点分段（如1、2.1、3.A.4、B.1.3）；2. “第”+阿拉伯数字（如第1、第2、第3）
+            var pattern = /^(第\d+|[0-9A-Z]+(\.[0-9A-Z]+)*)\s/;
             var anchorMap = {};
 
             var validHeaders = [];
