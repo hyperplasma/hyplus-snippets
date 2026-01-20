@@ -1503,7 +1503,7 @@
 			github: {
 				name: 'GitHub仓库',
 				url: 'https://github.com/search?q={q}',
-				homepage: 'https://github.com/search'
+				homepage: 'https://github.com/hyperplasma'
 			}
 		};
 
@@ -1710,7 +1710,7 @@
 				// 检查复选框是否选中
 				const addPrompt = addPromptCheckbox && addPromptCheckbox.checked;
 				if (addPrompt) {
-					const before = '请你认真阅读学习以下内容（其中第1行是所属网站及其permalink，第2行是所属分类、字数统计、预估阅读时间等元信息，第3行是标题，第4行是初版发表日期、作者名、最近修改日期等元信息，之后为正文；最后几行可能有若干注解(以返回符`↩`结尾)、分类/tag信息、评论栏、网友评论等额外内容），准备据此回答问题：\n```````````````````````````\n';
+					const before = '请你认真阅读学习以下重要内容（其中第1行是所属网站及其permalink，第2行是所属分类、字数统计、预估阅读时间等元信息，第3行是标题，第4行是初版发表日期、作者名、最近修改日期等元信息，之后为正文；最后几行可能有若干注解(以返回符`↩`结尾)、分类/tag信息、评论栏、网友评论等额外内容），准备据此回答问题：\n```````````````````````````\n';
 					const after = '\n```````````````````````````\n';
 					content = before + content + after;
 				}
