@@ -168,6 +168,8 @@ function hyplus_output_toc_scripts() {
 
             var validHeaders = [];
             headers.forEach(function(header){
+                // 跳过 class 包含 entry-title 的标题
+                if (header.classList && header.classList.contains('entry-title')) return;
                 var pureText = getPureText(header);
                 if (pureText.match(pattern)) validHeaders.push({header: header, pureText: pureText});
             });
