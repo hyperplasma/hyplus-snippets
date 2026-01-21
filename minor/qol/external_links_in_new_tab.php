@@ -87,19 +87,21 @@ function hyperplasma_modify_content_links($content) {
     $data = hyperplasma_get_special_internal_links();
     $site_domain = $data['site_domain'];
     $special_internal_links = $data['links'];
-    
-    // 预编译正则表达式和转义的域名，避免在回调中重复处理
     $site_domain_escaped = preg_quote($site_domain, '#');
 
     // 使用正则表达式处理链接
-    $pattern = '/<a([^>]*?)href=[\'"]([^\'"]+)[\'"]([^>]*?)>/i';
+    // 改进的正则：支持href前后的任意属性，且处理更加严格
+    $pattern = '/<a\s+([^>]*?\s+)?href=[\'"]([^\'"]*?)[\'"]([^>]*)>/i';
+    
     return preg_replace_callback($pattern, function($matches) use ($site_domain, $site_domain_escaped, $special_internal_links) {
-        $full_match = $matches[0];
+        $before_href = isset($matches[1]) ? $matches[1] : '';
         $url = $matches[2];
+        $after_href = $matches[3];
+        $full_tag = $matches[0];
 
-        // 忽略以 / 或 # 开头的链接（必定是内部链接）
+        // 忽略以 / 或 # 开头的链接（必定是内部链接）- 这些链接不应该添加target属性
         if (preg_match('#^[/#]#', $url)) {
-            return $full_match;
+            return $full_tag;
         }
 
         // 检查是否是外部链接或特定的内部链接
@@ -108,15 +110,17 @@ function hyperplasma_modify_content_links($content) {
             in_array($url, $special_internal_links, true)
         ) {
             // 确保不重复添加属性
-            if (strpos($full_match, 'target=') === false) {
-                $full_match = str_replace('>', ' target="_blank">', $full_match);
+            if (strpos($full_tag, 'target=') === false) {
+                // 在 > 前添加 target="_blank"
+                $full_tag = preg_replace('/>$/', ' target="_blank">', $full_tag);
             }
-            if (strpos($full_match, 'rel=') === false) {
-                $full_match = str_replace('>', ' rel="noopener external">', $full_match);
+            if (strpos($full_tag, 'rel=') === false) {
+                // 在 > 前添加 rel="noopener external"
+                $full_tag = preg_replace('/>$/', ' rel="noopener external">', $full_tag);
             }
         }
 
-        return $full_match;
+        return $full_tag;
     }, $content);
 }
 
