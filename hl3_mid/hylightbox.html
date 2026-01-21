@@ -4,21 +4,21 @@
 -->
 <!-- Template for lightbox structure -->
 <template id="hylightbox-template">
-    <div class="my-lightbox-wrapper">
-        <img class="my-lightbox-image" src="" alt="Lightbox Image" />
-        <canvas class="my-lightbox-canvas"></canvas>
+    <div class="hylightbox-wrapper">
+        <img class="hylightbox-image" src="" alt="Lightbox Image" />
+        <canvas class="hylightbox-canvas"></canvas>
 
         <!-- Control bar at top center -->
-        <div class="my-lightbox-control-bar">
-            <button class="my-lightbox-btn zoom-out-btn" title="Zoom Out (-)">−</button>
-            <span class="my-lightbox-zoom-level">100%</span>
-            <button class="my-lightbox-btn zoom-in-btn" title="Zoom In (+)">+</button>
+        <div class="hylightbox-control-bar">
+            <button class="hylightbox-btn zoom-out-btn" title="Zoom Out (-)">−</button>
+            <span class="hylightbox-zoom-level">100%</span>
+            <button class="hylightbox-btn zoom-in-btn" title="Zoom In (+)">+</button>
         </div>
 
         <!-- Help button at top left -->
-        <div class="my-lightbox-help-container">
-            <button class="my-lightbox-btn help-btn" title="Help (?)">?</button>
-            <div class="my-lightbox-help-tooltip">
+        <div class="hylightbox-help-container">
+            <button class="hylightbox-btn help-btn" title="Help (?)">?</button>
+            <div class="hylightbox-help-tooltip">
                 <p>键盘快捷键：</p>
                 <ul>
                     <li>+ : 放大</li>
@@ -35,20 +35,20 @@
         </div>
 
         <!-- Close button at top right -->
-        <div class="my-lightbox-close-container">
-            <button class="my-lightbox-btn close-btn" title="Close (ESC)">×</button>
+        <div class="hylightbox-close-container">
+            <button class="hylightbox-btn close-btn" title="Close (ESC)">×</button>
         </div>
 
         <!-- Rotate buttons at bottom left -->
-        <div class="my-lightbox-rotate-container">
-            <button class="my-lightbox-btn rotate-btn" title="Rotate CW (R)">↻</button>
-            <button class="my-lightbox-btn rotate-counter-btn" title="Rotate CCW (T)">↺</button>
+        <div class="hylightbox-rotate-container">
+            <button class="hylightbox-btn rotate-btn" title="Rotate CW (R)">↻</button>
+            <button class="hylightbox-btn rotate-counter-btn" title="Rotate CCW (T)">↺</button>
         </div>
     </div>
 </template>
 
 <style>
-    .my-lightbox-wrapper {
+    .hylightbox-wrapper {
         display: none;
         position: fixed;
         top: 0;
@@ -64,11 +64,11 @@
         -ms-user-select: none;
     }
 
-    .my-lightbox-wrapper.active {
+    .hylightbox-wrapper.active {
         display: block;
     }
 
-    .my-lightbox-image {
+    .hylightbox-image {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -81,12 +81,12 @@
         user-select: none;
     }
 
-    .my-lightbox-image.grabbing {
+    .hylightbox-image.grabbing {
         cursor: grabbing;
         transition: none;
     }
 
-    .my-lightbox-canvas {
+    .hylightbox-canvas {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -97,7 +97,7 @@
     }
 
     /* Button base styles */
-    .my-lightbox-btn {
+    .hylightbox-btn {
         border: none;
         color: white;
         font-size: 24px;
@@ -117,16 +117,16 @@
         outline: none;
     }
 
-    .my-lightbox-btn:hover,
-    .my-lightbox-btn:focus,
-    .my-lightbox-btn:active {
+    .hylightbox-btn:hover,
+    .hylightbox-btn:focus,
+    .hylightbox-btn:active {
         background: none;
         outline: none;
         box-shadow: none;
     }
 
     /* Control bar */
-    .my-lightbox-control-bar {
+    .hylightbox-control-bar {
         position: fixed;
         top: 20px;
         left: 50%;
@@ -140,7 +140,7 @@
         z-index: 10000;
     }
 
-    .my-lightbox-zoom-level {
+    .hylightbox-zoom-level {
         color: white;
         font-size: 14px;
         font-family: Arial, sans-serif;
@@ -151,7 +151,7 @@
     }
 
     /* Help button and tooltip */
-    .my-lightbox-help-container {
+    .hylightbox-help-container {
         position: absolute;
         top: 20px;
         left: 20px;
@@ -161,7 +161,7 @@
         z-index: 10000;
     }
 
-    .my-lightbox-help-tooltip {
+    .hylightbox-help-tooltip {
         display: none;
         position: absolute;
         top: 45px;
@@ -176,35 +176,35 @@
         line-height: 1.1;
     }
 
-    .my-lightbox-help-tooltip.visible {
+    .hylightbox-help-tooltip.visible {
         display: block;
     }
 
-    .my-lightbox-help-tooltip p {
+    .hylightbox-help-tooltip p {
         margin: 0;
     }
 
-    .my-lightbox-help-tooltip p:first-child {
+    .hylightbox-help-tooltip p:first-child {
         margin-bottom: 4px;
     }
 
-    .my-lightbox-help-tooltip p:last-child {
+    .hylightbox-help-tooltip p:last-child {
         margin-top: 4px;
     }
 
-    .my-lightbox-help-tooltip ul {
+    .hylightbox-help-tooltip ul {
         margin: 0;
         padding-left: 20px;
         list-style-type: disc;
     }
 
-    .my-lightbox-help-tooltip li {
+    .hylightbox-help-tooltip li {
         margin: 0 0 2px 0;
         list-style-type: disc;
     }
 
     /* Close button */
-    .my-lightbox-close-container {
+    .hylightbox-close-container {
         position: absolute;
         top: 20px;
         right: 20px;
@@ -215,7 +215,7 @@
     }
 
     /* Rotate buttons */
-    .my-lightbox-rotate-container {
+    .hylightbox-rotate-container {
         position: absolute;
         bottom: 20px;
         left: 20px;
@@ -225,7 +225,7 @@
         z-index: 10000;
     }
 
-    .my-lightbox-rotate-container .rotate-counter-btn {
+    .hylightbox-rotate-container .rotate-counter-btn {
         margin-left: 10px;
     }
 </style>
@@ -239,16 +239,16 @@
         document.body.appendChild(lightboxWrapper);
 
         // Get DOM elements
-        const wrapper = document.querySelector(".my-lightbox-wrapper");
-        const lightboxImage = document.querySelector(".my-lightbox-image");
-        const canvas = document.querySelector(".my-lightbox-canvas");
+        const wrapper = document.querySelector(".hylightbox-wrapper");
+        const lightboxImage = document.querySelector(".hylightbox-image");
+        const canvas = document.querySelector(".hylightbox-canvas");
         const ctx = canvas.getContext("2d");
-        const zoomLevel = document.querySelector(".my-lightbox-zoom-level");
+        const zoomLevel = document.querySelector(".hylightbox-zoom-level");
         const zoomInBtn = document.querySelector(".zoom-in-btn");
         const zoomOutBtn = document.querySelector(".zoom-out-btn");
         const closeBtn = document.querySelector(".close-btn");
         const helpBtn = document.querySelector(".help-btn");
-        const helpTooltip = document.querySelector(".my-lightbox-help-tooltip");
+        const helpTooltip = document.querySelector(".hylightbox-help-tooltip");
         const rotateBtn = document.querySelector(".rotate-btn");
         const rotateCounterBtn = document.querySelector(".rotate-counter-btn");
 
@@ -468,7 +468,7 @@
 
         // Image click to open
         document.body.addEventListener("click", function (e) {
-            if (e.target.tagName === "IMG" && !e.target.classList.contains("my-lightbox-image")) {
+            if (e.target.tagName === "IMG" && !e.target.classList.contains("hylightbox-image")) {
                 e.preventDefault();
                 openLightbox(e.target.src);
             }
@@ -478,7 +478,7 @@
         document.body.addEventListener(
             "mouseenter",
             function (e) {
-                if (e.target.tagName === "IMG" && !e.target.classList.contains("my-lightbox-image")) {
+                if (e.target.tagName === "IMG" && !e.target.classList.contains("hylightbox-image")) {
                     e.target.style.cursor = "zoom-in";
                 }
             },
@@ -488,7 +488,7 @@
         document.body.addEventListener(
             "mouseleave",
             function (e) {
-                if (e.target.tagName === "IMG" && !e.target.classList.contains("my-lightbox-image")) {
+                if (e.target.tagName === "IMG" && !e.target.classList.contains("hylightbox-image")) {
                     e.target.style.cursor = "auto";
                 }
             },
