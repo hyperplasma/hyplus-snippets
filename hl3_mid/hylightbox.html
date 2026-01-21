@@ -1,0 +1,662 @@
+<!-- HyLightbox
+ Description: A lightweight image viewer with zoom, drag, and drawing capabilities.
+ Code type: HTML + CSS + JavaScript
+-->
+<!-- Template for lightbox structure -->
+<template id="hylightbox-template">
+	<div class="my-lightbox-wrapper">
+		<img class="my-lightbox-image" src="" alt="Lightbox Image">
+		<canvas class="my-lightbox-canvas"></canvas>
+
+		<!-- Control bar at top center -->
+		<div class="my-lightbox-control-bar">
+			<button class="my-lightbox-btn zoom-out-btn" title="Zoom Out (-)">−</button>
+			<span class="my-lightbox-zoom-level">100%</span>
+			<button class="my-lightbox-btn zoom-in-btn" title="Zoom In (+)">+</button>
+		</div>
+
+		<!-- Help button at top left -->
+		<div class="my-lightbox-help-container">
+			<button class="my-lightbox-btn help-btn" title="Help (?)">?</button>
+			<div class="my-lightbox-help-tooltip">
+				<p>键盘快捷键：</p>
+				<ul>
+					<li>+ : 放大</li>
+					<li>- : 缩小</li>
+					<li>0 : 还原</li>
+					<li>R : 顺时针旋转45°</li>
+					<li>T : 逆时针旋转45°</li>
+					<li>ESC : 退出HyLightbox</li>
+					<li>1 : 回到鼠标模式</li>
+					<li>2 : 进入画笔模式（尚存bug）</li>
+				</ul>
+				<p>移动端可使用双指缩放</p>
+			</div>
+		</div>
+
+		<!-- Close button at top right -->
+		<div class="my-lightbox-close-container">
+			<button class="my-lightbox-btn close-btn" title="Close (ESC)">×</button>
+		</div>
+
+		<!-- Rotate buttons at bottom left -->
+		<div class="my-lightbox-rotate-container">
+			<button class="my-lightbox-btn rotate-btn" title="Rotate CW (R)">↻</button>
+			<button class="my-lightbox-btn rotate-counter-btn" title="Rotate CCW (T)">↺</button>
+		</div>
+	</div>
+</template>
+
+<style>
+	.my-lightbox-wrapper {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.8);
+		z-index: 9999;
+		touch-action: none;
+		user-select: none;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+	}
+
+	.my-lightbox-wrapper.active {
+		display: block;
+	}
+
+	.my-lightbox-image {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		max-width: 90%;
+		max-height: 90%;
+		cursor: grab;
+		transition: transform 0.2s ease;
+		touch-action: none;
+		user-select: none;
+	}
+
+	.my-lightbox-image.grabbing {
+		cursor: grabbing;
+		transition: none;
+	}
+
+	.my-lightbox-canvas {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		max-width: 90%;
+		max-height: 90%;
+		pointer-events: none;
+	}
+
+	/* Button base styles */
+	.my-lightbox-btn {
+		border: none;
+		color: white;
+		font-size: 24px;
+		cursor: pointer;
+		width: 30px;
+		height: 30px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		line-height: 1;
+		transition: opacity 0.2s;
+		background: none;
+		text-align: center;
+		vertical-align: middle;
+		opacity: 1;
+		-webkit-appearance: none;
+		appearance: none;
+		outline: none;
+	}
+
+	.my-lightbox-btn:hover {
+		opacity: 0.8;
+	}
+
+	.my-lightbox-btn:hover,
+	.my-lightbox-btn:focus,
+	.my-lightbox-btn:active {
+		background: none;
+		outline: none;
+		box-shadow: none;
+	}
+
+	/* Control bar */
+	.my-lightbox-control-bar {
+		position: fixed;
+		top: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		background-color: rgba(0, 0, 0, 0.5);
+		padding: 5px 15px;
+		border-radius: 20px;
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		z-index: 10000;
+	}
+
+	.my-lightbox-zoom-level {
+		color: white;
+		font-size: 14px;
+		font-family: Arial, sans-serif;
+		min-width: 60px;
+		text-align: center;
+		display: inline-block;
+		line-height: 30px;
+	}
+
+	/* Help button and tooltip */
+	.my-lightbox-help-container {
+		position: absolute;
+		top: 20px;
+		left: 20px;
+		background-color: rgba(0, 0, 0, 0.5);
+		border-radius: 20px;
+		padding: 5px 15px;
+		z-index: 10000;
+	}
+
+	.my-lightbox-help-tooltip {
+		display: none;
+		position: absolute;
+		top: 45px;
+		left: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		padding: 15px 20px;
+		border-radius: 10px;
+		color: white;
+		font-size: 14px;
+		width: 245px;
+		z-index: 9999;
+		line-height: 1.1;
+	}
+
+	.my-lightbox-help-tooltip.visible {
+		display: block;
+	}
+
+	.my-lightbox-help-tooltip p {
+		margin: 0;
+	}
+
+	.my-lightbox-help-tooltip p:first-child {
+		margin-bottom: 4px;
+	}
+
+	.my-lightbox-help-tooltip p:last-child {
+		margin-top: 4px;
+	}
+
+	.my-lightbox-help-tooltip ul {
+		margin: 0;
+		padding-left: 20px;
+		list-style-type: disc;
+	}
+
+	.my-lightbox-help-tooltip li {
+		margin: 0 0 2px 0;
+		list-style-type: disc;
+	}
+
+	/* Close button */
+	.my-lightbox-close-container {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		background-color: rgba(0, 0, 0, 0.5);
+		border-radius: 20px;
+		padding: 5px 15px;
+		z-index: 10000;
+	}
+
+	/* Rotate buttons */
+	.my-lightbox-rotate-container {
+		position: absolute;
+		bottom: 20px;
+		left: 20px;
+		background-color: rgba(0, 0, 0, 0.5);
+		border-radius: 20px;
+		padding: 5px 15px;
+		z-index: 10000;
+	}
+
+	.my-lightbox-rotate-container .rotate-counter-btn {
+		margin-left: 10px;
+	}
+</style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const template = document.getElementById('hylightbox-template');
+		if (!template) return;
+
+		const lightboxWrapper = template.content.cloneNode(true);
+		document.body.appendChild(lightboxWrapper);
+
+		// Get DOM elements
+		const wrapper = document.querySelector('.my-lightbox-wrapper');
+		const lightboxImage = document.querySelector('.my-lightbox-image');
+		const canvas = document.querySelector('.my-lightbox-canvas');
+		const ctx = canvas.getContext('2d');
+		const zoomLevel = document.querySelector('.my-lightbox-zoom-level');
+		const zoomInBtn = document.querySelector('.zoom-in-btn');
+		const zoomOutBtn = document.querySelector('.zoom-out-btn');
+		const closeBtn = document.querySelector('.close-btn');
+		const helpBtn = document.querySelector('.help-btn');
+		const helpTooltip = document.querySelector('.my-lightbox-help-tooltip');
+		const rotateBtn = document.querySelector('.rotate-btn');
+		const rotateCounterBtn = document.querySelector('.rotate-counter-btn');
+
+		// State variables
+		let isDragging = false;
+		let currentX = 0;
+		let currentY = 0;
+		let initialX = 0;
+		let initialY = 0;
+		let xOffset = 0;
+		let yOffset = 0;
+		let scale = 1;
+		let rotationAngle = 0;
+		let originalWidth = 0;
+		let originalHeight = 0;
+		let isSingleTouch = false;
+		let isHelpVisible = false;
+		let isDrawing = false;
+		let isPainting = false;
+		const MAX_SCALE = 1000;
+		let initialDistance = 0;
+		let initialScale = 1;
+
+		// Open lightbox
+		function openLightbox(src) {
+			wrapper.classList.add('active');
+			document.body.style.overflow = 'hidden';
+
+			const tempImg = new Image();
+			tempImg.onload = function () {
+				originalWidth = this.width;
+				originalHeight = this.height;
+				lightboxImage.src = src;
+				resetImagePosition();
+				canvas.width = lightboxImage.width;
+				canvas.height = lightboxImage.height;
+			};
+			tempImg.src = src;
+		}
+
+		// Close lightbox
+		function closeLightbox() {
+			wrapper.classList.remove('active');
+			document.body.style.overflow = '';
+			resetImagePosition();
+			isHelpVisible = false;
+			helpTooltip.classList.remove('visible');
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			isDrawing = false;
+		}
+
+		// Reset image position
+		function resetImagePosition() {
+			xOffset = 0;
+			yOffset = 0;
+			scale = 1;
+			rotationAngle = 0;
+			updateImageTransform();
+			lightboxImage.style.cursor = 'grab';
+		}
+
+		// Update image transform
+		function updateImageTransform() {
+			const transformString = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px)) scale(${scale}) rotate(${rotationAngle}deg)`;
+			lightboxImage.style.transform = transformString;
+			canvas.style.transform = transformString;
+			updateZoomLevelDisplay();
+		}
+
+		// Update zoom level display
+		function updateZoomLevelDisplay() {
+			const percentage = Math.round(scale * 100);
+			zoomLevel.textContent = `${percentage}%`;
+		}
+
+		// Zoom in
+		function zoomIn() {
+			let zoomFactor;
+			if (scale < 1) {
+				zoomFactor = 1.05;
+			} else if (scale < 10) {
+				zoomFactor = 1.125;
+			} else if (scale < 100) {
+				zoomFactor = 1.25;
+			} else {
+				zoomFactor = 1.5;
+			}
+			scale = Math.min(scale * zoomFactor, MAX_SCALE);
+			updateImageTransform();
+		}
+
+		// Zoom out
+		function zoomOut() {
+			let zoomFactor;
+			if (scale <= 1) {
+				zoomFactor = 1.05;
+			} else if (scale <= 10) {
+				zoomFactor = 1.125;
+			} else if (scale <= 100) {
+				zoomFactor = 1.25;
+			} else {
+				zoomFactor = 1.5;
+			}
+			scale = Math.max(scale / zoomFactor, 0.01);
+			updateImageTransform();
+		}
+
+		// Drag start
+		function dragStart(e) {
+			if (isDrawing) return;
+			if (e.type === 'touchstart') {
+				if (e.touches.length === 2) {
+					isSingleTouch = false;
+					return;
+				}
+				isSingleTouch = true;
+				initialX = e.touches[0].clientX - xOffset;
+				initialY = e.touches[0].clientY - yOffset;
+			} else {
+				initialX = e.clientX - xOffset;
+				initialY = e.clientY - yOffset;
+			}
+
+			if (e.target === lightboxImage) {
+				isDragging = true;
+				lightboxImage.classList.add('grabbing');
+			}
+		}
+
+		// Drag
+		function drag(e) {
+			if (!isDragging || isDrawing) return;
+			e.preventDefault();
+
+			if (e.type === 'touchmove') {
+				if (e.touches.length === 2 || !isSingleTouch) return;
+				currentX = e.touches[0].clientX - initialX;
+				currentY = e.touches[0].clientY - initialY;
+			} else {
+				currentX = e.clientX - initialX;
+				currentY = e.clientY - initialY;
+			}
+
+			xOffset = currentX;
+			yOffset = currentY;
+			updateImageTransform();
+		}
+
+		// Drag end
+		function dragEnd() {
+			isDragging = false;
+			isSingleTouch = false;
+			lightboxImage.classList.remove('grabbing');
+		}
+
+		// Get distance between two touches
+		function getDistance(touch1, touch2) {
+			return Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+		}
+
+		// Handle pinch zoom
+		function handlePinchZoom(e) {
+			if (isSingleTouch) {
+				drag(e);
+				return;
+			}
+
+			e.preventDefault();
+			e.stopPropagation();
+
+			if (e.touches.length === 2) {
+				const touch1 = e.touches[0];
+				const touch2 = e.touches[1];
+				const currentDistance = getDistance(touch1, touch2);
+
+				if (initialDistance === 0) {
+					initialDistance = currentDistance;
+					initialScale = scale;
+				} else {
+					const newScale = Math.min(
+						Math.max(initialScale * (currentDistance / initialDistance), 0.01),
+						MAX_SCALE
+					);
+					scale = newScale;
+					updateImageTransform();
+				}
+			}
+		}
+
+		// Handle touch end
+		function handleTouchEnd() {
+			initialDistance = 0;
+			dragEnd();
+		}
+
+		// Start painting
+		function startPainting(e) {
+			if (!isDrawing) return;
+			isPainting = true;
+			const rect = canvas.getBoundingClientRect();
+			const x = (e.clientX - rect.left) / scale - xOffset / scale;
+			const y = (e.clientY - rect.top) / scale - yOffset / scale;
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+			ctx.strokeStyle = 'red';
+			ctx.lineWidth = 2;
+		}
+
+		// Paint
+		function paint(e) {
+			if (!isPainting || !isDrawing) return;
+			const rect = canvas.getBoundingClientRect();
+			const x = (e.clientX - rect.left) / scale - xOffset / scale;
+			const y = (e.clientY - rect.top) / scale - yOffset / scale;
+			ctx.lineTo(x, y);
+			ctx.stroke();
+		}
+
+		// Stop painting
+		function stopPainting() {
+			if (!isDrawing) return;
+			isPainting = false;
+			ctx.closePath();
+		}
+
+		// Event listeners - Image click to open
+		document.body.addEventListener('click', function (e) {
+			const target = e.target;
+			if (target.tagName === 'IMG' && !target.classList.contains('my-lightbox-image')) {
+				e.preventDefault();
+				openLightbox(target.src);
+			}
+		});
+
+		// Mouse cursor styles for images
+		document.body.addEventListener('mouseenter', function (e) {
+			const target = e.target;
+			if (target.tagName === 'IMG' && !target.classList.contains('my-lightbox-image')) {
+				target.style.cursor = 'zoom-in';
+			}
+		}, true);
+
+		document.body.addEventListener('mouseleave', function (e) {
+			const target = e.target;
+			if (target.tagName === 'IMG' && !target.classList.contains('my-lightbox-image')) {
+				target.style.cursor = 'auto';
+			}
+		}, true);
+
+		// Button events
+		zoomInBtn.addEventListener('click', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			zoomIn();
+		});
+
+		zoomOutBtn.addEventListener('click', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			zoomOut();
+		});
+
+		rotateBtn.addEventListener('click', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			rotationAngle += 45;
+			updateImageTransform();
+		});
+
+		rotateCounterBtn.addEventListener('click', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			rotationAngle -= 45;
+			updateImageTransform();
+		});
+
+		closeBtn.addEventListener('click', closeLightbox);
+
+		// Help button
+		helpBtn.addEventListener('click', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			isHelpVisible = !isHelpVisible;
+			helpTooltip.classList.toggle('visible');
+		});
+
+		// Close help tooltip when clicking elsewhere
+		wrapper.addEventListener('click', function (e) {
+			if (isHelpVisible && !helpTooltip.contains(e.target) && e.target !== helpBtn) {
+				isHelpVisible = false;
+				helpTooltip.classList.remove('visible');
+			}
+			if (e.target === wrapper) {
+				closeLightbox();
+			}
+		});
+
+		// Keyboard events
+		document.addEventListener('keydown', function (e) {
+			if (!wrapper.classList.contains('active')) return;
+
+			switch (e.key) {
+				case '+':
+				case '=':
+					e.preventDefault();
+					zoomIn();
+					break;
+				case '-':
+				case '_':
+					e.preventDefault();
+					zoomOut();
+					break;
+				case '0':
+					e.preventDefault();
+					resetImagePosition();
+					break;
+				case 'Escape':
+					e.preventDefault();
+					closeLightbox();
+					break;
+				case '1':
+					e.preventDefault();
+					isDrawing = false;
+					lightboxImage.style.cursor = 'grab';
+					canvas.style.pointerEvents = 'none';
+					break;
+				case '2':
+					e.preventDefault();
+					isDrawing = true;
+					lightboxImage.style.cursor = 'crosshair';
+					canvas.style.pointerEvents = 'auto';
+					break;
+				case 'r':
+				case 'R':
+					e.preventDefault();
+					rotationAngle += 45;
+					updateImageTransform();
+					break;
+				case 't':
+				case 'T':
+					e.preventDefault();
+					rotationAngle -= 45;
+					updateImageTransform();
+					break;
+				case 'ArrowUp':
+					e.preventDefault();
+					yOffset += 30;
+					updateImageTransform();
+					break;
+				case 'ArrowDown':
+					e.preventDefault();
+					yOffset -= 30;
+					updateImageTransform();
+					break;
+				case 'ArrowLeft':
+					e.preventDefault();
+					xOffset += 30;
+					updateImageTransform();
+					break;
+				case 'ArrowRight':
+					e.preventDefault();
+					xOffset -= 30;
+					updateImageTransform();
+					break;
+			}
+		});
+
+		// Mouse events
+		wrapper.addEventListener('mousedown', dragStart, { passive: false });
+		wrapper.addEventListener('mousemove', drag, { passive: false });
+		wrapper.addEventListener('mouseup', dragEnd);
+		wrapper.addEventListener('mouseleave', dragEnd);
+
+		// Touch events
+		wrapper.addEventListener('touchstart', dragStart, { passive: false });
+		wrapper.addEventListener('touchmove', handlePinchZoom, { passive: false });
+		wrapper.addEventListener('touchend', handleTouchEnd);
+
+		// Prevent image dragging
+		lightboxImage.addEventListener('dragstart', function (e) {
+			e.preventDefault();
+		});
+
+		// Disable page zoom while lightbox is open
+		document.addEventListener('touchmove', function (e) {
+			if (wrapper.classList.contains('active')) {
+				e.preventDefault();
+			}
+		}, { passive: false });
+
+		// Canvas painting events
+		canvas.addEventListener('mousedown', startPainting);
+		canvas.addEventListener('mousemove', paint);
+		canvas.addEventListener('mouseup', stopPainting);
+		canvas.addEventListener('mouseout', stopPainting);
+
+		canvas.addEventListener('touchstart', function (e) {
+			startPainting(e.touches[0]);
+		});
+		canvas.addEventListener('touchmove', function (e) {
+			paint(e.touches[0]);
+		});
+		canvas.addEventListener('touchend', stopPainting);
+	});
+</script>
