@@ -124,6 +124,5 @@ function hyperplasma_modify_content_links($content) {
 add_filter('wp_nav_menu_objects', 'hyperplasma_modify_menu_items', 10, 1);
 add_filter('the_content', 'hyperplasma_modify_content_links', 999);
 add_filter('widget_text', 'hyperplasma_modify_content_links', 999);
-// 注：term_description 包含锚点链接，不应添加 target="_blank"，故移除此钩子
-// add_filter('term_description', 'hyperplasma_modify_content_links', 999);
+add_filter('term_description', 'hyperplasma_modify_content_links', 999);
 add_filter('the_excerpt', 'hyperplasma_modify_content_links', 999);
