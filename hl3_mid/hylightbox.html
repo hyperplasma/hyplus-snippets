@@ -6,7 +6,6 @@
 <template id="hylightbox-template">
     <div class="hylightbox-wrapper">
         <img class="hylightbox-image" src="" alt="Lightbox Image" />
-        <canvas class="hylightbox-canvas"></canvas>
 
         <!-- Control bar at top center -->
         <div class="hylightbox-control-bar">
@@ -27,8 +26,6 @@
                     <li>R : 顺时针旋转45°</li>
                     <li>T : 逆时针旋转45°</li>
                     <li>ESC : 退出HyLightbox</li>
-                    <li>1 : 回到鼠标模式</li>
-                    <li>2 : 进入画笔模式（尚存bug）</li>
                 </ul>
                 <p>移动端可使用双指缩放</p>
             </div>
@@ -84,16 +81,6 @@
     .hylightbox-image.grabbing {
         cursor: grabbing;
         transition: none;
-    }
-
-    .hylightbox-canvas {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        max-width: 90%;
-        max-height: 90%;
-        pointer-events: none;
     }
 
     /* Button base styles */
@@ -241,8 +228,6 @@
         // Get DOM elements
         const wrapper = document.querySelector(".hylightbox-wrapper");
         const lightboxImage = document.querySelector(".hylightbox-image");
-        const canvas = document.querySelector(".hylightbox-canvas");
-        const ctx = canvas.getContext("2d");
         const zoomLevel = document.querySelector(".hylightbox-zoom-level");
         const zoomInBtn = document.querySelector(".zoom-in-btn");
         const zoomOutBtn = document.querySelector(".zoom-out-btn");
@@ -263,8 +248,6 @@
         const state = {
             isDragging: false,
             isHelpVisible: false,
-            isDrawing: false,
-            isPainting: false,
             isSingleTouch: false,
             initialDistance: 0,
             initialScale: 1,
@@ -298,8 +281,6 @@
             tempImg.onload = function () {
                 lightboxImage.src = src;
                 resetImagePosition();
-                canvas.width = this.width;
-                canvas.height = this.height;
             };
             tempImg.src = src;
         }
@@ -311,8 +292,6 @@
             resetImagePosition();
             state.isHelpVisible = false;
             helpTooltip.classList.remove("visible");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            state.isDrawing = false;
         }
 
         // Reset image position
@@ -330,7 +309,6 @@
             const { xOffset, yOffset, scale, rotation } = state.transform;
             const transformString = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px)) scale(${scale}) rotate(${rotation}deg)`;
             lightboxImage.style.transform = transformString;
-            canvas.style.transform = transformString;
             updateZoomLevelDisplay();
         }
 
@@ -348,8 +326,6 @@
 
         // Drag handlers
         function dragStart(e) {
-            if (state.isDrawing) return;
-
             if (e.type === "touchstart") {
                 if (e.touches.length === 2) {
                     state.isSingleTouch = false;
@@ -370,7 +346,7 @@
         }
 
         function drag(e) {
-            if (!state.isDragging || state.isDrawing) return;
+            if (!state.isDragging) return;
             e.preventDefault();
 
             if (e.type === "touchmove") {
@@ -424,46 +400,6 @@
         function handleTouchEnd() {
             state.initialDistance = 0;
             dragEnd();
-        }
-
-        // Painting handlers - optimized to cache canvas rect
-        let cachedCanvasRect = null;
-
-        function getCachedCanvasRect() {
-            if (!cachedCanvasRect) {
-                cachedCanvasRect = canvas.getBoundingClientRect();
-            }
-            return cachedCanvasRect;
-        }
-
-        function startPainting(e) {
-            if (!state.isDrawing) return;
-            state.isPainting = true;
-            const rect = getCachedCanvasRect();
-            const { xOffset, yOffset, scale } = state.transform;
-            const x = (e.clientX - rect.left) / scale - xOffset / scale;
-            const y = (e.clientY - rect.top) / scale - yOffset / scale;
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 2;
-        }
-
-        function paint(e) {
-            if (!state.isPainting || !state.isDrawing) return;
-            const rect = getCachedCanvasRect();
-            const { xOffset, yOffset, scale } = state.transform;
-            const x = (e.clientX - rect.left) / scale - xOffset / scale;
-            const y = (e.clientY - rect.top) / scale - yOffset / scale;
-            ctx.lineTo(x, y);
-            ctx.stroke();
-        }
-
-        function stopPainting() {
-            if (!state.isDrawing) return;
-            state.isPainting = false;
-            ctx.closePath();
-            cachedCanvasRect = null;
         }
 
         // Image click to open
@@ -565,18 +501,6 @@
                     e.preventDefault();
                     closeLightbox();
                     break;
-                case "1":
-                    e.preventDefault();
-                    state.isDrawing = false;
-                    lightboxImage.style.cursor = "grab";
-                    canvas.style.pointerEvents = "none";
-                    break;
-                case "2":
-                    e.preventDefault();
-                    state.isDrawing = true;
-                    lightboxImage.style.cursor = "crosshair";
-                    canvas.style.pointerEvents = "auto";
-                    break;
                 case "r":
                 case "R":
                     e.preventDefault();
@@ -636,15 +560,5 @@
             },
             { passive: false },
         );
-
-        // Canvas painting events
-        canvas.addEventListener("mousedown", startPainting);
-        canvas.addEventListener("mousemove", paint);
-        canvas.addEventListener("mouseup", stopPainting);
-        canvas.addEventListener("mouseout", stopPainting);
-
-        canvas.addEventListener("touchstart", (e) => startPainting(e.touches[0]));
-        canvas.addEventListener("touchmove", (e) => paint(e.touches[0]));
-        canvas.addEventListener("touchend", stopPainting);
     });
 </script>
