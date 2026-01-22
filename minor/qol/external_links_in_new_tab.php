@@ -51,6 +51,7 @@ function hyperplasma_modify_menu_items($items) {
     $data = hyperplasma_get_special_internal_links();
     $site_domain = $data['site_domain'];
     $special_internal_links = $data['links'];
+    $site_domain_escaped = preg_quote($site_domain, '#');
 
     foreach ($items as $item) {
         if (!empty($item->url)) {
@@ -60,8 +61,8 @@ function hyperplasma_modify_menu_items($items) {
             }
             // 检查是否是外部链接或特定的内部链接
             if (
-                !preg_match('#^' . preg_quote($site_domain, '#') . '#i', $item->url) ||
-                in_array($item->url, $special_internal_links)
+                !preg_match('#^' . $site_domain_escaped . '#i', $item->url) ||
+                in_array($item->url, $special_internal_links, true)
             ) {
                 // 添加 target="_blank"
                 $item->target = '_blank';
@@ -88,19 +89,22 @@ function hyperplasma_modify_content_links($content) {
     $site_domain = $data['site_domain'];
     $special_internal_links = $data['links'];
     $site_domain_escaped = preg_quote($site_domain, '#');
+    
+    // 预缓存特殊路径以提高性能（避免在每个链接中重复访问常量）
+    $special_paths = HYPERPLASMA_SPECIAL_LINK_PATHS;
 
     // 使用正则表达式处理链接
     // 改进的正则：支持href前后的任意属性，且处理更加严格
     $pattern = '/<a\s+([^>]*?\s+)?href=[\'"]([^\'"]*?)[\'"]([^>]*)>/i';
     
-    return preg_replace_callback($pattern, function($matches) use ($site_domain, $site_domain_escaped, $special_internal_links) {
+    return preg_replace_callback($pattern, function($matches) use ($site_domain, $site_domain_escaped, $special_internal_links, $special_paths) {
         $before_href = isset($matches[1]) ? $matches[1] : '';
         $url = $matches[2];
         $after_href = $matches[3];
         $full_tag = $matches[0];
 
         // 如果包含 class="hyplus-nav-link"，则不修改
-        if (preg_match('#class=["\'][^"\']*hyplus-nav-link[^"\']*["\']#i', $full_tag)) {
+        if (preg_match('/class=["\'][^"\']*hyplus-nav-link[^"\']*["\']/i', $full_tag)) {
             return $full_tag;
         }
 
@@ -117,8 +121,8 @@ function hyperplasma_modify_content_links($content) {
         if (in_array($url, $special_internal_links, true)) {
             $is_special_link = true;
         } else {
-            // 检查是否是相对路径的特殊链接
-            foreach (HYPERPLASMA_SPECIAL_LINK_PATHS as $path) {
+            // 检查是否是相对路径的特殊链接（使用预缓存的 $special_paths）
+            foreach ($special_paths as $path) {
                 if (stripos($url, $path) === 0) {
                     $is_special_link = true;
                     break;

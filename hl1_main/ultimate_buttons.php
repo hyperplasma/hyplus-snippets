@@ -187,7 +187,7 @@
 			?>
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<label class="language-label">编辑组件:</label>
+						<label class="language-label"><a href="https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode" target="_blank">编辑</a>组件:</label>
 						<label id="edit-hynav" class="language-label">
 							<button class="font-size-btn"
 								onclick="window.open('https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647', '_blank');"
@@ -734,6 +734,10 @@
 
     .config-item input[type="checkbox"] {
         margin: 0;
+        cursor: pointer;
+    }
+
+    #addPromptCheckbox {
         cursor: pointer;
     }
 
