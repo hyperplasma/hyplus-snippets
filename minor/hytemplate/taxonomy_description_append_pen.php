@@ -15,10 +15,6 @@ add_action('wp_footer', function() {
         $term_id = $term->term_id;
         $edit_link = get_edit_term_link($term_id, $term->taxonomy);
         
-        if (!$edit_link) {
-            return;
-        }
-        
         $term_url = get_term_link($term_id, $term->taxonomy);
         $term_name = $term->name;
         
@@ -64,7 +60,7 @@ add_action('wp_footer', function() {
         $term_name_js = esc_js($term_name);
         
         // 检查用户是否为管理员（避免 shortcode 开销）
-        $show_edit_btn = current_user_can('manage_categories') ? 1 : 0;
+        $show_edit_btn = current_user_can('administrator') ? 1 : 0;
         
         // 更新信息
         $update_info = '';
