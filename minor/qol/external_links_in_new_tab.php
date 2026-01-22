@@ -100,7 +100,7 @@ function hyperplasma_modify_content_links($content) {
         $full_tag = $matches[0];
 
         // 如果包含 class="hyplus-nav-link"，则不修改
-        if (!is_singular('post') && preg_match('#class=["\']([^"\']*\s)?hyplus-nav-link(\s[^"\']*)?["\']#i', $full_tag)) {
+        if (preg_match('#class=["\'][^"\']*hyplus-nav-link[^"\']*["\']#i', $full_tag)) {
             return $full_tag;
         }
 
@@ -110,10 +110,23 @@ function hyperplasma_modify_content_links($content) {
         }
 
         // 检查是否是外部链接或特定的内部链接
-        if (
-            !preg_match('#^' . $site_domain_escaped . '#i', $url) ||
-            in_array($url, $special_internal_links, true)
-        ) {
+        $is_external = !preg_match('#^' . $site_domain_escaped . '#i', $url);
+        $is_special_link = false;
+        
+        // 检查是否在特殊链接列表中
+        if (in_array($url, $special_internal_links, true)) {
+            $is_special_link = true;
+        } else {
+            // 检查是否是相对路径的特殊链接
+            foreach (HYPERPLASMA_SPECIAL_LINK_PATHS as $path) {
+                if (stripos($url, $path) === 0) {
+                    $is_special_link = true;
+                    break;
+                }
+            }
+        }
+        
+        if ($is_external || $is_special_link) {
             // 确保不重复添加属性
             if (strpos($full_tag, 'target=') === false) {
                 // 在 > 前添加 target="_blank"
