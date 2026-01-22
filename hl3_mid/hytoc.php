@@ -168,10 +168,18 @@ function hyplus_output_toc_scripts() {
             var anchorSet = new Set();
 
             // 先过滤掉含entry-title的header
+            function getHeaderTextWithoutSup(header) {
+                // 克隆节点，移除所有sup
+                var clone = header.cloneNode(true);
+                var sups = clone.querySelectorAll('sup');
+                sups.forEach(function(sup){ sup.remove(); });
+                return clone.textContent.trim();
+            }
+
             var validHeaders = Array.prototype.filter.call(headers, function(header) {
                 return !(header.classList && header.classList.contains('entry-title'));
             }).map(function(header) {
-                var pureText = header.textContent.trim();
+                var pureText = getHeaderTextWithoutSup(header);
                 if (pattern.test(pureText)) {
                     return {header: header, pureText: pureText};
                 }
@@ -210,8 +218,9 @@ function hyplus_output_toc_scripts() {
             validHeaders.forEach(function(item){
                 var header = item.header;
                 var titleText = item.pureText;
-                var baseAnchor = titleText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
-                var anchor = baseAnchor;
+                // 锚点优先用header原有id（如有），否则用过滤后的文本生成
+                var anchor = header.id ? header.id.replace(/_.+$/, '') : titleText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+                var baseAnchor = anchor;
                 var suffix = 2;
                 while (anchorSet.has(anchor)) {
                     anchor = baseAnchor + '_' + suffix;
