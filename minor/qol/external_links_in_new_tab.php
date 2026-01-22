@@ -51,24 +51,23 @@ function hyperplasma_modify_menu_items($items) {
     $data = hyperplasma_get_special_internal_links();
     $site_domain = $data['site_domain'];
     $special_internal_links = $data['links'];
-    $site_domain_escaped = preg_quote($site_domain, '#');
+    $site_domain_escaped = preg_quote($site_domain, '/');
 
     foreach ($items as $item) {
-        if (!empty($item->url)) {
+        if (!empty($item->url) && is_string($item->url)) {
             // 忽略以 / 或 # 开头的链接（必定是内部链接）
-            if (preg_match('#^[/#]#', $item->url)) {
+            if (preg_match('/^[/#]/', $item->url)) {
                 continue;
             }
-            // 检查是否是外部链接或特定的内部链接
-            if (
-                !preg_match('#^' . $site_domain_escaped . '#i', $item->url) ||
-                in_array($item->url, $special_internal_links, true)
-            ) {
+            // 检查是否是外部链接或特殊内部链接
+            $is_external = !preg_match('/^' . $site_domain_escaped . '/i', $item->url);
+            $is_special_link = in_array($item->url, $special_internal_links, true);
+            if ($is_external || $is_special_link) {
                 // 添加 target="_blank"
                 $item->target = '_blank';
 
                 // 添加或更新 rel 属性
-                $rel_values = array_filter(explode(' ', $item->xfn));
+                $rel_values = array_filter(explode(' ', is_string($item->xfn) ? $item->xfn : ''));
                 $rel_values[] = 'noopener';
                 $rel_values[] = 'external';
                 $item->xfn = implode(' ', array_unique(array_filter($rel_values)));
@@ -88,7 +87,7 @@ function hyperplasma_modify_content_links($content) {
     $data = hyperplasma_get_special_internal_links();
     $site_domain = $data['site_domain'];
     $special_internal_links = $data['links'];
-    $site_domain_escaped = preg_quote($site_domain, '#');
+    $site_domain_escaped = preg_quote($site_domain, '/');
     
     // 预缓存特殊路径以提高性能（避免在每个链接中重复访问常量）
     $special_paths = HYPERPLASMA_SPECIAL_LINK_PATHS;
@@ -104,17 +103,17 @@ function hyperplasma_modify_content_links($content) {
         $full_tag = $matches[0];
 
         // 如果包含 class="hyplus-nav-link"，则不修改
-        if (preg_match('/class=["\'][^"\']*hyplus-nav-link[^"\']*["\']/i', $full_tag)) {
+        if ((is_category() || is_tax()) && preg_match('/class=["\'][^"\']*hyplus-nav-link[^"\']*["\']/i', $full_tag)) {
             return $full_tag;
         }
 
         // 忽略以 / 或 # 开头的链接（必定是内部链接）- 这些链接不应该添加target属性
-        if (preg_match('#^[/#]#', $url)) {
+        if (preg_match('/^[/#]/', $url)) {
             return $full_tag;
         }
 
         // 检查是否是外部链接或特定的内部链接
-        $is_external = !preg_match('#^' . $site_domain_escaped . '#i', $url);
+        $is_external = !preg_match('/^' . $site_domain_escaped . '/i', $url);
         $is_special_link = false;
         
         // 检查是否在特殊链接列表中
