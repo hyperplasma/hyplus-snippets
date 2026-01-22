@@ -24,7 +24,7 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
 
 // 输出 TOC 脚本和样式（仅一次）
 function hyplus_output_toc_scripts() {
-    if (!is_singular('post') || is_home()) return;
+    if (is_home()) return;
     static $scripts_output = false;
     if ($scripts_output) return;
     $scripts_output = true;

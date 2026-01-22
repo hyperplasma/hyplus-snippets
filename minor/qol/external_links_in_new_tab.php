@@ -99,6 +99,11 @@ function hyperplasma_modify_content_links($content) {
         $after_href = $matches[3];
         $full_tag = $matches[0];
 
+        // 如果包含 class="hyplus-nav-link"，则不修改
+        if (preg_match('#class=["\']([^"\']*\s)?hyplus-nav-link(\s[^"\']*)?["\']#i', $full_tag)) {
+            return $full_tag;
+        }
+
         // 忽略以 / 或 # 开头的链接（必定是内部链接）- 这些链接不应该添加target属性
         if (preg_match('#^[/#]#', $url)) {
             return $full_tag;
