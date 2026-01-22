@@ -100,7 +100,7 @@ function hyperplasma_modify_content_links($content) {
         $full_tag = $matches[0];
 
         // 如果包含 class="hyplus-nav-link"，则不修改
-        if (preg_match('#class=["\']([^"\']*\s)?hyplus-nav-link(\s[^"\']*)?["\']#i', $full_tag)) {
+        if (!is_singular('post') && preg_match('#class=["\']([^"\']*\s)?hyplus-nav-link(\s[^"\']*)?["\']#i', $full_tag)) {
             return $full_tag;
         }
 
