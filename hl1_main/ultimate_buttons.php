@@ -1710,7 +1710,7 @@
 				} else {
 					content = document.body.innerText;
 				}
-				content = "本内容来自Hyperplasma（www.hyperplasma.top），内容永久链接：" + window.location.href + "\n" + content;
+				content = "来源：Hyperplasma 链接：" + window.location.href + "\n" + content;
 				// 检查复选框是否选中
 				const addPrompt = addPromptCheckbox && addPromptCheckbox.checked;
 				if (addPrompt) {
