@@ -35,8 +35,11 @@ function hyperplasma_get_special_internal_links() {
         $special_internal_links[] = $site_domain . $path;
     }
     
+    $site_domain_escaped = preg_quote($site_domain, '~');
+    
     $data = array(
         'site_domain' => $site_domain,
+        'site_domain_escaped' => $site_domain_escaped,
         'links' => $special_internal_links
     );
     
@@ -50,8 +53,8 @@ function hyperplasma_get_special_internal_links() {
 function hyperplasma_modify_menu_items($items) {
     $data = hyperplasma_get_special_internal_links();
     $site_domain = $data['site_domain'];
+    $site_domain_escaped = $data['site_domain_escaped'];
     $special_internal_links = $data['links'];
-    $site_domain_escaped = preg_quote($site_domain, '/');
 
     foreach ($items as $item) {
         if (!empty($item->url) && is_string($item->url)) {
@@ -60,7 +63,7 @@ function hyperplasma_modify_menu_items($items) {
                 continue;
             }
             // 检查是否是外部链接或特殊内部链接
-            $is_external = !preg_match('/^' . $site_domain_escaped . '/i', $item->url);
+            $is_external = !preg_match('~^' . $site_domain_escaped . '~i', $item->url);
             $is_special_link = in_array($item->url, $special_internal_links, true);
             if ($is_external || $is_special_link) {
                 // 添加 target="_blank"
@@ -86,8 +89,8 @@ function hyperplasma_modify_content_links($content) {
 
     $data = hyperplasma_get_special_internal_links();
     $site_domain = $data['site_domain'];
+    $site_domain_escaped = $data['site_domain_escaped'];
     $special_internal_links = $data['links'];
-    $site_domain_escaped = preg_quote($site_domain, '/');
     
     // 预缓存特殊路径以提高性能（避免在每个链接中重复访问常量）
     $special_paths = HYPERPLASMA_SPECIAL_LINK_PATHS;
@@ -113,7 +116,7 @@ function hyperplasma_modify_content_links($content) {
         }
 
         // 检查是否是外部链接或特定的内部链接
-        $is_external = !preg_match('/^' . $site_domain_escaped . '/i', $url);
+        $is_external = !preg_match('~^' . $site_domain_escaped . '~i', $url);
         $is_special_link = false;
         
         // 检查是否在特殊链接列表中
