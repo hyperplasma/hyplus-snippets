@@ -1087,11 +1087,6 @@
 			} else if (isNavMaximized) {
 				setNavMaximizedStyle(nav, maximizeButton, true);
 			}
-
-			// 如果在工具页面，检查并加载相应工具
-			if (chatContent && chatContent.style.display !== 'none') {
-				checkAndLoadTool();
-			}
 		}
 	}
 
@@ -1193,14 +1188,14 @@
 			window._navContentCache = {
 				contents: {
 					nav: document.getElementById('navContent'),
-					chat: document.getElementById('chatContent'),
+					// chat: document.getElementById('chatContent'),
 					ai: document.getElementById('aiContent'),
 					settings: document.getElementById('settingsContent'),
 					note: document.getElementById('noteContent')
 				},
 				buttons: {
 					nav: document.getElementById('navPageButton'),
-					chat: document.getElementById('chatPageButton'),
+					// chat: document.getElementById('chatPageButton'),
 					ai: document.getElementById('aiPageButton'),
 					settings: document.getElementById('settingsPageButton'),
 					note: document.getElementById('notePageButton')
@@ -1226,9 +1221,6 @@
 				if (!kinaIframe.src || kinaIframe.src === 'about:blank') {
 					kinaIframe.src = 'https://kina.hyperplasma.top';
 				}
-			}
-			if (page === 'chat') {
-				checkAndLoadTool();
 			}
 			if (page === 'note') {
 				// 仅在非移动端（min-width: 769px）下将光标定位到搜索栏
@@ -1736,38 +1728,38 @@
 		}
 
 		// 检查是否需要保持 Nav 框显示
-		if (localStorage.getItem('keepNavOpen') === 'true') {
-			const nav = document.getElementById('navContainer');
-			const maximizeButton = document.querySelector('.maximize-button');
+		// if (localStorage.getItem('keepNavOpen') === 'true') {
+		// 	const nav = document.getElementById('navContainer');
+		// 	const maximizeButton = document.querySelector('.maximize-button');
 
-			nav.style.display = 'block';
-			document.body.classList.add('nav-open');
+		// 	nav.style.display = 'block';
+		// 	document.body.classList.add('nav-open');
 
-			// 移动端处理
-			if (window.innerWidth <= 568 || localStorage.getItem('isNavMaximized') === 'true') {
-				isNavMaximized = true;
-				nav.classList.add('maximized');
-				document.getElementById('maximizeButton').classList.add('maximized');
-				nav.style.width = '100%';
-				nav.style.height = '100%';
-				nav.style.maxWidth = 'none';
-				nav.style.borderRadius = '0';
+		// 	// 移动端处理
+		// 	if (window.innerWidth <= 568 || localStorage.getItem('isNavMaximized') === 'true') {
+		// 		isNavMaximized = true;
+		// 		nav.classList.add('maximized');
+		// 		document.getElementById('maximizeButton').classList.add('maximized');
+		// 		nav.style.width = '100%';
+		// 		nav.style.height = '100%';
+		// 		nav.style.maxWidth = 'none';
+		// 		nav.style.borderRadius = '0';
 
-				// 移动端隐藏最大化按钮
-				if (window.innerWidth <= 568 && maximizeButton) {
-					maximizeButton.style.display = 'none';
-				}
-			}
+		// 		// 移动端隐藏最大化按钮
+		// 		if (window.innerWidth <= 568 && maximizeButton) {
+		// 			maximizeButton.style.display = 'none';
+		// 		}
+		// 	}
 
-			// 重置标志
-			localStorage.removeItem('keepNavOpen');
+		// 	// 重置标志
+		// 	localStorage.removeItem('keepNavOpen');
 
-			// 切换到工具页面
-			switchNavContent('chat');
-		} else {
-			const lastVisitedPage = localStorage.getItem('lastVisitedNavPage') || 'nav';
-			switchNavContent(lastVisitedPage);
-		}
+		// 	// 切换到工具页面
+		// 	switchNavContent('chat');
+		// } else {
+		// 	const lastVisitedPage = localStorage.getItem('lastVisitedNavPage') || 'nav';
+		// 	switchNavContent(lastVisitedPage);
+		// }
 
 		updateTocVisibility();
 
