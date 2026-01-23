@@ -158,34 +158,58 @@ function hyplus_output_toc_scripts() {
             return text.trim();
         }
 
-        function generateToc(container, mode, hideParent, emptyMsg) {
+        // 全局缓存：一次性预处理所有headers的anchor和pureText（页面级别，只执行一次）
+        var cachedValidHeaders = null;
+
+        // 一次性预处理所有headers，确定anchor和pureText，供所有mode共享，避免重复计算
+        function preprocessAllHeaders() {
+            if (cachedValidHeaders !== null) return; // 已缓存，直接返回
+            
             var article = document.querySelector('article') || document.getElementById('main') || document.body;
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
-            var tocContent = container.querySelector('.hyplus-toc-content');
-            var tocHeader = container.querySelector('.hyplus-toc-header');
-            // 只捕获两种格式：1. 数字/字母+点分段（如1、2.1、3.A.4、B.1.3）；2. “第”+阿拉伯数字（如第1、第2、第3）
             var pattern = /^(第\d+|[0-9A-Z]+(\.[0-9A-Z]+)*)/;
             var anchorSet = new Set();
 
-            // 先过滤掉含entry-title的header
             function getHeaderTextWithoutSup(header) {
-                // 克隆节点，移除所有sup
                 var clone = header.cloneNode(true);
                 var sups = clone.querySelectorAll('sup');
                 sups.forEach(function(sup){ sup.remove(); });
                 return clone.textContent.trim();
             }
 
-            var validHeaders = Array.prototype.filter.call(headers, function(header) {
-                return !(header.classList && header.classList.contains('entry-title'));
-            }).map(function(header) {
+            var validHeaders = [];
+            Array.prototype.forEach.call(headers, function(header) {
+                if (header.classList && header.classList.contains('entry-title')) return;
                 var pureText = getHeaderTextWithoutSup(header);
                 if (pattern.test(pureText)) {
-                    return {header: header, pureText: pureText};
+                    // 为每个header一次性预处理和存储anchor
+                    var originalId = header.getAttribute('id');
+                    var baseAnchor = originalId ? originalId.replace(/_.+$/, '') : pureText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+                    var anchor = baseAnchor;
+                    var suffix = 2;
+                    while (anchorSet.has(anchor)) {
+                        anchor = baseAnchor + '_' + suffix;
+                        suffix++;
+                    }
+                    anchorSet.add(anchor);
+                    // 一次性存储anchor和pureText到dataset，后续所有mode共享
+                    header.dataset.hypluscurrentAnchor = anchor;
+                    header.dataset.hypluspureText = pureText;
+                    header.id = anchor;
+                    validHeaders.push({header: header, pureText: pureText});
                 }
-                return null;
-            }).filter(Boolean);
+            });
+            cachedValidHeaders = validHeaders;
+        }
 
+        function generateToc(container, mode, hideParent, emptyMsg) {
+            // 确保已完成全局预处理（只会在第一个mode触发，后续mode直接使用缓存）
+            preprocessAllHeaders();
+            
+            var validHeaders = cachedValidHeaders;
+            var tocContent = container.querySelector('.hyplus-toc-content');
+            var tocHeader = container.querySelector('.hyplus-toc-header');
+            // 只捕获两种格式：1. 数字/字母+点分段（如1、2.1、3.A.4、B.1.3）；2. “第”+阿拉伯数字（如第1、第2、第3）
             var tocSection = (mode === 'ub') ? container.closest('.toc-section') : container;
             if (validHeaders.length === 0) {
                 if (mode === 'ub' && emptyMsg === 'true') {
@@ -218,16 +242,8 @@ function hyplus_output_toc_scripts() {
             validHeaders.forEach(function(item){
                 var header = item.header;
                 var titleText = item.pureText;
-                // 锚点优先用header原有id（如有），否则用过滤后的文本生成
-                var anchor = header.id ? header.id.replace(/_.+$/, '') : titleText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
-                var baseAnchor = anchor;
-                var suffix = 2;
-                while (anchorSet.has(anchor)) {
-                    anchor = baseAnchor + '_' + suffix;
-                    suffix++;
-                }
-                anchorSet.add(anchor);
-                header.id = anchor;
+                // 所有anchor已在预处理阶段确定并存储到dataset（所有mode共享同一份anchor）
+                var anchor = header.dataset.hypluscurrentAnchor;
 
                 var li = document.createElement('li');
                 var a = document.createElement('a');
