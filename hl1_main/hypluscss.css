@@ -189,7 +189,7 @@ pre {
 }
 
 /* Unselectable */
-.hyplus-unselectable, details summary, .inside-header, .copy-button {
+.hyplus-unselectable, details summary, .inside-header, .copy-button, .footnote-backref {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -702,12 +702,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	overflow: hidden;
 	will-change: transform, box-shadow;
 }
-.hyplus-nav-link:active {
-	background: #dbeaf5;
-	color: #155a99;
-	box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
-	transform: translateY(1px) scale(0.98);
-}
+
 .hyplus-nav-link:hover,
 .hyplus-nav-link:focus {
 	background: #eaf6ff;
@@ -717,6 +712,13 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	transform: translateY(-1px) scale(1.025);
 	text-decoration: none;
 	z-index: 2;
+}
+
+.hyplus-nav-link:active {
+	background: #dbeaf5;
+	color: #155a99;
+	box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
+	transform: translateY(1px) scale(0.98);
 }
 
 /* favo-color按钮主色渐变 */
@@ -766,4 +768,20 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	display: none;
 	word-break: break-word;
 	pointer-events: none;
+}
+/*
+ * HY-通用缩放交互类
+ * 用法：给任意元素加.hyplus-scale类，即可获得悬浮放大、按下缩小的交互动画。
+ */
+.hyplus-scale {
+    transition: transform 0.15s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
+}
+.hyplus-scale:hover,
+.hyplus-scale:focus {
+    transform: scale(1.13);
+}
+.hyplus-scale:active {
+    transform: scale(0.93);
+    transition: none;
 }

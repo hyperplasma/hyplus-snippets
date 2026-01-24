@@ -73,19 +73,19 @@ add_action('wp_footer', function() {
         
         // 生成按钮 HTML（条件性包含编辑按钮）
         $edit_btn_html = $show_edit_btn 
-            ? sprintf('&nbsp;&nbsp;<a href="%s" target="_blank" title="编辑分类" style="text-decoration: none;"><span style="cursor: pointer;">🖊️</span></a>', esc_url($edit_link))
+            ? sprintf('&nbsp;&nbsp;<span class="hyplus-scale" style="display: inline-block;"><a href="%s" target="_blank" title="编辑分类" style="text-decoration: none;">🖊️</a></span>', esc_url($edit_link))
             : '';
         
         // 分享和打印按钮
         $share_print_html = sprintf(
-            '&nbsp;&nbsp;<span style="display: inline-block;"><a href="#" onclick="window.shareArticle(\'%s\', \'%s\'); return false;" title="分享页面" style="text-decoration: none;">📤</a></span>' .
-            '&nbsp;&nbsp;<span style="display: inline-block;"><a href="javascript:window.print();" title="打印页面（建议先在Hyplus设置隐藏必要元素）" onclick="window.print(); return false;" style="text-decoration: none;">🖨</a></span>',
+            '&nbsp;&nbsp;<span class="hyplus-scale" style="display: inline-block;"><a href="#" onclick="window.shareArticle(\'%s\', \'%s\'); return false;" title="分享页面" style="text-decoration: none;">📤</a></span>' .
+            '&nbsp;&nbsp;<span class="hyplus-scale" style="display: inline-block;"><a href="javascript:window.print();" title="打印页面（建议先在Hyplus设置隐藏必要元素）" onclick="window.print(); return false;" style="text-decoration: none;">🖨</a></span>',
             $term_url_js,
             $term_name_js
         );
         
         $buttons_html = sprintf(
-            '%s<span class="hyplus-unselectable">&nbsp;<button id="taxonomy-random-post-btn" title="随机博文" type="button" style="cursor: pointer; border: none; background: none; padding: 0; font-size: 1em;">🎲</button>%s%s</span>',
+            '%s<span class="hyplus-unselectable">&nbsp;<button id="taxonomy-random-post-btn" class="hyplus-scale" title="随机博文" type="button" style="cursor: pointer; border: none; background: none; padding: 0; font-size: 1em;">🎲</button>%s%s</span>',
             $update_info,
             $share_print_html,
             $edit_btn_html

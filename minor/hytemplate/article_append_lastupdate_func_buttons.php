@@ -23,11 +23,11 @@ add_action('wp_footer', function() {
         // 创建按钮HTML
         $buttons_html = sprintf(
             '<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;</span>' .
-            '<span style="display: inline-block;"><a href="#" onclick="window.copyIdLink(this, %s); return false;" title="复制朴素链接（ID：%s）" style="text-decoration: none;" class="hyplus-unselectable">📋</a></span>' .
+            '<span class="hyplus-scale" style="display: inline-block;"><a href="#" onclick="window.copyIdLink(this, %s); return false;" title="复制朴素链接（ID：%s）" style="text-decoration: none;" class="hyplus-unselectable">📋</a></span>' .
             '<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;&nbsp;</span>' .
-            '<span style="display: inline-block;"><a href="#" onclick="window.shareArticle(\'%s\', \'%s\'); return false;" title="分享文章" style="text-decoration: none;" class="hyplus-unselectable">📤</a></span>' .
+            '<span class="hyplus-scale" style="display: inline-block;"><a href="#" onclick="window.shareArticle(\'%s\', \'%s\'); return false;" title="分享文章" style="text-decoration: none;" class="hyplus-unselectable">📤</a></span>' .
             '<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;&nbsp;</span>' .
-            '<span style="display: inline-block;"><a href="javascript:window.print();" title="打印文章（建议先在Hyplus设置隐藏必要元素）" onclick="window.print(); return false;" style="text-decoration: none;" class="hyplus-unselectable">🖨</a></span>',
+            '<span class="hyplus-scale" style="display: inline-block;"><a href="javascript:window.print();" title="打印文章（建议先在Hyplus设置隐藏必要元素）" onclick="window.print(); return false;" style="text-decoration: none;" class="hyplus-unselectable">🖨</a></span>',
             $post_id_attr,
             $post_id_attr,
             esc_url(get_permalink($post_id)),
@@ -36,7 +36,7 @@ add_action('wp_footer', function() {
 
         // 创建编辑按钮HTML并处理shortcode
         $edit_button_shortcode = sprintf(
-            '[um_show_content roles="administrator"]<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;&nbsp;</span><span style="display: inline-block;"><a class="hyplus-unselectable" href="%s" target="_blank" title="编辑文章" style="text-decoration: none;"><span style="cursor: pointer;" data-postid="%s">🖊️</span></a></span>[/um_show_content]',
+            '[um_show_content roles="administrator"]<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;&nbsp;</span><span class="hyplus-scale" style="display: inline-block;"><a class="hyplus-unselectable" href="%s" target="_blank" title="编辑文章" style="text-decoration: none;"><span style="cursor: pointer;" data-postid="%s">🖊️</span></a></span>[/um_show_content]',
             esc_url($edit_link),
             $post_id_attr
         );

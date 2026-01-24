@@ -94,11 +94,17 @@ function hyplus_output_toc_scripts() {
         -webkit-text-fill-color: #333; /* Safari */
         display: inline-block;
         transform: translateY(1px);
-        transition: transform 0.15s ease;
+        transition: transform 0.15s cubic-bezier(0.4,0,0.2,1);
     }
     .hyplus-toc-toggle[aria-label="显示"]::after { content: '➕'; }
-    /* .hyplus-toc-toggle:hover::after { transform: translateY(1px) scale(1.1); } */
-    /* .hyplus-toc-toggle:active::after { transform: translateY(1px) scale(0.95); } */
+    .hyplus-toc-toggle:hover::after,
+    .hyplus-toc-toggle:focus::after {
+        transform: translateY(1px) scale(1.13);
+    }
+    .hyplus-toc-toggle:active::after {
+        transform: translateY(2px) scale(0.93);
+        transition: none;
+    }
     @media (prefers-color-scheme: dark) {
         .hyplus-toc-toggle::after {
             color: #eee;
