@@ -30,9 +30,25 @@ function hyplus_output_toc_scripts() {
     $scripts_output = true;
     ?>
     <style>
-    .hyplus-toc-header { position: relative; display: block; text-align: center; padding-right: 44px; }
-    .hyplus-toc-header::after { content: ""; display: inline-block; width: 44px; height: 1px; vertical-align: middle; }
-    .hyplus-toc-toggle { z-index: 1; }
+    .hyplus-toc-header {
+        position: relative;
+        display: block;
+        text-align: center;
+        padding-right: 44px;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+    .hyplus-toc-header::after {
+        content: "";
+        display: inline-block;
+        width: 44px;
+        height: 1px;
+        vertical-align: middle;
+    }
+    .hyplus-toc-toggle {
+        z-index: 1;
+    }
     /* 容器宽度随内容而定，避免 100% 铺满 */
     .hyplus-toc-container {
         display: inline-block;
@@ -99,7 +115,9 @@ function hyplus_output_toc_scripts() {
         will-change: max-height, opacity;
         transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease !important;
     }
-    .hyplus-toc-content ul, .hyplus-toc-content ol { margin: 0; }
+    /* .hyplus-toc-content ul, .hyplus-toc-content ol {
+        margin: 0;
+    } */
     /* 当前位置的目录项高亮为粗体 */
     .hyplus-toc-content a.hyplus-toc-active {
         /* font-weight: bold; */
@@ -121,7 +139,59 @@ function hyplus_output_toc_scripts() {
     .hyplus-toc-container:has(.hyplus-toc-toggle[aria-label="显示"]) {
         max-width: max-content !important; /* 仅容纳标题与按钮 */
     }
-    /* 移除之前在折叠时强制控制容器宽度的规则，让两种状态都由内容决定 */
+    
+    /* Hyplus TOC 通用样式 */
+    /* .hyplus-toc-container {
+        margin: 0 0 18px 0;
+    } */
+    .hyplus-toc-content ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin: 10px 0;
+    }
+    .hyplus-toc-content ul li {
+        margin-bottom: 10px;
+    }
+    .hyplus-toc-content ul li a {
+        text-decoration: none;
+        color: #0073aa;
+        transition: color 0.2s ease;
+    }
+    .hyplus-toc-content ul li a:hover {
+        color: red;
+    }
+    .hyplus-toc-content ul li.level-1 { margin-left: 0px; }
+    .hyplus-toc-content ul li.level-2 { margin-left: 15px; }
+    .hyplus-toc-content ul li.level-3 { margin-left: 30px; }
+    .hyplus-toc-content ul li.level-4 { margin-left: 45px; }
+    .hyplus-toc-content ul li.level-5 { margin-left: 60px; }
+    .hyplus-toc-content ul li.level-6 { margin-left: 75px; }
+
+    /* post模式专用样式 */
+	.hyplus-toc-container[data-toc-mode="post"] {
+		background: #fbfdfe;
+		border: 1px solid #b6dded;
+		border-radius: 14px;
+		box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
+		padding: 16px 22px 12px 22px;
+		display: inline-block;
+		max-width: 100%;
+		margin: 0 0 18px 0;
+		box-sizing: border-box;
+		vertical-align: top;
+	}
+	.hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-header {
+		text-align: center;
+		margin-bottom: 10px;
+		font-weight: bold;
+		color: #333;
+		padding: 0;
+	}
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-2 { margin-left: 12px; }
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-3 { margin-left: 24px; }
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-4 { margin-left: 36px; }
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-5 { margin-left: 48px; }
+    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-6 { margin-left: 60px; }
     </style>
     <script>
     (function(){

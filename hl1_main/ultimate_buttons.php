@@ -271,56 +271,61 @@
 </div>
 
 <style>
-/* 使用 sideinfo 的切换按钮样式作为搜索引擎按钮样式（复制自 sideinfo.php） */
-.sideinfo-toggle {
-	padding: 4px 12px;
-	background: #ecf5f8;
-	color: #175082;
-	border-radius: 16px;
-	border: 1.5px solid #c4e0f7;
-	box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.17), 0 1px 2px 0 rgba(33, 118, 193, 0.09);
-	font-weight: 600;
-	min-width: fit-content;
-	transition: background 0.18s cubic-bezier(0.4,0,0.2,1), color 0.18s cubic-bezier(0.4,0,0.2,1), box-shadow 0.18s cubic-bezier(0.4,0,0.2,1), transform 0.18s cubic-bezier(0.4,0,0.2,1);
-	outline: none;
-	cursor: pointer;
-}
+	/* 以sideinfo的切换按钮样式为基础作为搜索引擎按钮样式（派生自sideinfo.php） */
+	/* .sideinfo-toggle {
+		padding: 4px 12px;
+		background: #ecf5f8;
+		color: #175082;
+		border-radius: 16px;
+		border: 1.5px solid #c4e0f7;
+		box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.17), 0 1px 2px 0 rgba(33, 118, 193, 0.09);
+		font-weight: 600;
+		min-width: fit-content;
+		transition: background 0.18s cubic-bezier(0.4,0,0.2,1), color 0.18s cubic-bezier(0.4,0,0.2,1), box-shadow 0.18s cubic-bezier(0.4,0,0.2,1), transform 0.18s cubic-bezier(0.4,0,0.2,1);
+		outline: none;
+		cursor: pointer;
+	} */
 
-.sideinfo-toggle.disabled {
-	background: #f0f0f0 !important;
-	color: #999 !important;
-	border-color: #ddd !important;
-	box-shadow: none !important;
-	cursor: default !important;
-	transform: none !important;
-	pointer-events: none;
-	margin-bottom: 12px;
-	user-select: none;
-}
+	/* .sideinfo-toggle.disabled {
+		background: #f0f0f0 !important;
+		color: #999 !important;
+		border-color: #ddd !important;
+		box-shadow: none !important;
+		cursor: default !important;
+		transform: none !important;
+		pointer-events: none;
+		margin-bottom: 12px;
+		user-select: none;
+	} */
 
-.sideinfo-toggle:hover,
-.sideinfo-toggle:focus {
-	background: #eaf6ff;
-	color: #155a99;
-	border-color: #8ecafc;
-	box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.20), 0 1.5px 4px 0 rgba(33, 118, 193, 0.13);
-	transform: translateY(-1px) scale(1.025);
-	z-index: 2;
-}
+	.sideinfo-toggle:hover,
+	.sideinfo-toggle:focus {
+		background: #eaf6ff;
+		color: #155a99;
+		border-color: #8ecafc;
+		box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.20), 0 1.5px 4px 0 rgba(33, 118, 193, 0.13);
+		transform: translateY(-1px) scale(1.025);
+		z-index: 2;
+	}
 
-.sideinfo-toggle:active {
-	background: #dbeaf5;
-	color: #155a99;
-	box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
-	transform: translateY(1px) scale(0.98);
-}
+	.sideinfo-toggle:active {
+		background: #dbeaf5;
+		color: #155a99;
+		box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
+		transform: translateY(1px) scale(0.98);
+	}
 
-.engine-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 90px; }
+	.engine-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center; 
+		min-width: 90px;
+	}
+
     /* 基础字体缩放 */
     :root {
         --font-scale: 1;
     }
-
     p, span, a, li, td, th, div:not(.font-size-controls *), 
     label:not(.font-size-controls *), 
     input[type="text"], textarea, 
@@ -596,94 +601,6 @@
 		flex-direction: column;
 		align-items: center;
 	}
-
-    /* 目录内容样式（兼容旧实现，推荐使用hyplus-toc样式） */
-    #tocContent ul {
-        list-style-type: none;
-        padding-left: 0;
-        margin: 10px 0;
-    }
-
-    #tocContent ul li {
-        margin-bottom: 10px;
-    }
-
-    #tocContent ul li a {
-        text-decoration: none;
-        color: #0073aa;
-        transition: color 0.2s ease;
-    }
-
-    #tocContent ul li a:hover {
-        text-decoration: none;
-        color: red;
-    }
-
-    #tocContent ul li.level-1 { margin-left: 0px; }
-    #tocContent ul li.level-2 { margin-left: 15px; }
-    #tocContent ul li.level-3 { margin-left: 30px; }
-    #tocContent ul li.level-4 { margin-left: 45px; }
-    #tocContent ul li.level-5 { margin-left: 60px; }
-    #tocContent ul li.level-6 { margin-left: 75px; }
-
-    /* Hyplus TOC 通用样式 */
-    /* .hyplus-toc-container {
-        margin: 0 0 18px 0;
-    } */
-    .hyplus-toc-header {
-        font-size: 24px;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 8px;
-    }
-    .hyplus-toc-content ul {
-        list-style-type: none;
-        padding-left: 0;
-        margin: 10px 0;
-    }
-    .hyplus-toc-content ul li {
-        margin-bottom: 10px;
-    }
-    .hyplus-toc-content ul li a {
-        text-decoration: none;
-        color: #0073aa;
-        transition: color 0.2s ease;
-    }
-    .hyplus-toc-content ul li a:hover {
-        color: red;
-    }
-    .hyplus-toc-content ul li.level-1 { margin-left: 0px; }
-    .hyplus-toc-content ul li.level-2 { margin-left: 15px; }
-    .hyplus-toc-content ul li.level-3 { margin-left: 30px; }
-    .hyplus-toc-content ul li.level-4 { margin-left: 45px; }
-    .hyplus-toc-content ul li.level-5 { margin-left: 60px; }
-    .hyplus-toc-content ul li.level-6 { margin-left: 75px; }
-
-    /* post模式专用样式 */
-	.hyplus-toc-container[data-toc-mode="post"] {
-		background: #fbfdfe;
-		border: 1px solid #b6dded;
-		border-radius: 14px;
-		box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
-		padding: 16px 22px 12px 22px;
-		display: inline-block;
-		max-width: 100%;
-		margin: 0 0 18px 0;
-		box-sizing: border-box;
-		vertical-align: top;
-	}
-	.hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-header {
-		text-align: center;
-		margin-bottom: 10px;
-		font-weight: bold;
-		color: #333;
-		padding: 0;
-	}
-    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-2 { margin-left: 12px; }
-    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-3 { margin-left: 24px; }
-    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-4 { margin-left: 36px; }
-    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-5 { margin-left: 48px; }
-    .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-6 { margin-left: 60px; }
 
     /* 设置页面样式 */
     .settings-columns-container {
