@@ -1260,72 +1260,72 @@
 			document.getElementById(FONT_KEY_MAP[event.key])?.click();
 		}
 
-		// Alt+Shift 组合键（轮询侧边栏位置和切换页眉页脚）
-		if (event.altKey && event.shiftKey) {
-			const keyLower = (event.key || '').toLowerCase();
+		// Alt+Shift 组合键（轮询侧边栏位置和切换页眉页脚）unused
+		// if (event.altKey && event.shiftKey) {
+		// 	const keyLower = (event.key || '').toLowerCase();
 
-			// Alt+Shift 快捷键映射
-			const altShiftKeyMap = {
-				's': () => {
-					// 在移动端不切换
-					if (window.innerWidth <= 768) return;
-					const order = ['right', 'left', 'hide'];
-					let current = 'right';
-					if (document.getElementById('sidebarLeftRadio').checked) {
-						current = 'left';
-					}
-					const nextIndex = (order.indexOf(current) + 1) % order.length;
-					setSidebarPosition(order[nextIndex]);
-				},
-				'h': () => {
-					const headerFooterToggle = document.getElementById('headerFooterToggle');
-					if (headerFooterToggle) {
-						headerFooterToggle.checked = !headerFooterToggle.checked;
-						handleHeaderFooterToggle({ target: headerFooterToggle });
-					}
-				},
-				'y': () => {
-					const hideButtonsToggle = document.getElementById('hideButtonsToggle');
-					if (hideButtonsToggle) {
-						hideButtonsToggle.checked = !hideButtonsToggle.checked;
-						handleHideButtonsToggle({ target: hideButtonsToggle });
-					}
-				}
-			};
+		// 	// Alt+Shift 快捷键映射
+		// 	const altShiftKeyMap = {
+		// 		's': () => {
+		// 			// 在移动端不切换
+		// 			// if (window.innerWidth <= 768) return;
+		// 			const order = ['right', 'left', 'hide'];
+		// 			let current = 'right';
+		// 			if (document.getElementById('sidebarLeftRadio').checked) {
+		// 				current = 'left';
+		// 			}
+		// 			const nextIndex = (order.indexOf(current) + 1) % order.length;
+		// 			setSidebarPosition(order[nextIndex]);
+		// 		},
+		// 		'h': () => {
+		// 			const headerFooterToggle = document.getElementById('headerFooterToggle');
+		// 			if (headerFooterToggle) {
+		// 				headerFooterToggle.checked = !headerFooterToggle.checked;
+		// 				handleHeaderFooterToggle({ target: headerFooterToggle });
+		// 			}
+		// 		},
+		// 		'y': () => {
+		// 			const hideButtonsToggle = document.getElementById('hideButtonsToggle');
+		// 			if (hideButtonsToggle) {
+		// 				hideButtonsToggle.checked = !hideButtonsToggle.checked;
+		// 				handleHideButtonsToggle({ target: hideButtonsToggle });
+		// 			}
+		// 		}
+		// 	};
 
-			if (altShiftKeyMap[keyLower]) {
-				event.preventDefault();
-				event.stopPropagation();
-				altShiftKeyMap[keyLower]();
-			}
-		}
+		// 	if (altShiftKeyMap[keyLower]) {
+		// 		event.preventDefault();
+		// 		event.stopPropagation();
+		// 		altShiftKeyMap[keyLower]();
+		// 	}
+		// }
 	});
 
 	/**
-	 * Alt + Click to Open Links in New Tab
+	 * Alt + Click to Open Links in New Tab unused
 	 */
-	document.addEventListener('click', function (event) {
-		// 只响应鼠标左键 + Alt 点击
-		if (event.button !== 0 || !event.altKey) return;
+	// document.addEventListener('click', function (event) {
+	// 	// 只响应鼠标左键 + Alt 点击
+	// 	if (event.button !== 0 || !event.altKey) return;
 
-		// 查找可能的跳转元素（a标签或带有 data-href 属性等）
-		let el = event.target;
-		while (el && el !== document.body) {
-			if ((el.tagName === 'A' && el.href) || el.hasAttribute('data-href') || el.onclick) {
-				break;
-			}
-			el = el.parentElement;
-		}
-		if (!el || el === document.body) return;
+	// 	// 查找可能的跳转元素（a标签或带有 data-href 属性等）
+	// 	let el = event.target;
+	// 	while (el && el !== document.body) {
+	// 		if ((el.tagName === 'A' && el.href) || el.hasAttribute('data-href') || el.onclick) {
+	// 			break;
+	// 		}
+	// 		el = el.parentElement;
+	// 	}
+	// 	if (!el || el === document.body) return;
 
-		// 获取目标链接（优化：直接赋值 URL）
-		const url = el.href || el.getAttribute('data-href');
-		if (!url) return;
+	// 	// 获取目标链接（优化：直接赋值 URL）
+	// 	const url = el.href || el.getAttribute('data-href');
+	// 	if (!url) return;
 
-		// 阻止默认跳转，在新标签页打开
-		event.preventDefault();
-		window.open(url, '_blank');
-	}, true);
+	// 	// 阻止默认跳转，在新标签页打开
+	// 	event.preventDefault();
+	// 	window.open(url, '_blank');
+	// }, true);
 
 
 	/**
