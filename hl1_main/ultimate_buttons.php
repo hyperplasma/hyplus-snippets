@@ -1,6 +1,7 @@
 <!-- Ultimate Buttons by Akira37 (Hyperplasma)
- 外部组件：HyNav应用导航页面、Better Messages聊天窗口……
- 外部样式：`hyplus-unselectable` (Hyplus Overall); `hyplus-nav-section` `hyplus-nav-links` `hyplus-nav-group` `hyplus-nav-link` (HyNav)
+ Description: 提供一组功能强大的侧边按钮群（HyButton）、导航弹出框及其相关功能（部分功能已经），用于增强用户体验。
+ 外部组件：HyNav应用导航页面、Better Messages聊天窗口 (unused)、HyTOC目录组件……
+ 外部样式：`hyplus-unselectable` (Hyplus Overall); `hyplus-nav-section` `hyplus-nav-links` `hyplus-nav-group` `hyplus-nav-link` (HyNav)、Sideinfo搜索引擎按钮样式 (sideinfo.php)
  Code Type: universal
 -->
 
@@ -20,8 +21,8 @@
 
 	<!-- 切换按钮群 -->
 	<div id="navSwitchButtons" class="nav-switch-buttons hyplus-unselectable">
-		<!-- [隐藏] <button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">通讯</button> -->
-		<!-- [隐藏] <button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button> -->
+		<!-- <button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">通讯</button> -->
+		<!-- <button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button> -->
 		<button id="navPageButton" class="switch-button active" onclick="switchNavContent('nav')">导航</button>
 		<button id="notePageButton" class="switch-button" onclick="switchNavContent('note')">检索</button>
 		<button id="settingsPageButton" class="switch-button" onclick="switchNavContent('settings')">设置</button>
@@ -41,7 +42,7 @@
 		<div id="navMessage" class="hyplus-unselectable" style="color: gray; font-style: italic; text-align: center; margin-top: 16px;">Explore your Hyplusite!</div>
 	</div>
 
-	<!-- [隐藏] AI内容
+	<!-- AI内容
 	<div id="aiContent" class="nav-content" style="display: none; padding: 0 15px;">
 		<iframe id="kinaIframe" 
 				src="about:blank" 
@@ -49,10 +50,9 @@
 				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; camera; microphone; display-capture; fullscreen; clipboard-read; clipboard-write"
 				referrerpolicy="origin"
 				></iframe>
-	</div>
-	[隐藏] -->
+	</div> -->
 
-	<!-- 检索页面（原“目录”页面） -->
+	<!-- 检索页面（“目录”页面） -->
 	<div id="noteContent" class="nav-content hyplus-unselectable" style="display: none;">
 		<div id="searchHeader" style="font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0;">Hyplus检索&amp;目录</div>
 		<!-- 搜索栏 -->
