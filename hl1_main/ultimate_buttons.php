@@ -265,7 +265,7 @@
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.5 by Akira37
+			Ultimate Buttons v1.5.1 by Akira37
 		</div>
 	</div>
 </div>
@@ -666,22 +666,32 @@
     }
 
     /* 快捷键说明样式 */
-    .shortcuts-container {
-        display: flex;
-        flex-wrap: wrap;
-        width: 100%;
-        /* border: 1px solid #b6dded; */
-        border-radius: 4px;
-    }
+	.shortcuts-container {
+		display: flex;
+		flex-wrap: wrap;
+		width: 100%;
+		/* border: 1px solid #b6dded; */
+		border-radius: 4px;
+	}
 
-    .shortcuts-column {
-        flex: 1;
-        min-width: 250px;
-    }
+	.shortcuts-column {
+		flex: 1;
+		min-width: 250px;
+	}
 
-    /* .shortcuts-column:first-child {
-        border-right: 1px solid #b6dded;
-    } */
+
+	/* .shortcuts-column:first-child {
+		border-right: 1px solid #b6dded;
+	} */
+
+	@media screen and (max-width: 768px) {
+		.shortcuts-container {
+			flex-direction: column;
+		}
+		.shortcuts-column {
+			min-width: 0;
+		}
+	}
 
     .shortcut-item {
         padding: 8px;
