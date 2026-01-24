@@ -42,7 +42,7 @@ function lh_single_cats_above_title() {
                 <!--    <span class="screen-reader-text"></?php echo _x('Categories', 'Used before category names.', 'generatepress'); ?> </span> -->
                     <?php echo $categories_list; ?>
                     <span style="color: green;">
-                        <?php echo $counter_str; ?><span class="hyplus-unselectable" title="受限内容"><?php echo $emoji ? '&nbsp;&nbsp;' . $emoji : ''; ?></span>
+                        <?php echo $counter_str; ?><span class="hyplus-unselectable hyplus-scale" title="受限内容" style="display: inline-block;"><a href="https://www.hyperplasma.top/user/akira37/" style="text-decoration: none;"><?php echo $emoji ? '&nbsp;&nbsp;' . $emoji : ''; ?></a></span>
                     </span>
                 </span>
             </div>
