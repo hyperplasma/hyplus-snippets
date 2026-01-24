@@ -491,6 +491,14 @@ blockquote {
 	margin-bottom: 1em;
 }
 
+blockquote h3 {
+	text-align: center;
+	margin: 0 0 12px 0;
+	color: #2d3a4b;
+	font-size: 30px;
+	font-weight: 600;
+}
+
 h1, h2, h3, h4, h5, h6, ol, ul ,body p {
 	margin-bottom: 0.5em;
 }
