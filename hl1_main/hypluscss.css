@@ -175,6 +175,13 @@ pre {
 	margin-bottom: 0.05em;
 }
 
+/* highlight.js */
+.hljs {
+	/* border: 1px solid #b6dded; */
+	border-radius: 14px;
+	/* box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05); */
+}
+
 .footnotes ol {
 	margin-left: 25px;
 	font-size: 0.85em;
