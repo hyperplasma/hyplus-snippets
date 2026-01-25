@@ -589,7 +589,7 @@ function hyplus_render_toc_shortcode($atts) {
     ?>
     <div class="hyplus-toc-container" <?php if ($mode === 'post'): ?> style="margin-top: 1em;" <?php endif; ?> data-toc-mode="<?php echo esc_attr($mode); ?>" data-hideparent="<?php echo esc_attr($hideparent); ?>" data-emptymsg="<?php echo esc_attr($emptymsg); ?>"<?php if ($mode === 'post') { echo ' data-post-id="' . esc_attr(get_the_ID()) . '"'; } ?>>
         <?php if ($mode === 'post'): ?>
-            <div class="hyplus-toc-header">Hyplus目录<button type="button" class="hyplus-toc-toggle" aria-label="折叠" title="折叠">-</button></div>
+            <div class="hyplus-toc-header hyplus-unselectable">Hyplus目录<button type="button" class="hyplus-toc-toggle" aria-label="折叠" title="折叠">-</button></div>
         <?php endif; ?>
         <div class="hyplus-toc-content"></div>
     </div>
