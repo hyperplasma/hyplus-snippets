@@ -57,8 +57,6 @@ function hyplus_output_toc_scripts() {
         box-sizing: border-box;
         vertical-align: top;
     }
-    /* 在post模式下的特定样式
-     .hyplus-toc-container[data-toc-mode=post] in ultimate_buttons.php */
 
     /* 仅用 emoji 显示，不要背景与边框 */
     .hyplus-toc-toggle {
