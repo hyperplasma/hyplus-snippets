@@ -58,10 +58,16 @@ function hyperplasma_modify_menu_items($items) {
 
     foreach ($items as $item) {
         if (!empty($item->url) && is_string($item->url)) {
-            // 忽略以 / 或 # 开头的链接（必定是内部链接）
-            if (preg_match('/^[/#]/', $item->url)) {
+            // 新增：若链接不以 http 开头，完全不做处理
+            if (!preg_match('/^https?:/i', $item->url)) {
                 continue;
             }
+
+            // // 忽略以 / 或 # 开头的链接（必定是内部链接）
+            // if (preg_match('/^[/#]/', $item->url)) {
+            //     continue;
+            // }
+            
             // 检查是否是外部链接或特殊内部链接
             $is_external = !preg_match('~^' . $site_domain_escaped . '~i', $item->url);
             $is_special_link = in_array($item->url, $special_internal_links, true);
@@ -105,15 +111,20 @@ function hyperplasma_modify_content_links($content) {
         $after_href = $matches[3];
         $full_tag = $matches[0];
 
-        // 如果包含 class="hyplus-nav-link"，则不修改
-        if ((is_category() || is_tax()) && preg_match('/class=["\'][^"\']*hyplus-nav-link[^"\']*["\']/i', $full_tag)) {
+        // 若链接不以http开头，完全不做处理
+        if (!preg_match('/^https?:/i', $url)) {
             return $full_tag;
         }
 
-        // 忽略以 / 或 # 开头的链接（必定是内部链接）- 这些链接不应该添加target属性
-        if (preg_match('/^[/#]/', $url)) {
-            return $full_tag;
-        }
+        // // 如果包含 class="hyplus-nav-link"，则不修改
+        // if ((is_category() || is_tax()) && preg_match('/class=["\'][^"\']*hyplus-nav-link[^"\']*["\']/i', $full_tag)) {
+        //     return $full_tag;
+        // }
+
+        // // 忽略以 / 或 # 开头的链接（必定是内部链接）- 这些链接不应该添加target属性
+        // if (preg_match('/^[/#]/', $url)) {
+        //     return $full_tag;
+        // }
 
         // 检查是否是外部链接或特定的内部链接
         $is_external = !preg_match('~^' . $site_domain_escaped . '~i', $url);
