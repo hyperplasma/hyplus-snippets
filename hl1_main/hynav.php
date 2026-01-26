@@ -1,5 +1,5 @@
-<!-- A simple demo of HyNav -->
-<div class="hyplus-nav-container hyplus-unselectable">
+<?php/* A simple demo of HyNav */
+?><div class="hyplus-nav-container hyplus-unselectable">
 	<div class="hyplus-nav-section">
 		<h3>综合大模型</h3>
 		<div class="hyplus-nav-links">
