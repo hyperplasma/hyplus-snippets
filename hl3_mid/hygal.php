@@ -219,3 +219,4 @@ function hygal_ajax_fetch_minimal_handler() {
     }
     wp_send_json_success($html);
 }
+?>
