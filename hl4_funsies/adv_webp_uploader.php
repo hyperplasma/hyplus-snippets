@@ -1,7 +1,8 @@
 <?php
 /**
- * Plugin Name: 高级WebP上传器
+ * Plugin Name: 高级WebP上传器（Advanced WebP Uploader）- Admin only plugin!
  * Description: 全宽布局，支持持久化前缀标识，实时显示压缩率数据，内存优化。
+ * Usage: Admin Page under Tools > Advanced WebP Uploader
  */
 
 add_action('admin_menu', function() {
