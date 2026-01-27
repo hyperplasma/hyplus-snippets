@@ -237,6 +237,19 @@
         const rotateBtn = document.querySelector(".rotate-btn");
         const rotateCounterBtn = document.querySelector(".rotate-counter-btn");
 
+        // Cookie 读取函数
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const cookies = document.cookie.split(";");
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.indexOf(nameEQ) === 0) {
+                    return cookie.substring(nameEQ.length);
+                }
+            }
+            return null;
+        }
+
         // Constants
         const ROTATION_STEP = 45;
         const KEYBOARD_OFFSET = 30;
@@ -281,6 +294,9 @@
             tempImg.onload = function () {
                 lightboxImage.src = src;
                 resetImagePosition();
+                // 打开lightbox时动态读取cookie，实现实时更新显示/隐藏状态
+                const currentHideLightboxControls = getCookie("hideLightboxControls") === "true";
+                setLightboxControlsVisibility(!currentHideLightboxControls);
             };
             tempImg.src = src;
         }
@@ -303,6 +319,20 @@
             updateImageTransform();
             lightboxImage.style.cursor = "grab";
         }
+
+        // 控制HyLightBox控制按钮群的显示与隐藏
+        function setLightboxControlsVisibility(isVisible) {
+            const controlElements = [document.querySelector(".hylightbox-control-bar"), document.querySelector(".hylightbox-help-container"), document.querySelector(".hylightbox-close-container"), document.querySelector(".hylightbox-rotate-container")];
+            const display = isVisible ? "block" : "none";
+            controlElements.forEach((el) => {
+                if (el) el.style.display = display;
+            });
+        }
+
+        // 全局函数，供ultimate_buttons.php调用
+        window.updateLightboxControlsVisibility = function (isVisible) {
+            setLightboxControlsVisibility(isVisible);
+        };
 
         // Update image transform - optimized to reduce reflows
         function updateImageTransform() {

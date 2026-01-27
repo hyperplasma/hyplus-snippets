@@ -122,6 +122,10 @@
 						<input type="checkbox" id="hideButtonsToggle" />
 						<label for="hideButtonsToggle">临时隐藏HyButton按钮群</label>
 					</div>
+					<div class="config-item">
+						<input type="checkbox" id="hideLightboxControlsToggle" />
+						<label for="hideLightboxControlsToggle">隐藏HyLightBox控制按钮群</label>
+					</div>
 
 				</div>
 			</div>
@@ -894,6 +898,26 @@
 		}
 	}
 
+	// Cookie 操作函数
+	function setCookie(name, value, days = 365) {
+		const date = new Date();
+		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+		const expires = "expires=" + date.toUTCString();
+		document.cookie = name + "=" + value + ";" + expires + ";path=/";
+	}
+
+	function getCookie(name) {
+		const nameEQ = name + "=";
+		const cookies = document.cookie.split(';');
+		for (let cookie of cookies) {
+			cookie = cookie.trim();
+			if (cookie.indexOf(nameEQ) === 0) {
+				return cookie.substring(nameEQ.length);
+			}
+		}
+		return null;
+	}
+
 	// 页头页尾控制（通用函数）
 	function setHeaderFooterDisplay(isVisible) {
 		const header = document.querySelector('.site-header');
@@ -942,6 +966,16 @@
 
 	function handleHideButtonsToggle(event) {
 		setHyplusButtonsDisplay(!event.target.checked);
+	}
+
+	// 隐藏/显示HyLightBox控制按钮群
+	function handleHideLightboxControlsToggle(event) {
+		const isHidden = event.target.checked;
+		setCookie('hideLightboxControls', isHidden ? 'true' : 'false');
+		// 通知hylightbox.html更新按钮显示状态
+		if (window.updateLightboxControlsVisibility) {
+			window.updateLightboxControlsVisibility(!isHidden);
+		}
 	}
 
 	// 导航框控制
@@ -1583,7 +1617,8 @@
 		if (!window._hyplusSettingsCheckboxCache) {
 			window._hyplusSettingsCheckboxCache = {
 				headerFooterToggle: document.getElementById('headerFooterToggle'),
-				hideButtonsToggle: document.getElementById('hideButtonsToggle')
+				hideButtonsToggle: document.getElementById('hideButtonsToggle'),
+				hideLightboxControlsToggle: document.getElementById('hideLightboxControlsToggle')
 			};
 		}
 		const isHeaderFooterHidden = localStorage.getItem('headerFooterAlwaysHidden') === 'true';
@@ -1597,6 +1632,11 @@
 			}
 		}
 		const hideButtonsToggle = window._hyplusSettingsCheckboxCache.hideButtonsToggle;
+		const hideLightboxControlsToggle = window._hyplusSettingsCheckboxCache.hideLightboxControlsToggle;
+		const isLightboxControlsHidden = getCookie('hideLightboxControls') === 'true';
+		if (hideLightboxControlsToggle) {
+			hideLightboxControlsToggle.checked = isLightboxControlsHidden;
+		}
 
 		// 优化：页头页尾和隐藏按钮群复选框使用事件委托，只注册1个change监听
 		document.addEventListener('change', function(event) {
@@ -1604,6 +1644,8 @@
 				handleHeaderFooterToggle(event);
 			} else if (event.target.id === 'hideButtonsToggle') {
 				handleHideButtonsToggle(event);
+			} else if (event.target.id === 'hideLightboxControlsToggle') {
+				handleHideLightboxControlsToggle(event);
 			}
 		});
 
