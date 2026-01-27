@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name: WebP Ultra Converter (Key-Shortcut & Centered UI)
- * Description: 支持 Enter 键快速上传，UI 布局精修，自动清空标题。
+ * Plugin Name: WebP Ultra Converter Pro (Stable & Fast)
+ * Description: 全宽布局，Enter 键快捷上传，内存溢出防护，自动清空标题。
  */
 
 add_action('admin_menu', function() {
-    add_management_page('WebP 上传器', 'WebP 上传器', 'manage_options', 'webp-uploader-fast', 'webp_fast_render_page');
+    add_management_page('WebP 上传器', 'WebP 上传器', 'manage_options', 'webp-uploader-final', 'webp_final_render_page');
 });
 
-function webp_fast_render_page() {
+function webp_final_render_page() {
     ?>
     <style>
         .webp-slim-container { margin: 10px 20px 0 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -25,6 +25,7 @@ function webp_fast_render_page() {
             align-items: center; 
             justify-content: center; 
             overflow: hidden;
+            transition: 0.2s;
         }
         #drop-zone.hover { border-color: #2271b1; background: #ebf8ff; }
         #local-preview { height: 60px; width: auto; max-width: 150px; object-fit: contain; border-radius: 4px; display: none; }
@@ -35,10 +36,8 @@ function webp_fast_render_page() {
         .input-group label { display: block; font-size: 12px; margin-bottom: 4px; color: #64748b; font-weight: 600; }
         .input-group input { width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; }
 
-        /* 代码展示区 */
-        .copy-box { background: #1e293b; color: #f1f5f9; padding: 15px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 12px; margin-top: 10px; word-break: break-all; text-align: left; }
+        .copy-box { background: #1e293b; color: #f1f5f9; padding: 15px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 12px; margin-top: 10px; word-break: break-all; }
         
-        /* 按钮居中容器 */
         .btn-center-wrapper { display: flex; justify-content: center; margin-top: 15px; }
         .copy-btn { background: #3b82f6; color: white; border: none; padding: 10px 30px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.2s; }
         .copy-btn:hover { background: #2563eb; }
@@ -98,13 +97,11 @@ function webp_fast_render_page() {
     let currentBlob = null;
     let uploadedUrl = "";
     
-    // 触发上传的主函数
     function executeUpload() {
         if (!currentBlob || jQuery('#upload-btn').prop('disabled')) return;
-        
         const formData = new FormData();
-        formData.append('action', 'webp_fast_upload');
-        formData.append('_ajax_nonce', '<?php echo wp_create_nonce("webp_fast_nonce"); ?>');
+        formData.append('action', 'webp_final_upload');
+        formData.append('_ajax_nonce', '<?php echo wp_create_nonce("webp_final_nonce"); ?>');
         formData.append('webp_file', currentBlob);
         formData.append('img_title', document.getElementById('img-title-input').value);
 
@@ -122,12 +119,16 @@ function webp_fast_render_page() {
                     document.getElementById('html-title-opt').value = res.data.title;
                     document.getElementById('img-title-input').value = ""; 
                     generateTag();
-                }
+                } else { alert(res.data); }
+            },
+            error: function() {
+                jQuery('#loading').hide();
+                jQuery('#upload-btn').prop('disabled', false);
+                alert("服务器响应错误，可能是图片太大导致内存溢出。");
             }
         });
     }
 
-    // 预览逻辑
     function showPreview(file) {
         if (!file) return;
         currentBlob = file;
@@ -138,13 +139,11 @@ function webp_fast_render_page() {
             document.getElementById('drop-hint').style.display = 'none';
             document.getElementById('step-upload').style.display = 'block';
             document.getElementById('step-html').style.display = 'none';
-            // 自动聚焦标题输入框，方便直接输入后按回车
             setTimeout(() => document.getElementById('img-title-input').focus(), 100);
         };
         reader.readAsDataURL(file);
     }
 
-    // 事件监听
     const dz = document.getElementById('drop-zone');
     dz.onclick = () => document.getElementById('file-input').click();
     document.getElementById('file-input').onchange = (e) => showPreview(e.target.files[0]);
@@ -152,22 +151,15 @@ function webp_fast_render_page() {
     dz.ondragleave = () => dz.classList.remove('hover');
     dz.ondrop = (e) => { e.preventDefault(); dz.classList.remove('hover'); showPreview(e.dataTransfer.files[0]); };
     document.onpaste = (e) => {
-        const items = e.clipboardData.items;
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
         for (let i = 0; i < items.length; i++) { if (items[i].type.indexOf("image") !== -1) showPreview(items[i].getAsFile()); }
     };
 
-    // 绑定上传按钮点击
     document.getElementById('upload-btn').onclick = executeUpload;
-
-    // 【新增】键盘监听：在标题框按回车触发上传
     document.getElementById('img-title-input').onkeydown = function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            executeUpload();
-        }
+        if (e.key === 'Enter') { e.preventDefault(); executeUpload(); }
     };
 
-    // 标签生成逻辑
     ['html-title-opt', 'html-width-opt', 'html-height-opt'].forEach(id => {
         document.getElementById(id).oninput = generateTag;
     });
@@ -189,39 +181,52 @@ function webp_fast_render_page() {
             const old = this.innerText;
             this.innerText = "已成功复制到剪贴板！";
             this.style.background = "#10b981";
-            setTimeout(() => {
-                this.innerText = old;
-                this.style.background = "#3b82f6";
-            }, 1000);
+            setTimeout(() => { this.innerText = old; this.style.background = "#3b82f6"; }, 1000);
         });
     };
     </script>
     <?php
 }
 
-// 后端逻辑保持极速版一致
-add_action('wp_ajax_webp_fast_upload', function() {
-    check_ajax_referer('webp_fast_nonce');
+add_action('wp_ajax_webp_final_upload', function() {
+    check_ajax_referer('webp_final_nonce');
     require_once(ABSPATH . 'wp-admin/includes/image.php');
     require_once(ABSPATH . 'wp-admin/includes/file.php');
     require_once(ABSPATH . 'wp-admin/includes/media.php');
 
+    // 内存溢出防护
+    @ini_set('memory_limit', '512M'); 
+    @set_time_limit(300);
+
     $tmp_file = $_FILES['webp_file']['tmp_name'];
+    if (!$tmp_file) wp_send_json_error('文件上传失败');
+
     $pure_ts = date('YmdHis') . rand(100, 999);
     $img_title = !empty($_POST['img_title']) ? sanitize_text_field($_POST['img_title']) : $pure_ts;
 
     $info = @getimagesize($tmp_file);
+    if (!$info) { @unlink($tmp_file); wp_send_json_error('无效图片'); }
+
     $target_webp = $tmp_file . '.webp';
     $converted = false;
 
     if (function_exists('imagewebp')) {
         $img = null;
         if ($info['mime'] == 'image/jpeg') $img = @imagecreatefromjpeg($tmp_file);
-        elseif ($info['mime'] == 'image/png') {
-            $img = @imagecreatefrompng($tmp_file);
-            if($img){ imagepalettetotruecolor($img); imagealphablending($img, true); imagesavealpha($img, true); }
+        elseif ($info['mime'] == 'image/png') $img = @imagecreatefrompng($tmp_file);
+        elseif ($info['mime'] == 'image/gif') $img = @imagecreatefromgif($tmp_file);
+
+        if ($img) {
+            // 内存密集型操作保护
+            if ($info['mime'] == 'image/png') {
+                imagepalettetotruecolor($img); 
+                imagealphablending($img, true); 
+                imagesavealpha($img, true);
+            }
+            if (@imagewebp($img, $target_webp, 80)) $converted = true;
+            imagedestroy($img); // 立即销毁内存对象
+            unset($img);
         }
-        if ($img && imagewebp($img, $target_webp, 80)) { $converted = true; imagedestroy($img); }
     }
 
     $final_path = $converted ? $target_webp : $tmp_file;
@@ -234,5 +239,9 @@ add_action('wp_ajax_webp_fast_upload', function() {
     $id = media_handle_sideload(['name' => $final_name, 'tmp_name' => $final_path], 0);
     if (!is_wp_error($id)) wp_update_post(['ID' => $id, 'post_title' => $img_title]);
 
+    if ($converted && file_exists($tmp_file)) @unlink($tmp_file);
+    remove_filter('intermediate_image_sizes_advanced', $no_thumbs, 999);
+
+    if (is_wp_error($id)) wp_send_json_error($id->get_error_message());
     wp_send_json_success(['url' => wp_get_attachment_url($id), 'title' => $img_title]);
 });
