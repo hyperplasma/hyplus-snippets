@@ -120,7 +120,7 @@
 					</div>
 					<div class="config-item">
 						<input type="checkbox" id="hideButtonsToggle" />
-						<label for="hideButtonsToggle">临时隐藏HyButton按钮群</label>
+						<label for="hideButtonsToggle">临时隐藏导航按钮群</label>
 					</div>
 					<div class="config-item">
 						<input type="checkbox" id="hideLightboxControlsToggle" />
