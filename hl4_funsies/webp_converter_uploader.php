@@ -1,40 +1,57 @@
 <?php
 /**
- * Plugin Name: WebP Ultra Converter Pro (Prefix Support)
- * Description: 全宽布局，支持持久化前缀标识，Enter 键上传，内存优化。
+ * Plugin Name: 高级WebP上传器
+ * Description: 全宽布局，支持持久化前缀标识，实时显示压缩率数据，内存优化。
  */
 
 add_action('admin_menu', function() {
-    add_management_page('WebP 上传器', 'WebP 上传器', 'manage_options', 'webp-uploader-prefix', 'webp_prefix_render_page');
+    add_management_page('高级WebP上传器', '高级WebP上传器', 'manage_options', 'webp-uploader-pro', 'webp_pro_render_page');
 });
 
-function webp_prefix_render_page() {
+function webp_pro_render_page() {
     ?>
     <style>
         .webp-slim-container { margin: 10px 20px 0 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        /* 上传框固定高度 */
         #drop-zone { border: 2px dashed #cbd5e0; height: 80px; text-align: center; color: #4a5568; cursor: pointer; border-radius: 6px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         #drop-zone.hover { border-color: #2271b1; background: #ebf8ff; }
         #local-preview { height: 60px; width: auto; max-width: 150px; object-fit: contain; border-radius: 4px; display: none; }
+        
+        /* 状态统计条 */
+        #stats-bar { display: none; margin: 15px 0; padding: 10px 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; font-size: 13px; color: #166534; }
+        .stats-item { margin-right: 15px; font-weight: 600; }
+        .stats-highlight { color: #15803d; text-decoration: underline; }
+
         .step-section { margin-top: 15px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fff; display: none; }
         .input-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 10px; }
         .input-group { flex: 1; }
         .input-group label { display: block; font-size: 12px; margin-bottom: 4px; color: #64748b; font-weight: 600; }
         .input-group input { width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; }
+        
         .copy-box { background: #1e293b; color: #f1f5f9; padding: 15px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 12px; margin-top: 10px; word-break: break-all; }
         .btn-center-wrapper { display: flex; justify-content: center; margin-top: 15px; }
         .copy-btn { background: #3b82f6; color: white; border: none; padding: 10px 30px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        
         #loading { display:none; color: #2271b1; font-weight: bold; margin: 10px 0; }
         .btn-primary { background: #2271b1; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; height: 34px; }
     </style>
 
     <div class="wrap">
         <div class="webp-slim-container">
-            <h1>WebP 极速上传</h1>
+            <h1>高级WebP上传器</h1>
             
             <div id="drop-zone">
                 <img id="local-preview" src="">
                 <div id="drop-hint">点击、拖拽或粘贴图片</div>
                 <input type="file" id="file-input" style="display:none" accept="image/*">
+            </div>
+
+            <div id="stats-bar">
+                <span>✅ 上传成功！</span>
+                <span class="stats-item">原大小: <span id="size-old" class="stats-highlight"></span></span>
+                <span class="stats-item">压缩后: <span id="size-new" class="stats-highlight"></span></span>
+                <span class="stats-item">节省率: <span id="size-ratio" class="stats-highlight"></span></span>
             </div>
 
             <div id="step-upload" class="step-section">
@@ -56,7 +73,7 @@ function webp_prefix_render_page() {
             <div id="step-html" class="step-section">
                 <div class="input-row">
                     <div class="input-group">
-                        <label>上传成功，请设置标签 (HTML Title)</label>
+                        <label>请设置标签 (HTML Title)</label>
                         <input type="text" id="html-title-opt">
                     </div>
                     <div class="input-group" style="max-width: 80px;">
@@ -78,17 +95,27 @@ function webp_prefix_render_page() {
     let currentBlob = null;
     let uploadedUrl = "";
     
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
     function executeUpload() {
         if (!currentBlob || jQuery('#upload-btn').prop('disabled')) return;
         const formData = new FormData();
-        formData.append('action', 'webp_prefix_upload');
-        formData.append('_ajax_nonce', '<?php echo wp_create_nonce("webp_prefix_nonce"); ?>');
+        formData.append('action', 'webp_pro_upload');
+        formData.append('_ajax_nonce', '<?php echo wp_create_nonce("webp_pro_nonce"); ?>');
         formData.append('webp_file', currentBlob);
         formData.append('img_title', document.getElementById('img-title-input').value);
         formData.append('img_prefix', document.getElementById('img-prefix-input').value);
 
         jQuery('#loading').show();
         jQuery('#upload-btn').prop('disabled', true);
+        jQuery('#stats-bar').hide();
 
         jQuery.ajax({
             url: ajaxurl, type: 'POST', data: formData, processData: false, contentType: false,
@@ -97,17 +124,18 @@ function webp_prefix_render_page() {
                 jQuery('#upload-btn').prop('disabled', false);
                 if (res.success) {
                     uploadedUrl = res.data.url;
+                    
+                    // 显示统计数据
+                    document.getElementById('size-old').innerText = formatBytes(res.data.old_size);
+                    document.getElementById('size-new').innerText = formatBytes(res.data.new_size);
+                    document.getElementById('size-ratio').innerText = res.data.ratio + '%';
+                    jQuery('#stats-bar').fadeIn();
+
                     document.getElementById('step-html').style.display = 'block';
-                    // HTML Title 仅显示用户填写的具体标题部分（或自动生成的部分）
                     document.getElementById('html-title-opt').value = res.data.raw_title;
                     document.getElementById('img-title-input').value = ""; 
                     generateTag();
                 } else { alert(res.data); }
-            },
-            error: function() {
-                jQuery('#loading').hide();
-                jQuery('#upload-btn').prop('disabled', false);
-                alert("上传失败，请检查内存或文件格式。");
             }
         });
     }
@@ -122,6 +150,7 @@ function webp_prefix_render_page() {
             document.getElementById('drop-hint').style.display = 'none';
             document.getElementById('step-upload').style.display = 'block';
             document.getElementById('step-html').style.display = 'none';
+            jQuery('#stats-bar').hide();
             setTimeout(() => document.getElementById('img-title-input').focus(), 100);
         };
         reader.readAsDataURL(file);
@@ -170,8 +199,8 @@ function webp_prefix_render_page() {
     <?php
 }
 
-add_action('wp_ajax_webp_prefix_upload', function() {
-    check_ajax_referer('webp_prefix_nonce');
+add_action('wp_ajax_webp_pro_upload', function() {
+    check_ajax_referer('webp_pro_nonce');
     require_once(ABSPATH . 'wp-admin/includes/image.php');
     require_once(ABSPATH . 'wp-admin/includes/file.php');
     require_once(ABSPATH . 'wp-admin/includes/media.php');
@@ -179,12 +208,12 @@ add_action('wp_ajax_webp_prefix_upload', function() {
     @ini_set('memory_limit', '512M'); 
 
     $tmp_file = $_FILES['webp_file']['tmp_name'];
-    $pure_ts = date('YmdHis') . rand(100, 999);
+    $old_size = filesize($tmp_file); // 记录原始大小
     
+    $pure_ts = date('YmdHis') . rand(100, 999);
     $raw_title = sanitize_text_field($_POST['img_title']);
     $prefix = sanitize_text_field($_POST['img_prefix']);
 
-    // 构建媒体库最终标题
     if (!empty($prefix) && !empty($raw_title)) {
         $final_wp_title = $prefix . '-' . $raw_title;
     } elseif (!empty($prefix)) {
@@ -209,6 +238,9 @@ add_action('wp_ajax_webp_prefix_upload', function() {
     }
 
     $final_path = $converted ? $target_webp : $tmp_file;
+    $new_size = filesize($final_path); // 记录压缩后大小
+    $ratio = round((1 - ($new_size / $old_size)) * 100, 2); // 计算比例
+
     $final_name = $pure_ts . ($converted ? '.webp' : image_type_to_extension($info[2]));
 
     $no_thumbs = function($s){ return []; };
@@ -223,9 +255,11 @@ add_action('wp_ajax_webp_prefix_upload', function() {
 
     if (is_wp_error($id)) wp_send_json_error($id->get_error_message());
     
-    // 返回 raw_title 供 HTML 标签使用，确保标签里不带前缀
     wp_send_json_success([
         'url' => wp_get_attachment_url($id), 
-        'raw_title' => !empty($raw_title) ? $raw_title : ""
+        'raw_title' => $raw_title,
+        'old_size' => $old_size,
+        'new_size' => $new_size,
+        'ratio' => $ratio
     ]);
 });
