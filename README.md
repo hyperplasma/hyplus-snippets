@@ -7,7 +7,7 @@ This repository contains custom **Hyplus** code snippets of our WordPress site -
 * `hl1`: The most important components (**Ultimate Buttons**!) or style sheets (**HyplusCSS!**)
 * `hl2`: Components related to or specific pages
 * `hl3`: Site-wide middlewares or containers
-* `hl4`: Experimental components for fun
+* `hl4`: Experimental components for actual important usages (fun?)
 * `hl9`: Legacy components that are currently unused
 * `minor`: Simple non-Hyplus components
   * `hytemplate`: PHP snippets that directly modify WP templates, or overhaul to the default pages
