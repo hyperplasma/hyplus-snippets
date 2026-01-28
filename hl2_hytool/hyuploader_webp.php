@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: HyUploader WebP - 分类联动版
- * Description: 前缀改为下拉选择，支持通过短代码 tags 参数定义分类，支持回车键快捷上传。默认 tag 为“图”。
+ * Description: 支持 WebP 转换、下拉前缀、回车上传，并自动构建 _hygal_category 索引以适配万级数据。
  * Shortcode: [hyuploader_webp tags="霞,虹,雾,hyplus"]
  */
 
@@ -17,7 +17,6 @@ function hy_uploader_webp_shortcode($atts) {
     $atts = shortcode_atts(['tags' => ''], $atts);
     $tag_list = array_filter(array_map('trim', explode(',', $atts['tags'])));
 
-    // 逻辑修复：如果没传 tags，默认赋值为“图”
     if (empty($tag_list)) {
         $tag_list = ['图'];
     }
@@ -27,7 +26,6 @@ function hy_uploader_webp_shortcode($atts) {
     <style>
         .hyu-container { margin: 20px 0; text-align: center; font-family: -apple-system, sans-serif; }
         
-        /* 1. 拖拽/点击预览区 */
         #hyu-drop-zone { 
             border: 2px dashed #cbd5e0; 
             min-height: 100px; 
@@ -48,11 +46,9 @@ function hy_uploader_webp_shortcode($atts) {
         #hyu-preview-img { max-height: 80px; border-radius: 6px; display: none; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .hyu-hint { color: #64748b; font-size: 15px; font-weight: 500; pointer-events: none; }
 
-        /* 2. 统计条 */
         #hyu-stats { display: none; margin-bottom: 15px; padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 13px; color: #166534; }
         .hyu-stat-tag { font-weight: 700; color: #15803d; text-decoration: underline; margin: 0 4px; }
 
-        /* 3. 输入框与控制行 */
         .hyu-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; }
         
         .hyu-input {
@@ -72,28 +68,9 @@ function hy_uploader_webp_shortcode($atts) {
         #hyu-prefix { min-width: 100px; cursor: pointer; }
         #hyu-title { flex: 1; min-width: 180px; }
 
-        /* 4. 按钮 */
-        .hyu-btn-submit {
-            height: 40px;
-            padding: 0 35px !important;
-            cursor: pointer;
-            font-weight: 600;
-        }
+        .hyu-btn-submit { height: 40px; padding: 0 35px !important; cursor: pointer; font-weight: 600; }
         
         #hyu-loading { display: none; color: #2271b1; font-weight: bold; margin: 10px 0; }
-        
-        .hytool-version {
-            margin-top: 10px;
-            color: #aaa;
-            font-size: 15px;
-            font-family: inherit;
-            user-select: none;
-            letter-spacing: 1px;
-            background: transparent;
-            z-index: 2;
-            text-align: right;
-            width: 100%;
-        }
     </style>
 
     <div class="hyu-container">
@@ -105,7 +82,7 @@ function hy_uploader_webp_shortcode($atts) {
             </div>
 
             <div id="hyu-stats" class="hyplus-unselectable">
-                <span>✅ 已成功存入媒体库！</span>
+                <span>✅ 已同步至媒体库并建立索引！</span>
                 <span>原大小: <span id="hyu-old" class="hyu-stat-tag"></span></span>
                 <span>压缩后: <span id="hyu-new" class="hyu-stat-tag"></span></span>
                 <span>节省: <span id="hyu-ratio" class="hyu-stat-tag"></span></span>
@@ -118,15 +95,13 @@ function hy_uploader_webp_shortcode($atts) {
                             <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
                         <?php endforeach; ?>
                     </select>
-
                     <input type="text" id="hyu-title" class="hyu-input" placeholder="输入描述标题...">
                     <button id="hyu-upload-btn" class="hyplus-nav-link hyu-btn-submit">转换并上传</button>
                 </div>
             </div>
 
-            <div id="hyu-loading" class="hyplus-unselectable">🚀 正在处理 WebP 转换并存储...</div>
+            <div id="hyu-loading" class="hyplus-unselectable">🚀 正在处理 WebP 转换并存储索引...</div>
         </div>
-        <div class="hytool-version hyplus-unselectable">HyUploader WebP v0.1.8</div>
     </div>
 
     <script>
@@ -219,7 +194,7 @@ function hy_uploader_webp_shortcode($atts) {
 }
 
 /**
- * 后端处理逻辑
+ * 后端处理逻辑 (已更新 Meta 索引功能)
  */
 add_action('wp_ajax_hyu_webp_upload', 'hy_uploader_webp_ajax_handler');
 
@@ -242,6 +217,7 @@ function hy_uploader_webp_ajax_handler() {
     $raw_title = sanitize_text_field($_POST['title']);
     $ts = date('YmdHis');
     
+    // 1. 生成符合传统的图片标题
     if (!empty($prefix) && !empty($raw_title)) {
         $wp_title = $prefix . '-' . $raw_title;
     } elseif (!empty($prefix)) {
@@ -281,7 +257,12 @@ function hy_uploader_webp_ajax_handler() {
     $attach_id = media_handle_sideload(['name' => $final_name, 'tmp_name' => $final_file_path], 0);
     
     if (!is_wp_error($attach_id)) {
+        // 更新标题
         wp_update_post(['ID' => $attach_id, 'post_title' => $wp_title]);
+        // 核心优化：同步写入 Meta 索引字段，以便后续的高性能查询
+        if (!empty($prefix)) {
+            update_post_meta($attach_id, '_hygal_category', $prefix);
+        }
     }
 
     if ($is_converted && file_exists($tmp_path)) @unlink($tmp_path);
