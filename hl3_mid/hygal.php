@@ -23,7 +23,7 @@ function hygal_minimalist_search_handler($atts) {
             text-align: center; 
             display: flex; 
             flex-direction: column; 
-            min-height: 200px; /* 关键：给整个组件一个最小高度，防止大幅度跳动 */
+            /* min-height: 200px; */
         }
         
         .hygal-filter-container {
@@ -81,7 +81,7 @@ function hygal_minimalist_search_handler($atts) {
             color: #64748b;
         }
 
-        #hygal-status-text { flex: 1; text-align: center; font-weight: 600; }
+        #hygal-status-text {flex: 1; text-align: center; font-weight: 600; }
         
         #hygal-close-btn { 
             cursor: pointer; 
@@ -101,7 +101,7 @@ function hygal_minimalist_search_handler($atts) {
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: 10px;
             margin-top: 5px;
-            min-height: 50px; 
+            /* min-height: 50px;  */
             transition: opacity 0.2s;
         }
 
