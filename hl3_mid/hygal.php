@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: HyGal画廊 - 自动首选版
- * Description: 移除“选择分类”占位符，默认选中第一项，响应式单行布局。
+ * Plugin Name: HyGal画廊 - 视觉稳定版
+ * Description: 修复加载时由于高度塌陷导致底部文字跳动的问题，优化布局稳定性。
  * Shortcode: [hygal tags="霞,虹,雾,hyplus"]
  */
 
@@ -18,7 +18,13 @@ function hygal_minimalist_search_handler($atts) {
     ob_start();
     ?>
     <style>
-        .hygal-component-container { margin: 20px 0; text-align: center; }
+        .hygal-component-container { 
+            margin: 20px 0; 
+            text-align: center; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 200px; /* 关键：给整个组件一个最小高度，防止大幅度跳动 */
+        }
         
         .hygal-filter-container {
             display: flex;
@@ -29,12 +35,6 @@ function hygal_minimalist_search_handler($atts) {
             color: #2d3a4b;
             font-size: 16px;
             font-weight: 600;
-        }
-
-        .hygal-filter-unit {
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .hygal-input {
@@ -48,14 +48,11 @@ function hygal_minimalist_search_handler($atts) {
             height: 40px;
             outline: none;
             transition: border-color 0.2s;
-            vertical-align: middle;
         }
         .hygal-input:focus { border-color: #43a5f5; }
 
         .input-select { min-width: 130px; cursor: pointer; }
         .input-limit { width: 95px; text-align: center; }
-
-        .hygal-btn-row { margin-top: 15px; display: flex; justify-content: center; }
 
         .hygal-btn-submit {
             height: 40px;
@@ -64,16 +61,50 @@ function hygal_minimalist_search_handler($atts) {
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            border: 1.5px solid #c4e0f7;
-            /* border-radius: 6px; */
+            /* border: 1.5px solid #c4e0f7; */
+            /* background: #fff; */
+            /* transition: 0.2s; */
+            /* color: #2d3a4b; */
+            font-weight: 600;
+        }
+        .hygal-btn-submit:hover { background: #f0f9ff; }
+
+        /* 状态栏：固定高度占位，防止显示/隐藏时推挤底部 */
+        #hygal-status-bar { 
+            display: none; 
+            align-items: center;
+            justify-content: space-between;
+            height: 30px; /* 固定高度 */
+            margin: 10px 0;
+            padding: 0 5px;
+            font-size: 15px;
+            color: #64748b;
         }
 
-        .hygal-grid {
+        #hygal-status-text { flex: 1; text-align: center; font-weight: 600; }
+        
+        #hygal-close-btn { 
+            cursor: pointer; 
+            color: #f87171; 
+            font-size: 24px; 
+            line-height: 1;
+            width: 24px;
+            transition: color 0.2s;
+        }
+        #hygal-close-btn:hover { color: #ef4444; }
+
+        .status-spacer { width: 24px; visibility: hidden; }
+
+        /* 输出区域：使用 min-height 确保内容清空时容器不缩回 0 */
+        #hygal-output {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: 10px;
-            margin-top: 25px;
+            margin-top: 5px;
+            min-height: 50px; 
+            transition: opacity 0.2s;
         }
+
         .hygal-item {
             display: flex;
             flex-direction: column;
@@ -87,21 +118,16 @@ function hygal_minimalist_search_handler($atts) {
         .hygal-img-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 !important; }
         .hygal-title { padding: 6px 4px; font-size: 10px; color: #444; text-align: center; line-height: 1.3; word-wrap: break-word; }
 
-        #hygal-loader-msg { display: none; font-size: 14px; color: #175082; margin: 15px 0; }
-
-    .hytool-version {
-		margin-top: 10px;
-		color: #aaa;
-		font-size: 15px;
-		font-family: inherit;
-		user-select: none;
-		letter-spacing: 1px;
-		background: transparent;
-		z-index: 2;
-		align-self: flex-end;
-		text-align: right;
-		width: 100%;
-	}
+        /* 版本号：强制置底并消除不必要的 margin */
+        .hytool-version { 
+            margin-top: auto; /* 在 flex 容器中自动推向底部 */
+            padding-top: 20px;
+            color: #ccc; 
+            font-size: 14px; 
+            text-align: right; 
+            width: 100%; 
+            pointer-events: none;
+        }
     </style>
 
     <div class="hygal-component-container">
@@ -113,7 +139,7 @@ function hygal_minimalist_search_handler($atts) {
                     <?php endforeach; ?>
                 </select>
 
-                <div class="hygal-filter-unit">
+                <div style="display:flex; align-items:center; gap:8px;">
                     <span class="hyplus-unselectable">显示</span>
                     <input type="number" id="f-limit" class="hygal-input input-limit" placeholder="全部" min="1">
                     <span class="hyplus-unselectable">项</span>
@@ -126,27 +152,40 @@ function hygal_minimalist_search_handler($atts) {
                 </select>
             </div>
 
-            <div class="hygal-btn-row hyplus-unselectable">
-                <button id="btn-fetch" class="hyplus-nav-link hygal-btn-submit">展示图片</button>
+            <div style="margin-top:15px; display:flex; justify-content:center;">
+                <button id="btn-fetch" class="hyplus-nav-link hygal-btn-submit hyplus-unselectable">展示图片</button>
             </div>
         </div>
 
-        <div id="hygal-loader-msg" class="hyplus-unselectable">📡 正在搜索...</div>
+        <div id="hygal-status-bar" class="hyplus-unselectable">
+            <div class="status-spacer"></div>
+            <div id="hygal-status-text">📡 正在搜索...</div>
+            <div id="hygal-close-btn" title="清空内容">&times;</div>
+        </div>
+
         <div id="hygal-output" class="hygal-grid hyplus-unselectable"></div>
-        <div class="hytool-version hyplus-unselectable">HyGal v0.1.1</div>
+        <div class="hytool-version hyplus-unselectable">HyGal v0.1.4</div>
     </div>
 
     <script>
     jQuery(document).ready(function($) {
-        $('#btn-fetch').on('click', function() {
+        const $btn = $('#btn-fetch');
+        const $output = $('#hygal-output');
+        const $statusBar = $('#hygal-status-bar');
+        const $statusText = $('#hygal-status-text');
+        const $closeBtn = $('#hygal-close-btn');
+
+        $btn.on('click', function() {
             const category = $('#f-category').val();
-            const $btn = $(this);
-            const $output = $('#hygal-output');
-            const $loader = $('#hygal-loader-msg');
 
             $btn.prop('disabled', true).css('opacity', '0.6');
-            $loader.show();
-            $output.fadeOut(100);
+            
+            // 优化点：不要彻底 display:none，而是淡出内容
+            $output.animate({opacity: 0}, 100);
+            
+            $statusText.text('📡 正在搜索...');
+            $closeBtn.hide(); 
+            $statusBar.css('display', 'flex').hide().fadeIn(150);
 
             $.ajax({
                 url: '<?php echo admin_url("admin-ajax.php"); ?>',
@@ -159,15 +198,23 @@ function hygal_minimalist_search_handler($atts) {
                     _ajax_nonce: '<?php echo wp_create_nonce("hygal_min_nonce"); ?>'
                 },
                 success: function(res) {
-                    $loader.hide();
                     $btn.prop('disabled', false).css('opacity', '1');
                     if (res.success) {
-                        $output.html(res.data).fadeIn(150);
+                        $statusText.text('✨ 共找到 ' + res.data.count + ' 项');
+                        $closeBtn.show(); 
+                        $output.html(res.data.html).css('opacity', 1).hide().fadeIn(200);
                     } else {
-                        $output.html('<p style="grid-column:1/-1; padding:40px; color:#999;">暂无相关内容</p>').fadeIn(150);
+                        $statusText.text('❌ 未找到相关内容');
+                        $closeBtn.show();
+                        $output.empty().css('opacity', 1);
                     }
                 }
             });
+        });
+
+        $closeBtn.on('click', function() {
+            $output.fadeOut(150, function() { $(this).empty(); });
+            $statusBar.fadeOut(150);
         });
     });
     </script>
@@ -176,7 +223,7 @@ function hygal_minimalist_search_handler($atts) {
 }
 
 /**
- * 后端查询逻辑
+ * 后端逻辑保持不变
  */
 add_action('wp_ajax_hygal_fetch_minimal', 'hygal_ajax_fetch_minimal_handler');
 add_action('wp_ajax_nopriv_hygal_fetch_minimal', 'hygal_ajax_fetch_minimal_handler');
@@ -184,47 +231,24 @@ add_action('wp_ajax_nopriv_hygal_fetch_minimal', 'hygal_ajax_fetch_minimal_handl
 function hygal_ajax_fetch_minimal_handler() {
     check_ajax_referer('hygal_min_nonce');
     global $wpdb;
-
     $prefix = sanitize_text_field($_POST['prefix']);
     $limit  = !empty($_POST['limit']) ? intval($_POST['limit']) : -1;
     $order  = sanitize_text_field($_POST['order']);
-
     $sql = "SELECT ID, post_title FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_status = 'inherit'";
     $args = [];
-
     $sql .= " AND post_title LIKE %s";
     $args[] = $wpdb->esc_like($prefix . '-') . '%';
-
-    if ($order === 'RAND') {
-        $sql .= " ORDER BY RAND()";
-    } else {
-        $sql .= " ORDER BY post_date " . ($order === 'ASC' ? 'ASC' : 'DESC');
-    }
-
-    if ($limit > 0) {
-        $sql .= " LIMIT %d";
-        $args[] = $limit;
-    }
-
+    if ($order === 'RAND') { $sql .= " ORDER BY RAND()"; } else { $sql .= " ORDER BY post_date " . ($order === 'ASC' ? 'ASC' : 'DESC'); }
+    if ($limit > 0) { $sql .= " LIMIT %d"; $args[] = $limit; }
     $results = $wpdb->get_results($wpdb->prepare($sql, $args));
-
     if (empty($results)) { wp_send_json_error(); }
-
+    $count = count($results);
     $html = '';
     foreach ($results as $post) {
         $url = wp_get_attachment_url($post->ID);
-        $display_title = $post->post_title;
-        if (strpos($display_title, $prefix . '-') === 0) {
-            $display_title = substr($display_title, strlen($prefix . '-'));
-        }
-
-        $html .= '<div class="hygal-item">';
-        $html .= '  <div class="hygal-img-wrapper">';
-        $html .= '    <img src="' . esc_url($url) . '" loading="lazy" title="' . esc_attr($display_title) . '">';
-        $html .= '  </div>';
-        $html .= '  <div class="hygal-title">' . esc_html($display_title) . '</div>';
-        $html .= '</div>';
+        $display_title = (strpos($post->post_title, $prefix . '-') === 0) ? substr($post->post_title, strlen($prefix . '-')) : $post->post_title;
+        $html .= '<div class="hygal-item"><div class="hygal-img-wrapper"><img src="'.esc_url($url).'" loading="lazy" title="'.esc_attr($display_title).'"></div><div class="hygal-title">'.esc_html($display_title).'</div></div>';
     }
-    wp_send_json_success($html);
+    wp_send_json_success(['html' => $html, 'count' => $count]);
 }
 ?>
