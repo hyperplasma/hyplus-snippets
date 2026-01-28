@@ -65,7 +65,7 @@ function hygal_minimalist_search_handler($atts) {
             display: inline-flex;
             align-items: center;
             border: 1.5px solid #c4e0f7;
-            border-radius: 6px;
+            /* border-radius: 6px; */
         }
 
         .hygal-grid {
