@@ -1,7 +1,7 @@
 <?php
 /**
- * 插件功能：HyGal 索引构建助手
- * 功能：扫描现有媒体库，根据标题前缀建立 Meta 索引
+ * 插件功能：Meta Index for HyGal - 智能同步助手 (v2.0)
+ * 功能：扫描媒体库，根据标题前缀同步构建或清理 _hygal_category 索引字段。
  */
 
 // 1. 注册后台菜单
@@ -13,27 +13,31 @@ add_action('admin_menu', function() {
 function hygal_indexer_page() {
     ?>
     <div class="wrap">
-        <h1>🛠️ HyGal 媒体库索引助手</h1>
-        <p>本工具将扫描所有附件标题，识别 <code>前缀-标题</code> 格式，并将其存入 <code>_hygal_category</code> 索引字段。</p>
+        <h1>🛠️ HyGal 媒体库索引同步工具</h1>
+        <p>本工具将扫描所有附件标题：</p>
+        <ul style="list-style-type: disc; margin-left: 20px;">
+            <li>符合 <code>前缀-标题</code> 格式：<strong>更新或建立</strong> 索引。</li>
+            <li>不含 <code>-</code> 连字符：<strong>自动删除</strong> 现有索引（清理失效数据）。</li>
+        </ul>
         
         <div id="indexer-box" style="background:#fff; padding:20px; border:1px solid #ccd0d4; border-radius:8px; max-width:600px;">
             <div id="indexer-status">
-                <p>点击下方按钮开始分析媒体库...</p>
+                <p>准备就绪。点击下方按钮开始全量同步...</p>
             </div>
             
             <div style="margin-top:20px;">
-                <button id="start-indexing" class="button button-primary button-large">开始同步索引</button>
+                <button id="start-indexing" class="button button-primary button-large">开始全量同步索引</button>
             </div>
 
             <div id="progress-container" style="margin-top:20px; display:none;">
                 <div style="background:#eee; height:20px; border-radius:10px; overflow:hidden;">
                     <div id="progress-bar" style="background:#43a5f5; width:0%; height:100%; transition: width 0.3s;"></div>
                 </div>
-                <p id="progress-text" style="text-align:center; font-weight:600;"></p>
+                <p id="progress-text" style="text-align:center; font-weight:600; margin-top:10px;"></p>
             </div>
         </div>
 
-        <div id="indexer-log" style="margin-top:20px; background:#f0f0f1; padding:15px; height:200px; overflow-y:auto; font-family:monospace; font-size:12px; border:1px solid #ccd0d4;">
+        <div id="indexer-log" style="margin-top:20px; background:#f0f0f1; padding:15px; height:250px; overflow-y:auto; font-family:monospace; font-size:12px; border:1px solid #ccd0d4; line-height: 1.6;">
             > 等待操作...
         </div>
     </div>
@@ -44,7 +48,7 @@ function hygal_indexer_page() {
 
         $('#start-indexing').on('click', function() {
             if(isProcessing) return;
-            if(!confirm('确定要扫描整个媒体库吗？这可能需要一点时间。')) return;
+            if(!confirm('确定要同步整个媒体库索引吗？\n不含连字符的标题将会被移除索引字段。')) return;
 
             const $btn = $(this);
             const $log = $('#indexer-log');
@@ -53,9 +57,9 @@ function hygal_indexer_page() {
             const $pText = $('#progress-text');
 
             isProcessing = true;
-            $btn.prop('disabled', true).text('正在处理...');
+            $btn.prop('disabled', true).text('同步处理中...');
             $progress.show();
-            $log.append('<br>> 正在获取附件总量...');
+            $log.html('> 任务启动，正在计算附件总量...');
 
             function processBatch(offset) {
                 $.post(ajaxurl, {
@@ -65,7 +69,7 @@ function hygal_indexer_page() {
                 }, function(res) {
                     if(res.success) {
                         const data = res.data;
-                        $log.append('<br>> 处理进度: ' + data.current + '/' + data.total);
+                        $log.append('<br>> 处理批次: ' + data.current + '/' + data.total);
                         $log.scrollTop($log[0].scrollHeight);
                         
                         let percent = (data.current / data.total) * 100;
@@ -75,12 +79,13 @@ function hygal_indexer_page() {
                         if(!data.finished) {
                             processBatch(data.next_offset);
                         } else {
-                            $log.append('<br>> ✅ 索引构建完成！');
-                            $btn.text('同步完成').addClass('button-disabled');
+                            $log.append('<br><strong>> ✅ 全量同步完成！索引已与标题保持一致。</strong>');
+                            $btn.text('全量同步完成').addClass('button-disabled');
                             isProcessing = false;
                         }
                     } else {
-                        $log.append('<br>> ❌ 错误: ' + res.data);
+                        $log.append('<br>> ❌ 发生错误: ' + res.data);
+                        $btn.prop('disabled', false).text('重新尝试');
                         isProcessing = false;
                     }
                 });
@@ -93,18 +98,18 @@ function hygal_indexer_page() {
     <?php
 }
 
-// 3. AJAX 处理 (采用分批处理模式，防止超时)
+// 3. AJAX 分批逻辑
 add_action('wp_ajax_hygal_do_indexing', function() {
     check_ajax_referer('hygal_indexer_nonce', 'nonce');
     
     global $wpdb;
-    $batch_size = 100; // 每批处理100张图
+    $batch_size = 150; // 适当增加批次大小，提高效率
     $offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
 
-    // 获取总数（仅第一次时有用，但在 AJAX 响应中一直返回）
+    // 获取附件总数
     $total = $wpdb->get_var("SELECT COUNT(ID) FROM $wpdb->posts WHERE post_type = 'attachment'");
     
-    // 获取当前批次
+    // 查询当前批次的 ID 和标题
     $attachments = $wpdb->get_results($wpdb->prepare(
         "SELECT ID, post_title FROM $wpdb->posts WHERE post_type = 'attachment' LIMIT %d OFFSET %d",
         $batch_size, $offset
@@ -113,23 +118,27 @@ add_action('wp_ajax_hygal_do_indexing', function() {
     $processed_count = 0;
     foreach ($attachments as $at) {
         $title = $at->post_title;
-        // 查找连字符位置
         $dash_pos = strpos($title, '-');
         
         if ($dash_pos !== false) {
-            // 提取前缀并去除两端空格
+            // 模式 A: 提取前缀并更新/建立索引
             $prefix = trim(substr($title, 0, $dash_pos));
             if (!empty($prefix)) {
-                // 更新或创建索引字段
                 update_post_meta($at->ID, '_hygal_category', $prefix);
+            } else {
+                // 如果是 "-标题" 这种异常格式，清理索引
+                delete_post_meta($at->ID, '_hygal_category');
             }
+        } else {
+            // 模式 B: 标题中没有连字符，主动清理可能存在的旧索引
+            delete_post_meta($at->ID, '_hygal_category');
         }
         $processed_count++;
     }
 
     $current_pos = $offset + $processed_count;
     wp_send_json_success([
-        'total' => $total,
+        'total' => (int)$total,
         'current' => $current_pos,
         'next_offset' => $current_pos,
         'finished' => ($current_pos >= $total)
