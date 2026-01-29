@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: HyGal画廊 - 极致视觉净化版
- * Description: 去除底部翻页器分割线，完善管理员提示逻辑，权重数值大者优先。
+ * Description: 去除底部翻页器分割线，完善管理员提示逻辑，权重数值大者优先，新增10项/页选项。
  */
 
 add_shortcode('hygal', 'hygal_minimalist_search_handler');
@@ -23,12 +23,11 @@ function hygal_minimalist_search_handler($atts) {
         
         .hygal-status-bar { display: none; grid-template-columns: 1fr auto 1fr; align-items: center; height: 36px; margin: 10px 0; padding: 0 5px; font-size: 14px; color: #475569; }
         
-        /* 核心修改：移除线条和顶部内边距，仅保留外边距以控制间距 */
         .bar-bottom { margin-top: 15px; border-top: none !important; padding-top: 0 !important; }
 
         .status-left { text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         .status-center { font-weight: 600; min-width: 120px; display: flex; justify-content: center; }
-        .hygal-pager { align-items: center; gap: 12px; display: none; }
+        .hygal-pager { align-items: center; gap: 5px; display: none; }
         .pager-btn { cursor: pointer; padding: 0 8px; font-size: 18px; color: #43a5f5; user-select: none; }
         .pager-btn.disabled { opacity: 0.2; cursor: default; color: #94a3b8; }
         .status-right { text-align: right; display: flex; justify-content: flex-end; }
@@ -58,7 +57,7 @@ function hygal_minimalist_search_handler($atts) {
         .hytool-version { margin-top: auto; padding-top: 25px; color: #ccc; font-size: 13px; text-align: right; pointer-events: none; }
     </style>
 
-    <div class="hygal-component-container <?php echo ($is_admin === 'true') ? 'is-admin' : ''; ?>">
+    <div class="hygal-component-container hyplus-unselectable <?php echo ($is_admin === 'true') ? 'is-admin' : ''; ?>">
         <div class="hyplus-nav-section">
             <div class="hygal-filter-container">
                 <select id="f-category" class="hygal-input">
@@ -66,7 +65,11 @@ function hygal_minimalist_search_handler($atts) {
                         <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <select id="f-ppp" class="hygal-input"><option value="60">60 项/页</option><option value="30">30 项/页</option></select>
+                <select id="f-ppp" class="hygal-input">
+                    <option value="60">60 项/页</option>
+                    <option value="30">30 项/页</option>
+                    <option value="10">10 项/页</option>
+                </select>
                 <select id="f-order" class="hygal-input">
                     <option value="DESC">最新优先</option>
                     <option value="ASC">最早优先</option>
@@ -105,7 +108,7 @@ function hygal_minimalist_search_handler($atts) {
             <div class="status-right"></div>
         </div>
 
-        <div class="hytool-version">HyGal v0.5.2</div>
+        <div class="hytool-version">HyGal v0.5.3</div>
     </div>
 
     <script>
@@ -186,7 +189,7 @@ function hygal_minimalist_search_handler($atts) {
 }
 
 /**
- * 后端查询逻辑保持不变
+ * 后端查询逻辑
  */
 add_action('wp_ajax_hygal_fetch_minimal', 'hygal_ajax_fetch_minimal_handler');
 add_action('wp_ajax_nopriv_hygal_fetch_minimal', 'hygal_ajax_fetch_minimal_handler');
