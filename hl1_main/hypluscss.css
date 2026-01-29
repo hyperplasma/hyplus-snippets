@@ -162,9 +162,9 @@ body {
 	background-color: rgba(187,255,255,0.05)
 }
 
-.entry-content:not(:first-child) {
+/* .entry-content:not(:first-child) {
 	margin-top: 0.75em;
-}
+} */
 
 /* Inline Code */
 :not(pre) > code {
