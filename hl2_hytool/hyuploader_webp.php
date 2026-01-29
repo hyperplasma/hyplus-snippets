@@ -37,7 +37,6 @@ function hy_uploader_webp_shortcode($atts) {
             cursor: pointer; 
             transition: all 0.2s;
             padding: 15px;
-            margin-bottom: 15px;
             position: relative;
         }
         #hyu-drop-zone:hover { border-color: #43a5f5; background: #f0f9ff; }
@@ -46,10 +45,10 @@ function hy_uploader_webp_shortcode($atts) {
         #hyu-preview-img { max-height: 80px; border-radius: 6px; display: none; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .hyu-hint { color: #64748b; font-size: 15px; font-weight: 500; pointer-events: none; }
 
-        #hyu-stats { display: none; margin-bottom: 15px; padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 13px; color: #166534; }
+        #hyu-stats { display: none; padding: 12px; margin-top: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 13px; color: #166534; }
         .hyu-stat-tag { font-weight: 700; color: #15803d; text-decoration: underline; margin: 0 4px; }
 
-        .hyu-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .hyu-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin-top: 15px; }
         
         .hyu-input {
             background: #ffffff !important;
@@ -70,7 +69,7 @@ function hy_uploader_webp_shortcode($atts) {
 
         .hyu-btn-submit { height: 40px; padding: 0 35px !important; cursor: pointer; font-weight: 600; }
         
-        #hyu-loading { display: none; color: #2271b1; font-weight: bold; margin: 10px 0; }
+        #hyu-loading { display: none; color: #2271b1; font-weight: bold; margin: 0; margin-top: 15px; }
     </style>
 
     <div class="hyu-container">
