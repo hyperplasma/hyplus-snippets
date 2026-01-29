@@ -10,7 +10,7 @@ add_shortcode('hyuploader_webp', 'hy_uploader_webp_shortcode');
 function hy_uploader_webp_shortcode($atts) {
     // 安全校验
     if (!current_user_can('upload_files')) {
-        return '<p style="text-align:center; color:#999; padding:20px;">🔒 权限不足，请登录后操作。</p>';
+        return '';
     }
 
     // 解析短代码参数

@@ -66,9 +66,9 @@ function hygal_minimalist_search_handler($atts) {
                     <?php endforeach; ?>
                 </select>
                 <select id="f-ppp" class="hygal-input">
-                    <option value="60">60 项/页</option>
-                    <option value="30">30 项/页</option>
-                    <option value="10">10 项/页</option>
+                    <option value="60">60项/页</option>
+                    <option value="30">30项/页</option>
+                    <option value="10">10项/页</option>
                 </select>
                 <select id="f-order" class="hygal-input">
                     <option value="DESC">最新优先</option>
