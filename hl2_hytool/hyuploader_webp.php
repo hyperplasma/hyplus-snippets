@@ -76,7 +76,7 @@ function hy_uploader_webp_shortcode($atts) {
         <div class="hyplus-nav-section" style="padding: 20px;">
             <div id="hyu-drop-zone">
                 <img id="hyu-preview-img" src="">
-                <div id="hyu-drop-text" class="hyu-hint">点击、拖拽或粘贴图片到此处</div>
+                <div id="hyu-drop-text" class="hyu-hint">点击、拖拽或粘贴图片到此处上传</div>
                 <input type="file" id="hyu-file-input" style="display:none" accept="image/*">
             </div>
 
@@ -151,8 +151,8 @@ function hy_uploader_webp_shortcode($atts) {
             });
         }
 
-        $('#hyu-drop-zone').on('click', () => $('#hyu-file-input').trigger('click'));
-        $('#hyu-preview-img').on('click', (e) => { e.stopPropagation(); $('#hyu-file-input').trigger('click'); });
+        $('#hyu-drop-zone').on('click', () => $('#hyu-file-input')[0].click());
+        $('#hyu-preview-img').on('click', (e) => { e.stopPropagation(); $('#hyu-file-input')[0].click(); });
 
         function showPreview(file) {
             if (!file || !file.type.startsWith('image/')) return;
