@@ -2,6 +2,7 @@
 /**
  * Plugin Name: WebP Ultra Converter Pro (Stable & Fast)
  * Description: 全宽布局，Enter 键快捷上传，内存溢出防护，自动清空标题。
+ * Current status: unused
  */
 
 add_action('admin_menu', function() {
