@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: HyGal画廊 - 极致视觉净化版
- * Description: 去除底部翻页器分割线，完善管理员提示逻辑，权重数值大者优先，新增10项/页选项。
+ * Description: 空间优化版：压缩翻页控件间距，恢复完整加载文案，支持修改权重/分类/标题，Esc/外部关闭。
  */
 
 add_shortcode('hygal', 'hygal_minimalist_search_handler');
@@ -16,46 +16,87 @@ function hygal_minimalist_search_handler($atts) {
     ob_start();
     ?>
     <style>
+        /* 基础容器 */
         .hygal-component-container { margin: 20px 0; text-align: center; display: flex; flex-direction: column; }
+        .hyplus-unselectable { -webkit-user-select: none; user-select: none; }
+        
+        /* 筛选器 */
         .hygal-filter-container { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
         .hygal-input { background: #ffffff !important; border: 1px solid #cbd5e0; border-radius: 6px; padding: 0 12px; font-size: 16px; font-weight: 600; color: #2d3a4b; height: 40px; outline: none; }
         .hygal-btn-submit { height: 40px; padding: 0 45px !important; font-size: 16px !important; cursor: pointer; font-weight: 600; }
         
-        .hygal-status-bar { display: none; grid-template-columns: 1fr auto 1fr; align-items: center; height: 36px; margin: 10px 0; padding: 0 5px; font-size: 14px; color: #475569; }
-        
+        /* 状态条 */
+        .hygal-status-bar { display: none; grid-template-columns: 1fr auto 1fr; align-items: center; height: 40px; margin: 10px 0; padding: 0 10px; font-size: 14px; color: #475569; }
         .bar-bottom { margin-top: 15px; border-top: none !important; padding-top: 0 !important; }
-
-        .status-left { text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .status-center { font-weight: 600; min-width: 120px; display: flex; justify-content: center; }
-        .hygal-pager { align-items: center; gap: 5px; display: none; }
-        .pager-btn { cursor: pointer; padding: 0 8px; font-size: 18px; color: #43a5f5; user-select: none; }
+        
+        /* 左侧：分类信息 */
+        .status-left { text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-right: 5px; }
+        
+        /* 中间：翻页控件瘦身，为左侧留空间 */
+        .status-center { font-weight: 600; min-width: 80px; display: flex; justify-content: center; }
+        .hygal-pager { align-items: center; gap: 2px; display: none; } 
+        .pager-btn { cursor: pointer; padding: 0 4px; font-size: 18px; color: #43a5f5; } 
         .pager-btn.disabled { opacity: 0.2; cursor: default; color: #94a3b8; }
-        .status-right { text-align: right; display: flex; justify-content: flex-end; }
-        .close-btn { cursor: pointer; color: #f87171; font-size: 26px; visibility: hidden; width: 24px; }
+        /* .pager-text { font-size: 13px; } */
 
+        /* 右侧：关闭按钮 */
+        .status-right { text-align: right; display: flex; justify-content: flex-end; align-items: center; min-width: 30px; }
+        .close-btn { 
+            cursor: pointer; color: #ef4444 !important; font-size: 28px !important; 
+            line-height: 1; visibility: hidden; transition: transform 0.2s; 
+            padding: 2px; font-family: Arial, sans-serif; font-weight: bold;
+        }
+        .close-btn:hover { transform: scale(1.2); color: #b91c1c !important; }
+
+        /* 网格输出 */
         #hygal-output { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 5px; }
         #hygal-output.loading { height: 0; min-height: 0; overflow: hidden; opacity: 0; }
-
-        .hygal-item { display: flex; flex-direction: column; background: #fff; border-radius: 4px; border: 1px solid #eef0f2; position: relative; }
+        .hygal-item { display: flex; flex-direction: column; background: #fff; border-radius: 4px; border: 1px solid #eef0f2; position: relative; overflow: hidden; }
         .hygal-img-wrapper { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #f7f8f9; }
         .hygal-img-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 !important; }
-        
-        .hygal-title { 
-            padding: 4px 2px !important; font-size: 13px !important; color: #666 !important; 
-            text-align: center; line-height: 1.1 !important; word-wrap: break-word; 
-            letter-spacing: -0.3px; cursor: default;
-        }
+        .hygal-title { padding: 5px 2px !important; font-size: 12px !important; color: #666 !important; text-align: center; line-height: 1.2 !important; word-wrap: break-word; letter-spacing: -0.3px; cursor: default; transition: background 0.2s; }
         .is-admin .hygal-title { cursor: pointer; }
-
-        .order-badge { 
-            position: absolute; top: 2px; left: 2px; 
-            background: rgba(0,0,0,0.35); color: #fff; 
-            font-size: 8px; padding: 0 4px; border-radius: 2px; 
-            pointer-events: none; z-index: 5; 
-        }
-
+        .hygal-item.has-order .hygal-title { background-color: #f4fbfc !important; color: #00626b !important; }
         .hytool-version { margin-top: auto; padding-top: 25px; color: #ccc; font-size: 13px; text-align: right; pointer-events: none; }
+
+        /* 管理员弹窗 UI */
+        #hygal-admin-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 99999; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.25);
+        }
+        .hy-modal-content {
+            background: #fff; padding: 25px; border: 1px solid #ddd; border-radius: 12px; width: 90%; max-width: 400px;
+            box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5); text-align: left;
+        }
+        .hy-modal-label { display: block; font-size: 13px; color: #666; font-weight: 600; }
+        .hy-modal-input { width: 100%; margin-top: 6px; margin-bottom: 12px; padding: 8px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .hy-modal-btns { margin-top: 6px; display: flex; gap: 10px; }
+        .hy-btn { flex: 1; padding: 10px; cursor: pointer; font-weight: 600; }
+        .hygal-no-scroll { overflow: hidden !important; width: 100%; }
     </style>
+
+    <div id="hygal-admin-modal" class="hyplus-unselectable">
+        <div class="hy-modal-content">
+            <label class="hy-modal-label">权重评分 (数值越大越靠前)</label>
+            <input type="number" id="mod-order" class="hy-modal-input" placeholder="无">
+            
+            <label class="hy-modal-label">所属分类</label>
+            <select id="mod-prefix" class="hy-modal-input">
+                <?php foreach ($tag_list as $tag): ?>
+                    <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
+                <?php endforeach; ?>
+            </select>
+            
+            <label class="hy-modal-label">标题</label>
+            <input type="text" id="mod-title" class="hy-modal-input">
+            
+            <div class="hy-modal-btns">
+                <button class="hyplus-nav-link hy-btn hy-btn-cancel" onclick="closeHyModal()">取消</button>
+                <button class="hyplus-nav-link hy-btn hy-btn-save" id="hy-save-trigger">保存修改</button>
+            </div>
+        </div>
+    </div>
 
     <div class="hygal-component-container hyplus-unselectable <?php echo ($is_admin === 'true') ? 'is-admin' : ''; ?>">
         <div class="hyplus-nav-section">
@@ -65,16 +106,8 @@ function hygal_minimalist_search_handler($atts) {
                         <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <select id="f-ppp" class="hygal-input">
-                    <option value="60">60项/页</option>
-                    <option value="30">30项/页</option>
-                    <option value="10">10项/页</option>
-                </select>
-                <select id="f-order" class="hygal-input">
-                    <option value="DESC">最新优先</option>
-                    <option value="ASC">最早优先</option>
-                    <option value="RAND">随机排序</option>
-                </select>
+                <select id="f-ppp" class="hygal-input"><option value="60">60项/页</option><option value="30">30项/页</option><option value="10">10项/页</option></select>
+                <select id="f-order" class="hygal-input"><option value="DESC">最新优先</option><option value="ASC">最早优先</option><option value="RAND">随机排序</option></select>
             </div>
             <div style="margin-top:15px; display:flex; justify-content:center;">
                 <button id="btn-fetch" class="hyplus-nav-link hygal-btn-submit">展示图片</button>
@@ -86,9 +119,7 @@ function hygal_minimalist_search_handler($atts) {
             <div class="status-center">
                 <div class="loading-text" style="display:none;">📡 正在获取...</div>
                 <div class="hygal-pager">
-                    <span class="pager-btn prev-btn">&lt;</span>
-                    <span class="pager-text">1 / 1</span>
-                    <span class="pager-btn next-btn">&gt;</span>
+                    <span class="pager-btn prev-btn">&lt;</span><span class="pager-text">1 / 1</span><span class="pager-btn next-btn">&gt;</span>
                 </div>
             </div>
             <div class="status-right"><div class="close-btn">&times;</div></div>
@@ -100,87 +131,95 @@ function hygal_minimalist_search_handler($atts) {
             <div class="status-left"></div>
             <div class="status-center">
                 <div class="hygal-pager">
-                    <span class="pager-btn prev-btn">&lt;</span>
-                    <span class="pager-text">1 / 1</span>
-                    <span class="pager-btn next-btn">&gt;</span>
+                    <span class="pager-btn prev-btn">&lt;</span><span class="pager-text">1 / 1</span><span class="pager-btn next-btn">&gt;</span>
                 </div>
             </div>
             <div class="status-right"></div>
         </div>
-
-        <div class="hytool-version">HyGal v0.5.3</div>
+        <div class="hytool-version">HyGal v0.6.5</div>
     </div>
 
     <script>
+    function closeHyModal() { 
+        jQuery('#hygal-admin-modal').css('display', 'none'); 
+        jQuery('body').removeClass('hygal-no-scroll');
+    }
+
     jQuery(document).ready(function($) {
         const isAdmin = <?php echo $is_admin; ?>;
-        let currentPage = 1, totalPages = 1;
-        const $bars = $('.hygal-status-bar'), $output = $('#hygal-output'), $loadingText = $('.loading-text'),
-              $pagers = $('.hygal-pager'), $pagerTexts = $('.pager-text'), $infoText = $('.info-text');
+        let currentPage = 1, totalPages = 1, currentTargetId = null;
 
         function fetchImages(page = 1, isSwitching = false) {
             currentPage = page;
-            $output.stop().animate({opacity: 0}, 80, function() { $(this).addClass('loading'); });
-            if (isSwitching) $infoText.empty();
-            $bars.css('display', 'grid');
-            $pagers.hide();
+            $('#hygal-output').stop().animate({opacity: 0}, 80, function() { $(this).addClass('loading'); });
+            $('.hygal-status-bar').css('display', 'grid');
+            $('.loading-text').show(); $('.hygal-pager').hide();
             $('.close-btn').css('visibility', 'hidden');
-            $loadingText.show();
 
-            $.ajax({
-                url: '<?php echo admin_url("admin-ajax.php"); ?>',
-                type: 'POST',
-                data: {
-                    action: 'hygal_fetch_minimal',
-                    prefix: $('#f-category').val(),
-                    ppp: $('#f-ppp').val(),
-                    paged: currentPage,
-                    order: $('#f-order').val(),
-                    _ajax_nonce: '<?php echo wp_create_nonce("hygal_min_nonce"); ?>'
-                },
-                success: function(res) {
-                    $loadingText.hide();
-                    if (res.success) {
-                        const data = res.data;
-                        $infoText.html('<b>' + $('#f-category').val() + '</b><span style="color:#64748b;margin-left:4px;">(' + data.total_items + ')</span>');
-                        totalPages = data.total_pages || 1;
-                        $pagerTexts.text(currentPage + ' / ' + totalPages);
-                        $('.prev-btn').toggleClass('disabled', currentPage <= 1);
-                        $('.next-btn').toggleClass('disabled', currentPage >= totalPages);
-                        $pagers.css('display', 'flex');
-                        $('.close-btn').css('visibility', 'visible');
-                        $output.removeClass('loading').html(data.html).stop().css('opacity', 1).hide().fadeIn(80);
-                        if(!isSwitching) {
-                            $('html, body').animate({ scrollTop: $('#hygal-bar-top').offset().top - 80 }, 300);
-                        }
-                    }
+            $.post('<?php echo admin_url("admin-ajax.php"); ?>', {
+                action: 'hygal_fetch_minimal',
+                prefix: $('#f-category').val(),
+                ppp: $('#f-ppp').val(),
+                paged: currentPage,
+                order: $('#f-order').val(),
+                _ajax_nonce: '<?php echo wp_create_nonce("hygal_min_nonce"); ?>'
+            }, function(res) {
+                $('.loading-text').hide();
+                if (res.success) {
+                    const data = res.data;
+                    $('.info-text').html('<b>' + $('#f-category').val() + '</b><span style="color:#64748b;margin-left:4px;">(' + data.total_items + ')</span>');
+                    totalPages = data.total_pages || 1;
+                    $('.pager-text').text(currentPage + ' / ' + totalPages);
+                    $('.prev-btn').toggleClass('disabled', currentPage <= 1);
+                    $('.next-btn').toggleClass('disabled', currentPage >= totalPages);
+                    $('.hygal-pager').css('display', 'flex'); 
+                    $('.close-btn').css('visibility', 'visible');
+                    $('#hygal-output').removeClass('loading').html(data.html).stop().css('opacity', 1).hide().fadeIn(80);
+                    if(!isSwitching) $('html, body').animate({ scrollTop: $('#hygal-bar-top').offset().top - 80 }, 300);
                 }
             });
         }
 
         $('#btn-fetch').on('click', () => fetchImages(1, true));
-        $('.prev-btn').on('click', function() { if (currentPage > 1) fetchImages(currentPage - 1, false); });
-        $('.next-btn').on('click', function() { if (currentPage < totalPages) fetchImages(currentPage + 1, false); });
-        $('.close-btn').on('click', function() { $output.fadeOut(80, function() { $(this).empty().addClass('loading'); }); $bars.fadeOut(80); });
+        $('.prev-btn').on('click', () => currentPage > 1 && fetchImages(currentPage - 1));
+        $('.next-btn').on('click', () => currentPage < totalPages && fetchImages(currentPage + 1));
+        $('.close-btn').on('click', function() { 
+            $('#hygal-output').fadeOut(80, function() { $(this).empty().addClass('loading'); }); 
+            $('.hygal-status-bar').fadeOut(80); 
+        });
 
         if (isAdmin) {
-            $output.on('click', '.hygal-title', function() {
+            $('#hygal-output').on('click', '.hygal-title', function() {
                 const $item = $(this).closest('.hygal-item');
-                const imgId = $item.data('id');
-                let rawOrder = $item.attr('data-raw-order'); 
-                const displayOrder = (!rawOrder || rawOrder.trim() === '') ? '无' : rawOrder;
-                
-                const newOrder = prompt("设置权重评分（数值越大越靠前，留空取消权重）\n当前评分: " + displayOrder, (displayOrder === '无' ? '' : rawOrder));
-                
-                if (newOrder !== null) {
-                    $.ajax({
-                        url: '<?php echo admin_url("admin-ajax.php"); ?>',
-                        type: 'POST',
-                        data: { action: 'hygal_update_order', img_id: imgId, order_val: newOrder, _ajax_nonce: '<?php echo wp_create_nonce("hygal_min_nonce"); ?>' },
-                        success: function(res) { if(res.success) fetchImages(currentPage, false); }
-                    });
-                }
+                currentTargetId = $item.data('id');
+                $('#mod-order').val($item.attr('data-raw-order'));
+                $('#mod-prefix').val($item.attr('data-current-prefix'));
+                $('#mod-title').val($(this).text());
+                $('#hygal-admin-modal').css('display', 'flex');
+                $('body').addClass('hygal-no-scroll');
             });
+
+            $('#hygal-admin-modal').on('click', function(e) { if (e.target === this) closeHyModal(); });
+            $(document).on('keydown', function(e) { if (e.key === "Escape" && $('#hygal-admin-modal').is(':visible')) closeHyModal(); });
+
+            const submitAssetUpdate = () => {
+                const btn = $('#hy-save-trigger');
+                if (btn.prop('disabled')) return;
+                btn.prop('disabled', true).text('同步中...');
+                $.post('<?php echo admin_url("admin-ajax.php"); ?>', {
+                    action: 'hygal_update_asset',
+                    img_id: currentTargetId,
+                    order_val: $('#mod-order').val(),
+                    new_prefix: $('#mod-prefix').val(),
+                    new_pure_title: $('#mod-title').val(),
+                    _ajax_nonce: '<?php echo wp_create_nonce("hygal_min_nonce"); ?>'
+                }, function(res) {
+                    btn.prop('disabled', false).text('保存修改');
+                    if(res.success) { closeHyModal(); fetchImages(currentPage, false); }
+                });
+            };
+            $('#hy-save-trigger').on('click', submitAssetUpdate);
+            $('.hy-modal-input').on('keypress', function(e) { if (e.which === 13) submitAssetUpdate(); });
         }
     });
     </script>
@@ -189,7 +228,7 @@ function hygal_minimalist_search_handler($atts) {
 }
 
 /**
- * 后端查询逻辑
+ * 后端逻辑：获取列表 (此处逻辑保持不变)
  */
 add_action('wp_ajax_hygal_fetch_minimal', 'hygal_ajax_fetch_minimal_handler');
 add_action('wp_ajax_nopriv_hygal_fetch_minimal', 'hygal_ajax_fetch_minimal_handler');
@@ -197,12 +236,11 @@ add_action('wp_ajax_nopriv_hygal_fetch_minimal', 'hygal_ajax_fetch_minimal_handl
 function hygal_ajax_fetch_minimal_handler() {
     check_ajax_referer('hygal_min_nonce');
     global $wpdb;
-
     $prefix = sanitize_text_field($_POST['prefix']);
-    $ppp    = intval($_POST['ppp']);
-    $paged  = intval($_POST['paged']);
-    $order_type = $_POST['order'];
+    $ppp = intval($_POST['ppp']);
+    $paged = intval($_POST['paged']);
     $offset = ($paged - 1) * $ppp;
+    $order_type = $_POST['order'];
 
     $sql_where = $wpdb->prepare("
         FROM {$wpdb->posts} p
@@ -211,33 +249,19 @@ function hygal_ajax_fetch_minimal_handler() {
         WHERE p.post_type = 'attachment' AND m_cat.meta_value = %s
     ", $prefix);
 
-    if ($order_type === 'RAND') {
-        $orderby = "ORDER BY RAND()";
-    } else {
-        $time_order = ($order_type === 'ASC') ? 'ASC' : 'DESC';
-        $orderby = "ORDER BY 
-            CASE WHEN m_ord.meta_value IS NULL OR m_ord.meta_value = '' THEN 1 ELSE 0 END ASC,
-            CAST(m_ord.meta_value AS SIGNED) DESC, 
-            p.post_date $time_order";
-    }
+    $orderby = ($order_type === 'RAND') ? "ORDER BY RAND()" : "ORDER BY CASE WHEN m_ord.meta_value IS NULL OR m_ord.meta_value = '' THEN 1 ELSE 0 END ASC, CAST(m_ord.meta_value AS SIGNED) DESC, p.post_date ".($order_type==='ASC'?'ASC':'DESC');
 
-    $sql = "SELECT p.ID, p.post_title, m_ord.meta_value as raw_order " . $sql_where . $orderby . $wpdb->prepare(" LIMIT %d, %d", $offset, $ppp);
+    $results = $wpdb->get_results("SELECT p.ID, p.post_title, m_ord.meta_value as raw_order " . $sql_where . $orderby . $wpdb->prepare(" LIMIT %d, %d", $offset, $ppp));
     $total_items = $wpdb->get_var("SELECT COUNT(*) " . $sql_where);
-    $results = $wpdb->get_results($sql);
 
-    $logic_counter = $offset + 1;
     $html = '';
     foreach ($results as $post) {
         $url = wp_get_attachment_url($post->ID);
-        $raw_order = $post->raw_order;
         $display_title = $post->post_title;
         if (strpos($display_title, $prefix . '-') === 0) $display_title = substr($display_title, strlen($prefix) + 1);
-        
-        $badge = ($raw_order !== '' && $raw_order !== null) ? '<div class="order-badge">#'.$logic_counter.'</div>' : '';
-        if ($raw_order !== '' && $raw_order !== null) $logic_counter++;
+        $has_order_class = ($post->raw_order !== '' && $post->raw_order !== null) ? 'has-order' : '';
 
-        $html .= '<div class="hygal-item" data-id="'.$post->ID.'" data-raw-order="'.esc_attr($raw_order).'">
-                    '.$badge.'
+        $html .= '<div class="hygal-item '.$has_order_class.'" data-id="'.$post->ID.'" data-raw-order="'.esc_attr($post->raw_order).'" data-current-prefix="'.esc_attr($prefix).'">
                     <div class="hygal-img-wrapper"><img src="'.esc_url($url).'" loading="lazy"></div>
                     <div class="hygal-title">'.esc_html($display_title).'</div>
                   </div>';
@@ -245,14 +269,21 @@ function hygal_ajax_fetch_minimal_handler() {
     wp_send_json_success(['html' => $html, 'total_items' => (int)$total_items, 'total_pages' => ceil($total_items / $ppp)]);
 }
 
-add_action('wp_ajax_hygal_update_order', 'hygal_ajax_update_order_handler');
-function hygal_ajax_update_order_handler() {
+/**
+ * 后端逻辑：同步更新
+ */
+add_action('wp_ajax_hygal_update_asset', function() {
     check_ajax_referer('hygal_min_nonce');
-    if (!current_user_can('manage_options')) wp_send_json_error();
-    $val = sanitize_text_field($_POST['order_val']);
+    if (!current_user_can('manage_options')) wp_send_json_error('权限不足');
     $img_id = intval($_POST['img_id']);
-    if ($val === '') delete_post_meta($img_id, '_hygal_order');
-    else update_post_meta($img_id, '_hygal_order', intval($val));
+    $order_val = sanitize_text_field($_POST['order_val']);
+    $new_prefix = sanitize_text_field($_POST['new_prefix']);
+    $new_pure_title = sanitize_text_field($_POST['new_pure_title']);
+    if ($order_val === '') delete_post_meta($img_id, '_hygal_order');
+    else update_post_meta($img_id, '_hygal_order', intval($order_val));
+    $full_new_title = $new_prefix . '-' . $new_pure_title;
+    wp_update_post(['ID' => $img_id, 'post_title' => $full_new_title]);
+    update_post_meta($img_id, '_hygal_category', $new_prefix);
     wp_send_json_success();
-}
+});
 ?>
