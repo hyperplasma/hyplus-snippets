@@ -1,7 +1,7 @@
 <?php
 /**
- * 插件功能：Meta Index for HyGal - 智能同步助手 (v2.0)
- * 功能：扫描媒体库，根据标题前缀同步构建或清理 _hygal_category 索引字段。
+ * 插件功能：Meta Index for HyGal - 智能同步助手 (v2.1)
+ * 功能：扫描媒体库，根据标题前缀同步构建索引；不含前缀的统一归类为“图”。
  */
 
 // 1. 注册后台菜单
@@ -14,13 +14,16 @@ function hygal_indexer_page() {
     ?>
     <div class="wrap">
         <h1>🛠️ HyGal 媒体库索引同步工具</h1>
-        <p>本工具将扫描所有附件标题：</p>
-        <ul style="list-style-type: disc; margin-left: 20px;">
-            <li>符合 <code>前缀-标题</code> 格式：<strong>更新或建立</strong> 索引。</li>
-            <li>不含 <code>-</code> 连字符：<strong>自动删除</strong> 现有索引（清理失效数据）。</li>
-        </ul>
+        <div class="notice notice-info" style="margin-top: 15px;">
+            <p><strong>同步逻辑说明：</strong></p>
+            <ul style="list-style-type: disc; margin-left: 20px;">
+                <li>符合 <code>前缀-标题</code> 格式：提取 <strong>前缀</strong> 存入索引。</li>
+                <li>不含 <code>-</code> 连字符：统一将索引设置为 <strong>“图”</strong>（默认分类）。</li>
+                <li>此操作不会修改图片原始标题，仅更新数据库 <code>_hygal_category</code> 字段。</li>
+            </ul>
+        </div>
         
-        <div id="indexer-box" style="background:#fff; padding:20px; border:1px solid #ccd0d4; border-radius:8px; max-width:600px;">
+        <div id="indexer-box" style="background:#fff; padding:20px; border:1px solid #ccd0d4; border-radius:8px; max-width:600px; margin-top:20px;">
             <div id="indexer-status">
                 <p>准备就绪。点击下方按钮开始全量同步...</p>
             </div>
@@ -48,7 +51,7 @@ function hygal_indexer_page() {
 
         $('#start-indexing').on('click', function() {
             if(isProcessing) return;
-            if(!confirm('确定要同步整个媒体库索引吗？\n不含连字符的标题将会被移除索引字段。')) return;
+            if(!confirm('确定要同步整个媒体库索引吗？\n不含前缀的图片将统一归类为“图”。')) return;
 
             const $btn = $(this);
             const $log = $('#indexer-log');
@@ -79,8 +82,8 @@ function hygal_indexer_page() {
                         if(!data.finished) {
                             processBatch(data.next_offset);
                         } else {
-                            $log.append('<br><strong>> ✅ 全量同步完成！索引已与标题保持一致。</strong>');
-                            $btn.text('全量同步完成').addClass('button-disabled');
+                            $log.append('<br><strong>> ✅ 全量同步完成！所有图片均已建立分类索引。</strong>');
+                            $btn.text('同步已完成').addClass('button-disabled');
                             isProcessing = false;
                         }
                     } else {
@@ -103,13 +106,14 @@ add_action('wp_ajax_hygal_do_indexing', function() {
     check_ajax_referer('hygal_indexer_nonce', 'nonce');
     
     global $wpdb;
-    $batch_size = 150; // 适当增加批次大小，提高效率
+    $batch_size = 150; 
     $offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
+    $default_category = '图'; // 设定默认分类名
 
     // 获取附件总数
     $total = $wpdb->get_var("SELECT COUNT(ID) FROM $wpdb->posts WHERE post_type = 'attachment'");
     
-    // 查询当前批次的 ID 和标题
+    // 查询当前批次
     $attachments = $wpdb->get_results($wpdb->prepare(
         "SELECT ID, post_title FROM $wpdb->posts WHERE post_type = 'attachment' LIMIT %d OFFSET %d",
         $batch_size, $offset
@@ -121,17 +125,19 @@ add_action('wp_ajax_hygal_do_indexing', function() {
         $dash_pos = strpos($title, '-');
         
         if ($dash_pos !== false) {
-            // 模式 A: 提取前缀并更新/建立索引
+            // 提取前缀
             $prefix = trim(substr($title, 0, $dash_pos));
+            
             if (!empty($prefix)) {
+                // 情况 1: 正常前缀同步
                 update_post_meta($at->ID, '_hygal_category', $prefix);
             } else {
-                // 如果是 "-标题" 这种异常格式，清理索引
-                delete_post_meta($at->ID, '_hygal_category');
+                // 情况 2: 只有 "-" 没前缀（如 "-文件名"），设为默认“图”
+                update_post_meta($at->ID, '_hygal_category', $default_category);
             }
         } else {
-            // 模式 B: 标题中没有连字符，主动清理可能存在的旧索引
-            delete_post_meta($at->ID, '_hygal_category');
+            // 情况 3: 标题中完全没有连字符，统一归类为“图”
+            update_post_meta($at->ID, '_hygal_category', $default_category);
         }
         $processed_count++;
     }
@@ -144,3 +150,4 @@ add_action('wp_ajax_hygal_do_indexing', function() {
         'finished' => ($current_pos >= $total)
     ]);
 });
+?>
