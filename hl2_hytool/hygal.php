@@ -106,7 +106,7 @@ function hygal_minimalist_search_handler($atts) {
                         <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <select id="f-ppp" class="hygal-input"><option value="10">10项/页</option><option value="30">30项/页</option><option value="60">60项/页</option></select>
+                <select id="f-ppp" class="hygal-input"><option value="10">10项/页</option><option value="30">30项/页</option><option value="60">60项/页</option><option value="1">1项/页</option></select>
                 <select id="f-order" class="hygal-input"><option value="DESC">最新优先</option><option value="ASC">最早优先</option><option value="RAND">随机排序</option></select>
             </div>
             <div style="margin-top:15px; display:flex; justify-content:center;">

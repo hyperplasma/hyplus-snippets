@@ -9,13 +9,13 @@
 
         <img class="hylightbox-image" src="" alt="Lightbox Image" />
 
-        <div class="hylightbox-control-bar">
+        <div class="hylightbox-control-bar hylb-configurable-ui">
             <button class="hylightbox-btn hylb-zoom-out-btn" title="缩小 (-)">−</button>
             <span class="hylightbox-zoom-level">100%</span>
             <button class="hylightbox-btn hylb-zoom-in-btn" title="放大 (+)">+</button>
         </div>
 
-        <div class="hylightbox-help-container">
+        <div class="hylightbox-help-container hylb-configurable-ui">
             <button class="hylightbox-btn hylb-help-btn" title="帮助 (?)">?</button>
             <div class="hylightbox-help-tooltip">
                 <p class="hylb-help-title">快捷键指南</p>
@@ -27,9 +27,9 @@
             </div>
         </div>
 
-        <div class="hylb-page-indicator">1/1</div>
+        <div class="hylb-page-indicator hylb-configurable-ui">1/1</div>
 
-        <div class="hylightbox-rotate-container">
+        <div class="hylightbox-rotate-container hylb-configurable-ui">
             <button class="hylightbox-btn hylb-rotate-btn" title="顺时针旋转 (R)">↻</button>
             <button class="hylightbox-btn hylb-rotate-counter-btn" title="逆时针旋转 (T)">↺</button>
         </div>
@@ -37,6 +37,9 @@
 </template>
 
 <style>
+    /* Cookie 触发的隐藏样式 */
+    .hylb-ui-hidden { display: none !important; }
+
     .hylightbox-wrapper {
         display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background-color: rgba(0, 0, 0, 0.85); z-index: 999999; 
@@ -54,7 +57,6 @@
 
     #main img { cursor: zoom-in !important; }
 
-    /* 通用按钮：确保全是白色 */
     .hylightbox-btn {
         border: none !important; color: #ffffff !important; font-size: 20px; cursor: pointer;
         width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
@@ -62,16 +64,14 @@
     }
     .hylightbox-btn:hover { opacity: 0.6; }
 
-    /* UI 容器 */
     .hylightbox-control-bar, .hylightbox-help-container, .hylightbox-rotate-container, .hylb-page-indicator {
         position: absolute; background: rgba(30, 30, 30, 0.7); padding: 4px 12px;
         border-radius: 20px; z-index: 100; display: flex; align-items: center;
-        border: 1px solid rgba(255, 255, 255, 0.1); /* 增加微妙边缘感 */
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .hylightbox-control-bar { top: 20px; left: 50%; transform: translateX(-50%); gap: 10px; }
     .hylightbox-help-container { top: 20px; left: 20px; }
     
-    /* 修正百分比文字颜色 */
     .hylightbox-zoom-level { 
         color: #ffffff !important; 
         font-size: 16px; 
@@ -87,7 +87,6 @@
 
     .hylightbox-rotate-container { bottom: 20px; left: 20px; gap: 8px; }
 
-    /* 帮助框 UI */
     .hylightbox-help-tooltip {
         display: none; position: absolute; top: 45px; left: 0; 
         background: rgba(20, 20, 20, 0.98); padding: 15px; 
@@ -99,7 +98,6 @@
     .hylb-help-title { color: #ffffff !important; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
     .hylightbox-help-tooltip p { margin: 5px 0; white-space: nowrap; color: #cccccc; }
 
-    /* 导航区 */
     .hylightbox-nav-btn {
         position: fixed; top: 0; bottom: 0; background: transparent !important;
         color: #ffffff !important; border: none !important; font-size: 36px; width: 8%;
@@ -136,6 +134,21 @@ document.addEventListener("DOMContentLoaded", function () {
         clickTarget: null
     };
 
+    // --- 新增：Cookie 检测逻辑 ---
+    function checkCookieUI() {
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        };
+
+        if (getCookie('hideLightboxControls') === 'true') {
+            document.querySelectorAll('.hylb-configurable-ui').forEach(el => {
+                el.classList.add('hylb-ui-hidden');
+            });
+        }
+    }
+
     function collectImages() {
         const mainArea = document.getElementById('main') || document.body;
         state.galleryImages = Array.from(mainArea.querySelectorAll('img')).filter(img => 
@@ -151,6 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateContent();
         wrapper.classList.add("active");
         document.body.style.overflow = "hidden";
+        checkCookieUI(); // 每次打开时检查一次，确保同步
     }
 
     function closeLightbox() {
@@ -263,5 +277,8 @@ document.addEventListener("DOMContentLoaded", function () {
     window.ontouchmove = moveDrag;
     window.ontouchend = stopDrag;
     lightboxImg.ondragstart = (e) => e.preventDefault();
+
+    // 初始加载检查
+    checkCookieUI();
 });
 </script>
