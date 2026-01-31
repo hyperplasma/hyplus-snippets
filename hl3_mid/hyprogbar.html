@@ -8,9 +8,6 @@
         <div class="pageLeavingDot"></div>
         <div class="pageLeavingDot"></div>
     </div>
-    <div id="pageLeavingQuoteWrapper">
-        <div id="pageLeavingQuote"></div>
-    </div>
 </div>
 <div id="pageLeavingTopBar" style="display: none">
     <div id="pageLeavingTopBarInner"></div>
@@ -69,20 +66,6 @@
             opacity: 1;
         }
     }
-    #pageLeavingQuoteWrapper {
-        width: 100%;
-        text-align: center;
-    }
-    #pageLeavingQuote {
-        font-family: "行楷", "楷体", "STKaiti", "华文楷体", "仿宋", "STFangsong", "黑体", "STHeiti", sans-serif;
-        font-size: 28px;
-        color: #333;
-        padding: 20px;
-        max-width: 80%;
-        margin: 0 auto;
-        line-height: 1.8;
-        letter-spacing: 1px;
-    }
     #pageLeavingTopBar {
         position: fixed;
         left: 0;
@@ -122,67 +105,12 @@
     (function () {
         // 简化版：仅跳转后显示进度条和遮罩，无跳转前动画
         const MASK_ID = "pageLeavingMask";
-        const QUOTE_STORAGE_KEY = "localQuotes";
-        const QUOTE_URL = "https://www.hyperplasma.top/hpsrc/selection.txt";
-        const QUOTE_CUR_KEY = "pageLeavingQuoteCur";
+
         const mask = document.getElementById(MASK_ID);
-        const quoteEl = document.getElementById("pageLeavingQuote");
         const topBar = document.getElementById("pageLeavingTopBar");
         const topBarInner = document.getElementById("pageLeavingTopBarInner");
-        let quotesCache = null;
         let progressRaf = null;
 
-        function showQuote(q) {
-            quoteEl.textContent = q || "正在加载...";
-        }
-        function getLocalQuotes() {
-            const stored = localStorage.getItem(QUOTE_STORAGE_KEY);
-            if (!stored) return null;
-            try {
-                const arr = JSON.parse(stored);
-                return Array.isArray(arr) && arr.length ? arr : null;
-            } catch (e) {
-                localStorage.removeItem(QUOTE_STORAGE_KEY);
-                return null;
-            }
-        }
-        function setLocalQuotes(arr) {
-            try {
-                if (Array.isArray(arr) && arr.length) localStorage.setItem(QUOTE_STORAGE_KEY, JSON.stringify(arr));
-            } catch (e) {}
-        }
-        function randomQuote(arr) {
-            if (!arr || !arr.length) return "正在加载...";
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
-        function loadAndCacheQuotes(cb) {
-            if (quotesCache) {
-                cb(quotesCache);
-                return;
-            }
-            const localQuotes = getLocalQuotes();
-            if (localQuotes) {
-                quotesCache = localQuotes;
-                cb(localQuotes);
-                return;
-            }
-            fetch(QUOTE_URL)
-                .then((res) => res.text())
-                .then((text) => {
-                    const arr = text
-                        .split("\n")
-                        .map((q) => q.trim())
-                        .filter(Boolean);
-                    if (arr.length) {
-                        setLocalQuotes(arr);
-                        quotesCache = arr;
-                        cb(arr);
-                    } else {
-                        cb(["正在加载..."]);
-                    }
-                })
-                .catch(() => cb(["正在加载..."]));
-        }
         function setTopBarProgress(val) {
             val = Math.max(0, Math.min(100, Math.round(val)));
             topBarInner.style.width = val + "%";
@@ -196,16 +124,6 @@
         function showMaskAndQuote() {
             mask.style.display = "flex";
             mask.style.opacity = "1";
-            const cur = sessionStorage.getItem(QUOTE_CUR_KEY);
-            if (cur) showQuote(cur);
-            else {
-                loadAndCacheQuotes((arr) => {
-                    const q = randomQuote(arr);
-                    sessionStorage.setItem(QUOTE_CUR_KEY, q);
-                    showQuote(q);
-                });
-            }
-            // 最多2秒后隐藏中央内容和白色背景
             setTimeout(hideMaskCenter, 5000);
         }
         // 隐藏中央内容和白色背景，但不隐藏顶部条
