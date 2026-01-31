@@ -164,7 +164,7 @@ body {
 }
 
 .entry-content:not(:first-child) {
-	margin-top: 1.75em;
+	margin-top: 1.5em;
 }
 
 /* Inline Code */
