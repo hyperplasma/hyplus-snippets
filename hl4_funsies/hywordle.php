@@ -37,7 +37,7 @@ if ($is_wordle_ajax_request) {
 				return $GLOBALS_cache;
 			}
 			
-			$url = 'https://www.hyperplasma.top/hpsrc/valid-wordle-words.txt';
+			$url = 'wp-content/uploads/hyplus-assets/valid-wordle-words.txt';
 			$words = @file($url, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 			
 			if ($words === false || empty($words)) {
