@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector(".hylb-rotate-counter-btn").onclick = (e) => { e.stopPropagation(); state.transform.rotation -= 45; applyTransform(); };
     document.querySelector(".hylb-help-btn").onclick = (e) => { e.stopPropagation(); helpTooltip.classList.toggle("visible"); };
 
-    wrapper.onwheel = (e) => { e.preventDefault(); state.transform.scale *= e.deltaY < 0 ? 1.1 : 0.9; applyTransform(); };
+    wrapper.onwheel = (e) => { e.preventDefault(); state.transform.scale *= e.deltaY < 0 ? 1.04 : 0.96; applyTransform(); };
 
     document.addEventListener("keydown", (e) => {
         if (!wrapper.classList.contains("active")) return;
