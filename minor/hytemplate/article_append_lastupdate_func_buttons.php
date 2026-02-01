@@ -23,7 +23,7 @@ add_action('wp_footer', function() {
         // 创建按钮HTML
         $buttons_html = sprintf(
             '<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;</span>' .
-            '<span class="hyplus-scale" style="display: inline-block;"><a href="#" onclick="window.copyIdLink(this, %s); return false;" title="复制朴素链接（ID：%s）" style="text-decoration: none;" class="hyplus-unselectable">📋</a></span>' .
+            '<span class="hyplus-scale" style="display: inline-block;"><a href="#" onclick="window.copyIdLink(this, %s); return false;" title="复制朴素相对路径（ID：%s）" style="text-decoration: none;" class="hyplus-unselectable">📋</a></span>' .
             '<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;&nbsp;</span>' .
             '<span class="hyplus-scale" style="display: inline-block;"><a href="#" onclick="window.shareArticle(\'%s\', \'%s\'); return false;" title="分享文章" style="text-decoration: none;" class="hyplus-unselectable">📤</a></span>' .
             '<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;&nbsp;</span>' .
@@ -79,7 +79,8 @@ add_action('wp_footer', function() {
     };
     
     window.copyIdLink = function(el, postId) {
-        var url = 'https://www.hyperplasma.top/?p=' + postId;
+        // var url = 'https://www.hyperplasma.top/?p=' + postId;
+        var url = '/?p=' + postId;
         if (navigator.clipboard) {
             navigator.clipboard.writeText(url).then(function() {
                 alert('复制成功！ID：' + postId);
