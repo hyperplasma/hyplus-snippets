@@ -114,7 +114,7 @@ ol li {
 	background-color: white;
 
 	/* border: 1px solid LightGray; */
-	box-shadow: 0 0 20px rgba(102,139,139,0.55);
+	box-shadow: 0 0 20px rgba(102,139,139,0.55) !important;
 }
 
 /* Destroy paddings in Header */
@@ -159,7 +159,7 @@ footer {
  * Overall Hyplus style css (Including Inline Code Block, HomeTempButtons, NoSidebarOnMobile, commentForm...) CSS
  */
 body {
-	background-color: rgba(187,255,255,0.05);
+	background-color: rgba(187,255,255,0.05) !important;
 	border: none !important;
 }
 
