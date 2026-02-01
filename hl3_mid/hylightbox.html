@@ -27,6 +27,10 @@
             </div>
         </div>
 
+        <div class="hylightbox-close-container hylb-configurable-ui">
+            <button class="hylightbox-btn hylb-close-x-btn" title="关闭 (ESC)">×</button>
+        </div>
+
         <div class="hylb-page-indicator hylb-configurable-ui">1/1</div>
 
         <div class="hylightbox-rotate-container hylb-configurable-ui">
@@ -37,7 +41,6 @@
 </template>
 
 <style>
-    /* Cookie 触发的隐藏样式 */
     .hylb-ui-hidden { display: none !important; }
 
     .hylightbox-wrapper {
@@ -64,26 +67,25 @@
     }
     .hylightbox-btn:hover { opacity: 0.6; }
 
-    .hylightbox-control-bar, .hylightbox-help-container, .hylightbox-rotate-container, .hylb-page-indicator {
+    /* UI 容器通用样式 */
+    .hylightbox-control-bar, .hylightbox-help-container, .hylightbox-close-container, 
+    .hylightbox-rotate-container, .hylb-page-indicator {
         position: absolute; background: rgba(30, 30, 30, 0.7); padding: 4px 12px;
         border-radius: 20px; z-index: 100; display: flex; align-items: center;
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
+
     .hylightbox-control-bar { top: 20px; left: 50%; transform: translateX(-50%); gap: 10px; }
     .hylightbox-help-container { top: 20px; left: 20px; }
+    .hylightbox-close-container { top: 20px; right: 20px; padding: 4px; } /* 右上角关闭 */
     
     .hylightbox-zoom-level { 
-        color: #ffffff !important; 
-        font-size: 16px; 
-        min-width: 35px; 
-        text-align: center; 
-        font-family: Arial, sans-serif;
+        color: #ffffff !important; font-size: 16px; min-width: 35px; 
+        text-align: center; font-family: Arial, sans-serif;
     }
 
-    .hylb-page-indicator { 
-        top: 20px; right: 20px; color: #ffffff !important; 
-        font-size: 11px; font-weight: bold; padding: 4px 12px; 
-    }
+    /* 迁移至右下角 */
+    .hylb-page-indicator { bottom: 20px; right: 20px; color: #ffffff !important; font-size: 11px; font-weight: bold; }
 
     .hylightbox-rotate-container { bottom: 20px; left: 20px; gap: 8px; }
 
@@ -134,7 +136,6 @@ document.addEventListener("DOMContentLoaded", function () {
         clickTarget: null
     };
 
-    // --- 新增：Cookie 检测逻辑 ---
     function checkCookieUI() {
         const getCookie = (name) => {
             const value = `; ${document.cookie}`;
@@ -142,11 +143,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (parts.length === 2) return parts.pop().split(';').shift();
         };
 
-        if (getCookie('hideLightboxControls') === 'true') {
-            document.querySelectorAll('.hylb-configurable-ui').forEach(el => {
-                el.classList.add('hylb-ui-hidden');
-            });
-        }
+        const shouldHide = getCookie('hideLightboxControls') === 'true';
+        document.querySelectorAll('.hylb-configurable-ui').forEach(el => {
+            el.classList.toggle('hylb-ui-hidden', shouldHide);
+        });
     }
 
     function collectImages() {
@@ -157,6 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function openLightbox(target) {
+        checkCookieUI(); // 开启时立即同步 Cookie 状态
         collectImages();
         state.currentIndex = state.galleryImages.indexOf(target);
         if (state.currentIndex === -1) return;
@@ -164,7 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateContent();
         wrapper.classList.add("active");
         document.body.style.overflow = "hidden";
-        checkCookieUI(); // 每次打开时检查一次，确保同步
     }
 
     function closeLightbox() {
@@ -247,6 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }, true);
 
+    // 按钮绑定
     document.querySelector(".hylb-prev-btn").onclick = (e) => { e.stopPropagation(); navigate(-1); };
     document.querySelector(".hylb-next-btn").onclick = (e) => { e.stopPropagation(); navigate(1); };
     document.querySelector(".hylb-zoom-in-btn").onclick = (e) => { e.stopPropagation(); handleZoom("in"); };
@@ -254,6 +255,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector(".hylb-rotate-btn").onclick = (e) => { e.stopPropagation(); state.transform.rotation += 45; applyTransform(); };
     document.querySelector(".hylb-rotate-counter-btn").onclick = (e) => { e.stopPropagation(); state.transform.rotation -= 45; applyTransform(); };
     document.querySelector(".hylb-help-btn").onclick = (e) => { e.stopPropagation(); helpTooltip.classList.toggle("visible"); };
+    document.querySelector(".hylb-close-x-btn").onclick = (e) => { e.stopPropagation(); closeLightbox(); };
 
     wrapper.onwheel = (e) => { e.preventDefault(); state.transform.scale *= e.deltaY < 0 ? 1.04 : 0.96; applyTransform(); };
 
@@ -278,7 +280,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window.ontouchend = stopDrag;
     lightboxImg.ondragstart = (e) => e.preventDefault();
 
-    // 初始加载检查
     checkCookieUI();
 });
 </script>
