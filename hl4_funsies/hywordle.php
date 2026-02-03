@@ -37,7 +37,7 @@ if ($is_wordle_ajax_request) {
 				return $GLOBALS_cache;
 			}
 			
-			$url = 'wp-content/uploads/hyplus-assets/valid-wordle-words.txt';
+			$url = site_url() . '/wp-content/hyplus-assets/valid-wordle-words.txt';
 			$words = @file($url, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 			
 			if ($words === false || empty($words)) {
@@ -188,7 +188,7 @@ function getWordleWordList() {
 		return $GLOBALS['_hywordle_word_list'];
 	}
 	
-	$url = 'https://www.hyperplasma.top/hpsrc/valid-wordle-words.txt';
+	$url = site_url() . '/wp-content/hyplus-assets/valid-wordle-words.txt';
 	$words = @file($url, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	
 	if ($words === false || empty($words)) {
