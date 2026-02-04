@@ -84,7 +84,6 @@
         text-align: center; font-family: Arial, sans-serif;
     }
 
-    /* 迁移至右下角 */
     .hylb-page-indicator { bottom: 20px; right: 20px; color: #ffffff !important; font-size: 11px; font-weight: bold; }
 
     .hylightbox-rotate-container { bottom: 20px; left: 20px; gap: 8px; }
@@ -100,18 +99,26 @@
     .hylb-help-title { color: #ffffff !important; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
     .hylightbox-help-tooltip p { margin: 5px 0; white-space: nowrap; color: #cccccc; }
 
+    /* 修改：限制上一张/下一张按钮的高度 */
     .hylightbox-nav-btn {
-        position: fixed; top: 0; bottom: 0; background: transparent !important;
-        color: #ffffff !important; border: none !important; font-size: 36px; width: 8%;
-        cursor: pointer; z-index: 50; display: flex; align-items: center; 
-        transition: opacity 0.2s; opacity: 0; outline: none !important;
+        position: fixed; 
+        top: 50%; transform: translateY(-50%); /* 垂直居中 */
+        background: transparent !important;
+        color: #ffffff !important; border: none !important; 
+        font-size: 36px; width: 8%; height: 120px; /* 固定高度，不再铺满 */
+        cursor: pointer; z-index: 50; display: flex; 
+        align-items: center; justify-content: center;
+        transition: opacity 0.2s, background 0.2s; 
+        opacity: 0;
+        outline: none !important;
+        border-radius: 8px;
     }
-    .hylightbox-nav-btn:hover { opacity: 1; background: rgba(255,255,255,0.05) !important; }
-    .hylb-prev-btn { left: 0; justify-content: center; }
-    .hylb-next-btn { right: 0; justify-content: center; }
+    .hylightbox-nav-btn:hover { opacity: 1; background: rgba(255,255,255,0.1) !important; }
+    .hylb-prev-btn { left: 10px; }
+    .hylb-next-btn { right: 10px; }
 
     @media (max-width: 768px) {
-        .hylightbox-nav-btn { width: 15%; font-size: 28px; }
+        .hylightbox-nav-btn { width: 15%; font-size: 28px; height: 100px; }
     }
 </style>
 
@@ -157,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function openLightbox(target) {
-        checkCookieUI(); // 开启时立即同步 Cookie 状态
+        checkCookieUI();
         collectImages();
         state.currentIndex = state.galleryImages.indexOf(target);
         if (state.currentIndex === -1) return;
@@ -247,7 +254,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }, true);
 
-    // 按钮绑定
     document.querySelector(".hylb-prev-btn").onclick = (e) => { e.stopPropagation(); navigate(-1); };
     document.querySelector(".hylb-next-btn").onclick = (e) => { e.stopPropagation(); navigate(1); };
     document.querySelector(".hylb-zoom-in-btn").onclick = (e) => { e.stopPropagation(); handleZoom("in"); };
