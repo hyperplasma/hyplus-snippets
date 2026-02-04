@@ -1,8 +1,9 @@
 <?php
 /**
- * Plugin Name: HyUploader WebP - 分类联动版
+ * Plugin Name: HyUploader WebP (Old) - 分类联动版
  * Description: 支持 WebP 转换、下拉前缀、回车上传，并自动构建 _hygal_category 索引以适配万级数据。
  * Shortcode: [hyuploader_webp tags="霞,虹,雾,hyplus"]
+ * Current status: unused (combined to new HyGal)
  */
 
 add_shortcode('hyuploader_webp', 'hy_uploader_webp_shortcode');
