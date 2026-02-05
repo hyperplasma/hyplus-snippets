@@ -55,6 +55,7 @@
         max-width: 90%; max-height: 90%; cursor: grab; z-index: 10;
         transition: transform 0.15s ease-out;
         box-shadow: 0 5px 35px rgba(0,0,0,0.6);
+        will-change: transform; /* 提升移动端性能 */
     }
     .hylightbox-image.grabbing { cursor: grabbing; transition: none !important; }
 
@@ -77,7 +78,7 @@
 
     .hylightbox-control-bar { top: 20px; left: 50%; transform: translateX(-50%); gap: 10px; }
     .hylightbox-help-container { top: 20px; left: 20px; }
-    .hylightbox-close-container { top: 20px; right: 20px; padding: 4px; } /* 右上角关闭 */
+    .hylightbox-close-container { top: 20px; right: 20px; padding: 4px; }
     
     .hylightbox-zoom-level { 
         color: #ffffff !important; font-size: 16px; min-width: 35px; 
@@ -85,7 +86,6 @@
     }
 
     .hylb-page-indicator { bottom: 20px; right: 20px; color: #ffffff !important; font-size: 11px; font-weight: bold; }
-
     .hylightbox-rotate-container { bottom: 20px; left: 20px; gap: 8px; }
 
     .hylightbox-help-tooltip {
@@ -99,18 +99,12 @@
     .hylb-help-title { color: #ffffff !important; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
     .hylightbox-help-tooltip p { margin: 5px 0; white-space: nowrap; color: #cccccc; }
 
-    /* 修改：限制上一张/下一张按钮的高度 */
     .hylightbox-nav-btn {
-        position: fixed; 
-        top: 50%; transform: translateY(-50%); /* 垂直居中 */
-        background: transparent !important;
-        color: #ffffff !important; border: none !important; 
-        font-size: 36px; width: 8%; height: 120px; /* 固定高度，不再铺满 */
-        cursor: pointer; z-index: 50; display: flex; 
-        align-items: center; justify-content: center;
-        transition: opacity 0.2s, background 0.2s; 
-        opacity: 0;
-        outline: none !important;
+        position: fixed; top: 50%; transform: translateY(-50%);
+        background: transparent !important; color: #ffffff !important; border: none !important; 
+        font-size: 36px; width: 8%; height: 120px; cursor: pointer; z-index: 50; 
+        display: flex; align-items: center; justify-content: center;
+        transition: opacity 0.2s, background 0.2s; opacity: 0; outline: none !important;
         border-radius: 8px;
     }
     .hylightbox-nav-btn:hover { opacity: 1; background: rgba(255,255,255,0.1) !important; }
@@ -140,7 +134,10 @@ document.addEventListener("DOMContentLoaded", function () {
         initialX: 0, initialY: 0,
         galleryImages: [], currentIndex: -1,
         dragStartedOnImg: false,
-        clickTarget: null
+        clickTarget: null,
+        // 新增：移动端缩放状态
+        initialPinchDistance: 0,
+        initialScale: 1
     };
 
     function checkCookieUI() {
@@ -149,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const parts = value.split(`; ${name}=`);
             if (parts.length === 2) return parts.pop().split(';').shift();
         };
-
         const shouldHide = getCookie('hideLightboxControls') === 'true';
         document.querySelectorAll('.hylb-configurable-ui').forEach(el => {
             el.classList.toggle('hylb-ui-hidden', shouldHide);
@@ -211,30 +207,58 @@ document.addEventListener("DOMContentLoaded", function () {
         applyTransform();
     }
 
+    // 获取两点间距离（用于移动端缩放）
+    function getDistance(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
     function startDrag(e) {
         if (e.target !== lightboxImg) return;
         state.isDragging = true;
         state.dragStartedOnImg = true;
         lightboxImg.classList.add("grabbing");
-        const x = e.touches ? e.touches[0].clientX : e.clientX;
-        const y = e.touches ? e.touches[0].clientY : e.clientY;
-        state.initialX = x - state.transform.xOffset;
-        state.initialY = y - state.transform.yOffset;
+
+        if (e.touches && e.touches.length === 2) {
+            // 处理移动端双指缩放起始
+            state.initialPinchDistance = getDistance(e.touches);
+            state.initialScale = state.transform.scale;
+        } else {
+            // 处理单指/鼠标拖拽起始
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            state.initialX = x - state.transform.xOffset;
+            state.initialY = y - state.transform.yOffset;
+        }
         e.stopPropagation();
     }
 
     function moveDrag(e) {
         if (!state.isDragging) return;
-        const x = e.touches ? e.touches[0].clientX : e.clientX;
-        const y = e.touches ? e.touches[0].clientY : e.clientY;
-        state.transform.xOffset = x - state.initialX;
-        state.transform.yOffset = y - state.initialY;
-        applyTransform();
+
+        if (e.touches && e.touches.length === 2) {
+            // 移动端双指缩放执行
+            const currentDistance = getDistance(e.touches);
+            if (state.initialPinchDistance > 0) {
+                const ratio = currentDistance / state.initialPinchDistance;
+                state.transform.scale = state.initialScale * ratio;
+                applyTransform();
+            }
+        } else if (!e.touches || e.touches.length === 1) {
+            // 单指/鼠标移动执行
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            state.transform.xOffset = x - state.initialX;
+            state.transform.yOffset = y - state.initialY;
+            applyTransform();
+        }
     }
 
     function stopDrag() {
         state.isDragging = false;
         state.dragStartedOnImg = false;
+        state.initialPinchDistance = 0;
         lightboxImg.classList.remove("grabbing");
     }
 
@@ -281,11 +305,13 @@ document.addEventListener("DOMContentLoaded", function () {
     lightboxImg.onmousedown = startDrag;
     window.onmousemove = moveDrag;
     window.onmouseup = stopDrag;
-    lightboxImg.ontouchstart = startDrag;
-    window.ontouchmove = moveDrag;
-    window.ontouchend = stopDrag;
-    lightboxImg.ondragstart = (e) => e.preventDefault();
 
+    // 针对移动端被动事件监听器的处理
+    lightboxImg.addEventListener('touchstart', startDrag, { passive: false });
+    window.addEventListener('touchmove', moveDrag, { passive: false });
+    window.addEventListener('touchend', stopDrag, { passive: false });
+
+    lightboxImg.ondragstart = (e) => e.preventDefault();
     checkCookieUI();
 });
 </script>
