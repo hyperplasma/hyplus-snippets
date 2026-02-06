@@ -9,7 +9,19 @@
 function hyplus_sideinfo_shortcode() {
     ob_start();
 ?>
-<div class="hyplus-sideinfo">
+<div class="hyplus-sideinfo" data-current-category-ids="<?php 
+    // 获取当前分类ID（单篇文章或分类页面）
+    $catIds = array();
+    if (is_single()) {
+        $terms = get_the_terms(get_the_ID(), 'category');
+        if ($terms && !is_wp_error($terms)) {
+            $catIds = wp_list_pluck($terms, 'term_id');
+        }
+    } elseif (is_category()) {
+        $catIds = array(get_queried_object_id());
+    }
+    echo esc_attr(implode(',', $catIds));
+?>">
     <!-- 切换按钮 -->
     <div style="text-align: center;">
         <button class="sideinfo-toggle hyplus-nav-link hyplus-unselectable" onclick="toggleSideinfo(this)" hidden aria-label="切换分类和目录">分类</button>
@@ -96,6 +108,14 @@ function hyplus_sideinfo_shortcode() {
 .toc-wrapper {
     width: 100%;
 }
+
+/* 高亮当前所处的分类链接，样式与 hytoc.php 中的 hyplus-toc-active 一致 */
+.home-categories a.sideinfo-cat-active {
+    color: #3000aa;
+}
+.home-categories a.sideinfo-cat-active:hover {
+    color: red;
+}
 </style>
 
 <script>
@@ -103,6 +123,72 @@ function hyplus_sideinfo_shortcode() {
 function checkTocAvailable() {
     const toc = document.querySelector('.sideinfo-toc .toc-wrapper');
     return toc && toc.querySelector('ul') !== null;
+}
+
+// 高亮当前所处的分类
+function highlightCurrentCategory() {
+    const sideinfoContainer = document.querySelector('.hyplus-sideinfo');
+    if (!sideinfoContainer) return;
+
+    const catList = sideinfoContainer.querySelector('.home-categories');
+    if (!catList) return;
+
+    // 1. 尝试从数据属性获取当前分类 ID（单篇文章或分类页面）
+    const currentCategoryIds = sideinfoContainer.getAttribute('data-current-category-ids');
+    const catIdSet = new Set();
+    if (currentCategoryIds) {
+        currentCategoryIds.split(',').forEach(function(id) {
+            if (id.trim()) {
+                catIdSet.add(id.trim());
+            }
+        });
+    }
+
+    // 2. 如果通过数据属性找到了分类 ID，使用 ID 匹配；否则使用 URL 匹配
+    const links = catList.querySelectorAll('a');
+    if (catIdSet.size > 0) {
+        // 通过分类 ID 匹配
+        links.forEach(function(link) {
+            const href = link.getAttribute('href');
+            // 从 href 中提取分类 ID，href 格式通常是 /category/slug/ 
+            // 我们可以尝试从 data-term-id 属性获取，或从 href 中提取
+            let isCurrentCat = false;
+            
+            // 检查父元素是否有 id 或其他标记
+            let liElement = link.closest('li');
+            if (liElement) {
+                // WordPress wp_list_categories 生成的 li 有 cat-item cat-item-{id} class
+                const classMatch = liElement.className.match(/cat-item-(\d+)/);
+                if (classMatch && catIdSet.has(classMatch[1])) {
+                    isCurrentCat = true;
+                }
+            }
+            
+            if (isCurrentCat) {
+                link.classList.add('sideinfo-cat-active');
+            } else {
+                link.classList.remove('sideinfo-cat-active');
+            }
+        });
+    } else {
+        // 通过 URL 匹配（分类页面）
+        const currentUrl = window.location.href.split('?')[0]; // 移除查询参数
+        links.forEach(function(link) {
+            const href = link.getAttribute('href');
+            if (href) {
+                const linkUrl = href.split('?')[0]; // 移除查询参数
+                // 比较 URL（去除尾部斜杠，以便形如 /category/tech/ 和 /category/tech 都能匹配）
+                const normalizedCurrent = currentUrl.replace(/\/$/, '');
+                const normalizedLink = linkUrl.replace(/\/$/, '');
+                
+                if (normalizedCurrent === normalizedLink) {
+                    link.classList.add('sideinfo-cat-active');
+                } else {
+                    link.classList.remove('sideinfo-cat-active');
+                }
+            }
+        });
+    }
 }
 
 // 页面加载时初始化状态
@@ -139,6 +225,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初始化完成，显示按钮
     btn.removeAttribute('hidden');
+    
+    // 高亮当前分类
+    highlightCurrentCategory();
 });
 
 function toggleSideinfo(btn) {
