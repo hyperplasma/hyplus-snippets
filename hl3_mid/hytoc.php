@@ -200,6 +200,10 @@ function hyplus_output_toc_scripts() {
     <script>
     (function(){
         // ============ TOC 核心工具函数 ============
+        var HEADER_HEIGHT = 70;
+        var tocContainers = [];
+        var globalScrollTimeout;
+
         function setCookie(name, value, days) {
             var expires = "";
             if (days) {
@@ -221,15 +225,64 @@ function hyplus_output_toc_scripts() {
             return null;
         }
 
-        // 提取节点下所有TextNode内容，忽略标签
-        function getPureText(node) {
-            var text = '';
-            node.childNodes.forEach(function(child) {
-                if (child.nodeType === Node.TEXT_NODE) {
-                    text += child.textContent;
+        // 隐藏 UB 导航弹出框
+        function hideUBNav() {
+            var navContainer = document.getElementById('navContainer');
+            if (navContainer) {
+                setTimeout(function(){
+                    navContainer.style.display = "none";
+                    document.body.classList.remove("nav-open");
+                }, 50);
+            }
+        }
+
+        // 查找最接近顶部的活跃链接
+        function findNearestActiveLink(linkElements, scrollOffset) {
+            var nextActiveLink = null;
+            var minDistance = Infinity;
+            
+            linkElements.forEach(function(item) {
+                var rect = item.element.getBoundingClientRect();
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                var headerTop = rect.top + scrollTop;
+                var distance = Math.abs(headerTop - scrollOffset);
+                
+                if (headerTop <= scrollOffset && distance < minDistance) {
+                    nextActiveLink = item.link;
+                    minDistance = distance;
                 }
             });
-            return text.trim();
+            
+            return nextActiveLink;
+        }
+
+        // 全局更新所有活跃链接
+        function updateAllActiveLinks() {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var scrollOffset = scrollTop + HEADER_HEIGHT + 45;
+            
+            tocContainers.forEach(function(container) {
+                var nextActiveLink = findNearestActiveLink(container.linkElements, scrollOffset);
+                
+                if (nextActiveLink !== container.currentActiveLink) {
+                    if (container.currentActiveLink) {
+                        container.currentActiveLink.classList.remove('hyplus-toc-active');
+                    }
+                    if (nextActiveLink) {
+                        nextActiveLink.classList.add('hyplus-toc-active');
+                    }
+                    container.currentActiveLink = nextActiveLink;
+                }
+            });
+        }
+
+        // 全局节流 scroll 监听
+        function throttledScrollUpdate() {
+            if (globalScrollTimeout) return;
+            globalScrollTimeout = setTimeout(function(){
+                updateAllActiveLinks();
+                globalScrollTimeout = null;
+            }, 300);
         }
 
         // 全局缓存：一次性预处理所有headers的anchor和pureText（页面级别，只执行一次）
@@ -340,60 +393,37 @@ function hyplus_output_toc_scripts() {
                 tocContent.innerHTML = '';
                 tocContent.appendChild(ul);
 
-                // 高亮当前活跃锚点
-                function updateActiveNavItemCat() {
-                    var HEADER_HEIGHT = 70;
-                    var links = tocContent.querySelectorAll('a');
-                    var currentActiveLink = null;
-                    var minDistance = Infinity;
-                    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    var scrollOffset = scrollTop + HEADER_HEIGHT + 45;
-                    links.forEach(function(link) {
-                        var href = link.getAttribute('href');
-                        if (!href || !href.startsWith('#')) return;
-                        var anchorId = href.substring(1);
-                        var targetElement = document.getElementById(anchorId);
-                        if (!targetElement) return;
-                        var rect = targetElement.getBoundingClientRect();
-                        var headerTop = rect.top + scrollTop;
-                        var distance = Math.abs(headerTop - scrollOffset);
-                        if (headerTop <= scrollOffset && distance < minDistance) {
-                            currentActiveLink = link;
-                            minDistance = distance;
-                        }
-                    });
-                    // 移除所有高亮
-                    tocContent.querySelectorAll('a').forEach(function(link) {
-                        link.classList.remove('hyplus-toc-active');
-                    });
-                    if (currentActiveLink) {
-                        currentActiveLink.classList.add('hyplus-toc-active');
+                // 建立链接元素映射，注册到全局管理器
+                var linkElements = [];
+                var links = tocContent.querySelectorAll('a');
+                links.forEach(function(link) {
+                    var href = link.getAttribute('href');
+                    if (!href || !href.startsWith('#')) return;
+                    var anchorId = href.substring(1);
+                    var targetElement = document.getElementById(anchorId);
+                    if (targetElement) {
+                        linkElements.push({
+                            link: link,
+                            element: targetElement
+                        });
                     }
+                });
+                
+                if (linkElements.length > 0) {
+                    tocContainers.push({
+                        linkElements: linkElements,
+                        currentActiveLink: null,
+                        mode: mode
+                    });
+                    // 初始更新
+                    updateAllActiveLinks();
                 }
-                // 节流滚动监听
-                var scrollTimeout;
-                function throttledUpdateCat() {
-                    if (scrollTimeout) return;
-                    scrollTimeout = setTimeout(function(){
-                        updateActiveNavItemCat();
-                        scrollTimeout = null;
-                    }, 300);
-                }
-                updateActiveNavItemCat();
-                window.addEventListener('scroll', throttledUpdateCat, false);
 
-                // 点击事件（与原逻辑一致）
+                // 点击事件处理
                 tocContent.addEventListener('click', function(e){
                     if (e.target.tagName.toLowerCase() === 'a') {
-                        // 全局锚点处理函数会统一处理滚动，这里处理 UB 模式的导航隐藏
                         if (mode === 'ub') {
-                            var navContainer = document.getElementById('navContainer');
-                            if (navContainer) {
-                                setTimeout(function(){
-                                    navContainer.style.display = "none";
-                                    document.body.classList.remove("nav-open");
-                                }, 50);
-                            }
+                            hideUBNav();
                         }
                     }
                 });
@@ -451,17 +481,36 @@ function hyplus_output_toc_scripts() {
             tocContent.innerHTML = '';
             tocContent.appendChild(ul);
 
+            // 建立链接元素映射，注册到全局管理器
+            var linkElements = [];
+            var links = tocContent.querySelectorAll('a');
+            links.forEach(function(link) {
+                var href = link.getAttribute('href');
+                if (!href || !href.startsWith('#')) return;
+                var anchorId = href.substring(1);
+                var targetElement = document.getElementById(anchorId);
+                if (targetElement) {
+                    linkElements.push({
+                        link: link,
+                        element: targetElement
+                    });
+                }
+            });
+            
+            if (linkElements.length > 0) {
+                tocContainers.push({
+                    linkElements: linkElements,
+                    currentActiveLink: null,
+                    mode: mode
+                });
+                // 初始更新
+                updateAllActiveLinks();
+            }
+
             tocContent.addEventListener('click', function(e){
                 if (e.target.tagName.toLowerCase() === 'a') {
-                    // 全局锚点处理函数会统一处理滚动，这里只处理 UB 模式的导航隐藏
                     if (mode === 'ub') {
-                        var navContainer = document.getElementById('navContainer');
-                        if (navContainer) {
-                            setTimeout(function(){
-                                navContainer.style.display = "none";
-                                document.body.classList.remove("nav-open");
-                            }, 50);
-                        }
+                        hideUBNav();
                     }
                 }
             });
@@ -558,76 +607,6 @@ function hyplus_output_toc_scripts() {
             });
         }
 
-        // 更新当前活跃的导航项（高亮为粗体）
-        function updateActiveNavItem(container) {
-            var HEADER_HEIGHT = 70;
-            var links = container.querySelectorAll('.hyplus-toc-content a');
-            
-            // 缓存：初始化时建立链接和目标元素的映射，避免重复 DOM 查询
-            var linkElementMap = [];
-            links.forEach(function(link){
-                var href = link.getAttribute('href');
-                var anchorId = href.substring(1);
-                var targetElement = document.getElementById(anchorId);
-                if (targetElement) {
-                    linkElementMap.push({
-                        link: link,
-                        element: targetElement
-                    });
-                }
-            });
-            
-            if (linkElementMap.length === 0) return; // 没有有效的链接，无需监听
-            
-            var currentActiveLink = null;
-            
-            function updateActive() {
-                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                var scrollOffset = scrollTop + HEADER_HEIGHT + 45;  // 多加若干px作为缓冲
-                var nextActiveLink = null;
-                var minDistance = Infinity;
-                
-                // 单次遍历：找到最接近顶部的链接
-                linkElementMap.forEach(function(item){
-                    var rect = item.element.getBoundingClientRect();
-                    var headerTop = rect.top + scrollTop;
-                    var distance = Math.abs(headerTop - scrollOffset);
-                    
-                    if (headerTop <= scrollOffset && distance < minDistance) {
-                        nextActiveLink = item.link;
-                        minDistance = distance;
-                    }
-                });
-                
-                // 只在活跃链接真的改变时才更新 DOM，避免不必要的重排
-                if (nextActiveLink !== currentActiveLink) {
-                    if (currentActiveLink) {
-                        currentActiveLink.classList.remove('hyplus-toc-active');
-                    }
-                    if (nextActiveLink) {
-                        nextActiveLink.classList.add('hyplus-toc-active');
-                    }
-                    currentActiveLink = nextActiveLink;
-                }
-            }
-            
-            // 使用节流防止频繁更新
-            var scrollTimeout;
-            function throttledUpdate() {
-                if (scrollTimeout) return;
-                scrollTimeout = setTimeout(function(){
-                    updateActive();
-                    scrollTimeout = null;
-                }, 300);
-            }
-            
-            // 初始更新
-            updateActive();
-            
-            // 监听滚动事件
-            window.addEventListener('scroll', throttledUpdate, false);
-        }
-
         // 全局处理所有锚点链接点击事件，减去 sticky header 高度
         function handleAllAnchorLinks() {
             var HEADER_HEIGHT = 70; // Sticky header height with a little extra offset
@@ -672,11 +651,6 @@ function hyplus_output_toc_scripts() {
                 var emptyMsg = container.getAttribute('data-emptymsg') || 'true';
                 if (mode === 'post') return;
                 generateToc(container, mode, hideParent, emptyMsg);
-                
-                // 仅在 ub 和 widget 模式下启用活跃导航项高亮
-                if (mode === 'ub' || mode === 'widget') {
-                    updateActiveNavItem(container);
-                }
             });
         }
 
@@ -684,6 +658,11 @@ function hyplus_output_toc_scripts() {
             insertPostToc();
             initToc();
             handleAllAnchorLinks();
+            
+            // 注册全局 scroll 监听（仅当有需要高亮的容器时）
+            if (tocContainers.length > 0) {
+                window.addEventListener('scroll', throttledScrollUpdate, false);
+            }
         });
     })();
     </script>
