@@ -600,6 +600,10 @@
         background-color: #8fcaff;
     }
 
+	.switch-button:active {
+		transform: scale(0.98);
+	}
+
     /* 内容区域样式 */
     .nav-content {
         height: calc(100% - 37px);
@@ -780,9 +784,14 @@
         background-color: #f0f0f0;
     }
 
+	.font-size-btn:active {
+		transform: scale(0.95);
+	}
+
     .font-size-btn.reset {
         padding: 2px 8px;
         background-color: #e6f3ff;
+		color: #333 !important;
     }
 
     .font-size-btn.reset:hover {
