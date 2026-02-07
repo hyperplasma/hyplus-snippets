@@ -93,12 +93,12 @@
 			<div class="settings-column">
 				<div class="language-selector" id="sidebarRadioGroup">
 					<div class="config-item">
-						<input type="radio" id="sidebarRightRadio" name="sidebarPosition" value="right">
-						<label for="sidebarRightRadio">侧边栏位于右侧</label>
-					</div>
-					<div class="config-item">
 						<input type="radio" id="sidebarLeftRadio" name="sidebarPosition" value="left">
 						<label for="sidebarLeftRadio">侧边栏位于左侧</label>
+					</div>
+					<div class="config-item">
+						<input type="radio" id="sidebarRightRadio" name="sidebarPosition" value="right">
+						<label for="sidebarRightRadio">侧边栏位于右侧</label>
 					</div>
 				</div>
 
