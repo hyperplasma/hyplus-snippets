@@ -385,7 +385,16 @@ function hyplus_output_toc_scripts() {
                 // 点击事件（与原逻辑一致）
                 tocContent.addEventListener('click', function(e){
                     if (e.target.tagName.toLowerCase() === 'a') {
-                        // 全局锚点处理函数会统一处理滚动
+                        // 全局锚点处理函数会统一处理滚动，这里处理 UB 模式的导航隐藏
+                        if (mode === 'ub') {
+                            var navContainer = document.getElementById('navContainer');
+                            if (navContainer) {
+                                setTimeout(function(){
+                                    navContainer.style.display = "none";
+                                    document.body.classList.remove("nav-open");
+                                }, 50);
+                            }
+                        }
                     }
                 });
                 if (tocHeader) tocHeader.style.display = 'block';
