@@ -444,21 +444,39 @@
         transform: scale(1.05);
         background-color: rgba(52, 211, 161, 1);
     }
+	#scrollToTopButton:active {
+        transform: scale(1.00);
+        background-color: rgb(40, 159, 121);
+    }
 
     #navButton:hover {
         transform: scale(1.05);
         background-color: rgba(240, 58, 147, 1);
     }
+	#navButton:active {
+        transform: scale(1.00);
+        background-color: rgb(195, 37, 111);
+    }
+
 
     #goBackButton:hover,
     #goForwardButton:hover {
         transform: scale(1.05);
         background-color: rgba(94, 136, 249, 1);
     }
+	#goBackButton:active,
+    #goForwardButton:active {
+        transform: scale(1.00);
+        background-color: rgb(65, 95, 177);
+    }
 
     #refreshButton:hover {
         transform: scale(1.05);
         background-color: rgba(60, 187, 89, 1);
+    }
+	#refreshButton:active {
+        transform: scale(1.00);
+        background-color: rgb(29, 116, 49);
     }
 
     /* 按钮组悬浮时禁用滚轮 */

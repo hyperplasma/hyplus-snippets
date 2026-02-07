@@ -786,15 +786,18 @@ table:not(.hyplus-excluded-table) tr:first-child th {
  * HY-通用缩放交互类
  * 用法：给任意元素加.hyplus-scale类，即可获得悬浮放大、按下缩小的交互动画。
  */
-.hyplus-scale {
+.hyplus-scale, .menu-toggle, .dropdown-menu-toggle {
     transition: transform 0.15s cubic-bezier(0.4,0,0.2,1);
     will-change: transform;
 }
-.hyplus-scale:hover,
-.hyplus-scale:focus {
+.hyplus-scale:hover, .hyplus-scale:focus,
+.menu-toggle:hover, .menu-toggle:focus,
+.dropdown-menu-toggle:hover, .dropdown-menu-toggle:focus {
     transform: scale(1.13);
 }
-.hyplus-scale:active {
+.hyplus-scale:active,
+.menu-toggle:active,
+.dropdown-menu-toggle:active {
     transform: scale(0.93);
     transition: none;
 }
