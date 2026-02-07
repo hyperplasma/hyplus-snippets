@@ -1,6 +1,6 @@
 /**
  * HyplusCSS-Admin by www.hyperplasma.top (only run at wp-admin)
- * Version: 0.1
+ * Version: 0.2
  * Usage: search with "HY-"!
 */
 
@@ -9,5 +9,10 @@
  */
 /* hide that bugged close button */
 .editormd-preview-close-btn, li a .fa-desktop {
+	display: none !important;
+}
+
+/* hide "add media" button row */
+#wp-content-editor-tools {
 	display: none !important;
 }
