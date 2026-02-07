@@ -601,7 +601,7 @@
     }
 
 	.switch-button:active {
-		transform: scale(0.98);
+		transform: scale(0.97);
 	}
 
     /* 内容区域样式 */
@@ -785,7 +785,7 @@
     }
 
 	.font-size-btn:active {
-		transform: scale(0.95);
+		transform: scale(0.93);
 	}
 
     .font-size-btn.reset {
