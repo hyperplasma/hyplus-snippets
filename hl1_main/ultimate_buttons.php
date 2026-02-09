@@ -503,7 +503,7 @@
         border: 1px solid #ddd;
         box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5);
         padding: 0;
-        z-index: 120;
+        z-index: 99999;
         border-radius: 12px;
     }
 

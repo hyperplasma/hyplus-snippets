@@ -110,7 +110,7 @@ ol li {
 .site-header {
 	position: sticky;
 	top: 0;
-	z-index: 110;
+	z-index: 99998;
 	background-color: white;
 
 	/* border: 1px solid LightGray; */
