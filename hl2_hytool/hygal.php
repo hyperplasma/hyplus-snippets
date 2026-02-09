@@ -158,7 +158,7 @@ function hygal_unified_handler($atts) {
 
     <div id="hygal-admin-modal" class="hyplus-unselectable">
         <div class="hygal-modal-content">
-            <div id="hygal-delete-trigger" class="hygal-btn-delete" title="删除此图片">&times;</div>
+            <div id="hygal-delete-trigger" class="hygal-btn-delete" title="删除此图片">🗑️</div>
 
             <label class="hygal-modal-label">权重评分 (数值越大越靠前)</label>
             <input type="number" id="mod-order" class="hygal-modal-input" placeholder="无">
