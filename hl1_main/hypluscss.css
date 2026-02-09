@@ -39,6 +39,7 @@ a {
 	top: 58px;	/* offset */
 	height: 100vh;
 	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 /* .sidebar::-webkit-scrollbar {
@@ -427,6 +428,11 @@ padding-left: 3px;
 
 	.main-navigation {
 		transition: all 0.5s ease;
+	}
+
+	/* footer margin top */
+	footer {
+		margin-top: 1.5em;
 	}
 }
 
