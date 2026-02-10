@@ -618,19 +618,19 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 /**
  * HY-from Show post count in nav menu and Search Page Template PHP
  */
-@media (max-width: 768px) {
-	.mobile-search-bar {
+/* @media (max-width: 768px) { */
+	.res-cnt-search-bar {
 		display: block !important;
 		margin: 16px auto 0 auto;
 		max-width: 95vw;
 	}
-}
-@media (min-width: 769px) {
-	.mobile-search-bar {
+/* } */
+/* @media (min-width: 769px) {
+	.res-cnt-search-bar {
 		display: none !important;
 	}
-}
-.mobile-search-bar input[type="search"] {
+} */
+.res-cnt-search-bar input[type="search"] {
 	width: 98%;
 	padding: 10px 16px;
 	font-size: 16px;
@@ -641,7 +641,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	display: block;
 	margin: 0 auto;
 }
-.mobile-search-bar button {
+.res-cnt-search-bar button {
 	display: none !important;
 }
 
