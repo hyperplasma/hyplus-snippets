@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: HyGal 极致画廊 (All-in-One)
- * Description: 集成 HyUploader WebP 极速上传与 HyGal 空间优化版画廊的完整解决方案。
- * Version: 1.1.0 (Enhanced Admin)
+ * Plugin Name: HyGal 极致画廊 (No-Prefix Edition)
+ * Description: 集成 HyUploader WebP 极速上传与 HyGal 空间优化版画廊。此版本已移除标题前缀强制绑定，通过 Meta 字段管理分类。
+ * Version: 1.2.0
  */
 
 add_shortcode('hygal', 'hygal_unified_handler');
@@ -160,10 +160,10 @@ function hygal_unified_handler($atts) {
         <div class="hygal-modal-content">
             <div id="hygal-delete-trigger" class="hygal-btn-delete" title="删除此图片">🗑️</div>
 
-            <label class="hygal-modal-label">权重评分 (数值越大越靠前)</label>
+            <label class="hygal-modal-label">权重评分（数值越大越靠前）</label>
             <input type="number" id="mod-order" class="hygal-modal-input" placeholder="无">
             
-            <label class="hygal-modal-label">所属分类</label>
+            <label class="hygal-modal-label">修改分类</label>
             <select id="mod-prefix" class="hygal-modal-input">
                 <?php foreach ($tag_list as $tag): ?>
                     <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
@@ -207,7 +207,7 @@ function hygal_unified_handler($atts) {
                                 <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="text" id="hyupload-title" class="hyupload-input" placeholder="输入描述标题...">
+                        <input type="text" id="hyupload-title" class="hyupload-input" placeholder="输入描述标题 (无需前缀)...">
                         <button id="hyupload-upload-btn" class="hyplus-nav-link hyupload-btn-submit">转换并上传</button>
                     </div>
                 </div>
@@ -255,7 +255,7 @@ function hygal_unified_handler($atts) {
                 </div>
                 <div class="status-right"></div>
             </div>
-            <div class="hytool-version">HyGal v1.1.0</div>
+            <div class="hytool-version">HyGal v1.2.0</div>
         </div>
 
     </div>
@@ -338,6 +338,8 @@ function hygal_unified_handler($atts) {
                 const btn = $('#hygal-save-trigger');
                 if (btn.prop('disabled')) return;
                 btn.prop('disabled', true).text('同步中...');
+                
+                // 此时 new_pure_title 即为完整的新标题
                 $.post('<?php echo admin_url("admin-ajax.php"); ?>', {
                     action: 'hygal_update_asset',
                     img_id: currentTargetId,
@@ -353,7 +355,7 @@ function hygal_unified_handler($atts) {
             $('#hygal-save-trigger').on('click', submitAssetUpdate);
             $('.hygal-modal-input').on('keypress', function(e) { if (e.which === 13) submitAssetUpdate(); });
 
-            // --- 新增：安全删除逻辑 ---
+            // --- 删除逻辑保持不变 ---
             function generateCode() {
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
                 let result = '';
@@ -371,9 +373,8 @@ function hygal_unified_handler($atts) {
                 
                 if (userInput === verifyCode) {
                     if (confirm('✅ 验证通过。\n\n最后确认：真的要删除这张图片吗？')) {
-                        // 执行删除 AJAX
                         const $delBtn = $(this);
-                        $delBtn.css('opacity', '0.5').css('pointer-events', 'none'); // 禁用按钮防止重复点击
+                        $delBtn.css('opacity', '0.5').css('pointer-events', 'none');
                         
                         $.post('<?php echo admin_url("admin-ajax.php"); ?>', {
                             action: 'hygal_delete_asset',
@@ -383,11 +384,11 @@ function hygal_unified_handler($atts) {
                             if(res.success) {
                                 alert('图片已成功删除。');
                                 closeHyModal();
-                                fetchImages(currentPage, false); // 刷新网格
+                                fetchImages(currentPage, false);
                             } else {
                                 alert('删除失败：' + (res.data || '未知错误'));
                             }
-                            $delBtn.css('opacity', '').css('pointer-events', ''); // 恢复
+                            $delBtn.css('opacity', '').css('pointer-events', '');
                         });
                     }
                 } else if (userInput !== null) {
@@ -496,8 +497,8 @@ function hygal_ajax_fetch_minimal_handler() {
     $html = '';
     foreach ($results as $post) {
         $url = wp_get_attachment_url($post->ID);
+        // 修改点：直接使用标题，不再剔除前缀
         $display_title = $post->post_title;
-        if (strpos($display_title, $prefix . '-') === 0) $display_title = substr($display_title, strlen($prefix) + 1);
         $has_order_class = ($post->raw_order !== '' && $post->raw_order !== null) ? 'has-order' : '';
 
         // 获取详细信息
@@ -521,15 +522,19 @@ function hygal_ajax_fetch_minimal_handler() {
 add_action('wp_ajax_hygal_update_asset', function() {
     check_ajax_referer('hygal_min_nonce');
     if (!current_user_can('manage_options')) wp_send_json_error('权限不足');
+    
     $img_id = intval($_POST['img_id']);
     $order_val = sanitize_text_field($_POST['order_val']);
     $new_prefix = sanitize_text_field($_POST['new_prefix']);
-    $new_pure_title = sanitize_text_field($_POST['new_pure_title']);
+    $new_title = sanitize_text_field($_POST['new_pure_title']); // 现在直接代表新标题
+
     if ($order_val === '') delete_post_meta($img_id, '_hygal_order');
     else update_post_meta($img_id, '_hygal_order', intval($order_val));
-    $full_new_title = $new_prefix . '-' . $new_pure_title;
-    wp_update_post(['ID' => $img_id, 'post_title' => $full_new_title]);
+    
+    // 修改点：不再拼接前缀，直接保存新标题
+    wp_update_post(['ID' => $img_id, 'post_title' => $new_title]);
     update_post_meta($img_id, '_hygal_category', $new_prefix);
+    
     wp_send_json_success();
 });
 
@@ -540,7 +545,7 @@ add_action('wp_ajax_hygal_delete_asset', function() {
     $img_id = intval($_POST['img_id']);
     if (!$img_id) wp_send_json_error('无效 ID');
 
-    // 强制删除附件（跳过回收站，彻底删除文件和数据库记录）
+    // 强制删除附件
     $result = wp_delete_attachment($img_id, true);
 
     if ($result) {
@@ -576,14 +581,9 @@ function hy_uploader_webp_ajax_handler_merged() {
     $raw_title = sanitize_text_field($_POST['title']);
     $ts = date('YmdHis');
     
-    // 1. 生成符合传统的图片标题
-    if (!empty($prefix) && !empty($raw_title)) {
-        $wp_title = $prefix . '-' . $raw_title;
-    } elseif (!empty($prefix)) {
-        $wp_title = $prefix . '-' . $ts;
-    } else {
-        $wp_title = !empty($raw_title) ? $raw_title : $ts;
-    }
+    // 修改点：生成符合新规则的图片标题 (不再包含 prefix)
+    // 逻辑简化：有标题用标题，没标题用时间戳
+    $wp_title = !empty($raw_title) ? $raw_title : $ts;
 
     $info = @getimagesize($tmp_path);
     $target_webp = $tmp_path . '.webp';
