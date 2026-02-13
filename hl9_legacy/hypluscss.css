@@ -1,9 +1,9 @@
 /**
- * HyplusCSS by www.hyperplasma.top
+ * Old, pure CSS version of HyplusCSS by www.hyperplasma.top
  * Description: Overall style CSS for WordPress site using GeneratePress Theme (外观 > 自定义 > 额外CSS)
- * Version: 1.2
  * Quickstart: search with "HY-"!
-*/
+ * Current status: deprecated, use hypluscss.php instead.
+ */
 a:hover {
 	color: #ff6780;
 }

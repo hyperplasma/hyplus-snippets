@@ -1,0 +1,567 @@
+/**
+ * Extremely old version of HyplusCSS by www.hyperplasma.top (外观 > 自定义 > 额外CSS)
+ * Version: 1.1
+ * Usage: search with "HY-"!
+*/
+a:hover {
+	color: #ff6780;
+}
+
+a {
+	text-decoration: none;
+}
+
+
+/**
+ * HY-submenu CSS 子菜单
+ */
+/* 初始状态：隐藏下拉菜单 */
+.menu-item .sub-menu {
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+}
+
+
+/**
+ * HY-sidebar sth CSS 侧边栏
+ */
+.sidebar ul {
+	list-style-type: disc;
+}
+
+/* 确保 sidebar 是 sticky 的 */
+.sidebar {
+	position: sticky;
+	top: 0;
+	height: 100vh;
+	overflow-y: auto;
+}
+
+/* .sidebar::-webkit-scrollbar {
+	display: none;
+} */
+
+
+/**
+ * HY-Para and li line-height CSS 段落和列表行间距
+ */
+/* 增加段落行间距 */
+p {
+	line-height: 1.6; /* 默认行高是1，这里设置为1.6，可以根据需要调整 */
+	/*	margin-top: 14px;
+	margin-bottom: 14px;	*/
+}
+
+/* 增加无序列表项之间的间隙 */
+/*
+ul {
+margin-top: 0.5em;
+margin-bottom: 1em;
+}
+*/
+
+ul li {
+	margin-top: 0.5em; /* 列表顶部间隙 */
+	margin-bottom: 0.5em; /* 增加列表项之间的间隙 */
+}
+
+/* 增加有序列表项之间的间隙 */
+/*
+ol {
+margin-top: 0.5em;
+margin-bottom: 1em;
+}
+*/
+
+ol li {
+	margin-top: 0.5em; /* 列表顶部间隙 */
+	margin-bottom: 0.5em; /* 增加列表项之间的间隙 */
+}
+
+
+/**
+ * HY-Move comment textarea above comments, etc. CSS 评论框移动到评论区上方
+ */
+#comments {
+	display: flex;
+	flex-direction: column;
+}
+#respond {
+	order: 1;
+}
+.theme-heading {
+	order: 2;
+}
+#comments .comment-list {
+	order: 3;
+}
+.comment-navigation {
+	order: 4;
+}
+
+
+/**
+ * HY-Custom Header and Footer CSS 自定义页眉页脚
+ */
+.site-header {
+	position: sticky;
+	top: 0;
+	z-index: 110;
+	background-color: white;
+
+	/* border: 1px solid LightGray; */
+	box-shadow: 0 0 20px rgba(102,139,139,0.55);
+}
+
+/* Destroy paddings in Header */
+header .inside-header {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+header .inside-header ul li {
+	margin-top: 0em;
+	margin-bottom: 0em;
+}
+
+header .inside-header ol li {
+	margin-top: 0em;
+	margin-bottom: 0em;
+}
+
+.site-footer {
+	position: relative;
+	/* border: 1px solid LightGray; */
+	z-index: 110;
+	box-shadow: 0 0 20px rgba(102,139,139,0.55);
+}
+
+header {
+	margin-top: -2px;
+}
+
+footer {
+	margin-bottom: -2px;
+}
+
+@media (min-width: 769px) {
+	.sub-menu {
+		width: 215px !important;
+	}
+}
+
+/**
+ * HY-Body main architecture CSS
+ * Overall Hyplus style css (Including Inline Code Block, HomeTempButtons, NoSidebarOnMobile, commentForm...) CSS
+ */
+body {
+	background-color: rgba(187,255,255,0.05)
+}
+
+/* Inline Code */
+:not(pre) > code {
+	background-color: #e4edf7;
+	padding: 2px 4px;
+	border-radius: 4px;
+	font-size: 0.95em;
+}
+
+/* Mathjax / KaTeX */
+pre {
+	margin-bottom: 0.5em;
+}
+
+/* Unselectable */
+.hyplus-unselectable, details summary, .inside-header, .copy-button {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.hyplus-button-shadowier, .hyplus-button, .search-submit, .submit, .button, .post-password-form > p > input {
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	border-radius: 6px;
+	transition: all 0.5s ease;
+	cursor: pointer;
+	background-clip: padding-box;
+	font-weight: bold;
+}
+
+.post-password-form > p > input {
+	margin-left: 10px;
+}
+
+.hyplus-button-shadowier:hover, .hyplus-button:hover, .search-submit:hover, .submit:hover, .button:hover, .post-password-form > p > input:hover {
+	transform: scale(1.05);
+}
+
+/* 确保在获得焦点时也不会出现边框 */
+.hyplus-button-shadowier:focus, .hyplus-button:focus, .search-submit:focus, .submit:focus, .button:focus, .post-password-form > p > input:focus {
+	border: none;
+	outline: none;
+}
+
+
+.hyplus-box-shadow {
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
+	border-radius: 12px;
+}
+
+.hyplus-box-less-shadow {
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+	border-radius: 12px;
+}
+
+.page, .inside-article, .post {
+	border-radius: 8px;
+	border: 1px solid rgba(0,134,139, 0.23);	
+}
+
+.widget, .comments-area, .page-header, .paging-navigation {
+	border-radius: 8px;
+	border: 2px solid rgba(0,134,139, 0.23);	
+}
+
+#comment, .search-field {
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 6px;
+	resize: none;
+}
+
+#author, #email, #url, #user_login, #user_pass, .comment-content, .search-field, .post-password-form > p > label > input {
+	/*	border: 1px solid #e0e0e0;	*/
+	border: 1px solid rgba(182,221,237, 0.75);
+	border-radius: 6px;
+}
+
+.post-password-form label + input[type="submit"],
+.post-password-form label input[type="submit"],
+.post-password-form p input[type="submit"] {
+	margin-top: 1.1em !important;
+	display: inline-block;
+}
+
+/*.post-password-form > p {
+line-height: 1.5; 
+}
+*/
+
+.bm-login-form {
+	border: none;
+	border-radius: 6px;
+}
+
+.page-title {
+	text-align: center;
+}
+
+.comments-title {
+	display: none;
+}
+
+.page-header {
+	margin-top: 1px;
+}
+
+/*
+@media screen and (min-width: 769px) {
+
+body:has(.sidebar) .sidebar {
+margin-left: 13px;
+width: 28%;
+}
+
+body:has(.sidebar) .site-main {
+margin-right: -8px;
+width: calc(100% + 8px);
+}
+
+body:has(.sidebar) .content-area {
+width: calc(70%);
+}
+}
+*/
+
+/*
+@media screen and (max-width: 768px) {
+.site-main {
+padding-right: 3px;
+padding-left: 3px;
+}
+}
+*/
+
+@media screen and (min-width: 769px) {
+	body:has(.sidebar) .sidebar {
+		margin-left: 13px;
+		width: 28.7%;
+		float: right;
+	}
+
+	body:has(.sidebar) .site-main {
+		/*    margin-right: -8px;	*/
+		/*	padding-left: 3px;	*/
+		width: calc(100% + 8px);
+	}
+
+	body:has(.sidebar) .content-area {
+		width: calc(70%);
+		float: left;
+	}
+
+	body:has(.sidebar) .site-main::after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+}
+
+.wp-classic-calender {
+	text-align: center;
+}
+
+/* custom widget styles */
+.hy-widget-pad {
+	margin-left: -9px;
+	margin-right: -9px;
+}
+
+/* HyTranslate */
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf {
+	display: none !important;
+}
+
+.gtranslate_wrapper, .gt_switcher-popup, .glink, .nturl {
+	width: 102px !important;
+	height: 24px !important;
+}
+
+.main-navigation {
+	transition: all 0.5s ease;
+}
+
+.return-home-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 20px;	
+	background-color: #55555e;
+	color: white;
+	text-decoration: none;
+	border-radius: 6px;
+	font-size: 17px;
+	font-weight: bold;
+	transition: all 0.5s ease;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	min-width: fit-content;
+	text-align: center;
+	margin: 0;
+}
+
+.return-home-button:hover {
+	transform: scale(1.05);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	background-color: #484851;
+	color: white;
+	text-decoration: none;
+}
+
+@media screen and (max-width: 768px) {
+	.dropdown-menu-toggle {
+		background-color: #efeeee;
+	}
+
+	#menu-menu_01 {
+		border-radius: 6px;
+		padding-bottom: 5px;
+	}
+	.sub-menu .sub-menu {
+		background-color: #d1d1d1;
+	}
+	.site-header {
+		overflow-y: auto;
+	}
+
+	.main-navigation .sub-menu {
+		max-height: 60vh;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+	}
+}
+
+.main-navigation .sub-menu::-webkit-scrollbar {
+	width: 6px;
+	background: #f0f0f0;
+}
+.main-navigation .sub-menu::-webkit-scrollbar-thumb {
+	background: #bbb;
+	border-radius: 4px;
+}
+
+@media screen and (min-width: 769px) {
+	.main-nav .sub-menu a {
+		cursor: pointer;
+	}
+
+    .main-nav .sub-menu,
+    .main-navigation .main-nav ul.sub-menu {
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+        position: absolute !important; /* 确保是绝对定位的下拉菜单 */
+        z-index: 9999 !important;
+    }
+    .main-nav .sub-menu::-webkit-scrollbar,
+    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar {
+        width: 8px;
+        background: #f0f0f0;
+    }
+    .main-nav .sub-menu::-webkit-scrollbar-thumb,
+    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar-thumb {
+        background: #bbb;
+        border-radius: 4px;
+    }
+    .main-nav .sub-menu::-webkit-scrollbar-track,
+    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar-track {
+        background: #fff;
+    }
+}
+
+/**
+ * HY-Body Font-Family (TNR) + bodyquote CSS
+ */
+blockquote {
+	font-size: 16px;
+	color: #454545;
+	background-color: #f7f7f7;
+	font-style: normal;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+h1, h2, h3, h4, h5, h6, ol, ul ,body p {
+	margin-bottom: 0.5em;
+}
+
+h2, h3, h4, h5, h6 {
+	margin-top: 0.5em;
+}
+
+.entry-content h1, .entry-content h2, .entry-content h3, .entry-content h4, .entry-content h5, .entry-content h6 {
+	color: #01294c
+}
+
+ul li {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.page .entry-header {
+	text-align: center;
+}
+
+/* header .entry-title, header .entry-meta {
+	text-align: center;
+} */
+
+/* ul style */
+ul ul {
+	list-style-type: circle;
+}
+
+ul ul ul {
+	list-style-type: square;
+}
+
+ul ul ul ul {
+	list-style-type: disc;
+}
+
+ul ul ul ul ul {
+	list-style-type: circle;
+}
+
+/* ol style */
+ol ol {
+	list-style-type: lower-alpha;
+}
+
+ol ol ol {
+	list-style-type: lower-roman;
+}
+
+details summary {
+	cursor: pointer;
+	color: #1e73be;
+}
+
+details summary:hover {
+	color: #ff6780;
+}
+
+/* Table (exclude class="hyplus-excluded-table") */
+table:not(.hyplus-excluded-table) {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	box-sizing: border-box;
+	border: none !important;
+}
+
+/* 手动为表格添加所需的边框 */
+table:not(.hyplus-excluded-table) td,
+table:not(.hyplus-excluded-table) th {
+	border: 1px solid #ddd;
+	border-collapse: collapse;
+	background-color: #fbfdfe;
+}
+
+/* 可选：如果需要调整边框样式 */
+table:not(.hyplus-excluded-table) tr:first-child th {
+	border-top: 1px solid #ddd;
+}
+
+
+/**
+ * HY-from Counters of Pages and Apps PHP
+ */
+.site-content-counts {
+	text-align: center;
+	font-weight: bold;
+	margin: 5px auto;
+}
+.site-content-counter {
+	color: #FF8C00;
+}
+
+
+/**
+ * HY-from Show post count in nav menu and Search Page Template PHP
+ */
+@media (max-width: 768px) {
+	.mobile-search-bar {
+		display: block !important;
+		margin: 16px auto 0 auto;
+		max-width: 95vw;
+	}
+}
+@media (min-width: 769px) {
+	.mobile-search-bar {
+		display: none !important;
+	}
+}
+.mobile-search-bar input[type="search"] {
+	width: 98%;
+	padding: 10px 16px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 31px;
+	outline: none;
+	box-sizing: border-box;
+	display: block;
+	margin: 0 auto;
+}
+.mobile-search-bar button {
+	display: none !important;
+}

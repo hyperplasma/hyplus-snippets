@@ -1,8 +1,18 @@
+<?php
 /**
- * HyplusCSS by www.hyperplasma.top (外观 > 自定义 > 额外CSS)
- * Version: 1.1
- * Usage: search with "HY-"!
+ * Plugin Name: HyplusCSS - Critical Edition
+ * Description: Overall style CSS for WordPress site using GeneratePress Theme (外观 > 自定义 > 额外CSS)
+ * Quickstart: search with "HY-"!
 */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+function hyplus_add_critical_css() {
+    ob_start();
+    ?>
+<style id='hyplus-critical-css'>
 a:hover {
 	color: #ff6780;
 }
@@ -11,6 +21,10 @@ a {
 	text-decoration: none;
 }
 
+/* Bold Text 加粗文本 */
+/* b, strong {
+	font-weight: 900;
+} */
 
 /**
  * HY-submenu CSS 子菜单
@@ -28,12 +42,13 @@ a {
 	list-style-type: disc;
 }
 
-/* 确保 sidebar 是 sticky 的 */
+/* Basic styles */
 .sidebar {
 	position: sticky;
-	top: 0;
+	top: 58px;
 	height: 100vh;
 	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 /* .sidebar::-webkit-scrollbar {
@@ -103,13 +118,13 @@ ol li {
  * HY-Custom Header and Footer CSS 自定义页眉页脚
  */
 .site-header {
-	position: sticky;
+	position: sticky !important;
 	top: 0;
-	z-index: 110;
+	z-index: 99998;
 	background-color: white;
 
 	/* border: 1px solid LightGray; */
-	box-shadow: 0 0 20px rgba(102,139,139,0.55);
+	box-shadow: 0 0 20px rgba(102,139,139,0.55) !important;
 }
 
 /* Destroy paddings in Header */
@@ -154,7 +169,12 @@ footer {
  * Overall Hyplus style css (Including Inline Code Block, HomeTempButtons, NoSidebarOnMobile, commentForm...) CSS
  */
 body {
-	background-color: rgba(187,255,255,0.05)
+	background-color: rgba(187,255,255,0.05) !important;
+	border: none !important;
+}
+
+.entry-content:not(:first-child) {
+	margin-top: 1.5em;
 }
 
 /* Inline Code */
@@ -167,15 +187,40 @@ body {
 
 /* Mathjax / KaTeX */
 pre {
-	margin-bottom: 0.5em;
+	margin-bottom: 0.05em;
+}
+
+/* highlight.js */
+.hljs {
+	border-radius: 14px;
+}
+div:has(> .hljs) {
+	/* border: 1px solid #b6dded; */
+	border-radius: 14px;
+ 	box-shadow: 0 2px 6px rgba(0, 64, 128, 0.1);
+	margin-bottom: 1em;
+}
+.copy-button {
+	color: rgba(7, 1, 114, 0.468);
+	border-radius: 14px;
+}
+
+.footnotes ol {
+	margin-left: 25px;
+	font-size: 0.85em;
+	list-style-type: decimal;
 }
 
 /* Unselectable */
-.hyplus-unselectable, details summary, .inside-header, .copy-button {
+.hyplus-unselectable, details summary, .inside-header, .copy-button, .footnote-backref {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+.post-navigation {
+	display: none;
 }
 
 .hyplus-button-shadowier, .hyplus-button, .search-submit, .submit, .button, .post-password-form > p > input {
@@ -316,9 +361,9 @@ padding-left: 3px;
 	}
 }
 
-.wp-classic-calender {
+/* .wp-classic-calender {
 	text-align: center;
-}
+} */
 
 /* custom widget styles */
 .hy-widget-pad {
@@ -334,10 +379,6 @@ padding-left: 3px;
 .gtranslate_wrapper, .gt_switcher-popup, .glink, .nturl {
 	width: 102px !important;
 	height: 24px !important;
-}
-
-.main-navigation {
-	transition: all 0.5s ease;
 }
 
 .return-home-button {
@@ -367,9 +408,9 @@ padding-left: 3px;
 }
 
 @media screen and (max-width: 768px) {
-	.dropdown-menu-toggle {
+	/* .dropdown-menu-toggle {
 		background-color: #efeeee;
-	}
+	} */
 
 	#menu-menu_01 {
 		border-radius: 6px;
@@ -377,6 +418,12 @@ padding-left: 3px;
 	}
 	.sub-menu .sub-menu {
 		background-color: #d1d1d1;
+	}
+	.sub-menu .sub-menu .sub-menu {
+		background-color: #bdbdbd;
+	}
+	.sub-menu .sub-menu .sub-menu .sub-menu {
+		background-color: #b0b0b0;
 	}
 	.site-header {
 		overflow-y: auto;
@@ -386,6 +433,15 @@ padding-left: 3px;
 		max-height: 60vh;
 		overflow-y: auto;
 		overscroll-behavior: contain;
+	}
+
+	.main-navigation {
+		transition: all 0.5s ease;
+	}
+
+	/* footer margin top */
+	footer {
+		margin-top: 1.5em;
 	}
 }
 
@@ -399,32 +455,51 @@ padding-left: 3px;
 }
 
 @media screen and (min-width: 769px) {
+	/* 0s transition for sub-menu in desktop-mode */
+	.main-navigation:not(.toggled) ul ul {
+		transition: opacity 0ms linear;
+	}
+
+	.dropdown-hover .main-navigation:not(.toggled) ul li:hover > ul {
+		transition-delay: 0ms;
+	}
+
+	/* change cursor style when hover on sub-menu item */
 	.main-nav .sub-menu a {
 		cursor: pointer;
 	}
 
-    .main-nav .sub-menu,
-    .main-navigation .main-nav ul.sub-menu {
-        max-height: 85vh !important;
-        overflow-y: auto !important;
-        overscroll-behavior: contain !important;
-        position: absolute !important; /* 确保是绝对定位的下拉菜单 */
-        z-index: 9999 !important;
-    }
-    .main-nav .sub-menu::-webkit-scrollbar,
-    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar {
-        width: 8px;
-        background: #f0f0f0;
-    }
-    .main-nav .sub-menu::-webkit-scrollbar-thumb,
-    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar-thumb {
-        background: #bbb;
-        border-radius: 4px;
-    }
-    .main-nav .sub-menu::-webkit-scrollbar-track,
-    .main-navigation .main-nav ul.sub-menu::-webkit-scrollbar-track {
-        background: #fff;
-    }
+	/* far right */
+	.dropdown-hover .main-navigation:not(.toggled) ul .far-right ul {
+		left: auto;
+		right: 0;
+	}
+
+	/* drop left */
+	.dropdown-hover .main-navigation:not(.toggled) ul .open-left li>ul {
+		left: auto;
+		right: 100%;
+	}
+
+	/* .main-navigation .main-nav ul .open-left ul li.menu-item-has-children > a {
+		padding-left: 0;
+		padding-right: 20px;
+	} */
+
+	/* .main-navigation ul .open-left ul .menu-item-has-children .dropdown-menu-toggle {
+		float: left;
+		padding-left: 20px;
+		padding-right: 15px;
+	} */
+
+	/* .main-navigation .open-left .children .dropdown-menu-toggle:before, 
+	.main-navigation .open-left .sub-menu .dropdown-menu-toggle:before {
+		content: "\f104";
+	} */
+
+	.dropdown-hover .open-left .sub-menu .dropdown-menu-toggle .gp-icon svg {
+		transform: rotate(180deg);
+	}
 }
 
 /**
@@ -432,11 +507,24 @@ padding-left: 3px;
  */
 blockquote {
 	font-size: 16px;
+	/* border-left: 5px solid rgba(183, 236, 255, 0.495); */
+	border: 1px solid #b6dded;
 	color: #454545;
-	background-color: #f7f7f7;
+	/* background-color: #ecf6fb80; */
+	background-color: #fbfdfe;
+	border-radius: 14px;
+	box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
 	font-style: normal;
 	margin-top: 1em;
 	margin-bottom: 1em;
+}
+
+.taxonomy-description h3 {
+	/* text-align: center; */
+	/* margin: 0 0 12px 0; */
+	/* color: #2d3a4b; */
+	/* font-size: 30px; */
+	font-weight: 600;
 }
 
 h1, h2, h3, h4, h5, h6, ol, ul ,body p {
@@ -539,19 +627,19 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 /**
  * HY-from Show post count in nav menu and Search Page Template PHP
  */
-@media (max-width: 768px) {
-	.mobile-search-bar {
+/* @media (max-width: 768px) { */
+	.res-cnt-search-bar {
 		display: block !important;
 		margin: 16px auto 0 auto;
 		max-width: 95vw;
 	}
-}
-@media (min-width: 769px) {
-	.mobile-search-bar {
+/* } */
+/* @media (min-width: 769px) {
+	.res-cnt-search-bar {
 		display: none !important;
 	}
-}
-.mobile-search-bar input[type="search"] {
+} */
+.res-cnt-search-bar input[type="search"] {
 	width: 98%;
 	padding: 10px 16px;
 	font-size: 16px;
@@ -562,6 +650,177 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	display: block;
 	margin: 0 auto;
 }
-.mobile-search-bar button {
+.res-cnt-search-bar button {
 	display: none !important;
 }
+
+/*
+ * HY-Ultimate Buttons Addon - HyNav
+ * (including footnote hover popup CSS)
+ */
+.hyplus-nav-container {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 20px;
+}
+
+.hyplus-nav-section {
+	background: #fbfdfe;
+	border: 1px solid #b6dded;
+	border-radius: 14px;
+	padding: 15px;
+	box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
+}
+
+.hyplus-nav-section h3 {
+	text-align: center;
+	margin: 0 0 12px 0;
+	color: #2d3a4b;
+	font-size: 20px;
+	font-weight: 600;
+}
+
+.hyplus-nav-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: center;
+}
+
+.hyplus-nav-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: -3px;
+	margin-bottom: 4px;
+	justify-content: center;
+	width: 100%;
+	border-bottom: 1px solid rgba(30, 120, 200, 0.07);
+	padding-bottom: 9px;
+}
+
+.hyplus-nav-group:last-child {
+	margin-bottom: 0;
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.hyplus-nav-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px 10px;
+	background: #ecf5f8;
+	color: #175082;
+	text-decoration: none;
+	border-radius: 16px;
+	font-size: 16px;
+	font-weight: 600;
+	transition:
+		background 0.18s cubic-bezier(0.4,0,0.2,1),
+		color 0.18s cubic-bezier(0.4,0,0.2,1),
+		box-shadow 0.18s cubic-bezier(0.4,0,0.2,1),
+		transform 0.18s cubic-bezier(0.4,0,0.2,1);
+	box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.17), 0 1px 2px 0 rgba(33, 118, 193, 0.09);
+	min-width: fit-content;
+	text-align: center;
+	margin: 0;
+	border: 1.5px solid #c4e0f7;
+	position: relative;
+	overflow: hidden;
+	will-change: transform, box-shadow;
+}
+
+.hyplus-nav-link:hover,
+.hyplus-nav-link:focus {
+	background: #eaf6ff;
+	color: #155a99;
+	border-color: #8ecafc;
+	box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.20), 0 1.5px 4px 0 rgba(33, 118, 193, 0.13);
+	transform: translateY(-1px) scale(1.025);
+	text-decoration: none;
+	z-index: 2;
+}
+
+.hyplus-nav-link:active {
+	background: #dbeaf5;
+	color: #155a99;
+	box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
+	transform: translateY(1px) scale(0.98);
+}
+
+/* favo-color按钮主色渐变 */
+.hyplus-nav-link.favo-color {
+	color: #fff;
+	background: linear-gradient(90deg, #43a5f5 0%, #64e0d6 100%);
+	border: 1.5px solid #43a5f5;
+	box-shadow: 0 2.5px 10px 0 rgba(67, 165, 245, 0.17), 0 1px 2px 0 rgba(67, 165, 245, 0.09);
+	border-radius: 6px;
+	padding: 4px 10px;
+}
+
+.hyplus-nav-link.favo-color:hover,
+.hyplus-nav-link.favo-color:focus {
+	background: linear-gradient(90deg, #53b6ff 0%, #71f0e7 100%);
+	border-color: #2e8ad6;
+	color: #fff;
+	box-shadow: 0 4px 14px 0 rgba(67, 165, 245, 0.20), 0 1.5px 4px 0 rgba(67, 165, 245, 0.13);
+	transform: translateY(-1px) scale(1.025);
+	z-index: 2;
+	border-radius: 6px;
+	padding: 4px 10px;
+}
+
+@media screen and (max-width: 768px) {
+	.hyplus-nav-container {
+		grid-template-columns: 1fr;
+	}
+	.hyplus-nav-section {
+		padding: 12px;
+	}
+}
+
+/* fnref - derived from HyNav style, thus put here */
+.footnote-hover-popup {
+	position: fixed;
+	z-index: 99999;
+	max-width: 400px;
+	background: #fbfcfcff;
+	color: #222;
+	/* border: 1px solid #b6dded; */
+	border-radius: 12px;
+	box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
+	padding: 15px;
+	font-size: 0.75em !important;
+	line-height: 1.6;
+	display: none;
+	word-break: break-word;
+	pointer-events: none;
+}
+/*
+ * HY-通用缩放交互类
+ * 用法：给任意元素加.hyplus-scale类，即可获得悬浮放大、按下缩小的交互动画。
+ */
+.hyplus-scale, .menu-toggle, .dropdown-menu-toggle {
+    transition: transform 0.15s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
+}
+.hyplus-scale:hover, .hyplus-scale:focus,
+.menu-toggle:hover, .menu-toggle:focus,
+.dropdown-menu-toggle:hover, .dropdown-menu-toggle:focus {
+    transform: scale(1.13);
+}
+.hyplus-scale:active,
+.menu-toggle:active,
+.dropdown-menu-toggle:active {
+    transform: scale(0.93);
+    transition: none;
+}
+</style>
+    <?php
+    echo ob_get_clean();
+}
+
+// 在尽可能早的时刻输出
+add_action('wp_head', 'hyplus_add_critical_css', 1);
+?>
