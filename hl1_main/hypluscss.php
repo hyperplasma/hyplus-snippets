@@ -1,8 +1,9 @@
 <?php
 /**
  * Plugin Name: HyplusCSS - Critical Edition
- * Description: Overall style CSS for WordPress site using GeneratePress Theme (外观 > 自定义 > 额外CSS)
+ * Description: Overall style CSS for Hyplusite with GeneratePress Theme
  * Quickstart: search with "HY-"!
+ * Code Type: PHP (CSS Injection)
 */
 
 if (!defined('ABSPATH')) {
@@ -821,6 +822,5 @@ table:not(.hyplus-excluded-table) tr:first-child th {
     echo ob_get_clean();
 }
 
-// 在尽可能早的时刻输出
 add_action('wp_head', 'hyplus_add_critical_css', 1);
 ?>
