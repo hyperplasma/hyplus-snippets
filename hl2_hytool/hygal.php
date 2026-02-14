@@ -87,7 +87,7 @@ function hygal_unified_handler($atts) {
         .hygal-modal-content { background: #fff; padding: 25px; border: 1px solid #ddd; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5); text-align: left; position: relative; }
         .hygal-modal-label { display: block; font-size: 13px; color: #666; font-weight: 600; }
         .hygal-modal-input { width: 100%; margin-top: 6px; margin-bottom: 12px; padding: 8px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
-        .hygal-modal-btns { margin-top: 20px; display: flex; gap: 10px; }
+        .hygal-modal-btns { margin-top: 16px; display: flex; gap: 10px; }
         .hygal-btn { flex: 1; padding: 10px; cursor: pointer; font-weight: 600; }
         .hygal-modal-meta { font-size: 12px; color: #999; margin-top: -8px; margin-bottom: 5px; text-align: right; font-family: monospace; }
         .hygal-btn-delete { position: absolute; top: 8px; right: 12px; color: #ff4d4f; font-size: 24px; font-weight: bold; line-height: 1; cursor: pointer; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 10; padding: 5px; }
@@ -412,12 +412,18 @@ function hygal_unified_handler($atts) {
             $('#hyupload-file-input').on('change', function() {
                 handleImageFile(this.files[0]);
             });
-            // 粘贴事件处理
-            $('#hyupload-drop-zone').on('paste', function(e) {
+            // 粘贴事件处理 - 在 document 级别监听，避免 div 无焦点问题
+            $(document).on('paste', function(e) {
+                const target = e.target;
+                // 如果目标是输入框或文本区域，不拦截粘贴
+                if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+                    return;
+                }
                 const items = e.originalEvent.clipboardData.items;
                 for (let item of items) {
                     if (item.type.startsWith('image/')) {
                         handleImageFile(item.getAsFile());
+                        e.preventDefault();
                         break;
                     }
                 }
