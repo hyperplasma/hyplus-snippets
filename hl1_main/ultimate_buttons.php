@@ -172,19 +172,11 @@
 
 			<?php
 				if (is_single()) :
-					$edit_link = get_edit_post_link($post_id);
 			?>
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<span class="language-label">本文操作:</span>
-						<button id="copyContentBtn" class="font-size-btn">复制全文</button>
-						<?php if (current_user_can('administrator')) : ?>
-							<button class="font-size-btn"
-								onclick="window.open('<?php echo $edit_link; ?>', '_blank');"
-							>
-								编辑
-							</button>
-						<?php endif; ?>
+						<span class="language-label">复制本文内容:</span>
+						<button id="copyContentBtn" class="font-size-btn">复制</button>
 					</div>
 					<div class="language-selector-row">
 						<input type="checkbox" id="addPromptCheckbox" />
@@ -214,6 +206,18 @@
 								菜单
 							</button>
 						</label>
+						<?php 
+							if (is_single()) : 
+								$edit_link = get_edit_post_link($post_id);
+						?>
+						<label id="edit-nav-menu" class="language-label">
+							<button class="font-size-btn"
+								onclick="window.open('<?php echo $edit_link; ?>', '_blank');"
+							>
+								本文
+							</button>
+						</label>
+						<?php endif; ?>
 					</div>
 				</div>
 			<?php endif; ?>
