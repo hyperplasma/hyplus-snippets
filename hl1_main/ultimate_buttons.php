@@ -172,11 +172,19 @@
 
 			<?php
 				if (is_single()) :
+					$edit_link = get_edit_post_link($post_id);
 			?>
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<span class="language-label">复制本文内容:</span>
-						<button id="copyContentBtn" class="font-size-btn">复制</button>
+						<span class="language-label">本文操作:</span>
+						<button id="copyContentBtn" class="font-size-btn">复制全文</button>
+						<?php if (current_user_can('administrator')) : ?>
+							<button class="font-size-btn"
+								onclick="window.open('<?php echo $edit_link; ?>', '_blank');"
+							>
+								编辑
+							</button>
+						<?php endif; ?>
 					</div>
 					<div class="language-selector-row">
 						<input type="checkbox" id="addPromptCheckbox" />
@@ -191,7 +199,7 @@
 			?>
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<label class="language-label"><a href="https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode" target="_blank">编辑</a>组件:</label>
+						<label class="language-label">修改<a href="https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode" target="_blank">组件</a>:</label>
 						<label id="edit-hynav" class="language-label">
 							<button class="font-size-btn"
 								onclick="window.open('https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647', '_blank');"
@@ -208,9 +216,7 @@
 						</label>
 					</div>
 				</div>
-			<?php
-				endif;
-			?>
+			<?php endif; ?>
 			</div>
 		</div>
 
