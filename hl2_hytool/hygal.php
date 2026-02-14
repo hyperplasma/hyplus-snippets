@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: HyGal 极致画廊 (No-Prefix Edition)
- * Description: 集成 HyUploader WebP 极速上传与 HyGal 空间优化版画廊。此版本已移除标题前缀强制绑定，通过 Meta 字段管理分类。
- * Version: 1.2.0
+ * Plugin Name: HyGal 极致画廊 (Jump-to-Page Edition)
+ * Description: 集成 HyUploader WebP 上传与 HyGal 空间优化版画廊。新增点击页码直接跳转功能。
+ * Version: 1.3.0
  */
 
 add_shortcode('hygal', 'hygal_unified_handler');
@@ -100,8 +100,13 @@ function hygal_unified_handler($atts) {
         /* 中间：翻页控件 */
         .status-center { font-weight: 600; min-width: 80px; display: flex; justify-content: center; }
         .hygal-pager { align-items: center; gap: 2px; display: none; } 
-        .pager-btn { cursor: pointer; padding: 0 4px; font-size: 18px; color: #43a5f5; } 
+        .pager-btn { cursor: pointer; padding: 0 4px; font-size: 18px; color: #43a5f5; transition: transform 0.1s; } 
+        .pager-btn:active { transform: scale(1.2); }
         .pager-btn.disabled { opacity: 0.2; cursor: default; color: #94a3b8; }
+        
+        /* 页码跳转样式 */
+        .pager-text { cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: background 0.2s; }
+        .pager-text:hover { background: #f1f5f9; color: #43a5f5; }
 
         /* 右侧：关闭按钮 */
         .status-right { text-align: right; display: flex; justify-content: flex-end; align-items: center; min-width: 30px; }
@@ -123,7 +128,7 @@ function hygal_unified_handler($atts) {
         .hygal-item.has-order .hygal-title { background-color: #f4fbfc !important; color: #00626b !important; }
         .hytool-version { margin-top: 0.5em; color: #ccc; font-size: 13px; text-align: right; pointer-events: none; }
 
-        /* 管理员弹窗 UI (增强版) */
+        /* 管理员弹窗 UI */
         #hygal-admin-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 99999; justify-content: center; align-items: center;
@@ -132,17 +137,15 @@ function hygal_unified_handler($atts) {
         .hygal-modal-content {
             background: #fff; padding: 25px; border: 1px solid #ddd; border-radius: 12px; width: 90%; max-width: 400px;
             box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5); text-align: left;
-            position: relative; /* 关键：为右上角删除按钮提供定位基准 */
+            position: relative;
         }
         .hygal-modal-label { display: block; font-size: 13px; color: #666; font-weight: 600; }
         .hygal-modal-input { width: 100%; margin-top: 6px; margin-bottom: 12px; padding: 8px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
         .hygal-modal-btns { margin-top: 20px; display: flex; gap: 10px; }
         .hygal-btn { flex: 1; padding: 10px; cursor: pointer; font-weight: 600; }
         
-        /* 浅黑色信息小字 */
         .hygal-modal-meta { font-size: 12px; color: #999; margin-top: -8px; margin-bottom: 5px; text-align: right; font-family: monospace; }
 
-        /* 删除按钮样式 */
         .hygal-btn-delete {
             position: absolute; top: 8px; right: 12px;
             color: #ff4d4f; font-size: 24px; font-weight: bold;
@@ -150,7 +153,6 @@ function hygal_unified_handler($atts) {
             opacity: 0; transition: opacity 0.2s, transform 0.2s;
             z-index: 10; padding: 5px;
         }
-        /* 鼠标悬浮在关闭按钮上才显示 */
         .hygal-btn-delete:hover { opacity: 1; transform: scale(1.1); }
 
         .hygal-no-scroll { overflow: hidden !important; width: 100%; }
@@ -159,22 +161,17 @@ function hygal_unified_handler($atts) {
     <div id="hygal-admin-modal" class="hyplus-unselectable">
         <div class="hygal-modal-content">
             <div id="hygal-delete-trigger" class="hygal-btn-delete" title="删除此图片">🗑️</div>
-
             <label class="hygal-modal-label">权重评分（数值越大越靠前）</label>
             <input type="number" id="mod-order" class="hygal-modal-input" placeholder="无">
-            
             <label class="hygal-modal-label">修改分类</label>
             <select id="mod-prefix" class="hygal-modal-input">
                 <?php foreach ($tag_list as $tag): ?>
                     <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
                 <?php endforeach; ?>
             </select>
-            
             <label class="hygal-modal-label">标题</label>
             <input type="text" id="mod-title" class="hygal-modal-input">
-            
             <div id="mod-meta" class="hygal-modal-meta">大小: - <br>上传日期: -</div>
-            
             <div class="hygal-modal-btns">
                 <button class="hyplus-nav-link hygal-btn hygal-btn-cancel" onclick="closeHyModal()">取消</button>
                 <button class="hyplus-nav-link hygal-btn hygal-btn-save" id="hygal-save-trigger">保存修改</button>
@@ -192,14 +189,12 @@ function hygal_unified_handler($atts) {
                     <div id="hyupload-drop-text" class="hyupload-hint">点击、拖拽或粘贴图片到此处上传</div>
                     <input type="file" id="hyupload-file-input" style="display:none" accept="image/*">
                 </div>
-
                 <div id="hyupload-stats" class="hyplus-unselectable">
                     <span>✅ 已同步至媒体库并建立索引！</span>
                     <span>原大小: <span id="hyupload-old" class="hyupload-stat-tag"></span></span>
                     <span>压缩后: <span id="hyupload-new" class="hyupload-stat-tag"></span></span>
                     <span>节省: <span id="hyupload-ratio" class="hyupload-stat-tag"></span></span>
                 </div>
-
                 <div id="hyupload-controls" class="hyplus-unselectable" style="display:none;">
                     <div class="hyupload-row">
                         <select id="hyupload-prefix" class="hyupload-input">
@@ -207,11 +202,10 @@ function hygal_unified_handler($atts) {
                                 <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="text" id="hyupload-title" class="hyupload-input" placeholder="输入描述标题 (无需前缀)...">
+                        <input type="text" id="hyupload-title" class="hyupload-input" placeholder="输入描述标题...">
                         <button id="hyupload-upload-btn" class="hyplus-nav-link hyupload-btn-submit">转换并上传</button>
                     </div>
                 </div>
-
                 <div id="hyupload-loading" class="hyplus-unselectable">🚀 正在处理 WebP 转换并存储索引...</div>
             </div>
         </div>
@@ -238,7 +232,7 @@ function hygal_unified_handler($atts) {
                 <div class="status-center">
                     <div class="loading-text" style="display:none;">📡 正在获取...</div>
                     <div class="hygal-pager">
-                        <span class="pager-btn prev-btn">&lt;</span><span class="pager-text">1 / 1</span><span class="pager-btn next-btn">&gt;</span>
+                        <span class="pager-btn prev-btn">&lt;</span><span class="pager-text" title="点击跳转页码">1 / 1</span><span class="pager-btn next-btn">&gt;</span>
                     </div>
                 </div>
                 <div class="status-right"><div class="close-btn">&times;</div></div>
@@ -250,12 +244,12 @@ function hygal_unified_handler($atts) {
                 <div class="status-left"></div>
                 <div class="status-center">
                     <div class="hygal-pager">
-                        <span class="pager-btn prev-btn">&lt;</span><span class="pager-text">1 / 1</span><span class="pager-btn next-btn">&gt;</span>
+                        <span class="pager-btn prev-btn">&lt;</span><span class="pager-text" title="点击跳转页码">1 / 1</span><span class="pager-btn next-btn">&gt;</span>
                     </div>
                 </div>
                 <div class="status-right"></div>
             </div>
-            <div class="hytool-version">HyGal v1.2.0</div>
+            <div class="hytool-version">HyGal v1.3.0</div>
         </div>
 
     </div>
@@ -303,29 +297,40 @@ function hygal_unified_handler($atts) {
             });
         }
 
+        // 跳转页码逻辑
+        $('.pager-text').on('click', function() {
+            if (totalPages <= 1) return;
+            const targetPage = prompt('🚀 跳转到第几页？ (范围: 1 - ' + totalPages + ')', currentPage);
+            if (targetPage !== null) {
+                const pageNum = parseInt(targetPage);
+                if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
+                    if (pageNum !== currentPage) {
+                        fetchImages(pageNum);
+                    }
+                } else {
+                    alert('❌ 输入无效，请输入 1 到 ' + totalPages + ' 之间的数字。');
+                }
+            }
+        });
+
         $('#btn-fetch').on('click', () => fetchImages(1, true));
-        $('.prev-btn').on('click', () => currentPage > 1 && fetchImages(currentPage - 1));
-        $('.next-btn').on('click', () => currentPage < totalPages && fetchImages(currentPage + 1));
+        $('.prev-btn').on('click', function() { if(!$(this).hasClass('disabled')) fetchImages(currentPage - 1); });
+        $('.next-btn').on('click', function() { if(!$(this).hasClass('disabled')) fetchImages(currentPage + 1); });
+        
         $('.close-btn').on('click', function() { 
             $('#hygal-output').fadeOut(80, function() { $(this).empty().addClass('loading'); }); 
             $('.hygal-status-bar').fadeOut(80); 
         });
 
         if (isAdmin) {
-            // 打开编辑框逻辑
             $('#hygal-output').on('click', '.hygal-title', function() {
                 const $item = $(this).closest('.hygal-item');
                 currentTargetId = $item.data('id');
-                
-                // 填充基础数据
                 $('#mod-order').val($item.attr('data-raw-order'));
                 $('#mod-prefix').val($item.attr('data-current-prefix'));
                 $('#mod-title').val($(this).text());
-
-                // 填充新增的元数据
                 const metaText = '大小: ' + $item.attr('data-size') + '<br>上传日期: ' + $item.attr('data-date');
                 $('#mod-meta').html(metaText);
-
                 $('#hygal-admin-modal').css('display', 'flex');
                 $('body').addClass('hygal-no-scroll');
             });
@@ -333,13 +338,10 @@ function hygal_unified_handler($atts) {
             $('#hygal-admin-modal').on('click', function(e) { if (e.target === this) closeHyModal(); });
             $(document).on('keydown', function(e) { if (e.key === "Escape" && $('#hygal-admin-modal').is(':visible')) closeHyModal(); });
 
-            // 保存修改逻辑
             const submitAssetUpdate = () => {
                 const btn = $('#hygal-save-trigger');
                 if (btn.prop('disabled')) return;
                 btn.prop('disabled', true).text('同步中...');
-                
-                // 此时 new_pure_title 即为完整的新标题
                 $.post('<?php echo admin_url("admin-ajax.php"); ?>', {
                     action: 'hygal_update_asset',
                     img_id: currentTargetId,
@@ -355,45 +357,29 @@ function hygal_unified_handler($atts) {
             $('#hygal-save-trigger').on('click', submitAssetUpdate);
             $('.hygal-modal-input').on('keypress', function(e) { if (e.which === 13) submitAssetUpdate(); });
 
-            // --- 删除逻辑保持不变 ---
             function generateCode() {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 let result = '';
-                for (let i = 0; i < 6; i++) {
-                    result += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
+                for (let i = 0; i < 4; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
                 return result;
             }
 
             $('#hygal-delete-trigger').on('click', function() {
                 if(!currentTargetId) return;
-                
                 const verifyCode = generateCode();
-                const userInput = prompt('⚠️ 警告：您正在请求永久删除此图片！\n此操作不可逆，文件将从服务器彻底移除。\n\n请在下方输入验证码：' + verifyCode);
-                
+                const userInput = prompt('⚠️ 删除警告：\n文件将从服务器彻底移除，不可恢复！\n\n验证码：' + verifyCode);
                 if (userInput === verifyCode) {
-                    if (confirm('✅ 验证通过。\n\n最后确认：真的要删除这张图片吗？')) {
-                        const $delBtn = $(this);
-                        $delBtn.css('opacity', '0.5').css('pointer-events', 'none');
-                        
-                        $.post('<?php echo admin_url("admin-ajax.php"); ?>', {
-                            action: 'hygal_delete_asset',
-                            img_id: currentTargetId,
-                            _ajax_nonce: '<?php echo wp_create_nonce("hygal_min_nonce"); ?>'
-                        }, function(res) {
-                            if(res.success) {
-                                alert('图片已成功删除。');
-                                closeHyModal();
-                                fetchImages(currentPage, false);
-                            } else {
-                                alert('删除失败：' + (res.data || '未知错误'));
-                            }
-                            $delBtn.css('opacity', '').css('pointer-events', '');
-                        });
-                    }
-                } else if (userInput !== null) {
-                    alert('❌ 验证码错误，取消删除。');
-                }
+                    const $delBtn = $(this);
+                    $delBtn.css('opacity', '0.5').css('pointer-events', 'none');
+                    $.post('<?php echo admin_url("admin-ajax.php"); ?>', {
+                        action: 'hygal_delete_asset',
+                        img_id: currentTargetId,
+                        _ajax_nonce: '<?php echo wp_create_nonce("hygal_min_nonce"); ?>'
+                    }, function(res) {
+                        if(res.success) { alert('已删除'); closeHyModal(); fetchImages(currentPage, false); }
+                        $delBtn.css('opacity', '').css('pointer-events', '');
+                    });
+                } else if (userInput !== null) { alert('验证码错误'); }
             });
         }
 
@@ -437,7 +423,6 @@ function hygal_unified_handler($atts) {
                 });
             }
             $('#hyupload-drop-zone').on('click', () => $('#hyupload-file-input')[0].click());
-            $('#hyupload-preview-img').on('click', (e) => { e.stopPropagation(); $('#hyupload-file-input')[0].click(); });
             function showPreview(file) {
                 if (!file || !file.type.startsWith('image/')) return;
                 currentBlob = file;
@@ -497,11 +482,8 @@ function hygal_ajax_fetch_minimal_handler() {
     $html = '';
     foreach ($results as $post) {
         $url = wp_get_attachment_url($post->ID);
-        // 修改点：直接使用标题，不再剔除前缀
         $display_title = $post->post_title;
         $has_order_class = ($post->raw_order !== '' && $post->raw_order !== null) ? 'has-order' : '';
-
-        // 获取详细信息
         $file_path = get_attached_file($post->ID);
         $size_str = file_exists($file_path) ? size_format(filesize($file_path)) : '未知';
         $date_str = get_the_date('Y年m月d日', $post->ID);
@@ -522,78 +504,57 @@ function hygal_ajax_fetch_minimal_handler() {
 add_action('wp_ajax_hygal_update_asset', function() {
     check_ajax_referer('hygal_min_nonce');
     if (!current_user_can('manage_options')) wp_send_json_error('权限不足');
-    
     $img_id = intval($_POST['img_id']);
     $order_val = sanitize_text_field($_POST['order_val']);
     $new_prefix = sanitize_text_field($_POST['new_prefix']);
-    $new_title = sanitize_text_field($_POST['new_pure_title']); // 现在直接代表新标题
+    $new_title = sanitize_text_field($_POST['new_pure_title']);
 
     if ($order_val === '') delete_post_meta($img_id, '_hygal_order');
     else update_post_meta($img_id, '_hygal_order', intval($order_val));
     
-    // 修改点：不再拼接前缀，直接保存新标题
     wp_update_post(['ID' => $img_id, 'post_title' => $new_title]);
     update_post_meta($img_id, '_hygal_category', $new_prefix);
-    
     wp_send_json_success();
 });
 
 add_action('wp_ajax_hygal_delete_asset', function() {
     check_ajax_referer('hygal_min_nonce');
     if (!current_user_can('manage_options')) wp_send_json_error('权限不足');
-    
     $img_id = intval($_POST['img_id']);
     if (!$img_id) wp_send_json_error('无效 ID');
-
-    // 强制删除附件
     $result = wp_delete_attachment($img_id, true);
-
-    if ($result) {
-        wp_send_json_success('删除成功');
-    } else {
-        wp_send_json_error('删除失败，可能文件不存在或权限问题');
-    }
+    if ($result) wp_send_json_success('删除成功');
+    else wp_send_json_error('删除失败');
 });
 
 /**
- * =======================================================
- * 后端逻辑 PART B: HyUploader Upload & Process
- * =======================================================
+ * 后端逻辑 PART B: HyUploader
  */
 add_action('wp_ajax_hyu_webp_upload', 'hy_uploader_webp_ajax_handler_merged');
-
 function hy_uploader_webp_ajax_handler_merged() {
     check_ajax_referer('hyu_upload_nonce', '_nonce');
     if (!current_user_can('upload_files')) wp_send_json_error('无权操作');
-
     require_once(ABSPATH . 'wp-admin/includes/image.php');
     require_once(ABSPATH . 'wp-admin/includes/file.php');
     require_once(ABSPATH . 'wp-admin/includes/media.php');
-
     @ini_set('memory_limit', '512M');
-    if (!isset($_FILES['file'])) wp_send_json_error('没有接收到文件');
+    if (!isset($_FILES['file'])) wp_send_json_error('无文件');
 
     $file = $_FILES['file'];
     $tmp_path = $file['tmp_name'];
     $old_size = filesize($tmp_path);
-    
     $prefix = sanitize_text_field($_POST['prefix']);
     $raw_title = sanitize_text_field($_POST['title']);
     $ts = date('YmdHis');
-    
-    // 修改点：生成符合新规则的图片标题 (不再包含 prefix)
-    // 逻辑简化：有标题用标题，没标题用时间戳
     $wp_title = !empty($raw_title) ? $raw_title : $ts;
 
     $info = @getimagesize($tmp_path);
     $target_webp = $tmp_path . '.webp';
     $is_converted = false;
-
     if (function_exists('imagewebp')) {
         $img = null;
         if ($info['mime'] == 'image/jpeg') $img = @imagecreatefromjpeg($tmp_path);
         elseif ($info['mime'] == 'image/png') $img = @imagecreatefrompng($tmp_path);
-        
         if ($img) {
             if ($info['mime'] == 'image/png') {
                 imagepalettetotruecolor($img);
@@ -614,23 +575,13 @@ function hy_uploader_webp_ajax_handler_merged() {
     add_filter('big_image_size_threshold', '__return_false', 999);
 
     $attach_id = media_handle_sideload(['name' => $final_name, 'tmp_name' => $final_file_path], 0);
-    
     if (!is_wp_error($attach_id)) {
-        // 更新标题
         wp_update_post(['ID' => $attach_id, 'post_title' => $wp_title]);
-        // 核心优化：同步写入 Meta 索引字段
-        if (!empty($prefix)) {
-            update_post_meta($attach_id, '_hygal_category', $prefix);
-        }
+        if (!empty($prefix)) update_post_meta($attach_id, '_hygal_category', $prefix);
     }
-
     if ($is_converted && file_exists($tmp_path)) @unlink($tmp_path);
     if (is_wp_error($attach_id)) wp_send_json_error($attach_id->get_error_message());
 
-    wp_send_json_success([
-        'old_size' => $old_size,
-        'new_size' => $new_size,
-        'ratio' => $ratio
-    ]);
+    wp_send_json_success(['old_size' => $old_size, 'new_size' => $new_size, 'ratio' => $ratio]);
 }
 ?>
