@@ -10,7 +10,7 @@
 	/* 主链接颜色 */
 	--hyplus-primary-link-color: #0073aa;
 	--hyplus-primary-link-active: #3000aa;
-	--hyplus-link-hover-color: var(--hyplus-link-hover-color);
+	--hyplus-link-hover-color: red;
 	
 	/* 边框和容器颜色 */
 	--hyplus-border-color-main: rgba(0,134,139, 0.23);
@@ -84,8 +84,8 @@ body.hyplus-atmosphere-red,
 body.hyplus-atmosphere-red :root {
 	/* 主链接颜色 - 红色 */
 	--hyplus-primary-link-color: #d94556;
-	--hyplus-primary-link-active: #c94655;
-	--hyplus-link-hover-color: #ff7a88;
+	--hyplus-primary-link-active: #c401ad;
+	--hyplus-link-hover-color: #ff9100;
 	
 	/* 边框和容器颜色 - 红色系 */
 	--hyplus-border-color-main: rgba(192,28,59, 0.23);
@@ -159,8 +159,8 @@ body.hyplus-atmosphere-purple,
 body.hyplus-atmosphere-purple :root {
 	/* 主链接颜色 - 紫色 */
 	--hyplus-primary-link-color: #7b1fa2;
-	--hyplus-primary-link-active: #6a1b9a;
-	--hyplus-link-hover-color: #9c27b0;
+	--hyplus-primary-link-active: #154b80;
+	--hyplus-link-hover-color: #f1003c;
 	
 	/* 边框和容器颜色 - 紫色系 */
 	--hyplus-border-color-main: rgba(123, 31, 162, 0.23);
@@ -234,8 +234,8 @@ body.hyplus-atmosphere-green,
 body.hyplus-atmosphere-green :root {
 	/* 主链接颜色 - 绿色 */
 	--hyplus-primary-link-color: #00796b;
-	--hyplus-primary-link-active: #004d40;
-	--hyplus-link-hover-color: #26a69a;
+	--hyplus-primary-link-active: #2084e1;
+	--hyplus-link-hover-color: #020bb8;
 	
 	/* 边框和容器颜色 - 绿色系 */
 	--hyplus-border-color-main: rgba(0, 121, 107, 0.23);
@@ -304,12 +304,13 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-header-footer-shadow: rgba(38, 166, 154, 0.35);
 }
 
-a:hover {
-	color: red;
-}
-
 a {
 	text-decoration: none;
+	color: var(--hyplus-primary-link-color);
+}
+
+a:hover {
+	color: var(--hyplus-link-hover-color);
 }
 
 /* Bold Text 加粗文本 */

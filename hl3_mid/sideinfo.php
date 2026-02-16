@@ -114,7 +114,7 @@ function hyplus_sideinfo_shortcode() {
     color: var(--hyplus-primary-link-active);
 }
 .home-categories a.sideinfo-cat-active:hover {
-    color: red;
+    color: var(--hyplus-link-hover-color);
 }
 </style>
 

@@ -158,11 +158,11 @@ function hyplus_output_toc_scripts() {
     }
     .hyplus-toc-content ul li a {
         text-decoration: none;
-        color: #0073aa;
+        color: var(--hyplus-primary-link-color);
         transition: color 0.2s ease;
     }
     .hyplus-toc-content ul li a:hover {
-        color: red;
+        color: var(--hyplus-link-hover-color);
     }
     .hyplus-toc-content ul li.level-1 { margin-left: 0px; }
     .hyplus-toc-content ul li.level-2 { margin-left: 15px; }
