@@ -55,11 +55,11 @@ function hyplus_sideinfo_shortcode() {
 
 .sideinfo-toggle {
     padding: 4px 12px;
-    background: #ecf5f8;
-    color: #175082;
+    background: var(--hyplus-bg-button-light);
+    color: var(--hyplus-text-nav-link);
     border-radius: 16px;
-    border: 1.5px solid #c4e0f7;
-    box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.17), 0 1px 2px 0 rgba(33, 118, 193, 0.09);
+    border: 1.5px solid var(--hyplus-border-color-light2);
+    box-shadow: 0 2.5px 10px 0 var(--hyplus-shadow-nav), 0 1px 2px 0 var(--hyplus-shadow-nav-text);
     font-weight: 600;
     min-width: fit-content;
     transition:
@@ -85,18 +85,18 @@ function hyplus_sideinfo_shortcode() {
 
 .sideinfo-toggle:not(.disabled):hover,
 .sideinfo-toggle:not(.disabled):focus-visible {
-    background: #eaf6ff;
-    color: #155a99;
-    border-color: #8ecafc;
-    box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.20), 0 1.5px 4px 0 rgba(33, 118, 193, 0.13);
+    background: var(--hyplus-bg-button-hover);
+    color: var(--hyplus-text-nav-link-hover);
+    border-color: var(--hyplus-border-color-light2);
+    box-shadow: 0 4px 14px 0 var(--hyplus-shadow-nav-hover), 0 1.5px 4px 0 var(--hyplus-shadow-nav-text);
     transform: translateY(-1px) scale(1.025);
     z-index: 2;
 }
 
 .sideinfo-toggle:not(.disabled):active {
-    background: #dbeaf5;
-    color: #155a99;
-    box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
+    background: var(--hyplus-bg-button-active);
+    color: var(--hyplus-text-nav-link-hover);
+    box-shadow: 0 1px 4px 0 var(--hyplus-shadow-nav-text);
     transform: translateY(1px) scale(0.98);
 }
 
@@ -111,7 +111,7 @@ function hyplus_sideinfo_shortcode() {
 
 /* 高亮当前所处的分类链接，样式与 hytoc.php 中的 hyplus-toc-active 一致 */
 .home-categories a.sideinfo-cat-active {
-    color: #3000aa;
+    color: var(--hyplus-primary-link-active);
 }
 .home-categories a.sideinfo-cat-active:hover {
     color: red;

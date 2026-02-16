@@ -39,7 +39,7 @@
 		<?php
 		echo do_shortcode('[wpcode id="11647"]');
 		?>
-		<div id="navMessage" class="hyplus-unselectable" style="color: gray; font-style: italic; text-align: center; margin-top: 16px;">Explore your Hyplusite!</div>
+		<div id="navMessage" class="hyplus-unselectable" style="color: var(--hyplus-text-gray); font-style: italic; text-align: center; margin-top: 16px;">Explore your Hyplusite!</div>
 	</div>
 
 	<!-- AI内容
@@ -58,8 +58,8 @@
 		<!-- 搜索栏 -->
 		<div id="hyplusSearchBar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; margin-bottom: 12px; max-width: 600px; margin-left: auto; margin-right: auto;">
 			<div style="display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; position: relative;">
-				<input id="searchInput" type="text" placeholder="Hyplus Search Plus..." class="hyplus-search-input" style="flex: 1; min-width: 180px; max-width: 100%; padding: 10px 18px; border-radius: 999px; border: 1.5px solid #c4e0f7; background: #fff; color: #175082; font-size: 18px; font-weight: 500; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03); pointer-events: auto;" />
-				<button id="clearSearchBtn" type="button" style="display: none; position: absolute; right: 12px; background: none; border: none; color: #175082; font-size: 20px; cursor: pointer; padding: 0; width: 24px; height: 24px; line-height: 24px; text-align: center; font-weight: bold; opacity: 0.6; transition: opacity 0.2s ease; pointer-events: auto; z-index: 10;" title="清空搜索框">×</button>
+				<input id="searchInput" type="text" placeholder="Hyplus Search Plus..." class="hyplus-search-input" style="flex: 1; min-width: 180px; max-width: 100%; padding: 10px 18px; border-radius: 999px; border: 1.5px solid var(--hyplus-border-color-light2); background: var(--hyplus-bg-search-input); color: var(--hyplus-text-nav-link); font-size: 18px; font-weight: 500; outline: none; box-shadow: 0 2px 6px var(--hyplus-shadow-input); pointer-events: auto;" />
+				<button id="clearSearchBtn" type="button" style="display: none; position: absolute; right: 12px; background: none; border: none; color: var(--hyplus-text-nav-link); font-size: 20px; cursor: pointer; padding: 0; width: 24px; height: 24px; line-height: 24px; text-align: center; font-weight: bold; opacity: 0.6; transition: opacity 0.2s ease; pointer-events: auto; z-index: 10;" title="清空搜索框">×</button>
 			</div>
 			<div id="searchEngineOptions" style="display: flex; margin-top:2px; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%;">
 				<button type="button" class="sideinfo-toggle engine-btn" data-engine="hyplus">Hyplus</button>
@@ -159,14 +159,16 @@
 					</div>
 				</div>
 
+				<!-- 修改气氛 -->
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<label class="language-label">全文翻译:</label>
-						<label id="languageLabel" class="language-label">
-							<!-- php
-							echo do_shortcode('[gtranslate]'); // Need GTranslate Plugin
-		-->WORK IN PROGRESS
-						</label>
+						<label class="language-label">修改气氛:</label>
+						<select id="atmosphereSelect" class="font-select" onchange="changeAtmosphere()">
+							<option value="default">Hyplus水蓝</option>
+							<option value="red">新春快乐</option>
+							<option value="purple">紫色</option>
+							<option value="green">翠绿意境</option>
+						</select>
 					</div>
 				</div>
 
@@ -265,16 +267,16 @@
 				</div>
 			</div>
 
-			<div style="color: gray; margin-top: 26px; font-size: 11px; text-align: center;">
+			<div style="color: var(--hyplus-text-gray); margin-top: 26px; font-size: 11px; text-align: center;">
 				⌥: Alt/Option　　⇧: Shift　　⌃: Control　　⌘: Command
 			</div>
-			<div style="color: gray; margin-top: 2px; font-size: 11px; text-align: center;">
+			<div style="color: var(--hyplus-text-gray); margin-top: 2px; font-size: 11px; text-align: center;">
 				-- 注意事项 --
 			</div>
-			<div style="color: gray; margin-top: 2px; font-size: 11px; text-align: center;">
+			<div style="color: var(--hyplus-text-gray); margin-top: 2px; font-size: 11px; text-align: center;">
 				iframe版<a href="https://kina.hyperplasma.top" target="_blank">KINA</a>在各浏览器中存在轻微问题，Safari浏览器无法共享网页版存储与图片上传功能，Edge浏览器可能发生轻微布局错误
 			</div>
-			<div style="color: gray; margin-top: 2px; font-size: 11px; text-align: center;">
+			<div style="color: var(--hyplus-text-gray); margin-top: 2px; font-size: 11px; text-align: center;">
 				通过<a href="https://www.hyperplasma.top/?p=13242">Hyplusite Exporter</a>导出的页面不支持在线服务，且部分由PHP预生成的JS组件存在显示问题
 			</div>
 		</div>
@@ -288,11 +290,11 @@
 	/* 以sideinfo的切换按钮样式为基础作为搜索引擎按钮样式（派生自sideinfo.php） */
 	/* .sideinfo-toggle {
 		padding: 4px 12px;
-		background: #ecf5f8;
-		color: #175082;
+		background: var(--hyplus-bg-button-light);
+		color: var(--hyplus-text-nav-link);
 		border-radius: 16px;
-		border: 1.5px solid #c4e0f7;
-		box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.17), 0 1px 2px 0 rgba(33, 118, 193, 0.09);
+		border: 1.5px solid var(--hyplus-border-color-light2);
+		box-shadow: 0 2.5px 10px 0 var(--hyplus-shadow-nav), 0 1px 2px 0 var(--hyplus-shadow-nav-text);
 		font-weight: 600;
 		min-width: fit-content;
 		transition: background 0.18s cubic-bezier(0.4,0,0.2,1), color 0.18s cubic-bezier(0.4,0,0.2,1), box-shadow 0.18s cubic-bezier(0.4,0,0.2,1), transform 0.18s cubic-bezier(0.4,0,0.2,1);
@@ -314,18 +316,18 @@
 
 	.sideinfo-toggle:hover,
 	.sideinfo-toggle:focus {
-		background: #eaf6ff;
-		color: #155a99;
-		border-color: #8ecafc;
-		box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.20), 0 1.5px 4px 0 rgba(33, 118, 193, 0.13);
+		background: var(--hyplus-bg-button-hover);
+		color: var(--hyplus-text-nav-link-hover);
+		border-color: var(--hyplus-border-color-light2);
+		box-shadow: 0 4px 14px 0 var(--hyplus-shadow-nav-hover), 0 1.5px 4px 0 var(--hyplus-shadow-nav-text);
 		transform: translateY(-1px) scale(1.025);
 		z-index: 2;
 	}
 
 	.sideinfo-toggle:active {
-		background: #dbeaf5;
-		color: #155a99;
-		box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
+		background: var(--hyplus-bg-button-active);
+		color: var(--hyplus-text-nav-link-hover);
+		box-shadow: 0 1px 4px 0 var(--hyplus-shadow-nav-text);
 		transform: translateY(1px) scale(0.98);
 	}
 
@@ -510,7 +512,7 @@
         max-width: 850px;
         overflow: hidden;
         background-color: #ffffff;
-        border: 1px solid #ddd;
+        border: 1px solid var(--hyplus-border-color-neutral);
         box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5);
         padding: 0;
         z-index: 99999;
@@ -539,7 +541,7 @@
     }
 
     .back-button {
-        background-color: purple;
+        background-color: var(--hyplus-btn-back-control);
         color: white;
         display: flex;
         align-items: center;
@@ -553,7 +555,7 @@
     }
 
     .maximize-button {
-        background-color: #4CAF50;
+        background-color: var(--hyplus-btn-maximize-control);
     }
 
     .maximize-button:hover {
@@ -565,7 +567,7 @@
     }
 
     .close-button {
-        background-color: red;
+        background-color: var(--hyplus-btn-close-control);
     }
 
     .close-button:hover {
@@ -592,8 +594,8 @@
         padding: 4px 12px;
         border: none;
         border-radius: 4px;
-        background-color: #e6f3ff;
-        color: #333;
+        background-color: var(--hyplus-bg-button-light);
+        color: var(--hyplus-text-primary);
         cursor: pointer;
         font-size: 14px !important;
         transition: background-color 0.3s ease;
@@ -602,12 +604,12 @@
     }
 
     .switch-button.active {
-        background-color: #9fd2ff;
+        background-color: var(--hyplus-bg-button-hover);
     }
 
     .switch-button:hover {
-        color: #333;
-        background-color: #8fcaff;
+        color: var(--hyplus-text-primary);
+        background-color: var(--hyplus-bg-button-hover);
     }
 
 	.switch-button:active {
@@ -661,15 +663,15 @@
 
     .language-label {
         font-size: 14px !important;    
-        color: #333;
+        color: var(--hyplus-text-primary);
         /* white-space: nowrap;	*/
     }
 
     .language-selector {
         padding: 10px;
-        background-color: #f8f9fa;
+        background-color: var(--hyplus-bg-settings);
         border-radius: 8px;
-        border: 1px solid #b6dded;
+        border: 1px solid var(--hyplus-border-color-light);
     }
 
     .language-selector select,
@@ -697,7 +699,7 @@
     .config-item label {
         margin-left: 10px;
         cursor: pointer;
-        color: #333;
+        color: var(--hyplus-text-primary);
         font-size: 14px;
     }
 
@@ -706,7 +708,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		width: 100%;
-		/* border: 1px solid #b6dded; */
+		/* border: 1px solid var(--hyplus-border-color-light); */
 		border-radius: 4px;
 	}
 
@@ -732,23 +734,23 @@
     .shortcut-item {
         padding: 8px;
         /* border-bottom: 1px solid #b6dded;	*/
-        border: 1px solid #b6dded;
+        border: 1px solid var(--hyplus-border-color-light);
         display: flex;
         justify-content: space-between;
     }
 
     .shortcut-key {
-        color: gray;
+        color: var(--hyplus-text-gray);
     }
 
     /* 字体控制样式 */
     .font-select {
         max-width: 180px;
         padding: 4px 8px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--hyplus-border-color-neutral);
         border-radius: 4px;
         background-color: #fff;
-        color: #333;
+        color: var(--hyplus-text-primary);
         font-size: 14px !important;
         flex: 1;
         cursor: pointer;
@@ -780,17 +782,17 @@
 
     .font-size-btn {
         padding: 2px 10px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--hyplus-border-color-neutral);
         border-radius: 4px;
         background-color: #fff;
-        color: #333;
+        color: var(--hyplus-text-primary);
         cursor: pointer;
         font-size: 14px !important;
         transition: all 0.2s ease;
     }
 
     .font-size-btn:hover {
-        color: #333;
+        color: var(--hyplus-text-primary);
         background-color: #f0f0f0;
     }
 
@@ -800,12 +802,12 @@
 
     .font-size-btn.reset {
         padding: 2px 8px;
-        background-color: #e6f3ff;
+        background-color: var(--hyplus-bg-button-light);
 		color: #333 !important;
     }
 
     .font-size-btn.reset:hover {
-        color: #333;
+        color: var(--hyplus-text-primary);
         background-color: #d0e8ff;
     }
 
@@ -813,7 +815,7 @@
         min-width: 50px;
         text-align: center;
         font-size: 14px;
-        color: #333;
+        color: var(--hyplus-text-primary);
     }
 
     /* 响应式布局 */
@@ -1591,6 +1593,49 @@
 		});
 	}
 
+	// ========== 气氛切换功能 ==========
+	/**
+	 * 修改网站整体气氛（颜色主题）
+	 * 可选值: 'default' (Hyplus水蓝), 'red' (新春快乐), 'purple' (紫色), 'green' (翠绿意境)
+	 */
+	function changeAtmosphere(atmosphere) {
+		// 如果没有传入参数，则从选择器中获取
+		if (!atmosphere) {
+			const select = document.getElementById('atmosphereSelect');
+			atmosphere = select ? select.value : 'default';
+		}
+		
+		// 移除所有旧的atmosphere类
+		document.body.classList.remove('hyplus-atmosphere-red', 'hyplus-atmosphere-purple', 'hyplus-atmosphere-green');
+		
+		// 应用新的atmosphere类
+		if (atmosphere === 'red') {
+			document.body.classList.add('hyplus-atmosphere-red');
+		} else if (atmosphere === 'purple') {
+			document.body.classList.add('hyplus-atmosphere-purple');
+		} else if (atmosphere === 'green') {
+			document.body.classList.add('hyplus-atmosphere-green');
+		}
+		// 'default'不需要添加类，默认样式已由:root定义
+		
+		// 保存用户选择到localStorage
+		localStorage.setItem('selectedAtmosphere', atmosphere);
+	}
+
+	function initAtmosphere() {
+		// 从localStorage读取保存的气氛选择
+		const savedAtmosphere = localStorage.getItem('selectedAtmosphere') || 'default';
+		
+		// 应用保存的气氛
+		changeAtmosphere(savedAtmosphere);
+		
+		// 更新下拉菜单的值
+		const select = document.getElementById('atmosphereSelect');
+		if (select) {
+			select.value = savedAtmosphere;
+		}
+	}
+
 	// 页面加载完成后的初始化
 	window.onload = function() {
 		// 首先切换到上次访问的页面（确保切换功能正常工作）
@@ -1599,6 +1644,9 @@
 
 		// 初始化清空搜索框功能
 		setupClearSearchButton();
+
+		// 初始化气氛
+		initAtmosphere();
 
 		// 初始化字体选择
 		const fontSelect = document.getElementById('fontSelect');

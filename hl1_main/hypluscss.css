@@ -3,8 +3,297 @@
  * Description: Overall style CSS for WordPress site using GeneratePress Theme (外观 > 自定义 > 额外CSS)
  * Quickstart: search with "HY-"!
  */
+
+/* ========== 气氛颜色配置系统 ========== */
+/* 默认气氛: Hyplus水蓝 */
+:root {
+	/* 主链接颜色 */
+	--hyplus-primary-link-color: #0073aa;
+	--hyplus-primary-link-active: #3000aa;
+	--hyplus-link-hover-color: var(--hyplus-link-hover-color);
+	
+	/* 边框和容器颜色 */
+	--hyplus-border-color-main: rgba(0,134,139, 0.23);
+	--hyplus-border-color-light: #b6dded;
+	--hyplus-border-color-neutral: #ddd;
+	--hyplus-border-color-light2: #c4e0f7;
+	
+	/* 背景颜色 */
+	--hyplus-bg-overall: rgba(187,255,255,0.05);
+	--hyplus-bg-container: #fbfdfe;
+	--hyplus-bg-code: #e4edf7;
+	--hyplus-bg-settings: #f8f9fa;
+	--hyplus-bg-button-light: #ecf5f8;
+	--hyplus-bg-button-hover: #eaf6ff;
+	--hyplus-bg-button-active: #dbeaf5;
+	--hyplus-bg-search-input: #fff;
+	
+	/* 文字颜色 */
+	--hyplus-text-primary: #333;
+	--hyplus-text-nav-link: #175082;
+	--hyplus-text-nav-link-hover: #155a99;
+	--hyplus-text-heading: #2d3a4b;
+	--hyplus-text-title: #01294c;
+	--hyplus-text-quote: #454545;
+	--hyplus-text-gray: gray;
+	--hyplus-text-code: rgba(7, 1, 114, 0.468);
+	--hyplus-text-counter: #FF8C00;
+	
+	/* 阴影颜色 */
+	--hyplus-shadow-light: rgba(0, 64, 128, 0.05);
+	--hyplus-shadow-nav: rgba(33, 118, 193, 0.17);
+	--hyplus-shadow-nav-hover: rgba(33, 118, 193, 0.20);
+	--hyplus-shadow-nav-text: rgba(33, 118, 193, 0.13);
+	--hyplus-shadow-button: rgba(0, 0, 0, 0.3);
+	--hyplus-shadow-deep: rgba(0, 64, 128, 0.1);
+	--hyplus-shadow-input: rgba(0,0,0,0.03);
+	
+	/* 按钮颜色 */
+	--hyplus-btn-scroll-top-bg: rgb(33, 182, 137);
+	--hyplus-btn-scroll-top-hover: rgba(52, 211, 161, 1);
+	--hyplus-btn-scroll-top-active: rgb(40, 159, 121);
+	--hyplus-btn-nav-bg: rgba(220, 38, 127, 1);
+	--hyplus-btn-nav-hover: rgba(240, 58, 147, 1);
+	--hyplus-btn-nav-active: rgb(195, 37, 111);
+	--hyplus-btn-back-bg: rgba(84, 126, 239, 1);
+	--hyplus-btn-back-hover: rgba(94, 136, 249, 1);
+	--hyplus-btn-back-active: rgb(65, 95, 177);
+	--hyplus-btn-refresh-bg: rgba(40, 167, 69, 1);
+	--hyplus-btn-refresh-hover: rgba(60, 187, 89, 1);
+	--hyplus-btn-refresh-active: rgb(29, 116, 49);
+	--hyplus-btn-home-bg: #55555e;
+	--hyplus-btn-home-hover: #484851;
+	--hyplus-btn-back-control: purple;
+	--hyplus-btn-maximize-control: #4CAF50;
+	--hyplus-btn-close-control: red;
+	
+	/* 进度条颜色 */
+	--hyplus-progress-bar-color: #2196f3;
+	--hyplus-progress-dot-color: #2196f3;
+	
+	/* 搜索输入框 */
+	--hyplus-search-border: #c4e0f7;
+	--hyplus-search-text: #175082;
+}
+
+/* 新春快乐 - 红色气氛 */
+body.hyplus-atmosphere-red,
+body.hyplus-atmosphere-red :root {
+	/* 主链接颜色 - 红色 */
+	--hyplus-primary-link-color: #c41c3b;
+	--hyplus-primary-link-active: #b01e35;
+	--hyplus-link-hover-color: #ff4757;
+	
+	/* 边框和容器颜色 - 红色系 */
+	--hyplus-border-color-main: rgba(192,28,59, 0.23);
+	--hyplus-border-color-light: #f5a5a5;
+	--hyplus-border-color-neutral: #ddd;
+	--hyplus-border-color-light2: #ff9999;
+	
+	/* 背景颜色 - 红色调 */
+	--hyplus-bg-overall: rgba(255,200,200,0.05);
+	--hyplus-bg-container: #fffbfb;
+	--hyplus-bg-code: #fce4e4;
+	--hyplus-bg-settings: #fff5f5;
+	--hyplus-bg-button-light: #ffe6e6;
+	--hyplus-bg-button-hover: #ffdddd;
+	--hyplus-bg-button-active: #ffd1d1;
+	--hyplus-bg-search-input: #fff;
+	
+	/* 文字颜色 - 红色系 */
+	--hyplus-text-primary: #333;
+	--hyplus-text-nav-link: #c41c3b;
+	--hyplus-text-nav-link-hover: #a01830;
+	--hyplus-text-heading: #8b0000;
+	--hyplus-text-title: #7a0000;
+	--hyplus-text-quote: #6b3030;
+	--hyplus-text-gray: gray;
+	--hyplus-text-code: rgba(139, 0, 0, 0.6);
+	--hyplus-text-counter: #d9534f;
+	
+	/* 阴影颜色 - 红色系 */
+	--hyplus-shadow-light: rgba(192, 28, 59, 0.05);
+	--hyplus-shadow-nav: rgba(220, 53, 69, 0.17);
+	--hyplus-shadow-nav-hover: rgba(220, 53, 69, 0.20);
+	--hyplus-shadow-nav-text: rgba(220, 53, 69, 0.13);
+	--hyplus-shadow-button: rgba(0, 0, 0, 0.3);
+	--hyplus-shadow-deep: rgba(192, 28, 59, 0.1);
+	--hyplus-shadow-input: rgba(0,0,0,0.03);
+	
+	/* 按钮颜色 - 红色气氛 */
+	--hyplus-btn-scroll-top-bg: #e74c3c;
+	--hyplus-btn-scroll-top-hover: #ea6153;
+	--hyplus-btn-scroll-top-active: #c0392b;
+	--hyplus-btn-nav-bg: #e74c3c;
+	--hyplus-btn-nav-hover: #ec7063;
+	--hyplus-btn-nav-active: #c0392b;
+	--hyplus-btn-back-bg: #e67e22;
+	--hyplus-btn-back-hover: #eb984e;
+	--hyplus-btn-back-active: #ba4a00;
+	--hyplus-btn-refresh-bg: #e74c3c;
+	--hyplus-btn-refresh-hover: #ec7063;
+	--hyplus-btn-refresh-active: #c0392b;
+	--hyplus-btn-home-bg: #c0392b;
+	--hyplus-btn-home-hover: #a93226;
+	--hyplus-btn-back-control: #c41c3b;
+	--hyplus-btn-maximize-control: #e74c3c;
+	--hyplus-btn-close-control: #d9534f;
+	
+	/* 进度条颜色 - 红色 */
+	--hyplus-progress-bar-color: #e74c3c;
+	--hyplus-progress-dot-color: #e74c3c;
+	
+	/* 搜索输入框 */
+	--hyplus-search-border: #ff9999;
+	--hyplus-search-text: #c41c3b;
+}
+
+/* 紫色气氛 */
+body.hyplus-atmosphere-purple,
+body.hyplus-atmosphere-purple :root {
+	/* 主链接颜色 - 紫色 */
+	--hyplus-primary-link-color: #7b1fa2;
+	--hyplus-primary-link-active: #6a1b9a;
+	--hyplus-link-hover-color: #9c27b0;
+	
+	/* 边框和容器颜色 - 紫色系 */
+	--hyplus-border-color-main: rgba(123, 31, 162, 0.23);
+	--hyplus-border-color-light: #d1a4d4;
+	--hyplus-border-color-neutral: #ddd;
+	--hyplus-border-color-light2: #e1bee7;
+	
+	/* 背景颜色 - 紫色调 */
+	--hyplus-bg-overall: rgba(225, 190, 231, 0.05);
+	--hyplus-bg-container: #fbf5fc;
+	--hyplus-bg-code: #f3e5f5;
+	--hyplus-bg-settings: #faf7fb;
+	--hyplus-bg-button-light: #ede7f6;
+	--hyplus-bg-button-hover: #e1d5f3;
+	--hyplus-bg-button-active: #d1c4e9;
+	--hyplus-bg-search-input: #fff;
+	
+	/* 文字颜色 - 紫色系 */
+	--hyplus-text-primary: #333;
+	--hyplus-text-nav-link: #7b1fa2;
+	--hyplus-text-nav-link-hover: #6a1b9a;
+	--hyplus-text-heading: #512da8;
+	--hyplus-text-title: #4a148c;
+	--hyplus-text-quote: #5e35b1;
+	--hyplus-text-gray: gray;
+	--hyplus-text-code: rgba(123, 31, 162, 0.6);
+	--hyplus-text-counter: #9c27b0;
+	
+	/* 阴影颜色 - 紫色系 */
+	--hyplus-shadow-light: rgba(123, 31, 162, 0.05);
+	--hyplus-shadow-nav: rgba(171, 71, 188, 0.17);
+	--hyplus-shadow-nav-hover: rgba(171, 71, 188, 0.20);
+	--hyplus-shadow-nav-text: rgba(171, 71, 188, 0.13);
+	--hyplus-shadow-button: rgba(0, 0, 0, 0.3);
+	--hyplus-shadow-deep: rgba(123, 31, 162, 0.1);
+	--hyplus-shadow-input: rgba(0,0,0,0.03);
+	
+	/* 按钮颜色 - 紫色气氛 */
+	--hyplus-btn-scroll-top-bg: #9c27b0;
+	--hyplus-btn-scroll-top-hover: #ab47bc;
+	--hyplus-btn-scroll-top-active: #7b1fa2;
+	--hyplus-btn-nav-bg: #9c27b0;
+	--hyplus-btn-nav-hover: #ab47bc;
+	--hyplus-btn-nav-active: #7b1fa2;
+	--hyplus-btn-back-bg: #7b1fa2;
+	--hyplus-btn-back-hover: #8e24aa;
+	--hyplus-btn-back-active: #6a1b9a;
+	--hyplus-btn-refresh-bg: #9c27b0;
+	--hyplus-btn-refresh-hover: #ab47bc;
+	--hyplus-btn-refresh-active: #7b1fa2;
+	--hyplus-btn-home-bg: #7b1fa2;
+	--hyplus-btn-home-hover: #6a1b9a;
+	--hyplus-btn-back-control: #7b1fa2;
+	--hyplus-btn-maximize-control: #9c27b0;
+	--hyplus-btn-close-control: #ab47bc;
+	
+	/* 进度条颜色 - 紫色 */
+	--hyplus-progress-bar-color: #9c27b0;
+	--hyplus-progress-dot-color: #9c27b0;
+	
+	/* 搜索输入框 */
+	--hyplus-search-border: #e1bee7;
+	--hyplus-search-text: #7b1fa2;
+}
+
+/* 翠绿意境 - 绿色气氛 */
+body.hyplus-atmosphere-green,
+body.hyplus-atmosphere-green :root {
+	/* 主链接颜色 - 绿色 */
+	--hyplus-primary-link-color: #00796b;
+	--hyplus-primary-link-active: #004d40;
+	--hyplus-link-hover-color: #26a69a;
+	
+	/* 边框和容器颜色 - 绿色系 */
+	--hyplus-border-color-main: rgba(0, 121, 107, 0.23);
+	--hyplus-border-color-light: #80cbc4;
+	--hyplus-border-color-neutral: #ddd;
+	--hyplus-border-color-light2: #4db6ac;
+	
+	/* 背景颜色 - 绿色调 */
+	--hyplus-bg-overall: rgba(128, 203, 196, 0.05);
+	--hyplus-bg-container: #f5fbfb;
+	--hyplus-bg-code: #e0f2f1;
+	--hyplus-bg-settings: #f8fbfb;
+	--hyplus-bg-button-light: #e0f2f1;
+	--hyplus-bg-button-hover: #d0e8e8;
+	--hyplus-bg-button-active: #b2dfdb;
+	--hyplus-bg-search-input: #fff;
+	
+	/* 文字颜色 - 绿色系 */
+	--hyplus-text-primary: #333;
+	--hyplus-text-nav-link: #00796b;
+	--hyplus-text-nav-link-hover: #00695c;
+	--hyplus-text-heading: #00695c;
+	--hyplus-text-title: #004d40;
+	--hyplus-text-quote: #2d5c54;
+	--hyplus-text-gray: gray;
+	--hyplus-text-code: rgba(0, 121, 107, 0.6);
+	--hyplus-text-counter: #26a69a;
+	
+	/* 阴影颜色 - 绿色系 */
+	--hyplus-shadow-light: rgba(0, 121, 107, 0.05);
+	--hyplus-shadow-nav: rgba(76, 175, 80, 0.17);
+	--hyplus-shadow-nav-hover: rgba(76, 175, 80, 0.20);
+	--hyplus-shadow-nav-text: rgba(76, 175, 80, 0.13);
+	--hyplus-shadow-button: rgba(0, 0, 0, 0.3);
+	--hyplus-shadow-deep: rgba(0, 121, 107, 0.1);
+	--hyplus-shadow-input: rgba(0,0,0,0.03);
+	
+	/* 按钮颜色 - 绿色气氛 */
+	--hyplus-btn-scroll-top-bg: #26a69a;
+	--hyplus-btn-scroll-top-hover: #4db8aa;
+	--hyplus-btn-scroll-top-active: #00897b;
+	--hyplus-btn-nav-bg: #26a69a;
+	--hyplus-btn-nav-hover: #4db8aa;
+	--hyplus-btn-nav-active: #00897b;
+	--hyplus-btn-back-bg: #00796b;
+	--hyplus-btn-back-hover: #00897b;
+	--hyplus-btn-back-active: #004d40;
+	--hyplus-btn-refresh-bg: #26a69a;
+	--hyplus-btn-refresh-hover: #4db8aa;
+	--hyplus-btn-refresh-active: #00897b;
+	--hyplus-btn-home-bg: #004d40;
+	--hyplus-btn-home-hover: #003d33;
+	--hyplus-btn-back-control: #00796b;
+	--hyplus-btn-maximize-control: #26a69a;
+	--hyplus-btn-close-control: #4db8aa;
+	
+	/* 进度条颜色 - 绿色 */
+	--hyplus-progress-bar-color: #26a69a;
+	--hyplus-progress-dot-color: #26a69a;
+	
+	/* 搜索输入框 */
+	--hyplus-search-border: #4db6ac;
+	--hyplus-search-text: #00796b;
+}
+
 a:hover {
-	color: #ff6780;
+	color: red;
 }
 
 a {
@@ -159,7 +448,7 @@ footer {
  * Overall Hyplus style css (Including Inline Code Block, HomeTempButtons, NoSidebarOnMobile, commentForm...) CSS
  */
 body {
-	background-color: rgba(187,255,255,0.05) !important;
+	background-color: var(--hyplus-bg-overall) !important;
 	border: none !important;
 }
 
@@ -169,7 +458,7 @@ body {
 
 /* Inline Code */
 :not(pre) > code {
-	background-color: #e4edf7;
+	background-color: var(--hyplus-bg-code);
 	padding: 2px 4px;
 	border-radius: 4px;
 	font-size: 0.95em;
@@ -185,13 +474,13 @@ pre {
 	border-radius: 14px;
 }
 div:has(> .hljs) {
-	/* border: 1px solid #b6dded; */
+	/* border: 1px solid var(--hyplus-border-color-light); */
 	border-radius: 14px;
- 	box-shadow: 0 2px 6px rgba(0, 64, 128, 0.1);
+ 	box-shadow: 0 2px 6px var(--hyplus-shadow-deep);
 	margin-bottom: 1em;
 }
 .copy-button {
-	color: rgba(7, 1, 114, 0.468);
+	color: var(--hyplus-text-code);
 	border-radius: 14px;
 }
 
@@ -249,12 +538,12 @@ div:has(> .hljs) {
 
 .page, .inside-article, .post {
 	border-radius: 8px;
-	border: 1px solid rgba(0,134,139, 0.23);	
+	border: 1px solid var(--hyplus-border-color-main);	
 }
 
 .widget, .comments-area, .page-header, .paging-navigation {
 	border-radius: 8px;
-	border: 2px solid rgba(0,134,139, 0.23);	
+	border: 2px solid var(--hyplus-border-color-main);	
 }
 
 #comment, .search-field {
@@ -265,7 +554,7 @@ div:has(> .hljs) {
 
 #author, #email, #url, #user_login, #user_pass, .comment-content, .search-field, .post-password-form > p > label > input {
 	/*	border: 1px solid #e0e0e0;	*/
-	border: 1px solid rgba(182,221,237, 0.75);
+	border: 1px solid var(--hyplus-border-color-light);
 	border-radius: 6px;
 }
 
@@ -376,7 +665,7 @@ padding-left: 3px;
 	align-items: center;
 	justify-content: center;
 	padding: 10px 20px;	
-	background-color: #55555e;
+	background-color: var(--hyplus-btn-home-bg);
 	color: white;
 	text-decoration: none;
 	border-radius: 6px;
@@ -392,7 +681,7 @@ padding-left: 3px;
 .return-home-button:hover {
 	transform: scale(1.05);
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	background-color: #484851;
+	background-color: var(--hyplus-btn-home-hover);
 	color: white;
 	text-decoration: none;
 }
@@ -498,12 +787,12 @@ padding-left: 3px;
 blockquote {
 	font-size: 16px;
 	/* border-left: 5px solid rgba(183, 236, 255, 0.495); */
-	border: 1px solid #b6dded;
-	color: #454545;
+	border: 1px solid var(--hyplus-border-color-light);
+	color: var(--hyplus-text-quote);
 	/* background-color: #ecf6fb80; */
-	background-color: #fbfdfe;
+	background-color: var(--hyplus-bg-container);
 	border-radius: 14px;
-	box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
+	box-shadow: 0 2px 6px var(--hyplus-shadow-light);
 	font-style: normal;
 	margin-top: 1em;
 	margin-bottom: 1em;
@@ -512,7 +801,7 @@ blockquote {
 .taxonomy-description h3 {
 	/* text-align: center; */
 	/* margin: 0 0 12px 0; */
-	/* color: #2d3a4b; */
+	/* color: var(--hyplus-text-heading); */
 	/* font-size: 30px; */
 	font-weight: 600;
 }
@@ -526,7 +815,7 @@ h2, h3, h4, h5, h6 {
 }
 
 .entry-content h1, .entry-content h2, .entry-content h3, .entry-content h4, .entry-content h5, .entry-content h6 {
-	color: #01294c
+	color: var(--hyplus-text-title)
 }
 
 ul li {
@@ -570,11 +859,11 @@ ol ol ol {
 
 details summary {
 	cursor: pointer;
-	color: #1e73be;
+	color: var(--hyplus-primary-link-color);
 }
 
 details summary:hover {
-	color: #ff6780;
+	color: var(--hyplus-link-hover-color);
 }
 
 /* Table (exclude class="hyplus-excluded-table") */
@@ -590,14 +879,14 @@ table:not(.hyplus-excluded-table) {
 /* 手动为表格添加所需的边框 */
 table:not(.hyplus-excluded-table) td,
 table:not(.hyplus-excluded-table) th {
-	border: 1px solid #ddd;
+	border: 1px solid var(--hyplus-border-color-neutral);
 	border-collapse: collapse;
-	background-color: #fbfdfe;
+	background-color: var(--hyplus-bg-container);
 }
 
 /* 可选：如果需要调整边框样式 */
 table:not(.hyplus-excluded-table) tr:first-child th {
-	border-top: 1px solid #ddd;
+	border-top: 1px solid var(--hyplus-border-color-neutral);
 }
 
 
@@ -610,7 +899,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	margin: 5px auto;
 }
 .site-content-counter {
-	color: #FF8C00;
+	color: var(--hyplus-text-counter);
 }
 
 
@@ -633,7 +922,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	width: 98%;
 	padding: 10px 16px;
 	font-size: 16px;
-	border: 1px solid #ccc;
+	border: 1px solid var(--hyplus-border-color-neutral);
 	border-radius: 31px;
 	outline: none;
 	box-sizing: border-box;
@@ -655,17 +944,17 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 }
 
 .hyplus-nav-section {
-	background: #fbfdfe;
-	border: 1px solid #b6dded;
+	background: var(--hyplus-bg-container);
+	border: 1px solid var(--hyplus-border-color-light);
 	border-radius: 14px;
 	padding: 15px;
-	box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
+	box-shadow: 0 2px 6px var(--hyplus-shadow-light);
 }
 
 .hyplus-nav-section h3 {
 	text-align: center;
 	margin: 0 0 12px 0;
-	color: #2d3a4b;
+	color: var(--hyplus-text-heading);
 	font-size: 20px;
 	font-weight: 600;
 }
@@ -700,8 +989,8 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	align-items: center;
 	justify-content: center;
 	padding: 4px 10px;
-	background: #ecf5f8;
-	color: #175082;
+	background: var(--hyplus-bg-button-light);
+	color: var(--hyplus-text-nav-link);
 	text-decoration: none;
 	border-radius: 16px;
 	font-size: 16px;
@@ -711,11 +1000,11 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 		color 0.18s cubic-bezier(0.4,0,0.2,1),
 		box-shadow 0.18s cubic-bezier(0.4,0,0.2,1),
 		transform 0.18s cubic-bezier(0.4,0,0.2,1);
-	box-shadow: 0 2.5px 10px 0 rgba(33, 118, 193, 0.17), 0 1px 2px 0 rgba(33, 118, 193, 0.09);
+	box-shadow: 0 2.5px 10px 0 var(--hyplus-shadow-nav), 0 1px 2px 0 var(--hyplus-shadow-nav-text);
 	min-width: fit-content;
 	text-align: center;
 	margin: 0;
-	border: 1.5px solid #c4e0f7;
+	border: 1.5px solid var(--hyplus-border-color-light2);
 	position: relative;
 	overflow: hidden;
 	will-change: transform, box-shadow;
@@ -723,19 +1012,19 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 
 .hyplus-nav-link:hover,
 .hyplus-nav-link:focus {
-	background: #eaf6ff;
-	color: #155a99;
-	border-color: #8ecafc;
-	box-shadow: 0 4px 14px 0 rgba(33, 118, 193, 0.20), 0 1.5px 4px 0 rgba(33, 118, 193, 0.13);
+	background: var(--hyplus-bg-button-hover);
+	color: var(--hyplus-text-nav-link-hover);
+	border-color: var(--hyplus-border-color-light2);
+	box-shadow: 0 4px 14px 0 var(--hyplus-shadow-nav-hover), 0 1.5px 4px 0 var(--hyplus-shadow-nav-text);
 	transform: translateY(-1px) scale(1.025);
 	text-decoration: none;
 	z-index: 2;
 }
 
 .hyplus-nav-link:active {
-	background: #dbeaf5;
-	color: #155a99;
-	box-shadow: 0 1px 4px 0 rgba(33, 118, 193, 0.13);
+	background: var(--hyplus-bg-button-active);
+	color: var(--hyplus-text-nav-link-hover);
+	box-shadow: 0 1px 4px 0 var(--hyplus-shadow-nav-text);
 	transform: translateY(1px) scale(0.98);
 }
 
@@ -775,9 +1064,9 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	position: fixed;
 	z-index: 99999;
 	max-width: 400px;
-	background: #fbfcfcff;
+	background: var(--hyplus-bg-container);
 	color: #222;
-	/* border: 1px solid #b6dded; */
+	/* border: 1px solid var(--hyplus-border-color-light); */
 	border-radius: 12px;
 	box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
 	padding: 15px;

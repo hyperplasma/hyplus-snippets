@@ -88,8 +88,8 @@ function hyplus_output_toc_scripts() {
     .hyplus-toc-toggle::after {
         content: '➖';
         font-size: 18px;
-        color: #333; /* 指定可见颜色，避免继承透明导致不可见 */
-        -webkit-text-fill-color: #333; /* Safari */
+        color: var(--hyplus-text-primary); /* 指定可见颜色，避免继承透明导致不可见 */
+        -webkit-text-fill-color: var(--hyplus-text-primary); /* Safari */
         display: inline-block;
         transform: translateY(1px);
         transition: transform 0.15s cubic-bezier(0.4,0,0.2,1);
@@ -125,7 +125,7 @@ function hyplus_output_toc_scripts() {
     /* 当前位置的目录项高亮为粗体 */
     .hyplus-toc-content a.hyplus-toc-active {
         /* font-weight: bold; */
-        color: #3000aa;
+        color: var(--hyplus-primary-link-active);
     }
     /* 当按钮处于"显示"（即当前折叠）状态时，折叠内容 */
     .hyplus-toc-container:has(.hyplus-toc-toggle[aria-label="显示"]) .hyplus-toc-content {
@@ -173,10 +173,10 @@ function hyplus_output_toc_scripts() {
 
     /* post模式专用样式 */
 	.hyplus-toc-container[data-toc-mode="post"] {
-		background: #fbfdfe;
-		border: 1px solid #b6dded;
+		background: var(--hyplus-bg-container);
+		border: 1px solid var(--hyplus-border-color-light);
 		border-radius: 14px;
-		box-shadow: 0 2px 6px rgba(0, 64, 128, 0.05);
+		box-shadow: 0 2px 6px var(--hyplus-shadow-light);
 		padding: 16px 22px 12px 22px;
 		display: inline-block;
 		max-width: 100%;
@@ -188,7 +188,7 @@ function hyplus_output_toc_scripts() {
 		text-align: center;
 		margin-bottom: 10px;
 		font-weight: bold;
-		color: #333;
+		color: var(--hyplus-text-primary);
 		padding: 0;
 	}
     .hyplus-toc-container[data-toc-mode="post"] .hyplus-toc-content ul li.level-2 { margin-left: 12px; }
