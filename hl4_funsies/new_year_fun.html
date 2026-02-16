@@ -1,0 +1,162 @@
+<div id="launcher-container"></div>
+<canvas id="firework-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10000;"></canvas>
+
+<style>
+    /* 使用更具体的选择器确保优先级 */
+    #launcher-container .firework-launcher {
+        cursor: pointer !important;
+        position: fixed !important;
+        z-index: 99999 !important;
+        user-select: none !important;
+        
+        /* 强制大小 */
+        width: 80px !important;  /* 稍微增加容器宽度确保不被裁剪 */
+        height: 80px !important;
+        font-size: 60px !important; /* 再次放大 Emoji */
+        line-height: 80px !important;
+        text-align: center !important;
+        
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        
+        /* 动画过渡 */
+        transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.3)) !important;
+        background: transparent !important;
+    }
+
+    /* 悬停效果：放大 */
+    #launcher-container .firework-launcher:hover {
+        transform: scale(1.05) !important;
+    }
+
+    /* 点击效果：缩小反馈 */
+    #launcher-container .firework-launcher:active {
+        transform: scale(0.95) !important;
+        transition: transform 0.05s !important;
+    }
+</style>
+
+<script>
+(function() {
+    const canvas = document.getElementById('firework-canvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('launcher-container');
+    const launcherCount = 3;
+    let launchers = [];
+
+    // 初始化
+    function init() {
+        for (let i = 0; i < launcherCount; i++) {
+            const el = document.createElement('div');
+            el.className = 'firework-launcher';
+            el.innerHTML = '🧨';
+            container.appendChild(el);
+
+            launchers.push({
+                el: el,
+                x: Math.random() * (window.innerWidth - 100) + 50,
+                y: Math.random() * (window.innerHeight - 100) + 50,
+                velX: (Math.random() - 0.5) * 1.2,
+                velY: (Math.random() - 0.5) * 1.2,
+                size: 80
+            });
+        }
+    }
+
+    // 游荡动画
+    function move() {
+        launchers.forEach(l => {
+            l.x += l.velX;
+            l.y += l.velY;
+
+            if (l.x <= 0 || l.x >= window.innerWidth - l.size) l.velX *= -1;
+            if (l.y <= 0 || l.y >= window.innerHeight - l.size) l.velY *= -1;
+
+            // 使用 translate3d 性能更好，且不干扰 scale
+            l.el.style.left = l.x + 'px';
+            l.el.style.top = l.y + 'px';
+        });
+        requestAnimationFrame(move);
+    }
+
+    // --- 烟花引擎 ---
+    let particles = [];
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+        constructor(x, y, color, power) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.velocity = {
+                x: (Math.random() - 0.5) * power,
+                y: (Math.random() - 0.5) * power
+            };
+            this.alpha = 1;
+            this.friction = 0.95;
+            this.gravity = 0.15;
+        }
+        draw() {
+            ctx.globalAlpha = this.alpha;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
+        update() {
+            this.velocity.x *= this.friction;
+            this.velocity.y *= this.friction;
+            this.velocity.y += this.gravity;
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+            this.alpha -= 0.012;
+        }
+    }
+
+    function explode() {
+        const x = Math.random() * (window.innerWidth - 200) + 100;
+        const y = Math.random() * (window.innerHeight - 200) + 100;
+        const color = `hsl(${Math.random() * 360}, 100%, 65%)`;
+        const power = Math.random() * 18 + 10; 
+        for (let i = 0; i < 120; i++) particles.push(new Particle(x, y, color, power));
+    }
+
+    function launchEffect() {
+        let count = Math.random() < 0.005 ? 10 : Math.floor(Math.random() * 4) + 3;
+        for (let i = 0; i < count; i++) {
+            setTimeout(explode, i * 300);
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+            if (p.alpha > 0) {
+                p.update();
+                p.draw();
+            } else {
+                particles.splice(i, 1);
+            }
+        });
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    move();
+    animate();
+
+    // 点击事件
+    container.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains('firework-launcher')) {
+            launchEffect();
+        }
+    });
+})();
+</script>
