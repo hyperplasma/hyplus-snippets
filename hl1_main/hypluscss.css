@@ -24,7 +24,7 @@
 	--hyplus-bg-code: #e4edf7;
 	--hyplus-bg-settings: #f8f9fa;
 	--hyplus-bg-button-light: #ecf5f8;
-	--hyplus-bg-button-hover: #eaf6ff;
+	--hyplus-bg-button-hover: #d0ecf8;
 	--hyplus-bg-button-active: #dbeaf5;
 	--hyplus-bg-search-input: #fff;
 	
@@ -74,38 +74,41 @@
 	/* 搜索输入框 */
 	--hyplus-search-border: #c4e0f7;
 	--hyplus-search-text: #175082;
+	
+	/* 页头页脚阴影颜色 */
+	--hyplus-header-footer-shadow: rgba(102, 139, 139, 0.55);
 }
 
 /* 新春快乐 - 红色气氛 */
 body.hyplus-atmosphere-red,
 body.hyplus-atmosphere-red :root {
 	/* 主链接颜色 - 红色 */
-	--hyplus-primary-link-color: #c41c3b;
-	--hyplus-primary-link-active: #b01e35;
-	--hyplus-link-hover-color: #ff4757;
+	--hyplus-primary-link-color: #d94556;
+	--hyplus-primary-link-active: #c94655;
+	--hyplus-link-hover-color: #ff7a88;
 	
 	/* 边框和容器颜色 - 红色系 */
 	--hyplus-border-color-main: rgba(192,28,59, 0.23);
-	--hyplus-border-color-light: #f5a5a5;
+	--hyplus-border-color-light: #f5c0c0;
 	--hyplus-border-color-neutral: #ddd;
-	--hyplus-border-color-light2: #ff9999;
+	--hyplus-border-color-light2: #ffb3b3;
 	
 	/* 背景颜色 - 红色调 */
 	--hyplus-bg-overall: rgba(255,200,200,0.05);
-	--hyplus-bg-container: #fffbfb;
-	--hyplus-bg-code: #fce4e4;
-	--hyplus-bg-settings: #fff5f5;
-	--hyplus-bg-button-light: #ffe6e6;
-	--hyplus-bg-button-hover: #ffdddd;
-	--hyplus-bg-button-active: #ffd1d1;
+	--hyplus-bg-container: #fffcfc;
+	--hyplus-bg-code: #fdf0f0;
+	--hyplus-bg-settings: #fffbfb;
+	--hyplus-bg-button-light: #fff0f0;
+	--hyplus-bg-button-hover: #fce2e2;
+	--hyplus-bg-button-active: #ffc0c0;
 	--hyplus-bg-search-input: #fff;
 	
 	/* 文字颜色 - 红色系 */
 	--hyplus-text-primary: #333;
-	--hyplus-text-nav-link: #c41c3b;
-	--hyplus-text-nav-link-hover: #a01830;
-	--hyplus-text-heading: #8b0000;
-	--hyplus-text-title: #7a0000;
+	--hyplus-text-nav-link: #d94556;
+	--hyplus-text-nav-link-hover: #e25d6c;
+	--hyplus-text-heading: #914242;
+	--hyplus-text-title: #d86060;
 	--hyplus-text-quote: #6b3030;
 	--hyplus-text-gray: gray;
 	--hyplus-text-code: rgba(139, 0, 0, 0.6);
@@ -121,23 +124,23 @@ body.hyplus-atmosphere-red :root {
 	--hyplus-shadow-input: rgba(0,0,0,0.03);
 	
 	/* 按钮颜色 - 红色气氛 */
-	--hyplus-btn-scroll-top-bg: #e74c3c;
-	--hyplus-btn-scroll-top-hover: #ea6153;
-	--hyplus-btn-scroll-top-active: #c0392b;
-	--hyplus-btn-nav-bg: #e74c3c;
-	--hyplus-btn-nav-hover: #ec7063;
-	--hyplus-btn-nav-active: #c0392b;
-	--hyplus-btn-back-bg: #e67e22;
-	--hyplus-btn-back-hover: #eb984e;
-	--hyplus-btn-back-active: #ba4a00;
-	--hyplus-btn-refresh-bg: #e74c3c;
-	--hyplus-btn-refresh-hover: #ec7063;
-	--hyplus-btn-refresh-active: #c0392b;
-	--hyplus-btn-home-bg: #c0392b;
-	--hyplus-btn-home-hover: #a93226;
-	--hyplus-btn-back-control: #c41c3b;
-	--hyplus-btn-maximize-control: #e74c3c;
-	--hyplus-btn-close-control: #d9534f;
+	--hyplus-btn-scroll-top-bg: #f07a6f;
+	--hyplus-btn-scroll-top-hover: #f39385;
+	--hyplus-btn-scroll-top-active: #e8a09d;
+	--hyplus-btn-nav-bg: #f07a6f;
+	--hyplus-btn-nav-hover: #f39385;
+	--hyplus-btn-nav-active: #e8a09d;
+	--hyplus-btn-back-bg: #f0a070;
+	--hyplus-btn-back-hover: #f5b890;
+	--hyplus-btn-back-active: #d9876f;
+	--hyplus-btn-refresh-bg: #f07a6f;
+	--hyplus-btn-refresh-hover: #f39385;
+	--hyplus-btn-refresh-active: #e8a09d;
+	--hyplus-btn-home-bg: #e8a09d;
+	--hyplus-btn-home-hover: #d9908a;
+	--hyplus-btn-back-control: #d94556;
+	--hyplus-btn-maximize-control: #f07a6f;
+	--hyplus-btn-close-control: #e8a09d;
 	
 	/* 进度条颜色 - 红色 */
 	--hyplus-progress-bar-color: #e74c3c;
@@ -146,6 +149,9 @@ body.hyplus-atmosphere-red :root {
 	/* 搜索输入框 */
 	--hyplus-search-border: #ff9999;
 	--hyplus-search-text: #c41c3b;
+	
+	/* 页头页脚阴影颜色 - 红色系 */
+	--hyplus-header-footer-shadow: rgba(229, 87, 75, 0.35);
 }
 
 /* 紫色气氛 */
@@ -176,8 +182,8 @@ body.hyplus-atmosphere-purple :root {
 	--hyplus-text-primary: #333;
 	--hyplus-text-nav-link: #7b1fa2;
 	--hyplus-text-nav-link-hover: #6a1b9a;
-	--hyplus-text-heading: #512da8;
-	--hyplus-text-title: #4a148c;
+	--hyplus-text-heading: #8b6bc8;
+	--hyplus-text-title: #8050b8;
 	--hyplus-text-quote: #5e35b1;
 	--hyplus-text-gray: gray;
 	--hyplus-text-code: rgba(123, 31, 162, 0.6);
@@ -195,19 +201,19 @@ body.hyplus-atmosphere-purple :root {
 	/* 按钮颜色 - 紫色气氛 */
 	--hyplus-btn-scroll-top-bg: #9c27b0;
 	--hyplus-btn-scroll-top-hover: #ab47bc;
-	--hyplus-btn-scroll-top-active: #7b1fa2;
+	--hyplus-btn-scroll-top-active: #b366d0;
 	--hyplus-btn-nav-bg: #9c27b0;
 	--hyplus-btn-nav-hover: #ab47bc;
-	--hyplus-btn-nav-active: #7b1fa2;
-	--hyplus-btn-back-bg: #7b1fa2;
-	--hyplus-btn-back-hover: #8e24aa;
-	--hyplus-btn-back-active: #6a1b9a;
+	--hyplus-btn-nav-active: #b366d0;
+	--hyplus-btn-back-bg: #b366d0;
+	--hyplus-btn-back-hover: #a450b8;
+	--hyplus-btn-back-active: #a450b8;
 	--hyplus-btn-refresh-bg: #9c27b0;
 	--hyplus-btn-refresh-hover: #ab47bc;
-	--hyplus-btn-refresh-active: #7b1fa2;
-	--hyplus-btn-home-bg: #7b1fa2;
-	--hyplus-btn-home-hover: #6a1b9a;
-	--hyplus-btn-back-control: #7b1fa2;
+	--hyplus-btn-refresh-active: #b366d0;
+	--hyplus-btn-home-bg: #b366d0;
+	--hyplus-btn-home-hover: #a450b8;
+	--hyplus-btn-back-control: #b366d0;
 	--hyplus-btn-maximize-control: #9c27b0;
 	--hyplus-btn-close-control: #ab47bc;
 	
@@ -218,6 +224,9 @@ body.hyplus-atmosphere-purple :root {
 	/* 搜索输入框 */
 	--hyplus-search-border: #e1bee7;
 	--hyplus-search-text: #7b1fa2;
+	
+	/* 页头页脚阴影颜色 - 紫色系 */
+	--hyplus-header-footer-shadow: rgba(156, 39, 176, 0.35);
 }
 
 /* 翠绿意境 - 绿色气氛 */
@@ -248,8 +257,8 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-text-primary: #333;
 	--hyplus-text-nav-link: #00796b;
 	--hyplus-text-nav-link-hover: #00695c;
-	--hyplus-text-heading: #00695c;
-	--hyplus-text-title: #004d40;
+	--hyplus-text-heading: #66a39f;
+	--hyplus-text-title: #4d8a83;
 	--hyplus-text-quote: #2d5c54;
 	--hyplus-text-gray: gray;
 	--hyplus-text-code: rgba(0, 121, 107, 0.6);
@@ -267,19 +276,19 @@ body.hyplus-atmosphere-green :root {
 	/* 按钮颜色 - 绿色气氛 */
 	--hyplus-btn-scroll-top-bg: #26a69a;
 	--hyplus-btn-scroll-top-hover: #4db8aa;
-	--hyplus-btn-scroll-top-active: #00897b;
+	--hyplus-btn-scroll-top-active: #66b3ac;
 	--hyplus-btn-nav-bg: #26a69a;
 	--hyplus-btn-nav-hover: #4db8aa;
-	--hyplus-btn-nav-active: #00897b;
-	--hyplus-btn-back-bg: #00796b;
-	--hyplus-btn-back-hover: #00897b;
-	--hyplus-btn-back-active: #004d40;
+	--hyplus-btn-nav-active: #66b3ac;
+	--hyplus-btn-back-bg: #66a39f;
+	--hyplus-btn-back-hover: #66b3ac;
+	--hyplus-btn-back-active: #4d8a83;
 	--hyplus-btn-refresh-bg: #26a69a;
 	--hyplus-btn-refresh-hover: #4db8aa;
-	--hyplus-btn-refresh-active: #00897b;
-	--hyplus-btn-home-bg: #004d40;
-	--hyplus-btn-home-hover: #003d33;
-	--hyplus-btn-back-control: #00796b;
+	--hyplus-btn-refresh-active: #66b3ac;
+	--hyplus-btn-home-bg: #4d8a83;
+	--hyplus-btn-home-hover: #4d7a71;
+	--hyplus-btn-back-control: #66a39f;
 	--hyplus-btn-maximize-control: #26a69a;
 	--hyplus-btn-close-control: #4db8aa;
 	
@@ -290,6 +299,9 @@ body.hyplus-atmosphere-green :root {
 	/* 搜索输入框 */
 	--hyplus-search-border: #4db6ac;
 	--hyplus-search-text: #00796b;
+	
+	/* 页头页脚阴影颜色 - 绿色系 */
+	--hyplus-header-footer-shadow: rgba(38, 166, 154, 0.35);
 }
 
 a:hover {
@@ -403,7 +415,7 @@ ol li {
 	background-color: white;
 
 	/* border: 1px solid LightGray; */
-	box-shadow: 0 0 20px rgba(102,139,139,0.55) !important;
+	box-shadow: 0 0 20px var(--hyplus-header-footer-shadow) !important;
 }
 
 /* Destroy paddings in Header */
@@ -426,7 +438,7 @@ header .inside-header ol li {
 	position: relative;
 	/* border: 1px solid LightGray; */
 	z-index: 110;
-	box-shadow: 0 0 20px rgba(102,139,139,0.55);
+	box-shadow: 0 0 20px var(--hyplus-header-footer-shadow);
 }
 
 header {

@@ -166,7 +166,7 @@
 						<select id="atmosphereSelect" class="font-select" onchange="changeAtmosphere()">
 							<option value="default">Hyplus水蓝</option>
 							<option value="red">新春快乐</option>
-							<option value="purple">紫色</option>
+							<option value="purple">紫气东来</option>
 							<option value="green">翠绿意境</option>
 						</select>
 					</div>
@@ -541,7 +541,7 @@
     }
 
     .back-button {
-        background-color: var(--hyplus-btn-back-control);
+        background-color: purple;
         color: white;
         display: flex;
         align-items: center;
@@ -555,7 +555,7 @@
     }
 
     .maximize-button {
-        background-color: var(--hyplus-btn-maximize-control);
+        background-color: #4CAF50;
     }
 
     .maximize-button:hover {
@@ -567,7 +567,7 @@
     }
 
     .close-button {
-        background-color: var(--hyplus-btn-close-control);
+        background-color: red;
     }
 
     .close-button:hover {
