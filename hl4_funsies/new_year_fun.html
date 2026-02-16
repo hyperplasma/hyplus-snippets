@@ -1,37 +1,29 @@
 <div id="launcher-container"></div>
-<canvas id="firework-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10000;"></canvas>
+<canvas id="firework-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999;"></canvas>
 
 <style>
-    /* 使用更具体的选择器确保优先级 */
     #launcher-container .firework-launcher {
         cursor: pointer !important;
         position: fixed !important;
         z-index: 99999 !important;
         user-select: none !important;
-        
-        /* 强制大小 */
-        width: 80px !important;  /* 稍微增加容器宽度确保不被裁剪 */
+        width: 80px !important;
         height: 80px !important;
-        font-size: 60px !important; /* 再次放大 Emoji */
+        font-size: 60px !important;
         line-height: 80px !important;
         text-align: center !important;
-        
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        
-        /* 动画过渡 */
         transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.3)) !important;
         background: transparent !important;
     }
 
-    /* 悬停效果：放大 */
     #launcher-container .firework-launcher:hover {
         transform: scale(1.05) !important;
     }
 
-    /* 点击效果：缩小反馈 */
     #launcher-container .firework-launcher:active {
         transform: scale(0.95) !important;
         transition: transform 0.05s !important;
@@ -46,7 +38,6 @@
     const launcherCount = 3;
     let launchers = [];
 
-    // 初始化
     function init() {
         for (let i = 0; i < launcherCount; i++) {
             const el = document.createElement('div');
@@ -65,23 +56,18 @@
         }
     }
 
-    // 游荡动画
     function move() {
         launchers.forEach(l => {
             l.x += l.velX;
             l.y += l.velY;
-
             if (l.x <= 0 || l.x >= window.innerWidth - l.size) l.velX *= -1;
             if (l.y <= 0 || l.y >= window.innerHeight - l.size) l.velY *= -1;
-
-            // 使用 translate3d 性能更好，且不干扰 scale
             l.el.style.left = l.x + 'px';
             l.el.style.top = l.y + 'px';
         });
         requestAnimationFrame(move);
     }
 
-    // --- 烟花引擎 ---
     let particles = [];
     function resize() {
         canvas.width = window.innerWidth;
@@ -91,22 +77,23 @@
     resize();
 
     class Particle {
-        constructor(x, y, color, power) {
+        constructor(x, y, color, speed, angle) {
             this.x = x;
             this.y = y;
             this.color = color;
+            // 核心修改：使用正弦和余弦确保完美的圆形扩散
             this.velocity = {
-                x: (Math.random() - 0.5) * power,
-                y: (Math.random() - 0.5) * power
+                x: Math.cos(angle) * speed,
+                y: Math.sin(angle) * speed
             };
             this.alpha = 1;
-            this.friction = 0.95;
-            this.gravity = 0.15;
+            this.friction = 0.96; // 稍微调高摩擦力，让圆形保持更久
+            this.gravity = 0.12;
         }
         draw() {
             ctx.globalAlpha = this.alpha;
             ctx.beginPath();
-            ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+            ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
             ctx.fillStyle = this.color;
             ctx.fill();
         }
@@ -116,7 +103,7 @@
             this.velocity.y += this.gravity;
             this.x += this.velocity.x;
             this.y += this.velocity.y;
-            this.alpha -= 0.012;
+            this.alpha -= 0.01;
         }
     }
 
@@ -124,8 +111,16 @@
         const x = Math.random() * (window.innerWidth - 200) + 100;
         const y = Math.random() * (window.innerHeight - 200) + 100;
         const color = `hsl(${Math.random() * 360}, 100%, 65%)`;
-        const power = Math.random() * 18 + 10; 
-        for (let i = 0; i < 120; i++) particles.push(new Particle(x, y, color, power));
+        const particleCount = 120;
+        const basePower = Math.random() * 10 + 8;
+
+        for (let i = 0; i < particleCount; i++) {
+            // 核心修改：均匀分布角度 (0 到 2π)
+            const angle = Math.random() * Math.PI * 2;
+            // 使用随机速度使圆心处也有粒子，视觉更饱满
+            const speed = Math.random() * basePower;
+            particles.push(new Particle(x, y, color, speed, angle));
+        }
     }
 
     function launchEffect() {
@@ -136,7 +131,10 @@
     }
 
     function animate() {
+        // 使用半透明填充实现淡淡的拖尾效果，增加动感
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         particles.forEach((p, i) => {
             if (p.alpha > 0) {
                 p.update();
@@ -152,7 +150,6 @@
     move();
     animate();
 
-    // 点击事件
     container.addEventListener('mousedown', (e) => {
         if (e.target.classList.contains('firework-launcher')) {
             launchEffect();
