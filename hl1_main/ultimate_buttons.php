@@ -162,12 +162,12 @@
 				<!-- 修改气氛 -->
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<label class="language-label">修改气氛:</label>
+						<label class="language-label">渲染气氛:</label>
 						<select id="atmosphereSelect" class="font-select" onchange="changeAtmosphere()">
-							<option value="default">Hyplus水蓝</option>
-							<option value="red">新春快乐</option>
-							<option value="purple">紫气东来</option>
-							<option value="green">翠绿意境</option>
+							<option value="default">水蓝记忆(Hyplus)</option>
+							<option value="red">艳阳高照(Vermillion)</option>
+							<option value="purple">紫气东来(Violet)</option>
+							<option value="green">翠绿雷凌(Verdant)</option>
 						</select>
 					</div>
 				</div>
@@ -1596,7 +1596,7 @@
 	// ========== 气氛切换功能 ==========
 	/**
 	 * 修改网站整体气氛（颜色主题）
-	 * 可选值: 'default' (Hyplus水蓝), 'red' (新春快乐), 'purple' (紫色), 'green' (翠绿意境)
+	 * 可选值: 'default' (Hyplus水蓝), 'red' , 'purple', 'green'等
 	 */
 	function changeAtmosphere(atmosphere) {
 		// 如果没有传入参数，则从选择器中获取

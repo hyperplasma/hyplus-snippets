@@ -5,7 +5,7 @@
  */
 
 /* ========== 气氛颜色配置系统 ========== */
-/* 默认气氛: Hyplus水蓝 */
+/* 默认气氛: Hyplus水蓝 default */
 :root {
 	/* 主链接颜色 */
 	--hyplus-primary-link-color: #0073aa;
@@ -79,7 +79,7 @@
 	--hyplus-header-footer-shadow: rgba(102, 139, 139, 0.55);
 }
 
-/* 新春快乐 - 红色气氛 */
+/* 红色气氛 */
 body.hyplus-atmosphere-red,
 body.hyplus-atmosphere-red :root {
 	/* 主链接颜色 - 红色 */
@@ -229,7 +229,7 @@ body.hyplus-atmosphere-purple :root {
 	--hyplus-header-footer-shadow: rgba(156, 39, 176, 0.35);
 }
 
-/* 翠绿意境 - 绿色气氛 */
+/* 绿色气氛 */
 body.hyplus-atmosphere-green,
 body.hyplus-atmosphere-green :root {
 	/* 主链接颜色 - 绿色 */
