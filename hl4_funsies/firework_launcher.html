@@ -25,8 +25,14 @@
     }
 
     #launcher-container .firework-launcher:active {
-        transform: scale(0.95) !important;
+        transform: scale(0.9) !important;
         transition: transform 0.05s !important;
+    }
+
+    /* 冷却状态的视觉反馈（可选）：略微透明 */
+    .firework-launcher.cooldown {
+        opacity: 0.7 !important;
+        cursor: default !important;
     }
 </style>
 
@@ -37,20 +43,28 @@
     const container = document.getElementById('launcher-container');
     const launcherCount = 3;
     let launchers = [];
+    let isCoolingDown = false; // 全局冷却状态
+    const COOLDOWN_TIME = 1500; // 点击间隔限制：1.5秒
+
+    function getRandomVelocity() {
+        const speed = Math.random() * 1.2 + 0.8;
+        return (Math.random() < 0.5 ? 1 : -1) * speed;
+    }
 
     function init() {
         for (let i = 0; i < launcherCount; i++) {
             const el = document.createElement('div');
             el.className = 'firework-launcher';
             el.innerHTML = '🧨';
+            el.dataset.index = i;
             container.appendChild(el);
 
             launchers.push({
                 el: el,
                 x: Math.random() * (window.innerWidth - 100) + 50,
                 y: Math.random() * (window.innerHeight - 100) + 50,
-                velX: (Math.random() - 0.5) * 1.2,
-                velY: (Math.random() - 0.5) * 1.2,
+                velX: getRandomVelocity(),
+                velY: getRandomVelocity(),
                 size: 80
             });
         }
@@ -81,13 +95,12 @@
             this.x = x;
             this.y = y;
             this.color = color;
-            // 核心修改：使用正弦和余弦确保完美的圆形扩散
             this.velocity = {
                 x: Math.cos(angle) * speed,
                 y: Math.sin(angle) * speed
             };
             this.alpha = 1;
-            this.friction = 0.96; // 稍微调高摩擦力，让圆形保持更久
+            this.friction = 0.96;
             this.gravity = 0.12;
         }
         draw() {
@@ -111,13 +124,11 @@
         const x = Math.random() * (window.innerWidth - 200) + 100;
         const y = Math.random() * (window.innerHeight - 200) + 100;
         const color = `hsl(${Math.random() * 360}, 100%, 65%)`;
-        const particleCount = 120;
-        const basePower = Math.random() * 10 + 8;
+        const particleCount = 100; // 略微减少单个烟花粒子数以保证连发流畅
+        const basePower = Math.random() * 10 + 10;
 
         for (let i = 0; i < particleCount; i++) {
-            // 核心修改：均匀分布角度 (0 到 2π)
             const angle = Math.random() * Math.PI * 2;
-            // 使用随机速度使圆心处也有粒子，视觉更饱满
             const speed = Math.random() * basePower;
             particles.push(new Particle(x, y, color, speed, angle));
         }
@@ -131,10 +142,7 @@
     }
 
     function animate() {
-        // 使用半透明填充实现淡淡的拖尾效果，增加动感
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
         particles.forEach((p, i) => {
             if (p.alpha > 0) {
                 p.update();
@@ -150,10 +158,33 @@
     move();
     animate();
 
+    // --- 修改点 1: 点击防抖逻辑 ---
     container.addEventListener('mousedown', (e) => {
         if (e.target.classList.contains('firework-launcher')) {
+            if (isCoolingDown) return; // 如果正在冷却，则忽略点击
+
+            isCoolingDown = true;
             launchEffect();
+            
+            const index = e.target.dataset.index;
+            const l = launchers[index];
+            if (l) {
+                l.velX = getRandomVelocity() * 2; 
+                l.velY = getRandomVelocity() * 2;
+            }
+
+            // 冷却结束后重置
+            setTimeout(() => {
+                isCoolingDown = false;
+            }, COOLDOWN_TIME);
         }
     });
+
+    // --- 修改点 2: 30秒自动燃放逻辑 ---
+    setInterval(() => {
+        // 自动燃放不会触发冷却限制，也不会改变烟花筒速度
+        launchEffect();
+    }, 30000); // 30,000 毫秒 = 30 秒
+
 })();
 </script>
