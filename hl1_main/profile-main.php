@@ -15,7 +15,7 @@ function hyplus_profile_shortcode_callback() {
     ?>
     <style>
         body {
-            background: #f6f8fa;
+            background: var(--hyplus-bg-settings);
         }
         .profile-main-row {
             display: flex;
@@ -48,9 +48,9 @@ function hyplus_profile_shortcode_callback() {
         }
         .profile-card,
         .profile-panel {
-            background: #f9fbfd;
+            background: var(--hyplus-bg-container);
             border-radius: 22px;
-            box-shadow: 0 4px 24px #0001, 0 1.5px 6px #0001;
+            box-shadow: 0 4px 24px var(--hyplus-shadow-light), 0 1.5px 6px var(--hyplus-shadow-light);
             padding: 36px 28px 32px 28px;
             text-align: center;
             display: flex;
@@ -71,14 +71,14 @@ function hyplus_profile_shortcode_callback() {
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #3498db;
+            border: 3px solid var(--hyplus-primary-link-color);
             background: #fff;
             margin-bottom: 18px;
-            box-shadow: 0 2px 8px #0002;
+            box-shadow: 0 2px 8px var(--hyplus-shadow-light);
         }
         /* 使用艺术字样式显示个人简介行 */
         .profile-desc {
-            color: #222;
+            color: var(--hyplus-text-primary);
             font-size: 1.13em;
             margin-bottom: 18px;
             font-family: "Dancing Script", "Segoe Script", "Comic Sans MS", cursive, sans-serif;
@@ -113,8 +113,8 @@ function hyplus_profile_shortcode_callback() {
             min-width: 80px;
             max-width: 220px;
             background: #fff;
-            border: 1.5px solid #e0e4ea;
-            color: #3a466e;
+            border: 1.5px solid var(--hyplus-border-color-neutral);
+            color: var(--hyplus-text-nav-link);
             font-size: 1.08em;
             font-weight: 500;
             border-radius: 16px;
@@ -129,9 +129,9 @@ function hyplus_profile_shortcode_callback() {
             box-sizing: border-box;
         }
         .profile-tab-btn.active {
-            background: #f3f6fa;
-            color: #1a2a4a;
-            border: 2px solid #b3c6e0;
+            background: var(--hyplus-bg-button-light);
+            color: var(--hyplus-text-title);
+            border: 2px solid var(--hyplus-border-color-light);
             font-weight: bold;
         }
         .profile-tab-btn svg {
@@ -154,7 +154,7 @@ function hyplus_profile_shortcode_callback() {
         .profile-repo-item {
             background: #fff;
             border-radius: 16px;
-            box-shadow: 0 2px 8px #0001;
+            box-shadow: 0 2px 8px var(--hyplus-shadow-light);
             padding: 18px 18px 12px 18px;
             width: 300px;
             max-width: 100%;
@@ -165,14 +165,14 @@ function hyplus_profile_shortcode_callback() {
         .profile-repo-title {
             font-size: 1.18em;
             font-weight: bold;
-            color: #2563eb;
+            color: var(--hyplus-primary-link-color);
             margin-bottom: 4px;
             text-decoration: none;
             display: block;
             text-align: center;
         }
         .profile-repo-desc {
-            color: #222;
+            color: var(--hyplus-text-primary);
             font-size: 1.08em;
             margin-bottom: 0;
             text-align: center;
@@ -181,7 +181,7 @@ function hyplus_profile_shortcode_callback() {
             width: 100%;
             max-width: 340px;
             border-radius: 12px;
-            box-shadow: 0 2px 8px #0002;
+            box-shadow: 0 2px 8px var(--hyplus-shadow-light);
             margin-bottom: 18px;
             display: block;
             margin-left: auto;
@@ -190,11 +190,11 @@ function hyplus_profile_shortcode_callback() {
         .profile-stats-counts {
             font-size: 1.25em;
             font-weight: bold;
-            color: #222;
+            color: var(--hyplus-text-primary);
             text-align: center;
         }
         .profile-stats-counts .highlight {
-            color: #f39c12;
+            color: var(--hyplus-text-counter);
             font-weight: bold;
         }
         .recent-posts-block-title {
@@ -236,10 +236,10 @@ function hyplus_profile_shortcode_callback() {
         }
         .randpost-select {
             padding: 8px 14px;
-            border: 1.5px solid #e0e4ea;
+            border: 1.5px solid var(--hyplus-border-color-neutral);
             border-radius: 12px;
             background: #fff;
-            color: #3a466e;
+            color: var(--hyplus-text-nav-link);
             font-size: 0.95em;
             cursor: pointer;
             outline: none;
@@ -248,12 +248,12 @@ function hyplus_profile_shortcode_callback() {
             box-sizing: border-box;
         }
         .randpost-select:hover {
-            border-color: #b3c6e0;
-            background: #f8f9fb;
+            border-color: var(--hyplus-border-color-light);
+            background: var(--hyplus-bg-settings);
         }
         .randpost-select:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            border-color: var(--hyplus-primary-link-color);
+            box-shadow: 0 0 0 3px var(--hyplus-shadow-nav);
         }
         .randpost-btn {
             padding: 8px 22px;
@@ -265,7 +265,7 @@ function hyplus_profile_shortcode_callback() {
         }
         .randpost-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 2px 8px var(--hyplus-shadow-nav);
         }
         .randpost-btn:active {
             transform: translateY(0);
