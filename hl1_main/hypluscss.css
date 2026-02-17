@@ -516,12 +516,16 @@ div:has(> .hljs) {
 }
 
 .hyplus-button-shadowier, .hyplus-button, .search-submit, .submit, .button, .post-password-form > p > input {
-	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 6px 12px var(--hyplus-shadow-button);
 	border-radius: 6px;
 	transition: all 0.5s ease;
 	cursor: pointer;
 	background-clip: padding-box;
 	font-weight: bold;
+}
+
+.wp-element-button {
+	background-color: var(--hyplus-progress-dot-color) !important;
 }
 
 .post-password-form > p > input {
