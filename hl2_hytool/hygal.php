@@ -26,14 +26,14 @@ function hygal_unified_handler($atts) {
     <style>
         /* 基础与上传样式 */
         .hyupload-container { margin: 0 0 20px 0; text-align: center; font-family: -apple-system, sans-serif; }
-        #hyupload-drop-zone { border: 2px dashed #cbd5e0; min-height: 100px; border-radius: 12px; background: #f8fafc; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 15px; padding-top: 25px; position: relative; }
-        #hyupload-drop-zone:hover, #hyupload-drop-zone.hover { border-color: #43a5f5; background: #f0f9ff; }
+        #hyupload-drop-zone { border: 2px dashed var(--hyplus-border-color-light2); min-height: 100px; border-radius: 12px; background: var(--hyplus-bg-settings); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 15px; padding-top: 25px; position: relative; }
+        #hyupload-drop-zone:hover, #hyupload-drop-zone.hover { border-color: var(--hyplus-primary-link-color); background: var(--hyplus-bg-button-light); }
         #hyupload-preview-img { max-height: 80px; border-radius: 6px; display: none; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .hyupload-hint { color: #64748b; font-size: 15px; font-weight: 500; pointer-events: none; }
         #hyupload-stats { display: none; padding: 12px; margin-top: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 13px; color: #166534; }
         .hyupload-stat-tag { font-weight: 700; color: #15803d; text-decoration: underline; margin: 0 4px; }
         .hyupload-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin-top: 15px; }
-        .hyupload-input { background: #ffffff !important; border: 1px solid #cbd5e0; border-radius: 6px; padding: 0 12px; font-size: 15px; font-weight: 600; color: #2d3a4b; height: 40px; outline: none; }
+        .hyupload-input { background: var(--hyplus-bg-search-input) !important; border: 1px solid var(--hyplus-border-color-light2); border-radius: 6px; padding: 0 12px; font-size: 15px; font-weight: 600; color: var(--hyplus-text-heading); height: 40px; outline: none; }
         #hyupload-prefix { min-width: 100px; cursor: pointer; }
         #hyupload-title { flex: 1; min-width: 180px; }
         .hyupload-btn-submit { height: 40px; padding: 0 35px !important; cursor: pointer; font-weight: 600; }
@@ -43,7 +43,7 @@ function hygal_unified_handler($atts) {
         .hygal-component-container { margin: 20px 0; text-align: center; display: flex; flex-direction: column; }
         .hyplus-unselectable { -webkit-user-select: none; user-select: none; }
         .hygal-filter-container { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
-        .hygal-input { background: #ffffff !important; border: 1px solid #cbd5e0; border-radius: 6px; padding: 0 12px; font-size: 16px; font-weight: 600; color: #2d3a4b; height: 40px; outline: none; }
+        .hygal-input { background: var(--hyplus-bg-search-input) !important; border: 1px solid var(--hyplus-border-color-light2); border-radius: 6px; padding: 0 12px; font-size: 16px; font-weight: 600; color: var(--hyplus-text-heading); height: 40px; outline: none; }
         .hygal-btn-submit { height: 40px; padding: 0 45px !important; font-size: 16px !important; cursor: pointer; font-weight: 600; }
         
         /* 顶部状态栏布局 */
@@ -54,10 +54,10 @@ function hygal_unified_handler($atts) {
 
         /* 翻页器样式 (共用) */
         .hygal-pager { align-items: center; gap: 2px; display: none; } 
-        .pager-btn { cursor: pointer; padding: 0 6px; font-size: 20px; color: #43a5f5; font-weight: bold; line-height: 1; } 
+        .pager-btn { cursor: pointer; padding: 0 6px; font-size: 20px; color: var(--hyplus-primary-link-color); font-weight: bold; line-height: 1; } 
         .pager-btn.disabled { opacity: 0.5; cursor: default; color: #94a3b8; }
         .pager-text { cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: background 0.2s; font-weight: 600; }
-        .pager-text:hover { background: #f1f5f9; color: #43a5f5; }
+        .pager-text:hover { background: var(--hyplus-bg-button-light); color: var(--hyplus-primary-link-color); }
         
         /* 底部翻页器专用位置 */
         .footer-pager-wrap { margin: 15px 0; display: flex; justify-content: center; }
@@ -67,26 +67,26 @@ function hygal_unified_handler($atts) {
             cursor: pointer; line-height: 1; visibility: hidden; 
             transition: transform 0.2s; padding: 2px; font-family: Arial, sans-serif; font-weight: bold; 
         }
-        .close-btn { color: #ef4444 !important; font-size: 28px !important; }
+        .close-btn { color: var(--hyplus-btn-close-control) !important; font-size: 28px !important; }
         .dl-batch-btn { color: #43a5f5 !important; font-size: 16px !important; }
         .close-btn:hover, .dl-batch-btn:hover { transform: scale(1.2); }
 
         /* 内容区 */
         #hygal-output { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 5px; }
         #hygal-output.loading { height: 0; min-height: 0; overflow: hidden; opacity: 0; }
-        .hygal-item { display: flex; flex-direction: column; background: #fff; border-radius: 4px; border: 1px solid #eef0f2; position: relative; overflow: hidden; }
-        .hygal-img-wrapper { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #f7f8f9; }
+        .hygal-item { display: flex; flex-direction: column; background: var(--hyplus-bg-search-input); border-radius: 4px; border: 1px solid var(--hyplus-border-color-light); position: relative; overflow: hidden; }
+        .hygal-img-wrapper { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: var(--hyplus-bg-settings); }
         .hygal-img-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 !important; }
         .hygal-title { padding: 5px 2px !important; font-size: 12px !important; color: #666 !important; text-align: center; line-height: 1.2 !important; word-wrap: break-word; cursor: default; }
         .is-admin .hygal-title { cursor: pointer; }
         .hygal-item.has-order .hygal-title { background-color: #e7fafd !important; color: #00626b !important; }
-        .hytool-version { margin-top: -1.5em; color: #ccc; font-size: 13px; text-align: right; pointer-events: none; }
+        .hytool-version { margin-top: -1.5em; color: var(--hyplus-border-color-neutral); font-size: 13px; text-align: right; pointer-events: none; }
 
         /* 弹窗 */
         #hygal-admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; justify-content: center; align-items: center; background: rgba(0,0,0,0.25); }
-        .hygal-modal-content { background: #fff; padding: 25px; border: 1px solid #ddd; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5); text-align: left; position: relative; }
+        .hygal-modal-content { background: var(--hyplus-bg-search-input); padding: 25px; border: 1px solid var(--hyplus-border-color-neutral); border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5); text-align: left; position: relative; }
         .hygal-modal-label { display: block; font-size: 13px; color: #666; font-weight: 600; }
-        .hygal-modal-input { width: 100%; margin-top: 6px; margin-bottom: 12px; padding: 8px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .hygal-modal-input { width: 100%; margin-top: 6px; margin-bottom: 12px; padding: 8px; border: 1px solid var(--hyplus-border-color-neutral); border-radius: 8px; font-size: 14px; }
         .hygal-modal-btns { margin-top: 16px; display: flex; gap: 10px; }
         .hygal-btn { flex: 1; padding: 10px; cursor: pointer; font-weight: 600; }
         .hygal-modal-meta { font-size: 12px; color: #999; margin-top: -8px; margin-bottom: 5px; text-align: right; font-family: monospace; }
