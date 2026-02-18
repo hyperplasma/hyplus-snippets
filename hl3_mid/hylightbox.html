@@ -15,13 +15,16 @@
             <button class="hylightbox-btn hylb-zoom-in-btn" title="放大 (+)">+</button>
         </div>
 
+        <div class="hylightbox-download-container hylb-configurable-ui">
+            <button class="hylightbox-btn hylb-download-btn" title="下载图片">↓</button>
+        </div>
+
         <div class="hylightbox-help-container hylb-configurable-ui">
-            <button class="hylightbox-btn hylb-help-btn" title="帮助 (?)">?</button>
             <div class="hylightbox-help-tooltip">
                 <p class="hylb-help-title">快捷键指南</p>
                 <p>切换图片：, / . (或 ← / →)</p>
                 <p>缩放：- / = (或使用滚轮)</p>
-                <p>旋转：R / T </p>
+                <p>旋转：R / T</p>
                 <p>还原位置：0</p>
                 <p>关闭灯箱：ESC (或点击空白区域)</p>
             </div>
@@ -31,7 +34,7 @@
             <button class="hylightbox-btn hylb-close-x-btn" title="关闭 (ESC)">×</button>
         </div>
 
-        <div class="hylb-page-indicator hylb-configurable-ui">1/1</div>
+        <div class="hylb-page-indicator hylb-configurable-ui" title="点击查看快捷键指南">1/1</div>
 
         <div class="hylightbox-rotate-container hylb-configurable-ui">
             <button class="hylightbox-btn hylb-rotate-btn" title="顺时针旋转 (R)">↻</button>
@@ -41,277 +44,468 @@
 </template>
 
 <style>
-    .hylb-ui-hidden { display: none !important; }
+    .hylb-ui-hidden {
+        display: none !important;
+    }
 
     .hylightbox-wrapper {
-        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(0, 0, 0, 0.85); z-index: 999999; 
-        touch-action: none; user-select: none;
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        z-index: 999999;
+        touch-action: none;
+        user-select: none;
     }
-    .hylightbox-wrapper.active { display: block; }
-    
+    .hylightbox-wrapper.active {
+        display: block;
+    }
+
     .hylightbox-image {
-        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        max-width: 90%; max-height: 90%; cursor: grab; z-index: 10;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 90%;
+        max-height: 90%;
+        cursor: grab;
+        z-index: 10;
         transition: transform 0.15s ease-out;
-        box-shadow: 0 5px 35px rgba(0,0,0,0.6);
+        box-shadow: 0 5px 35px rgba(0, 0, 0, 0.6);
         will-change: transform; /* 提升移动端性能 */
     }
-    .hylightbox-image.grabbing { cursor: grabbing; transition: none !important; }
+    .hylightbox-image.grabbing {
+        cursor: grabbing;
+        transition: none !important;
+    }
 
-    #main img { cursor: zoom-in !important; }
+    #main img {
+        cursor: zoom-in !important;
+    }
 
     .hylightbox-btn {
-        border: none !important; color: #ffffff !important; font-size: 20px; cursor: pointer;
-        width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
-        background: transparent !important; outline: none !important; transition: opacity 0.2s;
+        border: none !important;
+        color: #ffffff !important;
+        font-size: 20px;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent !important;
+        outline: none !important;
+        transition: opacity 0.2s;
     }
-    .hylightbox-btn:hover { opacity: 0.6; }
+    .hylightbox-btn:hover {
+        opacity: 0.6;
+    }
 
     /* UI 容器通用样式 */
-    .hylightbox-control-bar, .hylightbox-help-container, .hylightbox-close-container, 
-    .hylightbox-rotate-container, .hylb-page-indicator {
-        position: absolute; background: rgba(30, 30, 30, 0.7); padding: 4px 12px;
-        border-radius: 20px; z-index: 100; display: flex; align-items: center;
+    .hylightbox-control-bar,
+    .hylightbox-help-container,
+    .hylightbox-close-container,
+    .hylightbox-rotate-container,
+    .hylightbox-download-container,
+    .hylb-page-indicator {
+        position: absolute;
+        background: rgba(30, 30, 30, 0.7);
+        padding: 4px 12px;
+        border-radius: 20px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .hylightbox-control-bar { top: 20px; left: 50%; transform: translateX(-50%); gap: 10px; }
-    .hylightbox-help-container { top: 20px; left: 20px; }
-    .hylightbox-close-container { top: 20px; right: 20px; padding: 4px; }
-    
-    .hylightbox-zoom-level { 
-        color: #ffffff !important; font-size: 16px; min-width: 35px; 
-        text-align: center; font-family: Arial, sans-serif;
+    .hylightbox-control-bar {
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        gap: 10px;
+    }
+    .hylightbox-close-container {
+        top: 20px;
+        right: 20px;
+        padding: 4px;
     }
 
-    .hylb-page-indicator { bottom: 20px; right: 20px; color: #ffffff !important; font-size: 11px; font-weight: bold; }
-    .hylightbox-rotate-container { bottom: 20px; left: 20px; gap: 8px; }
+    .hylightbox-zoom-level {
+        color: #ffffff !important;
+        font-size: 16px;
+        min-width: 35px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+
+    .hylb-page-indicator {
+        bottom: 20px;
+        right: 20px;
+        color: #ffffff !important;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer !important;
+        transition: opacity 0.2s;
+    }
+    .hylb-page-indicator:hover {
+        opacity: 0.6;
+    }
+    .hylightbox-help-container {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 0;
+        background: transparent;
+        border: none;
+        display: none !important;
+    }
+    .hylightbox-help-container.visible {
+        display: flex !important;
+    }
+    .hylightbox-download-container {
+        top: 20px;
+        left: 20px;
+        gap: 8px;
+    }
+    .hylightbox-rotate-container {
+        bottom: 20px;
+        left: 20px;
+        gap: 8px;
+    }
 
     .hylightbox-help-tooltip {
-        display: none; position: absolute; top: 45px; left: 0; 
-        background: rgba(20, 20, 20, 0.98); padding: 15px; 
-        border-radius: 12px; color: #eeeeee !important; font-size: 11px; 
-        min-width: 180px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        border: 1px solid rgba(255,255,255,0.15);
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(20, 20, 20, 0.98);
+        padding: 15px;
+        border-radius: 12px;
+        color: #eeeeee !important;
+        font-size: 11px;
+        min-width: 180px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.15);
     }
-    .hylightbox-help-tooltip.visible { display: block; }
-    .hylb-help-title { color: #ffffff !important; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
-    .hylightbox-help-tooltip p { margin: 5px 0; white-space: nowrap; color: #cccccc; }
+    .hylightbox-help-tooltip.visible {
+        display: block;
+    }
+    .hylb-help-title {
+        color: #ffffff !important;
+        font-weight: bold;
+        margin-bottom: 8px;
+        font-size: 12px;
+    }
+    .hylightbox-help-tooltip p {
+        margin: 5px 0;
+        white-space: nowrap;
+        color: #cccccc;
+    }
 
     .hylightbox-nav-btn {
-        position: fixed; top: 50%; transform: translateY(-50%);
-        background: transparent !important; color: #ffffff !important; border: none !important; 
-        font-size: 36px; width: 8%; height: 120px; cursor: pointer; z-index: 50; 
-        display: flex; align-items: center; justify-content: center;
-        transition: opacity 0.2s, background 0.2s; opacity: 0; outline: none !important;
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent !important;
+        color: #ffffff !important;
+        border: none !important;
+        font-size: 36px;
+        width: 8%;
+        height: 120px;
+        cursor: pointer;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+            opacity 0.2s,
+            background 0.2s;
+        opacity: 0;
+        outline: none !important;
         border-radius: 8px;
     }
-    .hylightbox-nav-btn:hover { opacity: 1; background: rgba(255,255,255,0.1) !important; }
-    .hylb-prev-btn { left: 10px; }
-    .hylb-next-btn { right: 10px; }
+    .hylightbox-nav-btn:hover {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
+    .hylb-prev-btn {
+        left: 10px;
+    }
+    .hylb-next-btn {
+        right: 10px;
+    }
 
     @media (max-width: 768px) {
-        .hylightbox-nav-btn { width: 15%; font-size: 28px; height: 100px; }
+        .hylightbox-nav-btn {
+            width: 15%;
+            font-size: 28px;
+            height: 100px;
+        }
     }
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const template = document.getElementById("hylightbox-template");
-    if (!template) return;
-    document.body.appendChild(template.content.cloneNode(true));
+    document.addEventListener("DOMContentLoaded", function () {
+        const template = document.getElementById("hylightbox-template");
+        if (!template) return;
+        document.body.appendChild(template.content.cloneNode(true));
 
-    const wrapper = document.querySelector(".hylightbox-wrapper");
-    const lightboxImg = document.querySelector(".hylightbox-image");
-    const pageIndicator = document.querySelector(".hylb-page-indicator");
-    const zoomLevel = document.querySelector(".hylightbox-zoom-level");
-    const helpTooltip = document.querySelector(".hylightbox-help-tooltip");
+        const wrapper = document.querySelector(".hylightbox-wrapper");
+        const lightboxImg = document.querySelector(".hylightbox-image");
+        const pageIndicator = document.querySelector(".hylb-page-indicator");
+        const zoomLevel = document.querySelector(".hylightbox-zoom-level");
+        const helpTooltip = document.querySelector(".hylightbox-help-tooltip");
+        const helpContainer = document.querySelector(".hylightbox-help-container");
 
-    const state = {
-        isDragging: false,
-        transform: { xOffset: 0, yOffset: 0, scale: 1, rotation: 0 },
-        initialX: 0, initialY: 0,
-        galleryImages: [], currentIndex: -1,
-        dragStartedOnImg: false,
-        clickTarget: null,
-        // 新增：移动端缩放状态
-        initialPinchDistance: 0,
-        initialScale: 1
-    };
-
-    function checkCookieUI() {
-        const getCookie = (name) => {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
+        const state = {
+            isDragging: false,
+            transform: { xOffset: 0, yOffset: 0, scale: 1, rotation: 0 },
+            initialX: 0,
+            initialY: 0,
+            galleryImages: [],
+            currentIndex: -1,
+            dragStartedOnImg: false,
+            clickTarget: null,
+            // 新增：移动端缩放状态
+            initialPinchDistance: 0,
+            initialScale: 1,
         };
-        const shouldHide = getCookie('hideLightboxControls') === 'true';
-        document.querySelectorAll('.hylb-configurable-ui').forEach(el => {
-            el.classList.toggle('hylb-ui-hidden', shouldHide);
-        });
-    }
 
-    function collectImages() {
-        const mainArea = document.getElementById('main') || document.body;
-        state.galleryImages = Array.from(mainArea.querySelectorAll('img')).filter(img => 
-            img.offsetParent !== null && !img.closest('.hylightbox-wrapper')
-        );
-    }
-
-    function openLightbox(target) {
-        checkCookieUI();
-        collectImages();
-        state.currentIndex = state.galleryImages.indexOf(target);
-        if (state.currentIndex === -1) return;
-        resetPos();
-        updateContent();
-        wrapper.classList.add("active");
-        document.body.style.overflow = "hidden";
-    }
-
-    function closeLightbox() {
-        wrapper.classList.remove("active");
-        document.body.style.overflow = "";
-        helpTooltip.classList.remove("visible");
-        resetPos();
-    }
-
-    function updateContent() {
-        const img = state.galleryImages[state.currentIndex];
-        const src = img.getAttribute('data-src') || img.src;
-        lightboxImg.src = src;
-        pageIndicator.textContent = `${state.currentIndex + 1}/${state.galleryImages.length}`;
-        applyTransform();
-    }
-
-    function navigate(dir) {
-        if (state.galleryImages.length <= 1) return;
-        state.currentIndex = (state.currentIndex + dir + state.galleryImages.length) % state.galleryImages.length;
-        updateContent();
-    }
-
-    function resetPos() {
-        state.transform = { xOffset: 0, yOffset: 0, scale: 1, rotation: 0 };
-        applyTransform();
-    }
-
-    function applyTransform() {
-        const { xOffset, yOffset, scale, rotation } = state.transform;
-        lightboxImg.style.transform = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px)) scale(${scale}) rotate(${rotation}deg)`;
-        zoomLevel.textContent = `${Math.round(scale * 100)}%`;
-    }
-
-    function handleZoom(dir) {
-        state.transform.scale *= dir === "in" ? 1.25 : 0.8;
-        applyTransform();
-    }
-
-    // 获取两点间距离（用于移动端缩放）
-    function getDistance(touches) {
-        const dx = touches[0].clientX - touches[1].clientX;
-        const dy = touches[0].clientY - touches[1].clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    function startDrag(e) {
-        if (e.target !== lightboxImg) return;
-        state.isDragging = true;
-        state.dragStartedOnImg = true;
-        lightboxImg.classList.add("grabbing");
-
-        if (e.touches && e.touches.length === 2) {
-            // 处理移动端双指缩放起始
-            state.initialPinchDistance = getDistance(e.touches);
-            state.initialScale = state.transform.scale;
-        } else {
-            // 处理单指/鼠标拖拽起始
-            const x = e.touches ? e.touches[0].clientX : e.clientX;
-            const y = e.touches ? e.touches[0].clientY : e.clientY;
-            state.initialX = x - state.transform.xOffset;
-            state.initialY = y - state.transform.yOffset;
+        function checkCookieUI() {
+            const getCookie = (name) => {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            };
+            const shouldHide = getCookie("hideLightboxControls") === "true";
+            document.querySelectorAll(".hylb-configurable-ui").forEach((el) => {
+                el.classList.toggle("hylb-ui-hidden", shouldHide);
+            });
         }
-        e.stopPropagation();
-    }
 
-    function moveDrag(e) {
-        if (!state.isDragging) return;
+        function collectImages() {
+            const mainArea = document.getElementById("main") || document.body;
+            state.galleryImages = Array.from(mainArea.querySelectorAll("img")).filter((img) => img.offsetParent !== null && !img.closest(".hylightbox-wrapper"));
+        }
 
-        if (e.touches && e.touches.length === 2) {
-            // 移动端双指缩放执行
-            const currentDistance = getDistance(e.touches);
-            if (state.initialPinchDistance > 0) {
-                const ratio = currentDistance / state.initialPinchDistance;
-                state.transform.scale = state.initialScale * ratio;
-                applyTransform();
-            }
-        } else if (!e.touches || e.touches.length === 1) {
-            // 单指/鼠标移动执行
-            const x = e.touches ? e.touches[0].clientX : e.clientX;
-            const y = e.touches ? e.touches[0].clientY : e.clientY;
-            state.transform.xOffset = x - state.initialX;
-            state.transform.yOffset = y - state.initialY;
+        function openLightbox(target) {
+            checkCookieUI();
+            collectImages();
+            state.currentIndex = state.galleryImages.indexOf(target);
+            if (state.currentIndex === -1) return;
+            resetPos();
+            updateContent();
+            wrapper.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeLightbox() {
+            wrapper.classList.remove("active");
+            document.body.style.overflow = "";
+            helpTooltip.classList.remove("visible");
+            helpContainer.classList.remove("visible");
+            resetPos();
+        }
+
+        function updateContent() {
+            const img = state.galleryImages[state.currentIndex];
+            const src = img.getAttribute("data-src") || img.src;
+            lightboxImg.src = src;
+            pageIndicator.textContent = `${state.currentIndex + 1}/${state.galleryImages.length}`;
             applyTransform();
         }
-    }
 
-    function stopDrag() {
-        state.isDragging = false;
-        state.dragStartedOnImg = false;
-        state.initialPinchDistance = 0;
-        lightboxImg.classList.remove("grabbing");
-    }
+        function navigate(dir) {
+            if (state.galleryImages.length <= 1) return;
+            state.currentIndex = (state.currentIndex + dir + state.galleryImages.length) % state.galleryImages.length;
+            updateContent();
+        }
 
-    wrapper.addEventListener("mousedown", (e) => { state.clickTarget = e.target; });
-    wrapper.addEventListener("mouseup", (e) => {
-        if (state.clickTarget === wrapper && e.target === wrapper && !state.dragStartedOnImg) {
+        function resetPos() {
+            state.transform = { xOffset: 0, yOffset: 0, scale: 1, rotation: 0 };
+            applyTransform();
+        }
+
+        function applyTransform() {
+            const { xOffset, yOffset, scale, rotation } = state.transform;
+            lightboxImg.style.transform = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px)) scale(${scale}) rotate(${rotation}deg)`;
+            zoomLevel.textContent = `${Math.round(scale * 100)}%`;
+        }
+
+        function handleZoom(dir) {
+            state.transform.scale *= dir === "in" ? 1.25 : 0.8;
+            applyTransform();
+        }
+
+        function downloadImage() {
+            if (state.galleryImages.length === 0 || state.currentIndex === -1) return;
+            const img = state.galleryImages[state.currentIndex];
+            const src = img.getAttribute("data-src") || img.src;
+            const filename = src.split("/").pop() || "image";
+            const a = document.createElement("a");
+            a.href = src;
+            a.download = filename;
+            a.click();
+        }
+
+        // 获取两点间距离（用于移动端缩放）
+        function getDistance(touches) {
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function startDrag(e) {
+            if (e.target !== lightboxImg) return;
+            state.isDragging = true;
+            state.dragStartedOnImg = true;
+            lightboxImg.classList.add("grabbing");
+
+            if (e.touches && e.touches.length === 2) {
+                // 处理移动端双指缩放起始
+                state.initialPinchDistance = getDistance(e.touches);
+                state.initialScale = state.transform.scale;
+            } else {
+                // 处理单指/鼠标拖拽起始
+                const x = e.touches ? e.touches[0].clientX : e.clientX;
+                const y = e.touches ? e.touches[0].clientY : e.clientY;
+                state.initialX = x - state.transform.xOffset;
+                state.initialY = y - state.transform.yOffset;
+            }
+            e.stopPropagation();
+        }
+
+        function moveDrag(e) {
+            if (!state.isDragging) return;
+
+            if (e.touches && e.touches.length === 2) {
+                // 移动端双指缩放执行
+                const currentDistance = getDistance(e.touches);
+                if (state.initialPinchDistance > 0) {
+                    const ratio = currentDistance / state.initialPinchDistance;
+                    state.transform.scale = state.initialScale * ratio;
+                    applyTransform();
+                }
+            } else if (!e.touches || e.touches.length === 1) {
+                // 单指/鼠标移动执行
+                const x = e.touches ? e.touches[0].clientX : e.clientX;
+                const y = e.touches ? e.touches[0].clientY : e.clientY;
+                state.transform.xOffset = x - state.initialX;
+                state.transform.yOffset = y - state.initialY;
+                applyTransform();
+            }
+        }
+
+        function stopDrag() {
+            state.isDragging = false;
+            state.dragStartedOnImg = false;
+            state.initialPinchDistance = 0;
+            lightboxImg.classList.remove("grabbing");
+        }
+
+        wrapper.addEventListener("mousedown", (e) => {
+            state.clickTarget = e.target;
+        });
+        wrapper.addEventListener("mouseup", (e) => {
+            if (state.clickTarget === wrapper && e.target === wrapper && !state.dragStartedOnImg) {
+                closeLightbox();
+            }
+            state.clickTarget = null;
+        });
+
+        document.addEventListener(
+            "click",
+            (e) => {
+                const mainArea = document.getElementById("main");
+                const img = e.target.closest("img");
+                if (img && mainArea && mainArea.contains(img) && !img.closest(".hylightbox-wrapper")) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openLightbox(img);
+                }
+            },
+            true,
+        );
+
+        document.querySelector(".hylb-prev-btn").onclick = (e) => {
+            e.stopPropagation();
+            navigate(-1);
+        };
+        document.querySelector(".hylb-next-btn").onclick = (e) => {
+            e.stopPropagation();
+            navigate(1);
+        };
+        document.querySelector(".hylb-zoom-in-btn").onclick = (e) => {
+            e.stopPropagation();
+            handleZoom("in");
+        };
+        document.querySelector(".hylb-zoom-out-btn").onclick = (e) => {
+            e.stopPropagation();
+            handleZoom("out");
+        };
+        document.querySelector(".hylb-rotate-btn").onclick = (e) => {
+            e.stopPropagation();
+            state.transform.rotation += 45;
+            applyTransform();
+        };
+        document.querySelector(".hylb-rotate-counter-btn").onclick = (e) => {
+            e.stopPropagation();
+            state.transform.rotation -= 45;
+            applyTransform();
+        };
+        document.querySelector(".hylb-close-x-btn").onclick = (e) => {
+            e.stopPropagation();
             closeLightbox();
-        }
-        state.clickTarget = null;
+        };
+        document.querySelector(".hylb-download-btn").onclick = (e) => {
+            e.stopPropagation();
+            downloadImage();
+        };
+        document.querySelector(".hylb-page-indicator").onclick = (e) => {
+            e.stopPropagation();
+            helpContainer.classList.toggle("visible");
+            helpTooltip.classList.toggle("visible");
+        };
+
+        wrapper.onwheel = (e) => {
+            e.preventDefault();
+            state.transform.scale *= e.deltaY < 0 ? 1.04 : 0.96;
+            applyTransform();
+        };
+
+        document.addEventListener("keydown", (e) => {
+            if (!wrapper.classList.contains("active")) return;
+            const k = e.key;
+            if (k === "," || k === "ArrowLeft") navigate(-1);
+            if (k === "." || k === "ArrowRight") navigate(1);
+            if (k === "=" || k === "+") handleZoom("in");
+            if (k === "-" || k === "_") handleZoom("out");
+            if (k.toLowerCase() === "r") {
+                state.transform.rotation += 45;
+                applyTransform();
+            }
+            if (k.toLowerCase() === "t") {
+                state.transform.rotation -= 45;
+                applyTransform();
+            }
+            if (k === "0") resetPos();
+            if (k === "Escape") closeLightbox();
+        });
+
+        lightboxImg.onmousedown = startDrag;
+        window.onmousemove = moveDrag;
+        window.onmouseup = stopDrag;
+
+        // 针对移动端被动事件监听器的处理
+        lightboxImg.addEventListener("touchstart", startDrag, { passive: false });
+        window.addEventListener("touchmove", moveDrag, { passive: false });
+        window.addEventListener("touchend", stopDrag, { passive: false });
+
+        lightboxImg.ondragstart = (e) => e.preventDefault();
+        checkCookieUI();
     });
-
-    document.addEventListener("click", (e) => {
-        const mainArea = document.getElementById('main');
-        const img = e.target.closest('img');
-        if (img && mainArea && mainArea.contains(img) && !img.closest('.hylightbox-wrapper')) {
-            e.preventDefault(); e.stopPropagation(); openLightbox(img);
-        }
-    }, true);
-
-    document.querySelector(".hylb-prev-btn").onclick = (e) => { e.stopPropagation(); navigate(-1); };
-    document.querySelector(".hylb-next-btn").onclick = (e) => { e.stopPropagation(); navigate(1); };
-    document.querySelector(".hylb-zoom-in-btn").onclick = (e) => { e.stopPropagation(); handleZoom("in"); };
-    document.querySelector(".hylb-zoom-out-btn").onclick = (e) => { e.stopPropagation(); handleZoom("out"); };
-    document.querySelector(".hylb-rotate-btn").onclick = (e) => { e.stopPropagation(); state.transform.rotation += 45; applyTransform(); };
-    document.querySelector(".hylb-rotate-counter-btn").onclick = (e) => { e.stopPropagation(); state.transform.rotation -= 45; applyTransform(); };
-    document.querySelector(".hylb-help-btn").onclick = (e) => { e.stopPropagation(); helpTooltip.classList.toggle("visible"); };
-    document.querySelector(".hylb-close-x-btn").onclick = (e) => { e.stopPropagation(); closeLightbox(); };
-
-    wrapper.onwheel = (e) => { e.preventDefault(); state.transform.scale *= e.deltaY < 0 ? 1.04 : 0.96; applyTransform(); };
-
-    document.addEventListener("keydown", (e) => {
-        if (!wrapper.classList.contains("active")) return;
-        const k = e.key;
-        if (k === "," || k === "ArrowLeft") navigate(-1);
-        if (k === "." || k === "ArrowRight") navigate(1);
-        if (k === "=" || k === "+") handleZoom("in");
-        if (k === "-" || k === "_") handleZoom("out");
-        if (k.toLowerCase() === "r") { state.transform.rotation += 45; applyTransform(); }
-        if (k.toLowerCase() === "t") { state.transform.rotation -= 45; applyTransform(); }
-        if (k === "0") resetPos();
-        if (k === "Escape") closeLightbox();
-    });
-
-    lightboxImg.onmousedown = startDrag;
-    window.onmousemove = moveDrag;
-    window.onmouseup = stopDrag;
-
-    // 针对移动端被动事件监听器的处理
-    lightboxImg.addEventListener('touchstart', startDrag, { passive: false });
-    window.addEventListener('touchmove', moveDrag, { passive: false });
-    window.addEventListener('touchend', stopDrag, { passive: false });
-
-    lightboxImg.ondragstart = (e) => e.preventDefault();
-    checkCookieUI();
-});
 </script>
