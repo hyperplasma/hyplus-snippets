@@ -326,6 +326,19 @@ a:hover {
 	box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
 }
 
+.main-navigation .main-nav ul li:not([class*="current-menu-"]):hover > a,
+.main-navigation .main-nav ul li:not([class*="current-menu-"]):focus > a,
+.main-navigation .main-nav ul li.sfHover:not([class*="current-menu-"]) > a,
+.main-navigation .menu-bar-item:hover > a,
+.main-navigation .menu-bar-item.sfHover > a,
+.main-navigation .main-nav ul li[class*="current-menu-"]:hover > a {
+	color: var(--hyplus-primary-link-color) !important;
+}
+
+.menu-toggle {
+	color: var(--hyplus-primary-link-color) !important;
+}
+
 
 /**
  * HY-sidebar sth CSS 侧边栏

@@ -132,24 +132,23 @@
 
 			<!-- 右列 -->
 			<div class="settings-column">
-				<!-- 字体选择区 -->
+				<!-- 修改气氛 -->
 				<div class="language-selector">
 					<div class="language-selector-row">
-						<span class="language-label">字体选择:</span>
-						<select id="fontSelect" class="font-select">
-							<option value="default">默认字体</option>
-							<option value="times">Times New Roman</option>
-							<option value="bilibili">HarmonyOS Sans</option>
-							<option value="monaco">Monaco</option>
-							<option value="cursive">Ma Shan Zheng</option>
+						<label class="language-label">渲染气氛:</label>
+						<select id="atmosphereSelect" class="font-select" onchange="changeAtmosphere()">
+							<option value="default">水蓝记忆(Hyplus)</option>
+							<option value="red">艳阳高照(Vermillion)</option>
+							<option value="purple">紫气东来(Violet)</option>
+							<option value="green">翠绿雷凌(Verdant)</option>
 						</select>
 					</div>
 				</div>
 
-				<!-- 字体缩放控制区 -->
+				<!-- 字号缩放控制区 -->
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<span class="language-label">字体缩放:</span>
+						<span class="language-label">字号缩放:</span>
 						<div class="font-size-controls">
 							<button id="decreaseFontBtn" class="font-size-btn">-</button>
 							<span id="fontSizeDisplay" class="font-size-display">100%</span>
@@ -159,15 +158,16 @@
 					</div>
 				</div>
 
-				<!-- 修改气氛 -->
+				<!-- 字体选择区 -->
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<label class="language-label">渲染气氛:</label>
-						<select id="atmosphereSelect" class="font-select" onchange="changeAtmosphere()">
-							<option value="default">水蓝记忆(Hyplus)</option>
-							<option value="red">艳阳高照(Vermillion)</option>
-							<option value="purple">紫气东来(Violet)</option>
-							<option value="green">翠绿雷凌(Verdant)</option>
+						<span class="language-label">字体选择:</span>
+						<select id="fontSelect" class="font-select">
+							<option value="default">默认字体</option>
+							<option value="times">Times New Roman</option>
+							<option value="bilibili">HarmonyOS Sans</option>
+							<option value="monaco">Monaco</option>
+							<option value="cursive">Ma Shan Zheng</option>
 						</select>
 					</div>
 				</div>
