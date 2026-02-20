@@ -90,6 +90,8 @@ function hygal_unified_handler($atts) {
         .hygal-modal-btns { margin-top: 16px; display: flex; gap: 10px; }
         .hygal-btn { flex: 1; padding: 10px; cursor: pointer; font-weight: 600; }
         .hygal-modal-meta { font-size: 12px; color: #999; margin-top: -8px; margin-bottom: 5px; text-align: right; font-family: monospace; }
+        .copy-link-btn { color: var(--hyplus-primary-link-color); cursor: pointer; transition: opacity 0.2s; }
+        .copy-link-btn:hover { opacity: 0.7; }
         .hygal-btn-delete { position: absolute; top: 8px; right: 12px; color: #ff4d4f; font-size: 24px; font-weight: bold; line-height: 1; cursor: pointer; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 10; padding: 5px; }
         .hygal-btn-delete:hover { opacity: 1; transform: scale(1.1); }
         .hygal-no-scroll { overflow: hidden !important; width: 100%; }
@@ -108,7 +110,7 @@ function hygal_unified_handler($atts) {
             </select>
             <label class="hygal-modal-label">标题</label>
             <input type="text" id="mod-title" class="hygal-modal-input">
-            <div id="mod-meta" class="hygal-modal-meta">大小: - <br>上传日期: -</div>
+            <div id="mod-meta" class="hygal-modal-meta">大小: - <br>上传日期: -<br>复制链接：<a href="#" data-type="absolute" class="copy-link-btn">绝对</a> | <a href="#" data-type="relative" class="copy-link-btn">相对</a></div>
             <div class="hygal-modal-btns">
                 <button class="hyplus-nav-link hygal-btn hygal-btn-cancel" onclick="closeHyModal()">取消</button>
                 <button class="hyplus-nav-link hygal-btn hygal-btn-save" id="hygal-save-trigger">保存修改</button>
@@ -204,7 +206,7 @@ function hygal_unified_handler($atts) {
 
     jQuery(document).ready(function($) {
         const isAdmin = <?php echo $is_admin_manage; ?>;
-        let currentPage = 1, totalPages = 1, currentTargetId = null, isFetching = false;
+        let currentPage = 1, totalPages = 1, currentTargetId = null, currentImageUrl = null, isFetching = false;
 
         function fetchImages(page = 1, isSwitching = false) {
             isFetching = true;
@@ -302,10 +304,11 @@ function hygal_unified_handler($atts) {
             $('#hygal-output').on('click', '.hygal-title', function() {
                 const $item = $(this).closest('.hygal-item');
                 currentTargetId = $item.data('id');
+                currentImageUrl = $item.find('img').attr('src');
                 $('#mod-order').val($item.attr('data-raw-order'));
                 $('#mod-prefix').val($item.attr('data-current-prefix'));
                 $('#mod-title').val($(this).text());
-                $('#mod-meta').html('大小: ' + $item.attr('data-size') + '<br>日期: ' + $item.attr('data-date'));
+                $('#mod-meta').html('大小: ' + $item.attr('data-size') + '<br>上传日期: ' + $item.attr('data-date') + '<br>复制链接：<a href="#" data-type="absolute" class="copy-link-btn">绝对</a> | <a href="#" data-type="relative" class="copy-link-btn">相对</a>');
                 $('#hygal-admin-modal').css('display', 'flex');
                 $('body').addClass('hygal-no-scroll');
             });
@@ -320,6 +323,43 @@ function hygal_unified_handler($atts) {
                     _ajax_nonce: '<?php echo wp_create_nonce("hygal_min_nonce"); ?>'
                 }, function() { btn.prop('disabled', false).text('保存修改'); closeHyModal(); fetchImages(currentPage, false); });
             });
+            // 复制链接功能
+            $(document).on('click', '.copy-link-btn', function(e) {
+                e.preventDefault();
+                if (!currentImageUrl) {
+                    alert('❌ 无法获取图片链接');
+                    return;
+                }
+                
+                let linkToCopy = currentImageUrl;
+                const linkType = $(this).attr('data-type');
+                
+                if (linkType === 'relative') {
+                    // 转换为相对路径
+                    const url = new URL(linkToCopy, window.location.origin);
+                    linkToCopy = url.pathname;
+                }
+                
+                // 使用现代 Clipboard API
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(linkToCopy).then(() => {
+                        alert('✅ ' + (linkType === 'absolute' ? '绝对' : '相对') + '链接已复制到剪切板');
+                    }).catch(() => {
+                        alert('❌ 复制失败，请重试');
+                    });
+                } else {
+                    // 备选方案：使用旧方法
+                    const $temp = $('<textarea>').val(linkToCopy).appendTo('body').select();
+                    try {
+                        document.execCommand('copy');
+                        alert('✅ ' + (linkType === 'absolute' ? '绝对' : '相对') + '链接已复制到剪切板');
+                    } catch (err) {
+                        alert('❌ 复制失败，请重试');
+                    }
+                    $temp.remove();
+                }
+            });
+            
             $('#hygal-delete-trigger').on('click', function() {
                 if(!currentTargetId) return;
                 
