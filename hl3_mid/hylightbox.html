@@ -16,7 +16,7 @@
         </div>
 
         <div class="hylightbox-download-container hylb-configurable-ui">
-            <button class="hylightbox-btn hylb-download-btn" title="下载图片">↓</button>
+            <button class="hylightbox-btn hylb-open-newtab-btn" title="在新标签页打开">↗</button>
         </div>
 
         <div class="hylightbox-help-container hylb-configurable-ui">
@@ -341,15 +341,11 @@
             applyTransform();
         }
 
-        function downloadImage() {
+        function openImageInNewTab() {
             if (state.galleryImages.length === 0 || state.currentIndex === -1) return;
             const img = state.galleryImages[state.currentIndex];
             const src = img.getAttribute("data-src") || img.src;
-            const filename = src.split("/").pop() || "image";
-            const a = document.createElement("a");
-            a.href = src;
-            a.download = filename;
-            a.click();
+            window.open(src, "_blank");
         }
 
         // 获取两点间距离（用于移动端缩放）
@@ -461,9 +457,9 @@
             e.stopPropagation();
             closeLightbox();
         };
-        document.querySelector(".hylb-download-btn").onclick = (e) => {
+        document.querySelector(".hylb-open-newtab-btn").onclick = (e) => {
             e.stopPropagation();
-            downloadImage();
+            openImageInNewTab();
         };
         document.querySelector(".hylb-page-indicator").onclick = (e) => {
             e.stopPropagation();
