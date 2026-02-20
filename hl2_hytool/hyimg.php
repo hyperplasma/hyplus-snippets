@@ -2,10 +2,10 @@
 /**
  * HyImg - 异步获取并展示图片的短代码插件
  * Description: 通过[hyimg]短代码实现异步加载图片的功能
- * Usage: [hyimg url="example.com/image.jpg" title="图片" width="80%" height="auto"]
+ * Usage: [hyimg src="example.com/image.jpg" title="图片" width="80%" height="auto"]
  * 
  * Parameters:
- * - url: 图片URL（必需）。相对路径会自动加上本站域名
+ * - src: 图片URL（必需）。相对路径会自动加上本站域名
  * - title: 按钮文字（可选，默认为"图片"）
  * - width: 图片宽度（可选，默认为100%）支持百分比和px
  * - height: 图片高度（可选，默认为auto）支持百分比和px
@@ -20,19 +20,19 @@ add_shortcode('hyimg', 'hyimg_shortcode_handler');
 function hyimg_shortcode_handler($atts) {
     // 解析短代码参数，设置默认值
     $atts = shortcode_atts(array(
-        'url'    => '',
+        'src'    => '',
         'title'  => '图片',
         'width'  => '100%',
         'height' => 'auto'
     ), $atts, 'hyimg');
 
     // 验证URL参数
-    if (empty($atts['url'])) {
-        return '<p style="color: #d9534f; font-weight: bold;">⚠ HyImg: URL参数为必需</p>';
+    if (empty($atts['src'])) {
+        return '<p style="color: #d9534f; font-weight: bold;">⚠ HyImg: src参数为必需</p>';
     }
 
     // 处理图片URL
-    $img_url = $atts['url'];
+    $img_url = $atts['src'];
     
     // 如果是相对路径（不以http开头），则加上本站域名
     if (strpos($img_url, 'http') !== 0) {
@@ -66,7 +66,7 @@ function hyimg_shortcode_handler($atts) {
         <div 
             id="<?php echo $safe_id; ?>" 
             class="hyimg-display" 
-            style="margin-top: 15px; display: none; text-align: center; min-height: 50px; display: flex; align-items: center; justify-content: center;">
+            style="margin-top: 15px; display: none; text-align: center; align-items: center; justify-content: center;">
         </div>
     </div>
     <?php
@@ -110,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (display.style.display === 'none' || display.style.display === '') {
             // 显示
             display.style.display = 'flex';
+            display.style.minHeight = '50px';
 
             // 如果还没有加载过，则异步加载
             if (!hyimgCache[toggleId]) {
@@ -128,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     img.onload = function() {
                         display.innerHTML = '';
                         display.appendChild(img);
+                        display.style.minHeight = 'auto';
                         hyimgCache[toggleId] = true;
                         delete display.dataset.hyimgLoading;
                         display.style.display = 'flex';
