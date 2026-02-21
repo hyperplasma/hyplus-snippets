@@ -140,7 +140,7 @@ body.hyplus-atmosphere-red :root {
 	--hyplus-btn-home-hover: #d9908a;
 	--hyplus-btn-back-control: #d94556;
 	--hyplus-btn-maximize-control: #f07a6f;
-	--hyplus-btn-close-control: #e8a09d;
+	--hyplus-btn-close-control: red;
 	
 	/* 进度条颜色 - 红色 */
 	--hyplus-progress-bar-color: #e74c3c;
@@ -215,7 +215,7 @@ body.hyplus-atmosphere-purple :root {
 	--hyplus-btn-home-hover: #a450b8;
 	--hyplus-btn-back-control: #b366d0;
 	--hyplus-btn-maximize-control: #9c27b0;
-	--hyplus-btn-close-control: #ab47bc;
+	--hyplus-btn-close-control: red;
 	
 	/* 进度条颜色 - 紫色 */
 	--hyplus-progress-bar-color: #9c27b0;
@@ -290,7 +290,7 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-btn-home-hover: #4d7a71;
 	--hyplus-btn-back-control: #66a39f;
 	--hyplus-btn-maximize-control: #26a69a;
-	--hyplus-btn-close-control: #4db8aa;
+	--hyplus-btn-close-control: red;
 	
 	/* 进度条颜色 - 绿色 */
 	--hyplus-progress-bar-color: #26a69a;
@@ -309,7 +309,7 @@ a {
 	color: var(--hyplus-primary-link-color);
 }
 
-a:hover {
+a:hover, a:focus, a:active{
 	color: var(--hyplus-link-hover-color);
 }
 
