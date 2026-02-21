@@ -1636,6 +1636,11 @@
 		}
 	}
 
+	// 在DOMContentLoaded时立即应用气氛，避免白色遮罩消失时闪烁
+	document.addEventListener('DOMContentLoaded', function() {
+		initAtmosphere();
+	});
+
 	// 页面加载完成后的初始化
 	window.onload = function() {
 		// 首先切换到上次访问的页面（确保切换功能正常工作）
@@ -1644,9 +1649,6 @@
 
 		// 初始化清空搜索框功能
 		setupClearSearchButton();
-
-		// 初始化气氛
-		initAtmosphere();
 
 		// 初始化字体选择
 		const fontSelect = document.getElementById('fontSelect');

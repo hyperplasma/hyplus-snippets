@@ -371,32 +371,20 @@ p {
 	margin-bottom: 14px;	*/
 }
 
-/* 增加无序列表项之间的间隙 */
-/*
-ul {
-margin-top: 0.5em;
-margin-bottom: 1em;
-}
-*/
-
+/* 调整各种列表项的间隙等属性 */
 ul li {
 	margin-top: 0.5em; /* 列表顶部间隙 */
 	margin-bottom: 0.5em; /* 增加列表项之间的间隙 */
 }
-
-/* 增加有序列表项之间的间隙 */
-/*
-ol {
-margin-top: 0.5em;
-margin-bottom: 1em;
-}
-*/
 
 ol li {
 	margin-top: 0.5em; /* 列表顶部间隙 */
 	margin-bottom: 0.5em; /* 增加列表项之间的间隙 */
 }
 
+#main ul li:not([class*="level-"]), #main ol li {
+	margin-left: -1em;
+}
 
 /**
  * HY-Move comment textarea above comments, etc. CSS 评论框移动到评论区上方
