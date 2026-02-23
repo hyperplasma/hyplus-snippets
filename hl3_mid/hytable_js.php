@@ -7,15 +7,10 @@
 
 // 使用 wp_footer 钩子将脚本注入到页面底部
 add_action('wp_footer', function() {
-    // 仅在前台页面执行，不在管理后台运行
     if (is_admin()) return;
     ?>
     <script type="text/javascript">
     (function() {
-        /**
-         * HyTable.js - 自动合并 Markdown 表格纵向空白单元格
-         * 逻辑基于用户验证过的“稳定版”进行性能优化
-         */
         const mergeTableRows = () => {
             // 性能优化：优先定位 #main 区域，若不存在则扫描整个 body
             const container = document.querySelector('#main') || document.body;
