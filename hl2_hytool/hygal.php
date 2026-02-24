@@ -2,7 +2,7 @@
 /**
  * Plugin Name: HyGal 极致画廊 (Dual Pager Edition)
  * Description: 集成上传、管理、上下双翻页组件、批量下载功能。修复了顶部翻页丢失问题。
- * Version: 1.5.0
+ * Version: 1.5.0.1
  */
 
 add_shortcode('hygal', 'hygal_unified_handler');
@@ -102,7 +102,7 @@ function hygal_unified_handler($atts) {
             <div id="hygal-delete-trigger" class="hygal-btn-delete" title="删除此图片">🗑️</div>
             <label class="hygal-modal-label">权重评分（数值越大越靠前）</label>
             <input type="number" id="mod-order" class="hygal-modal-input" placeholder="无">
-            <label class="hygal-modal-label">修改分类</label>
+            <label class="hygal-modal-label">分类</label>
             <select id="mod-prefix" class="hygal-modal-input">
                 <?php foreach ($tag_list as $tag): ?>
                     <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
@@ -110,7 +110,7 @@ function hygal_unified_handler($atts) {
             </select>
             <label class="hygal-modal-label">标题</label>
             <input type="text" id="mod-title" class="hygal-modal-input">
-            <div id="mod-meta" class="hygal-modal-meta">大小: - <br>上传日期: -<br>复制链接：<a href="#" data-type="absolute" class="copy-link-btn">绝对</a> | <a href="#" data-type="relative" class="copy-link-btn">相对</a></div>
+            <div id="mod-meta" class="hygal-modal-meta">大小: - <br>上传日期: -<br>复制路径: <a href="#" data-type="absolute" class="copy-link-btn">绝对</a> | <a href="#" data-type="relative" class="copy-link-btn">相对</a></div>
             <div class="hygal-modal-btns">
                 <button class="hyplus-nav-link hygal-btn hygal-btn-cancel" onclick="closeHyModal()">取消</button>
                 <button class="hyplus-nav-link hygal-btn hygal-btn-save" id="hygal-save-trigger">保存修改</button>
@@ -187,7 +187,7 @@ function hygal_unified_handler($atts) {
                 </div>
             </div>
 
-            <div class="hytool-version">HyGal v1.5.0</div>
+            <div class="hytool-version">HyGal v1.5.0.1</div>
         </div>
     </div>
 
