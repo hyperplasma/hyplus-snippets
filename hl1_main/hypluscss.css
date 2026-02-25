@@ -499,7 +499,7 @@ div:has(> .hljs) {
 }
 
 .footnotes ol {
-	margin-left: 25px;
+	margin-left: 2.2em;
 	font-size: 0.85em;
 	list-style-type: decimal;
 }
