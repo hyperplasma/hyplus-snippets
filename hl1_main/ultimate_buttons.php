@@ -791,7 +791,7 @@
         transition: all 0.2s ease;
     }
 
-    .font-size-btn:hover {
+    .font-size-btn:hover, .font-size-btn:focus {
         color: var(--hyplus-text-primary);
         background-color: #f0f0f0;
     }
