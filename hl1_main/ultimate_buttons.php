@@ -983,7 +983,10 @@
 		} else {
 			showHeaderFooter();
 			showSidebar();
-			setSidebarRadioGroupEnabled(true);
+			// 在非移动端下才启用侧边栏单选群
+			if (window.innerWidth > 768) {
+				setSidebarRadioGroupEnabled(true);
+			}
 			localStorage.setItem('headerFooterAlwaysHidden', 'false');
 		}
 	}
@@ -1269,6 +1272,27 @@
 		} else {
 			radioGroup.classList.add('disabled');
 			radios.forEach(radio => radio.disabled = true);
+		}
+	}
+
+	function setHeaderFooterToggleEnabled(enabled) {
+		// 缓存元素
+		if (!window._headerFooterToggleCache) {
+			const toggle = document.getElementById('headerFooterToggle');
+			if (!toggle) return;
+			window._headerFooterToggleCache = {
+				toggle: toggle, 
+				container: toggle.parentElement
+			};
+		}
+		const { toggle, container } = window._headerFooterToggleCache;
+		
+		if (enabled) {
+			container.classList.remove('disabled');
+			toggle.disabled = false;
+		} else {
+			container.classList.add('disabled');
+			toggle.disabled = true;
 		}
 	}
 
@@ -1779,8 +1803,10 @@
 		// 移动端禁用侧边栏单选群
 		if (window.innerWidth <= 768) {
 			setSidebarRadioGroupEnabled(false);
+			setHeaderFooterToggleEnabled(false);
 		} else {
 			setSidebarRadioGroupEnabled(true);
+			setHeaderFooterToggleEnabled(true);
 		}
 
 		// 检查是否需要保持 Nav 框显示
@@ -1835,6 +1861,7 @@
 				hideSidebar();
 				document.body.classList.remove('sidebar-left');
 				setSidebarRadioGroupEnabled(false);
+				setHeaderFooterToggleEnabled(false);
 
 				// 移动端下隐藏最大化按钮
 				if (window.innerWidth <= 568 && maximizeButton) {
@@ -1857,10 +1884,11 @@
 					}
 				}
 
-				// 非移动端显示最大化按钮
+				// 在非移动端显示最大化按钮和启用headerFooterToggle
 				if (maximizeButton) {
 					maximizeButton.style.display = 'block';
 				}
+				setHeaderFooterToggleEnabled(true);
 			}
 			updateTocVisibility();
 		}, 50);
