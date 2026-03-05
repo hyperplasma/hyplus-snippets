@@ -221,7 +221,7 @@ function hygal_unified_handler($atts) {
                 $('.loading-text').hide();
                 if (res.success) {
                     const data = res.data;
-                    $('.info-text').html('<b>' + $('#f-category').val() + '</b> (' + data.total_items + ')');
+                    $('.info-text').html('共 <b>' + data.total_items + '</b> 项');
                     totalPages = data.total_pages || 1;
                     
                     // 同步更新上下两个翻页器
