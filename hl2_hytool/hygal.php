@@ -25,7 +25,7 @@ function hygal_unified_handler($atts) {
     ?>
     <style>
         /* 基础与上传样式 */
-        .hyupload-container { margin: 0 0 20px 0; text-align: center; font-family: -apple-system, sans-serif; }
+        .hyupload-container { margin: 0 0 0 0; text-align: center; font-family: -apple-system, sans-serif; }
         #hyupload-drop-zone { border: 2px dashed var(--hyplus-border-color-light2); min-height: 100px; border-radius: 12px; background: var(--hyplus-bg-settings); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 15px; padding-top: 25px; position: relative; }
         #hyupload-drop-zone:hover, #hyupload-drop-zone.hover { border-color: var(--hyplus-primary-link-color); background: var(--hyplus-bg-button-light); }
         #hyupload-preview-img { max-height: 80px; border-radius: 6px; display: none; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -119,38 +119,31 @@ function hygal_unified_handler($atts) {
     </div>
 
     <div class="hygal-merged-wrapper">
-        <?php if ($can_upload): ?>
-        <div class="hyupload-container">
-            <div class="hyplus-nav-section" style="padding: 20px;">
-                <div id="hyupload-drop-zone">
-                    <img id="hyupload-preview-img" src="">
-                    <div id="hyupload-drop-text" class="hyupload-hint">点击、拖拽或粘贴图片到此处上传</div>
-                    <input type="file" id="hyupload-file-input" style="display:none" accept="image/*">
-                </div>
-                <div id="hyupload-stats" class="hyplus-unselectable">
-                    <span>✅ 已同步至媒体库并建立索引！</span>
-                    <span>原大小: <span id="hyupload-old" class="hyupload-stat-tag"></span></span>
-                    <span>压缩后: <span id="hyupload-new" class="hyupload-stat-tag"></span></span>
-                    <span>节省: <span id="hyupload-ratio" class="hyupload-stat-tag"></span></span>
-                </div>
-                <div id="hyupload-controls" class="hyplus-unselectable" style="display:none;">
-                    <div class="hyupload-row">
-                        <select id="hyupload-prefix" class="hyupload-input">
-                            <?php foreach ($tag_list_for_upload as $tag): ?>
-                                <option value="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <input type="text" id="hyupload-title" class="hyupload-input" placeholder="输入描述标题...">
-                        <button id="hyupload-upload-btn" class="hyplus-nav-link hyupload-btn-submit">转换并上传</button>
-                    </div>
-                </div>
-                <div id="hyupload-loading" class="hyplus-unselectable">🚀 正在处理 WebP 转换并存储索引...</div>
-            </div>
-        </div>
-        <?php endif; ?>
-
         <div class="hygal-component-container hyplus-unselectable <?php echo ($is_admin_manage === 'true') ? 'is-admin' : ''; ?>">
             <div class="hyplus-nav-section">
+                <?php if ($can_upload): ?>
+                <div class="hyupload-container" style="margin-bottom: 20px;">
+                    <div id="hyupload-drop-zone">
+                        <img id="hyupload-preview-img" src="">
+                        <div id="hyupload-drop-text" class="hyupload-hint">点击、拖拽或粘贴图片到此处上传</div>
+                        <input type="file" id="hyupload-file-input" style="display:none" accept="image/*">
+                    </div>
+                    <div id="hyupload-stats" class="hyplus-unselectable">
+                        <span>✅ 已同步至媒体库并建立索引！</span>
+                        <span>原大小: <span id="hyupload-old" class="hyupload-stat-tag"></span></span>
+                        <span>压缩后: <span id="hyupload-new" class="hyupload-stat-tag"></span></span>
+                        <span>节省: <span id="hyupload-ratio" class="hyupload-stat-tag"></span></span>
+                    </div>
+                    <div id="hyupload-controls" class="hyplus-unselectable" style="display:none;">
+                        <div class="hyupload-row">
+                            <input type="text" id="hyupload-title" class="hyupload-input" placeholder="输入描述标题...">
+                            <button id="hyupload-upload-btn" class="hyplus-nav-link hyupload-btn-submit">转换并上传</button>
+                        </div>
+                    </div>
+                    <div id="hyupload-loading" class="hyplus-unselectable">🚀 正在处理 WebP 转换并存储索引...</div>
+                </div>
+                <?php endif; ?>
+                
                 <div class="hygal-filter-container">
                     <select id="f-category" class="hygal-input">
                         <?php foreach ($tag_list as $tag): ?>
@@ -415,7 +408,7 @@ function hygal_unified_handler($atts) {
                 fd.append('_nonce', '<?php echo wp_create_nonce("hyu_upload_nonce"); ?>');
                 fd.append('file', currentBlob);
                 fd.append('title', $('#hyupload-title').val());
-                fd.append('prefix', $('#hyupload-prefix').val());
+                fd.append('prefix', $('#f-category').val());
                 $('#hyupload-loading').show(); $('#hyupload-upload-btn').prop('disabled', true);
                 $.ajax({
                     url: '<?php echo admin_url("admin-ajax.php"); ?>', type: 'POST', data: fd, processData: false, contentType: false,
