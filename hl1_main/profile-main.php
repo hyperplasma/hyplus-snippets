@@ -80,7 +80,7 @@ function hyplus_profile_shortcode_callback() {
         .profile-desc {
             color: var(--hyplus-text-primary);
             font-size: 1.13em;
-            margin-bottom: 18px;
+            margin-bottom: 15px;
             font-family: "Dancing Script", "Segoe Script", "Comic Sans MS", cursive, sans-serif;
             font-weight: 600;
         }
@@ -349,7 +349,7 @@ function hyplus_profile_shortcode_callback() {
         <div class="profile-card profile-info-card">
             <img class="profile-avatar" src="/wp-content/uploads/2026/03/20260306122902.webp" alt="kokuyou" />
             <div class="profile-info-text">
-                <div class="profile-desc"><a href="https://www.hyperplasma.top/user/akira37/">Akira&nbsp;-&nbsp;Hyperplasma&nbsp;-&nbsp;Hyplus</a></div>
+                <div class="profile-desc"><a href="https://www.hyperplasma.top/user/akira37/">Kokuyou Yuzuru - Akira37, The Hyplus</a></div>
                 <div class="custom-randpost">
                     <div class="randpost-container">
                         <select id="randpost-category-select" class="randpost-select">
