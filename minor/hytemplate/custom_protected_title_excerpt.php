@@ -23,8 +23,8 @@ add_filter('the_excerpt', function($excerpt) {
 add_filter('the_password_form', function($form) {
 	// 替换表单提示语
 	$form = str_replace(
-		'此内容受密码保护。如需查看请在下方输入访问密码：',
-		'此内容受密码保护。如需查阅，请在下列字段中输入此内容的临时保护密码。密码随时可能更改，详情请联系<a href="https://www.hyperplasma.top/user/akira37/">Hyplus管理员</a>。',
+		'此内容受密码保护。如需查阅，请在下方输入密码。',
+		'此内容受密码保护。如需查阅，请在下方输入此内容的临时保护密码（随时可能更改，详情请联系<a href="https://www.hyperplasma.top/user/akira37/">Hyplus管理员</a>）。',
 		$form
 	);
 	// 替换输入框前的标签
