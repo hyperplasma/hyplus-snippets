@@ -349,7 +349,7 @@ function hyplus_profile_shortcode_callback() {
         <div class="profile-card profile-info-card">
             <img class="profile-avatar" src="/wp-content/uploads/2026/03/20260306122902.webp" alt="kokuyou" />
             <div class="profile-info-text">
-                <div class="profile-desc"><a href="https://www.hyperplasma.top/user/akira37/">Kokuyou Yuzuru - Akira37, The Hyplus</a></div>
+                <div class="profile-desc"><a href="https://www.hyperplasma.top/user/akira37/">Akira37 - The Hyplus</a></div>
                 <div class="custom-randpost">
                     <div class="randpost-container">
                         <select id="randpost-category-select" class="randpost-select">
