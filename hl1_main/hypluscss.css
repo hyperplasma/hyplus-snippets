@@ -564,13 +564,15 @@ div:has(> .hljs) {
 	border: 2px solid var(--hyplus-border-color-main);	
 }
 
-#comment, .search-field {
+#comment, .search-field, .um-search-line, .um-search-area, .um-search-field {
 	border: 1px solid rgba(0, 0, 0, 0.15);
 	border-radius: 6px;
 	resize: none;
 }
 
-#author, #email, #url, #user_login, #user_pass, .comment-content, .search-field, .post-password-form > p > label > input {
+#author, #email, #url, #user_login, #user_pass, .comment-content,
+.um-search-line,
+.search-field, .post-password-form > p > label > input {
 	/*	border: 1px solid #e0e0e0;	*/
 	border: 1px solid var(--hyplus-border-color-light);
 	border-radius: 6px;
