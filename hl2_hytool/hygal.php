@@ -403,30 +403,55 @@ function hygal_unified_handler($atts) {
             
             function performUpload() {
                 if (!currentBlob || $('#hyupload-upload-btn').prop('disabled')) return;
-                const fd = new FormData();
-                fd.append('action', 'hyu_webp_upload');
-                fd.append('_nonce', '<?php echo wp_create_nonce("hyu_upload_nonce"); ?>');
-                fd.append('file', currentBlob);
-                fd.append('title', $('#hyupload-title').val());
-                fd.append('prefix', $('#f-category').val());
-                $('#hyupload-loading').show(); $('#hyupload-upload-btn').prop('disabled', true);
-                $.ajax({
-                    url: '<?php echo admin_url("admin-ajax.php"); ?>', type: 'POST', data: fd, processData: false, contentType: false,
-                    success: function(res) {
-                        $('#hyupload-loading').hide(); $('#hyupload-upload-btn').prop('disabled', false);
-                        if (res.success) { 
-                            $('#hyupload-old').text(formatBytes(res.data.old_size));
-                            $('#hyupload-new').text(formatBytes(res.data.new_size));
-                            $('#hyupload-ratio').text(res.data.ratio + '%'); 
-                            $('#hyupload-stats').fadeIn(); currentBlob = null; 
-                            $('#hyupload-preview-img').hide(); $('#hyupload-drop-text').show(); 
-                            $('#hyupload-controls').hide(); 
-                            $('#hyupload-title').val("");
-                        } else {
-                            alert('失败: ' + (res.data || '未知错误'));
+                
+                // 使用 FileReader 将 Blob 转换为 Base64（避免 PHP $_FILES 的临时目录问题）
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Data = e.target.result;
+                    const fd = new FormData();
+                    fd.append('action', 'hyu_webp_upload');
+                    fd.append('_nonce', '<?php echo wp_create_nonce("hyu_upload_nonce"); ?>');
+                    fd.append('file_base64', base64Data);
+                    fd.append('file_name', currentBlob.name || ('upload_' + Date.now() + '.jpg'));
+                    fd.append('title', $('#hyupload-title').val());
+                    fd.append('prefix', $('#f-category').val());
+                    
+                    $('#hyupload-loading').show(); 
+                    $('#hyupload-upload-btn').prop('disabled', true);
+                    
+                    $.ajax({
+                        url: '<?php echo admin_url("admin-ajax.php"); ?>', 
+                        type: 'POST', 
+                        data: fd, 
+                        processData: false, 
+                        contentType: false,
+                        success: function(res) {
+                            $('#hyupload-loading').hide(); 
+                            $('#hyupload-upload-btn').prop('disabled', false);
+                            if (res.success) { 
+                                $('#hyupload-old').text(formatBytes(res.data.old_size));
+                                $('#hyupload-new').text(formatBytes(res.data.new_size));
+                                $('#hyupload-ratio').text(res.data.ratio + '%'); 
+                                $('#hyupload-stats').fadeIn(); 
+                                currentBlob = null; 
+                                $('#hyupload-preview-img').hide(); 
+                                $('#hyupload-drop-text').show(); 
+                                $('#hyupload-controls').hide(); 
+                                $('#hyupload-title').val("");
+                            } else {
+                                const errMsg = (typeof res.data === 'object' && res.data.message) ? res.data.message : (res.data || '未知错误');
+                                alert('失败: ' + errMsg);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            $('#hyupload-loading').hide(); 
+                            $('#hyupload-upload-btn').prop('disabled', false);
+                            console.error('上传错误详情:', xhr.responseText, status, error);
+                            alert('上传失败: 网络错误或服务器响应异常。\n\n请检查：\n1. 网络连接\n2. 服务器日志\n3. 文件大小（最大50MB）\n\n详情请打开浏览器控制台查看');
                         }
-                    }
-                });
+                    });
+                };
+                reader.readAsDataURL(currentBlob);
             }
             function handleImageFile(file) {
                 if (!file || !file.type.startsWith('image/')) return;
@@ -590,10 +615,35 @@ add_action('wp_ajax_hyu_webp_upload', function() {
         return;
     }
     
+    // 从 Base64 数据接收（不再使用 $_FILES，避免系统临时目录问题）
+    if (empty($_POST['file_base64'])) {
+        wp_send_json_error(['message' => '❌ 未收到文件数据']);
+        return;
+    }
+    
+    $base64_data = sanitize_text_field($_POST['file_base64']);
+    $file_name = sanitize_file_name($_POST['file_name'] ?? 'upload_' . time() . '.jpg');
+    
+    // 解析 Base64 数据
+    if (strpos($base64_data, ',') !== false) {
+        list($type, $base64_data) = explode(',', $base64_data);
+    }
+    $binary_data = @base64_decode($base64_data);
+    
+    if (empty($binary_data)) {
+        wp_send_json_error(['message' => '❌ Base64 数据无效']);
+        return;
+    }
+    
     // 文件大小限制 (最大 50MB)
     $max_size = 50 * 1024 * 1024;
-    if (!isset($_FILES['file']) || $_FILES['file']['size'] > $max_size) {
-        wp_send_json_error(['message' => '文件过大，请压缩后上传（最大50MB）']);
+    if (strlen($binary_data) > $max_size) {
+        wp_send_json_error(['message' => '文件过大，请压缩后上传（最大50MB，当前：' . round(strlen($binary_data) / 1024 / 1024, 1) . 'MB）']);
+        return;
+    }
+    
+    if (strlen($binary_data) == 0) {
+        wp_send_json_error(['message' => '❌ 文件为空。请检查是否选择了正确的图片文件']);
         return;
     }
     
@@ -603,12 +653,20 @@ add_action('wp_ajax_hyu_webp_upload', function() {
     
     @ini_set('memory_limit', '512M');
     
-    $file = $_FILES['file'];
-    $tmp = $file['tmp_name'];
-    $old_size = filesize($tmp);
+    // 使用 WordPress 上传目录作为工作目录
+    $upload_dir = wp_upload_dir();
+    $work_dir = $upload_dir['basedir'] . '/hygal-temp';
     
-    if (!$old_size) {
-        wp_send_json_error(['message' => '文件为空']);
+    // 确保工作目录存在
+    if (!is_dir($work_dir)) {
+        if (!@mkdir($work_dir, 0755, true)) {
+            wp_send_json_error(['message' => '❌ 无法创建工作目录。请检查 WordPress 上传文件夹权限']);
+            return;
+        }
+    }
+    
+    if (!is_writable($work_dir)) {
+        wp_send_json_error(['message' => '❌ 工作目录不可写。请检查权限']);
         return;
     }
     
@@ -617,42 +675,55 @@ add_action('wp_ajax_hyu_webp_upload', function() {
     $ts = date('YmdHis');
     $wp_title = !empty($raw_title) ? $raw_title : $ts;
     
-    $target = $tmp . '.webp';
+    // 将 Base64 数据保存为临时文件
+    $local_tmp = $work_dir . '/' . uniqid('hygal_') . '_upload_' . md5($ts) . '_temp.jpg';
+    if (file_put_contents($local_tmp, $binary_data) === false) {
+        wp_send_json_error(['message' => '❌ 无法保存上传的数据。请检查磁盘空间和权限']);
+        return;
+    }
+    
+    $old_size = strlen($binary_data);
+    $target = $local_tmp . '.webp';
     $success = false;
     
-    // 方法1：尝试使用Imagick (更高效)
+    // 验证文件是否为有效图片
+    $info = @getimagesize($local_tmp);
+    if (!$info) {
+        @unlink($local_tmp);
+        wp_send_json_error(['message' => '❌ 图像处理失败，请检查图片格式']);
+        return;
+    }
+    
+    // 方法1：尝试使用 Imagick (更高效)
     if (extension_loaded('imagick')) {
         try {
-            $imagick = new Imagick($tmp);
+            $imagick = new Imagick($local_tmp);
             $imagick->setImageFormat('webp');
             $imagick->setImageCompressionQuality(80);
             $imagick->writeImage($target);
             $imagick->destroy();
             $success = true;
         } catch (Exception $e) {
-            // 如果Imagick失败，尝试GD库
+            // 如果 Imagick 失败，尝试 GD 库
         }
     }
     
-    // 方法2：使用GD库 (备选，添加错误检查)
+    // 方法2：使用 GD 库 (备选)
     if (!$success) {
-        $info = @getimagesize($tmp);
-        if (!$info) {
-            wp_send_json_error(['message' => '图像处理失败，请检查图片格式']);
-            return;
-        }
-        
         $img = null;
         if ($info['mime'] == 'image/jpeg') {
-            $img = @imagecreatefromjpeg($tmp);
+            $img = @imagecreatefromjpeg($local_tmp);
         } elseif ($info['mime'] == 'image/png') {
-            $img = @imagecreatefrompng($tmp);
+            $img = @imagecreatefrompng($local_tmp);
         } elseif ($info['mime'] == 'image/gif') {
-            $img = @imagecreatefromgif($tmp);
+            $img = @imagecreatefromgif($local_tmp);
+        } elseif ($info['mime'] == 'image/webp') {
+            $img = @imagecreatefromwebp($local_tmp);
         }
         
         if ($img === false) {
-            wp_send_json_error(['message' => '图像处理失败，请检查图片格式']);
+            @unlink($local_tmp);
+            wp_send_json_error(['message' => '❌ 图像处理失败，请检查图片格式']);
             return;
         }
         
@@ -665,11 +736,17 @@ add_action('wp_ajax_hyu_webp_upload', function() {
         
         if (!imagewebp($img, $target, 80)) {
             imagedestroy($img);
+            @unlink($local_tmp);
             wp_send_json_error(['message' => 'WebP转换失败，请重试']);
             return;
         }
         imagedestroy($img);
         $success = true;
+    }
+    
+    // 清理原始临时文件
+    if (file_exists($local_tmp)) {
+        @unlink($local_tmp);
     }
     
     if (!$success || !file_exists($target)) {
@@ -685,13 +762,23 @@ add_action('wp_ajax_hyu_webp_upload', function() {
     
     $id = media_handle_sideload(['name' => $ts . '.webp', 'tmp_name' => $target], 0);
     
-    // 清理临时WebP文件
+    // 立即清理 WebP 文件
     if (file_exists($target)) {
         @unlink($target);
     }
     
+    // 立即清理所有临时文件
+    $files = @glob($work_dir . '/hygal_*');
+    if (is_array($files)) {
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                @unlink($file);
+            }
+        }
+    }
+    
     if (is_wp_error($id)) {
-        wp_send_json_error(['message' => '上传到媒体库失败']);
+        wp_send_json_error(['message' => '上传到媒体库失败：' . $id->get_error_message()]);
         return;
     }
     
