@@ -1,6 +1,6 @@
 <?php
 /*
- * WordPress 脚注ref(fnref)悬浮显示脚注内容
+ * WordPress 脚注ref(fnref)悬浮显示脚注内容 + "Hyplus注释"标题注入
  * 注：适用于WP Githuber MD等Markdown to HTML插件生成的脚注格式；popup样式详见HyplusCSS之HyNav相关衍生样式
  * 将此文件作为功能片段引入即可
  */
@@ -15,6 +15,8 @@ add_action('wp_footer', function () {
 	(function(){
 		var contentCache = {};
 		var isInitialized = false;
+		var lastMoveTime = 0;
+		var moveThrottleDelay = 100; // 毫秒
 
 		function getFootnoteContent(href) {
 			if (!href) return null;
@@ -152,6 +154,13 @@ add_action('wp_footer', function () {
 		}
 		
 		function updatePopupPosition(e) {
+			// 节流：100ms内只更新一次
+			var now = Date.now();
+			if (now - lastMoveTime < moveThrottleDelay) {
+				return;
+			}
+			lastMoveTime = now;
+			
 			// 轻量级位置更新，无需重新获取内容
 			if (popup.style.display === 'block') {
 				var pos = computePosition(e);
@@ -175,22 +184,46 @@ add_action('wp_footer', function () {
 				return;
 			}
 			
-			refs.forEach(function(ref) {
-				ref.addEventListener('mouseenter', function(e){
-					var href = this.getAttribute('href');
+			// 事件委托：在document级别监听事件
+			document.addEventListener('mouseenter', function(e){
+				if (e.target.classList.contains('footnote-ref')) {
+					var href = e.target.getAttribute('href');
 					var html = getFootnoteContent(href);
 					if (html) {
 						showPopup(e, html);
 					}
-				});
-				
-				// mousemove 仅更新位置，不重新获取内容（轻量级）
-				ref.addEventListener('mousemove', function(e){
+				}
+			}, true); // 使用捕获阶段
+			
+			document.addEventListener('mousemove', function(e){
+				if (e.target.classList.contains('footnote-ref')) {
 					updatePopupPosition(e);
-				});
-				
-				ref.addEventListener('mouseleave', hidePopup);
-			});
+				}
+			}, true);
+			
+			document.addEventListener('mouseleave', function(e){
+				if (e.target.classList.contains('footnote-ref')) {
+					hidePopup();
+				}
+			}, true);
+			
+			// 在脚注区域的ol前插入h1标题
+			var footnotesList = document.querySelector('div.footnotes ol');
+			if (footnotesList) {
+				var footnotesDiv = footnotesList.parentElement;
+				// 检查是否已经存在标题，避免重复添加
+				if (!footnotesDiv.querySelector('h1.footnotes-title')) {
+					var title = document.createElement('h1');
+					title.className = 'footnotes-title';
+					title.textContent = 'Hyplus注释';
+					footnotesList.parentElement.insertBefore(title, footnotesList);
+					
+					// 插入标题后，触发hytoc的增量添加（如果已加载）
+					if (typeof window.hyplus_add_toc_header_incremental === 'function') {
+						window.hyplus_add_toc_header_incremental(title);
+					}
+				}
+			}
 			
 			isInitialized = true;
 		}

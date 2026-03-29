@@ -10,10 +10,10 @@
 add_filter('the_content', 'hyplus_auto_insert_toc_before_first_toc_heading');
 function hyplus_auto_insert_toc_before_first_toc_heading($content) {
     if (!is_singular('post') || is_home()) return $content;
-    if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
+    // if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
 
-    // 只捕获两种格式：1. 数字（可多位）或单大写字母+点分段，且后面必须有空格（如1 标题、10 标题、2.1 标题、3.A.4 标题、B.1.3 标题、11.2.3 标题）；2. “第”+阿拉伯数字（如第1、第2、第3）
-    if (preg_match('/(<h[1-6][^>]*>\s*((第\d+)|((?:[0-9]+|[A-Z])(?:\.(?:[0-9]+|[A-Z]))* )).*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
+    // 捕获三种格式：1. 数字（可多位）或单大写字母+点分段，且后面必须有空格（如1 标题、10 标题、2.1 标题、3.A.4 标题、B.1.3 标题、11.2.3 标题）；2. "第"+阿拉伯数字（如第1、第2、第3）；3. 以"Hyplus"开头（如Hyplus注释）
+    if (preg_match('/(<h[1-6][^>]*>\s*((第\d+|Hyplus)|((?:[0-9]+|[A-Z])(?:\.(?:[0-9]+|[A-Z]))* )).*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
         $pos = $matches[0][1];
         $toc = '[toc]';
         // 在第一个被TOC捕获的标题前插入
@@ -203,6 +203,89 @@ function hyplus_output_toc_scripts() {
         var HEADER_HEIGHT = 70;
         var tocContainers = [];
         var globalScrollTimeout;
+        
+        // 轻量级增量添加：仅为新插入的标题生成anchor和toc项，无需重新扫描整篇文章
+        window.hyplus_add_toc_header_incremental = function(headerElement) {
+            if (!headerElement) return;
+            
+            var pattern = /^(第\d+|Hyplus|(?:[0-9]+|[A-Z])(?:\.(?:[0-9]+|[A-Z]))* )/;
+            
+            function getHeaderTextWithoutSup(header) {
+                var clone = header.cloneNode(true);
+                var sups = clone.querySelectorAll('sup');
+                sups.forEach(function(sup){ sup.remove(); });
+                return clone.textContent.trim();
+            }
+            
+            var pureText = getHeaderTextWithoutSup(headerElement);
+            if (!pattern.test(pureText)) {
+                return; // 不匹配TOC模式
+            }
+            
+            // 为该元素分配anchor（避免重复）
+            var anchorSet = new Set();
+            // 从已缓存的headers中收集anchor
+            if (cachedValidHeaders !== null) {
+                cachedValidHeaders.forEach(function(item) {
+                    if (item.header.id) anchorSet.add(item.header.id);
+                });
+            }
+            // 从DOM中收集所有已有的id（仅必要时）
+            document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').forEach(function(el) {
+                if (el.id) anchorSet.add(el.id);
+            });
+            
+            var baseAnchor = pureText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+            var anchor = baseAnchor;
+            var suffix = 2;
+            while (anchorSet.has(anchor)) {
+                anchor = baseAnchor + '_' + suffix;
+                suffix++;
+            }
+            
+            // 分配anchor
+            headerElement.id = anchor;
+            headerElement.dataset.hypluscurrentAnchor = anchor;
+            headerElement.dataset.hypluspureText = pureText;
+            
+            // 添加到缓存（如果已有缓存）
+            if (cachedValidHeaders !== null) {
+                cachedValidHeaders.push({header: headerElement, pureText: pureText});
+            }
+            
+            // 为每个toc容器添加对应的目录项
+            var containers = document.querySelectorAll('.hyplus-toc-container');
+            containers.forEach(function(container) {
+                var ul = container.querySelector('.hyplus-toc-content ul');
+                if (!ul) return; // 该容器还未生成
+                
+                // 创建li项并追加
+                var li = document.createElement('li');
+                var a = document.createElement('a');
+                a.textContent = pureText;
+                a.href = '#' + anchor;
+                var level = parseInt(headerElement.tagName.substring(1), 10);
+                li.className = 'level-' + level;
+                li.appendChild(a);
+                ul.appendChild(li);
+                
+                // 更新该容器对应的linkElements
+                var targetTocContainer = null;
+                for (var i = 0; i < tocContainers.length; i++) {
+                    if (tocContainers[i].container === container) {
+                        targetTocContainer = tocContainers[i];
+                        break;
+                    }
+                }
+                
+                if (targetTocContainer) {
+                    targetTocContainer.linkElements.push({
+                        link: a,
+                        element: headerElement
+                    });
+                }
+            });
+        };
 
         function setCookie(name, value, days) {
             var expires = "";
@@ -294,7 +377,7 @@ function hyplus_output_toc_scripts() {
             
             var article = document.querySelector('article') || document.getElementById('main') || document.body;
             var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
-            var pattern = /^(第\d+|(?:[0-9]+|[A-Z])(?:\.(?:[0-9]+|[A-Z]))* )/;
+            var pattern = /^(第\d+|Hyplus|(?:[0-9]+|[A-Z])(?:\.(?:[0-9]+|[A-Z]))* )/;
             var anchorSet = new Set();
 
             function getHeaderTextWithoutSup(header) {
@@ -411,6 +494,7 @@ function hyplus_output_toc_scripts() {
                 
                 if (linkElements.length > 0) {
                     tocContainers.push({
+                        container: container,
                         linkElements: linkElements,
                         currentActiveLink: null,
                         mode: mode
@@ -499,6 +583,7 @@ function hyplus_output_toc_scripts() {
             
             if (linkElements.length > 0) {
                 tocContainers.push({
+                    container: container,
                     linkElements: linkElements,
                     currentActiveLink: null,
                     mode: mode
