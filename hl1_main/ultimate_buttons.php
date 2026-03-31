@@ -100,6 +100,10 @@
 						<input type="radio" id="sidebarRightRadio" name="sidebarPosition" value="right">
 						<label for="sidebarRightRadio">侧边栏位于右侧</label>
 					</div>
+					<div class="config-item">
+						<input type="radio" id="sidebarHideRadio" name="sidebarPosition" value="hide">
+						<label for="sidebarHideRadio">隐藏侧边栏</label>
+					</div>
 				</div>
 
 				<div class="language-selector" id="navButtonsRadioGroup" style="margin-top: 12px;">
@@ -979,10 +983,11 @@
 			localStorage.setItem('headerFooterAlwaysHidden', 'true');
 		} else {
 			showHeaderFooter();
-			showSidebar();
-			// 在非移动端下才启用侧边栏单选群
+			// 非移动端下启用侧边栏单选群并恢复之前的状态
 			if (window.innerWidth > 768) {
 				setSidebarRadioGroupEnabled(true);
+				const savedSidebarPosition = localStorage.getItem('sidebarPosition') || 'right';
+				setSidebarPosition(savedSidebarPosition);
 			}
 			localStorage.setItem('headerFooterAlwaysHidden', 'false');
 		}
@@ -1294,7 +1299,11 @@
 	}
 
 	function setSidebarPosition(position) {
-		if (position === 'left' && window.innerWidth > 768) {
+		if (position === 'hide') {
+			hideSidebar();
+			document.body.classList.remove('sidebar-left');
+			localStorage.setItem('sidebarPosition', 'hide');
+		} else if (position === 'left' && window.innerWidth > 768) {
 			showSidebar();
 			setUIPosition('sidebar', 'left');
 		} else if (window.innerWidth > 768) { // right
@@ -1304,6 +1313,7 @@
 		// 设置radio选中状态（防止快捷键切换时UI不同步）
 		document.getElementById('sidebarRightRadio').checked = (position === 'right');
 		document.getElementById('sidebarLeftRadio').checked = (position === 'left');
+		document.getElementById('sidebarHideRadio').checked = (position === 'hide');
 	}
 
 	// 页面导航名称数组（用于Alt+Z/X快捷键）
@@ -1687,6 +1697,8 @@
 		let sidebarSetting = 'right';
 		if (window.innerWidth > 768 && localStorage.getItem('sidebarPosition') === 'left') {
 			sidebarSetting = 'left';
+		} else if (localStorage.getItem('sidebarPosition') === 'hide') {
+			sidebarSetting = 'hide';
 		}
 		if (window.innerWidth > 768) {
 			setSidebarPosition(sidebarSetting);
@@ -1696,7 +1708,8 @@
 		if (!window._sidebarRadioCache) {
 			window._sidebarRadioCache = {
 				right: document.getElementById('sidebarRightRadio'),
-				left: document.getElementById('sidebarLeftRadio')
+				left: document.getElementById('sidebarLeftRadio'),
+				hide: document.getElementById('sidebarHideRadio')
 			};
 		}
 		window._sidebarRadioCache.right && window._sidebarRadioCache.right.addEventListener('change', function() {
@@ -1704,6 +1717,9 @@
 		});
 		window._sidebarRadioCache.left && window._sidebarRadioCache.left.addEventListener('change', function() {
 			if (this.checked) setSidebarPosition('left');
+		});
+		window._sidebarRadioCache.hide && window._sidebarRadioCache.hide.addEventListener('change', function() {
+			if (this.checked) setSidebarPosition('hide');
 		});
 
 		// 初始化导航按钮位置
@@ -1848,8 +1864,11 @@
 			const mainContent = document.querySelector('.site-main');
 			const maximizeButton = document.querySelector('.maximize-button');
 			let sidebarSetting = 'right';
-			if (localStorage.getItem('sidebarPosition') === 'left') {
+			const savedSidebarPosition = localStorage.getItem('sidebarPosition');
+			if (savedSidebarPosition === 'left') {
 				sidebarSetting = 'left';
+			} else if (savedSidebarPosition === 'hide') {
+				sidebarSetting = 'hide';
 			}
 
 			if (window.innerWidth <= 768) {
@@ -1870,6 +1889,11 @@
 				if (isHeaderFooterHidden) {
 					setSidebarRadioGroupEnabled(false);
 					hideSidebar();
+				} else if (sidebarSetting === 'hide') {
+					// 用户选择隐藏侧边栏
+					setSidebarRadioGroupEnabled(true);
+					hideSidebar();
+					document.body.classList.remove('sidebar-left');
 				} else {
 					setSidebarRadioGroupEnabled(true);
 					if (sidebarSetting === 'left') {
