@@ -1816,7 +1816,6 @@
 		// 移动端禁用侧边栏单选群
 		if (window.innerWidth <= 768) {
 			setSidebarRadioGroupEnabled(false);
-			setHeaderFooterToggleEnabled(false);
 		} else {
 			setSidebarRadioGroupEnabled(true);
 			setHeaderFooterToggleEnabled(true);
@@ -1877,7 +1876,6 @@
 				hideSidebar();
 				document.body.classList.remove('sidebar-left');
 				setSidebarRadioGroupEnabled(false);
-				setHeaderFooterToggleEnabled(false);
 
 				// 移动端下隐藏最大化按钮
 				if (window.innerWidth <= 568 && maximizeButton) {
