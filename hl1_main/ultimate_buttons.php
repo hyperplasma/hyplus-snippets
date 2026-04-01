@@ -198,14 +198,14 @@
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
 						<label class="language-label">修改<a href="https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode" target="_blank">组件</a>:</label>
-						<label id="edit-hynav" class="language-label">
+						<label class="language-label">
 							<button class="font-size-btn"
 								onclick="window.open('https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647', '_blank');"
 							>
 								HyNav
 							</button>
 						</label>
-						<label id="edit-nav-menu" class="language-label">
+						<label class="language-label">
 							<button class="font-size-btn"
 								onclick="window.open('https://www.hyperplasma.top/wp-admin/nav-menus.php', '_blank');"
 							>
@@ -216,7 +216,7 @@
 							if (is_single()) : 
 								$edit_link = get_edit_post_link($post_id);
 						?>
-						<label id="edit-nav-menu" class="language-label">
+						<label class="language-label">
 							<button class="font-size-btn"
 								onclick="window.open('<?php echo $edit_link; ?>', '_blank');"
 							>
@@ -224,6 +224,25 @@
 							</button>
 						</label>
 						<?php endif; ?>
+					</div>
+				</div>
+				<div class="language-selector" style="margin-top: 12px;">
+					<div class="language-selector-row">
+						<label class="language-label">便捷服务:</label>
+						<label class="language-label">
+							<button class="font-size-btn"
+								onclick="window.open('https://www.hyperplasma.top/wp-admin/admin.php?page=ultimatemember', '_blank');"
+							>
+								会员
+							</button>
+						</label>
+						<label class="language-label">
+							<button class="font-size-btn"
+								onclick="window.open('https://www.hyperplasma.top/wp-admin/edit-comments.php', '_blank');"
+							>
+								评论
+							</button>
+						</label>
 					</div>
 				</div>
 			<?php endif; ?>
