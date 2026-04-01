@@ -382,8 +382,9 @@ ol li {
 	margin-bottom: 0.5em; /* 增加列表项之间的间隙 */
 }
 
+/* 调整无序列表（Hyplus目录除外）和有序列表的左侧缩进 */
 #main ul li:not([class*="level-"]), #main ol li {
-	margin-left: -0.8em;
+	margin-left: -0.7em;
 }
 
 /**
