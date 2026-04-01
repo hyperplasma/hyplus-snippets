@@ -225,9 +225,7 @@
 						</label>
 						<?php endif; ?>
 					</div>
-				</div>
-				<div class="language-selector" style="margin-top: 12px;">
-					<div class="language-selector-row">
+					<div class="language-selector-row" style="margin-top: 5px;">
 						<label class="language-label">便捷服务:</label>
 						<label class="language-label">
 							<button class="font-size-btn"
@@ -902,8 +900,8 @@
         }
     }
 
-	/* Responsive tweaks for settings */
-	@media screen and (max-width: 768px) {
+	/* Responsive tweaks for settings (slightly more than 768px) */
+	@media screen and (max-width: 785px) {
 		.settings-columns-container {
 			flex-direction: column;
 			gap: 12px;
