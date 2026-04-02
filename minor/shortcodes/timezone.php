@@ -8,9 +8,9 @@
 $timezones = [
     'China' => 'Asia/Shanghai',
     'Pacific' => 'Pacific/Auckland',
-    'Europe' => 'Europe/Paris',
-    'US EST' => 'America/New_York',
     'US PST' => 'America/Los_Angeles',
+    'US EST' => 'America/New_York',
+    'Europe' => 'Europe/Paris',
 ];
 
 $date_format = 'Y-m-d H:i:s';
