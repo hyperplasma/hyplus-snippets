@@ -7,6 +7,7 @@
  */
 $timezones = [
     'China' => 'Asia/Shanghai',
+    'Pacific' => 'Pacific/Auckland',
     'Europe' => 'Europe/Paris',
     'US EST' => 'America/New_York',
     'US PST' => 'America/Los_Angeles',
@@ -15,7 +16,7 @@ $timezones = [
 $date_format = 'Y-m-d H:i:s';
 ?>
 
-<div class="timezone-times" style="text-align: center;">
+<div class="timezone-times" title="Pacific: Auckland; Europe: Paris; EST: New York; PST: Los Angeles" style="text-align: center;">
     <?php
     foreach ($timezones as $region => $timezone) {
         try {
