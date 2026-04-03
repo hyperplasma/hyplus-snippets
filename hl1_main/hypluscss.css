@@ -1097,11 +1097,6 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	word-break: break-word;
 	pointer-events: none;
 }
-@media screen and (max-width: 450px) {
-	.footnote-hover-popup {
-		display: none !important;
-	}
-}
 
 /*
  * HY-通用缩放交互类
