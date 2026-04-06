@@ -1117,3 +1117,10 @@ table:not(.hyplus-excluded-table) tr:first-child th {
     transform: scale(0.93);
     transition: none;
 }
+
+/* HY-hyimg按钮 */
+.hyimg-button {
+	margin: 4px;
+	cursor: pointer;
+	display: inline-block;
+}

@@ -50,7 +50,7 @@ function hyimg_shortcode_handler($atts) {
         class="hyplus-nav-link hyimg-button" 
         data-hyimg-url="<?php echo $safe_url; ?>"
         type="button"
-        style="margin: 4px; cursor: pointer; display: inline-block;">
+    >
         <?php echo $btn_text; ?>
     </button>
     <?php
