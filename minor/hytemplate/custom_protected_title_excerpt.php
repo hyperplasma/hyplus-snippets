@@ -24,7 +24,7 @@ add_filter('the_password_form', function($form) {
 	$custom_message = '此内容受密码保护。如需查阅，请在下方输入此内容的临时保护密码（随时可能更改，详情请联系<a href="https://www.hyperplasma.top/user/akira37/">Hyplus管理员</a>）。';
 	
 	// 检查自定义字段，追加密码提示
-	$password_tip = get_post_meta(get_the_ID(), 'protected_password_tip', true);
+	$password_tip = get_post_meta(get_the_ID(), 'hy_password_tip', true);
 	if (!empty($password_tip)) {
 		$custom_message .= '<p>密码提示：' . $password_tip . '</p>';
 	}
