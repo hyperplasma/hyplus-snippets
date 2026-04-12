@@ -2,7 +2,7 @@
 /**
  * Custom Protected Title excerpt PHP
  */
-/* 修改密码保护标题 */
+/* 修改密码保护标题（去掉“密码保护：”） */
 add_filter('protected_title_format', function($title) {
 	// $lock = "\u{1F510}";
 	// $emoji = json_decode('"' . $lock . '"');
@@ -21,17 +21,20 @@ add_filter('the_excerpt', function($excerpt) {
 });
 
 add_filter('the_password_form', function($form) {
-	// 替换表单提示语
+	$custom_message = '此内容受密码保护。如需查阅，请在下方输入此内容的临时保护密码（随时可能更改，详情请联系<a href="https://www.hyperplasma.top/user/akira37/">Hyplus管理员</a>）。';
+	
+	// 检查自定义字段，追加密码提示
+	$password_tip = get_post_meta(get_the_ID(), 'protected_password_tip', true);
+	if (!empty($password_tip)) {
+		$custom_message .= '<p>密码提示：' . $password_tip . '</p>';
+	}
+	
+	// 替换表单提示语和标签
 	$form = str_replace(
-		'此内容受密码保护。如需查阅，请在下方输入密码。',
-		'此内容受密码保护。如需查阅，请在下方输入此内容的临时保护密码（随时可能更改，详情请联系<a href="https://www.hyperplasma.top/user/akira37/">Hyplus管理员</a>）。',
+		['此内容受密码保护。如需查阅，请在下方输入密码。', '密码：'],
+		[$custom_message, '保护密码：'],
 		$form
 	);
-	// 替换输入框前的标签
-	$form = str_replace(
-		'密码：',
-		'保护密码：',
-		$form
-	);
+	
 	return $form;
 });
