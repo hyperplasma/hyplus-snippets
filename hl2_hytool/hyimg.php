@@ -91,9 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function openImageInLightbox(imgUrl) {
-        const main = document.getElementById('main');
-        if (!main) {
-            console.warn('HyImg: 灯箱模式需要页面内存在 #main 元素');
+        const container = document.querySelector('article');
+        if (!container) {
+            // console.warn('HyImg: 需要页面内存在 article 标签');
             return;
         }
 
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         tempImg.style.width = '1px';
         tempImg.style.height = '1px';
         tempImg.setAttribute('data-hyimg-temp', 'true');
-        main.appendChild(tempImg);
+        container.appendChild(tempImg);
 
         // 设置src后，浏览器会开始加载图片
         // 灯箱打开后，用户会在灯箱中看到图片逐渐加载的过程
