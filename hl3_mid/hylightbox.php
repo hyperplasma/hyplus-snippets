@@ -1,7 +1,13 @@
-<!-- HyLightbox
- Description: A lightweight image viewer with zoom, drag, and drawing capabilities.
- Code type: HTML + CSS + JavaScript
--->
+<?php
+/**
+ * HyLightbox
+ * Description: A lightweight image viewer with zoom, drag, and drawing capabilities. (不在分类页面、搜索结果页面、网站主页执行)
+ * Code type: Universal Snippet (HTML + CSS + JavaScript + PHP)
+ */
+if ( is_category() || is_search()) {
+    return;
+}
+?>
 <template id="hylightbox-template">
     <div class="hylightbox-wrapper">
         <button class="hylightbox-nav-btn hylb-prev-btn" title="上一张 (,)">❮</button>
@@ -82,7 +88,7 @@
         transition: none !important;
     }
 
-    #main img {
+    .inside-article img {
         cursor: zoom-in !important;
     }
 
@@ -288,7 +294,7 @@
         }
 
         function collectImages() {
-            const mainArea = document.getElementById("main") || document.body;
+            const mainArea = document.querySelector("article") || document.body;
             state.galleryImages = Array.from(mainArea.querySelectorAll("img")).filter((img) => img.offsetParent !== null && !img.closest(".hylightbox-wrapper"));
         }
 
@@ -416,7 +422,7 @@
         document.addEventListener(
             "click",
             (e) => {
-                const mainArea = document.getElementById("main");
+                const mainArea = document.querySelector("article");
                 const img = e.target.closest("img");
                 if (img && mainArea && mainArea.contains(img) && !img.closest(".hylightbox-wrapper")) {
                     e.preventDefault();
