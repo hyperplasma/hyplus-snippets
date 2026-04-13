@@ -26,7 +26,7 @@ add_filter('the_password_form', function($form) {
 	// 检查自定义字段，追加密码提示
 	$password_tip = get_post_meta(get_the_ID(), 'hy_password_tip', true);
 	if (!empty($password_tip)) {
-		$custom_message .= '<p>密码提示：' . $password_tip . '</p>';
+		$custom_message .= '<p>作者提示：' . $password_tip . '</p>';
 	}
 	
 	// 替换表单提示语和标签
