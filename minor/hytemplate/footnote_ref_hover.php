@@ -17,6 +17,7 @@ add_action('wp_footer', function () {
 		var isInitialized = false;
 		var lastMoveTime = 0;
 		var moveThrottleDelay = 100; // 毫秒
+		var listeners = {}; // 存储事件监听器引用，用于后续清理
 
 		function getFootnoteContent(href) {
 			if (!href) return null;
@@ -174,8 +175,10 @@ add_action('wp_footer', function () {
 		}
 
 		function initFootnoteHover() {
+			// 如果已初始化，先清理旧的监听器（支持PJAX重新加载）
 			if (isInitialized) {
-				return;
+				cleanupListeners();
+				isInitialized = false;
 			}
 			
 			var refs = document.querySelectorAll('a.footnote-ref');
@@ -184,28 +187,37 @@ add_action('wp_footer', function () {
 				return;
 			}
 			
-			// 事件委托：在document级别监听事件
-			document.addEventListener('mouseenter', function(e){
-				if (e.target.classList.contains('footnote-ref')) {
+			// 定义事件处理函数
+			listeners.mouseenter = function(e){
+				if (e.target && e.target.classList && e.target.classList.contains('footnote-ref')) {
 					var href = e.target.getAttribute('href');
 					var html = getFootnoteContent(href);
 					if (html) {
 						showPopup(e, html);
 					}
 				}
-			}, true); // 使用捕获阶段
+			};
 			
-			document.addEventListener('mousemove', function(e){
-				if (e.target.classList.contains('footnote-ref')) {
+			listeners.mousemove = function(e){
+				// 只在脚注引用上监听，避免频繁触发
+				if (e.target && e.target.classList && e.target.classList.contains('footnote-ref')) {
 					updatePopupPosition(e);
 				}
-			}, true);
+			};
 			
-			document.addEventListener('mouseleave', function(e){
-				if (e.target.classList.contains('footnote-ref')) {
+			listeners.mouseleave = function(e){
+				if (e.target && e.target.classList && e.target.classList.contains('footnote-ref')) {
 					hidePopup();
 				}
-			}, true);
+			};
+			
+			// 使用事件委托，但限制在更具体的范围内
+			// 先尝试在文章容器上注册，如果没有则在document上注册
+			var articleContainer = document.querySelector('article') || document.querySelector('.post') || document.querySelector('main') || document;
+			
+			articleContainer.addEventListener('mouseenter', listeners.mouseenter, true);
+			articleContainer.addEventListener('mousemove', listeners.mousemove, true);
+			articleContainer.addEventListener('mouseleave', listeners.mouseleave, true);
 			
 			// 在脚注区域的ol前插入h1标题
 			var footnotesList = document.querySelector('div.footnotes ol');
@@ -227,6 +239,35 @@ add_action('wp_footer', function () {
 			
 			isInitialized = true;
 		}
+		
+		// 清理旧的事件监听器
+		function cleanupListeners() {
+			if (!isInitialized) return;
+			
+			var articleContainer = document.querySelector('article') || document.querySelector('.post') || document.querySelector('main') || document;
+			
+			if (listeners.mouseenter) {
+				articleContainer.removeEventListener('mouseenter', listeners.mouseenter, true);
+			}
+			if (listeners.mousemove) {
+				articleContainer.removeEventListener('mousemove', listeners.mousemove, true);
+			}
+			if (listeners.mouseleave) {
+				articleContainer.removeEventListener('mouseleave', listeners.mouseleave, true);
+			}
+		}
+		
+		// 监听PJAX更新事件，重新初始化
+		document.addEventListener('pjax:end', function() {
+			contentCache = {}; // 清空缓存
+			initFootnoteHover();
+		});
+		
+		// 也监听其他可能的动态加载事件
+		document.addEventListener('page:loaded', function() {
+			contentCache = {};
+			initFootnoteHover();
+		});
 
 		// 多次尝试初始化，以应对异步加载内容
 		function tryInit() {
@@ -238,12 +279,15 @@ add_action('wp_footer', function () {
 				setTimeout(initFootnoteHover, 100);
 			}
 			
-			// 如果初始化失败，1秒后重试
-			setTimeout(function() {
-				if (!isInitialized && document.querySelectorAll('a.footnote-ref').length > 0) {
-					initFootnoteHover();
-				}
-			}, 1000);
+			// 只在初始加载时设置一次重试，避免无限循环
+			if (!window.footnote_retry_scheduled) {
+				window.footnote_retry_scheduled = true;
+				setTimeout(function() {
+					if (!isInitialized && document.querySelectorAll('a.footnote-ref').length > 0) {
+						initFootnoteHover();
+					}
+				}, 1000);
+			}
 		}
 		
 		tryInit();
