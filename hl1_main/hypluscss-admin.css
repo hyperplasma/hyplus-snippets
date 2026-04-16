@@ -16,3 +16,8 @@
 #wp-content-editor-tools {
 	display: none !important;
 }
+
+/* hide delete btn in classic editor */
+#delete-action {
+	display: none !important;
+}
