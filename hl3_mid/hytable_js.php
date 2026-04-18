@@ -17,6 +17,8 @@ add_action('wp_footer', function() {
             const tables = container.querySelectorAll('table');
 
             tables.forEach(table => {
+                if (table.classList.contains('hyplus-excluded-table')) return;
+
                 // 针对 tbody 进行深度处理，确保表头结构不受干扰
                 const rows = table.querySelectorAll('tbody tr');
                 if (rows.length < 2) return; 
