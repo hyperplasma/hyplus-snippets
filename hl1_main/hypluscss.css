@@ -304,12 +304,12 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-header-footer-shadow: rgba(38, 166, 154, 0.35);
 }
 
-a {
+a, .um .um-item-meta a {
 	text-decoration: none;
 	color: var(--hyplus-primary-link-color);
 }
 
-a:hover, a:focus, a:active{
+a:hover, a:focus, a:active, .um .um-item-meta a:hover, .um .um-item-meta a:focus, .um .um-item-meta a:active {
 	color: var(--hyplus-link-hover-color);
 }
 
@@ -1123,4 +1123,19 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	margin: 4px;
 	cursor: pointer;
 	display: inline-block;
+}
+
+/**
+ * HY-Ultimate Member - UM相关设置
+ */
+.um-load-items {
+    display: none !important;
+}
+
+.um .um-profile-nav-item.active a {
+	background: var(--hyplus-btn-back-active);
+}
+
+.um .um-profile-nav-item.active a:hover {
+	background: var(--hyplus-btn-back-bg);
 }
