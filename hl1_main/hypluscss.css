@@ -16,7 +16,7 @@
 	--hyplus-border-color-main: rgba(0,134,139, 0.23);
 	--hyplus-border-color-light: #9ac8da;
 	--hyplus-border-color-neutral: #ddd;
-	--hyplus-border-color-light2: #c4e0f7;
+	--hyplus-border-color-light2: #72b8d3;
 	
 	/* 背景颜色 */
 	--hyplus-bg-overall: rgba(187,255,255,0.05);
@@ -166,7 +166,7 @@ body.hyplus-atmosphere-purple :root {
 	--hyplus-border-color-main: rgba(123, 31, 162, 0.23);
 	--hyplus-border-color-light: #d1a4d4;
 	--hyplus-border-color-neutral: #ddd;
-	--hyplus-border-color-light2: #e1bee7;
+	--hyplus-border-color-light2: #c786d3;
 	
 	/* 背景颜色 - 紫色调 */
 	--hyplus-bg-overall: rgba(225, 190, 231, 0.05);
@@ -241,7 +241,7 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-border-color-main: rgba(0, 121, 107, 0.23);
 	--hyplus-border-color-light: #80cbc4;
 	--hyplus-border-color-neutral: #ddd;
-	--hyplus-border-color-light2: #4db6ac;
+	--hyplus-border-color-light2: #5dcbc0;
 	
 	/* 背景颜色 - 绿色调 */
 	--hyplus-bg-overall: rgba(128, 203, 196, 0.05);
@@ -853,8 +853,8 @@ h2, h3, h4, h5, h6 {
 }
 
 .entry-content h1 {
-	border-left: 6px solid var(--hyplus-border-color-light);
-	border-right: 6px solid var(--hyplus-border-color-light);
+	border-left: 6px solid var(--hyplus-border-color-light2);
+	border-right: 6px solid var(--hyplus-border-color-light2);
 	margin-left: -12px;
 	margin-right: -12px;
 }
