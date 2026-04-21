@@ -1062,7 +1062,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	min-width: fit-content;
 	text-align: center;
 	margin: 0;
-	border: 1.5px solid var(--hyplus-border-color-light2);
+	border: 1.5px solid var(--hyplus-border-color-light);
 	position: relative;
 	overflow: hidden;
 	will-change: transform, box-shadow;
@@ -1072,7 +1072,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 .hyplus-nav-link:focus {
 	background: var(--hyplus-bg-button-hover);
 	color: var(--hyplus-text-nav-link-hover);
-	border-color: var(--hyplus-border-color-light2);
+	border-color: var(--hyplus-border-color-light);
 	box-shadow: 0 4px 14px 0 var(--hyplus-shadow-nav-hover), 0 1.5px 4px 0 var(--hyplus-shadow-nav-text);
 	transform: translateY(-1px) scale(1.025);
 	text-decoration: none;
