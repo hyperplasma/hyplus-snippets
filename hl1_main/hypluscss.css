@@ -314,10 +314,10 @@ a:hover, a:focus, a:active, .um .um-item-meta a:hover, .um .um-item-meta a:focus
 }
 
 /* Bold Text 加粗文本 */
-b, strong {
+/* b, strong { */
 	/* font-weight: 900; */
-	color: var(--hyplus-text-title);
-}
+	/* color: var(--hyplus-text-title); */
+/* } */
 
 /**
  * HY-submenu CSS 子菜单
@@ -853,6 +853,7 @@ h2, h3, h4, h5, h6 {
 	box-shadow: 0 2px 6px var(--hyplus-shadow-deep);
 }
 
+/* .entry-header h1, .page-header h1, */
 .entry-content h1 {
 	border-left: 6px solid var(--hyplus-border-color-light2);
 	border-right: 6px solid var(--hyplus-border-color-light2);
