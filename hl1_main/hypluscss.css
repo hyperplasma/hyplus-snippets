@@ -314,9 +314,10 @@ a:hover, a:focus, a:active, .um .um-item-meta a:hover, .um .um-item-meta a:focus
 }
 
 /* Bold Text 加粗文本 */
-/* b, strong {
-	font-weight: 900;
-} */
+b, strong {
+	/* font-weight: 900; */
+	color: var(--hyplus-text-title);
+}
 
 /**
  * HY-submenu CSS 子菜单
