@@ -10,7 +10,7 @@
 	/* 主链接颜色 */
 	--hyplus-primary-link-color: #0073aa;
 	--hyplus-primary-link-active: #3000aa;
-	--hyplus-link-hover-color: red;
+	--hyplus-link-hover-color: #ec0202;
 	
 	/* 边框和容器颜色 */
 	--hyplus-border-color-main: rgba(0,134,139, 0.23);
@@ -32,8 +32,8 @@
 	--hyplus-text-primary: #333;
 	--hyplus-text-nav-link: #175082;
 	--hyplus-text-nav-link-hover: #155a99;
-	--hyplus-text-heading: #2d3a4b;
-	--hyplus-text-title: #012f57;
+	--hyplus-text-heading: #132d51;
+	--hyplus-text-title: #013664;
 	--hyplus-text-quote: #454545;
 	--hyplus-text-gray: gray;
 	--hyplus-text-code: rgba(7, 1, 114, 0.468);
@@ -85,7 +85,7 @@ body.hyplus-atmosphere-red :root {
 	/* 主链接颜色 - 红色 */
 	--hyplus-primary-link-color: #d94556;
 	--hyplus-primary-link-active: #c401ad;
-	--hyplus-link-hover-color: #ff9100;
+	--hyplus-link-hover-color: #ed0268;
 	
 	/* 边框和容器颜色 - 红色系 */
 	--hyplus-border-color-main: rgba(192,28,59, 0.23);
@@ -160,7 +160,7 @@ body.hyplus-atmosphere-purple :root {
 	/* 主链接颜色 - 紫色 */
 	--hyplus-primary-link-color: #7b1fa2;
 	--hyplus-primary-link-active: #154b80;
-	--hyplus-link-hover-color: #f1003c;
+	--hyplus-link-hover-color: #ed4102;
 	
 	/* 边框和容器颜色 - 紫色系 */
 	--hyplus-border-color-main: rgba(123, 31, 162, 0.23);
@@ -235,7 +235,7 @@ body.hyplus-atmosphere-green :root {
 	/* 主链接颜色 - 绿色 */
 	--hyplus-primary-link-color: #00796b;
 	--hyplus-primary-link-active: #2084e1;
-	--hyplus-link-hover-color: #020bb8;
+	--hyplus-link-hover-color: #ed3902;
 	
 	/* 边框和容器颜色 - 绿色系 */
 	--hyplus-border-color-main: rgba(0, 121, 107, 0.23);
@@ -304,20 +304,23 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-header-footer-shadow: rgba(38, 166, 154, 0.35);
 }
 
-a, .um .um-item-meta a {
-	text-decoration: none;
+a, .um .um-item-meta a, .um-item-link a {
+	text-decoration: none !important;
 	color: var(--hyplus-primary-link-color);
 }
 
-a:hover, a:focus, a:active, .um .um-item-meta a:hover, .um .um-item-meta a:focus, .um .um-item-meta a:active {
+a:hover, a:focus, a:active, 
+.um-item-link a:hover, .um-item-link a:focus, .um-item-link a:active,
+.um .um-item-meta a:hover, .um .um-item-meta a:focus, .um .um-item-meta a:active {
+	text-decoration: none !important;
 	color: var(--hyplus-link-hover-color);
 }
 
 /* Bold Text 加粗文本 */
-/* b, strong { */
+.post b, .post strong {
 	/* font-weight: 900; */
-	/* color: var(--hyplus-text-title); */
-/* } */
+	color: var(--hyplus-text-title);
+}
 
 /**
  * HY-submenu CSS 子菜单
@@ -850,22 +853,22 @@ h2, h3, h4, h5, h6 {
 	border-radius: 12px;
 	/* border: 1px solid var(--hyplus-border-color-very-light); */
 	/* border: 1px solid var(--hyplus-border-color-light); */
-	box-shadow: 0 2px 6px var(--hyplus-shadow-deep);
+	/* box-shadow: 0 2px 6px var(--hyplus-shadow-deep); */
 }
 
 /* .entry-header h1, .page-header h1, */
 .entry-content h1 {
-	border-left: 6px solid var(--hyplus-border-color-light2);
-	border-right: 6px solid var(--hyplus-border-color-light2);
-	margin-left: -12px;
-	margin-right: -12px;
+	border-left: 5px solid var(--hyplus-border-color-light2);
+	border-right: 5px solid var(--hyplus-border-color-light2);
+	margin-left: -10px;
+	margin-right: -10px;
 }
 
 .entry-content h2 {
-	border-left: 5px solid var(--hyplus-border-color-light);
-	border-right: 5px solid var(--hyplus-border-color-light);
-	margin-left: -10px;
-	margin-right: -10px;
+	border-left: 4px solid var(--hyplus-border-color-light);
+	border-right: 4px solid var(--hyplus-border-color-light);
+	margin-left: -8px;
+	margin-right: -8px;
 }
 
 .entry-content h3, .entry-content h4, .entry-content h5, .entry-content h6, .taxonomy-description > h3 {
@@ -873,11 +876,6 @@ h2, h3, h4, h5, h6 {
 	border-right: 3px solid var(--hyplus-border-color-light);
 	margin-left: -6px;
 	margin-right: -6px;
-}
-
-ul li {
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
 }
 
 /* .entry-content h1, */
@@ -889,7 +887,17 @@ ul li {
 	text-align: center;
 } */
 
-/* ul style */
+/* Lists (ul, ol) and List Items (li) */
+ul li {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+li::marker {
+	color: var(--hyplus-text-title);
+}
+
+/* ul li marker style */
 ul ul {
 	list-style-type: circle;
 }
@@ -906,7 +914,7 @@ ul ul ul ul ul {
 	list-style-type: circle;
 }
 
-/* ol style */
+/* ol li marker style */
 ol ol {
 	list-style-type: lower-alpha;
 }
@@ -915,6 +923,7 @@ ol ol ol {
 	list-style-type: lower-roman;
 }
 
+/* foldable detail list */
 details summary {
 	cursor: pointer;
 	color: var(--hyplus-primary-link-color);
