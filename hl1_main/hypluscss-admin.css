@@ -21,3 +21,8 @@
 #delete-action {
 	display: none !important;
 }
+
+/* hide delete btn when editing category/tag */
+.edit-tag-actions #delete-link {
+	display: none !important;
+}

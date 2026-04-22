@@ -212,18 +212,18 @@
 								菜单
 							</button>
 						</label>
-						<?php 
+						<!-- </?php 
 							if (is_single()) : 
-								$edit_link = get_edit_post_link($post_id);
+								$edit_link = get_edit_post_link();
 						?>
 						<label class="language-label">
 							<button class="font-size-btn"
-								onclick="window.open('<?php echo $edit_link; ?>', '_blank');"
+								onclick="window.open('</?php echo $edit_link; ?>', '_blank');"
 							>
 								本文
 							</button>
 						</label>
-						<?php endif; ?>
+						</?php endif; ?> -->
 					</div>
 					<div class="language-selector-row" style="margin-top: 5px;">
 						<label class="language-label">便捷服务:</label>
@@ -270,8 +270,8 @@
 				</div>
 				<div class="shortcuts-column">
 					<div class="shortcut-item">
-						在新标签页中打开链接
-						<span class="shortcut-key">⌥左键单击</span>
+						编辑页面（仅限管理员）
+						<span class="shortcut-key">⌥D</span>
 					</div>
 					<div class="shortcut-item">
 						减小字体大小
@@ -1363,6 +1363,15 @@
 			event.stopPropagation();
 		}
 
+		// 快速编辑页面 (Alt+E)
+		if (event.altKey && !event.shiftKey && (event.key === 'd' || event.key === '∂')) {
+			event.preventDefault();
+			if (window.editUrl) {
+				window.open(window.editUrl, '_blank');
+			}
+			event.stopPropagation();
+		}
+
 		// 页面切换 (Alt+Z/X 或 Alt+←/→)
 		if (navContainer.style.display === 'block') {
 			if (event.altKey && (
@@ -1431,33 +1440,6 @@
 		// 	}
 		// }
 	});
-
-	/**
-	 * Alt + Click to Open Links in New Tab unused
-	 */
-	// document.addEventListener('click', function (event) {
-	// 	// 只响应鼠标左键 + Alt 点击
-	// 	if (event.button !== 0 || !event.altKey) return;
-
-	// 	// 查找可能的跳转元素（a标签或带有 data-href 属性等）
-	// 	let el = event.target;
-	// 	while (el && el !== document.body) {
-	// 		if ((el.tagName === 'A' && el.href) || el.hasAttribute('data-href') || el.onclick) {
-	// 			break;
-	// 		}
-	// 		el = el.parentElement;
-	// 	}
-	// 	if (!el || el === document.body) return;
-
-	// 	// 获取目标链接（优化：直接赋值 URL）
-	// 	const url = el.href || el.getAttribute('data-href');
-	// 	if (!url) return;
-
-	// 	// 阻止默认跳转，在新标签页打开
-	// 	event.preventDefault();
-	// 	window.open(url, '_blank');
-	// }, true);
-
 
 	/**
 	 * Random post function for PAT category page
@@ -1691,6 +1673,24 @@
 
 	// 页面加载完成后的初始化
 	window.onload = function() {
+	<?php
+	if (current_user_can('administrator')) {
+		$edit_url = '';
+		if (is_single() || is_page()) {
+			$edit_url = get_edit_post_link(get_the_ID());
+		} elseif (is_category()) {
+			$term = get_queried_object();
+			if ($term) {
+				$edit_url = get_edit_term_link($term->term_id, $term->taxonomy);
+			}
+		}
+		if ($edit_url) {
+			$edit_url = html_entity_decode($edit_url, ENT_QUOTES, 'UTF-8');
+			echo "window.editUrl = " . json_encode($edit_url) . ";";
+		}
+	}
+	?>
+
 		// 首先切换到上次访问的页面（确保切换功能正常工作）
 		const lastVisitedPage = localStorage.getItem('lastVisitedNavPage') || 'nav';
 		switchNavContent(lastVisitedPage);
