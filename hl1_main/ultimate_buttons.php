@@ -177,22 +177,6 @@
 				</div>
 
 			<?php
-				if (is_single()) :
-			?>
-				<div class="language-selector" style="margin-top: 12px;">
-					<div class="language-selector-row">
-						<span class="language-label">复制本文内容:</span>
-						<button id="copyContentBtn" class="font-size-btn">复制</button>
-					</div>
-					<div class="language-selector-row">
-						<input type="checkbox" id="addPromptCheckbox" />
-						<label for="addPromptCheckbox">
-							<span class="language-label">附加问答提示词（适用于<a href="https://kina.hyperplasma.top" target="_blank">KINA</a>）</span>
-						</label>
-					</div>
-				</div>
-			<?php
-				endif;
 				if (current_user_can('administrator')) :
 			?>
 				<div class="language-selector" style="margin-top: 12px;">
@@ -212,18 +196,6 @@
 								菜单
 							</button>
 						</label>
-						<!-- </?php 
-							if (is_single()) : 
-								$edit_link = get_edit_post_link();
-						?>
-						<label class="language-label">
-							<button class="font-size-btn"
-								onclick="window.open('</?php echo $edit_link; ?>', '_blank');"
-							>
-								本文
-							</button>
-						</label>
-						</?php endif; ?> -->
 					</div>
 					<div class="language-selector-row" style="margin-top: 5px;">
 						<label class="language-label">便捷服务:</label>
@@ -244,6 +216,10 @@
 					</div>
 				</div>
 			<?php endif; ?>
+			<!-- GTranslate -->
+				<div style="margin: 12px 0;">
+					<?php echo do_shortcode('[gtranslate]'); ?>
+				</div>
 			</div>
 		</div>
 
@@ -707,10 +683,6 @@
 
     .config-item input[type="checkbox"] {
         margin: 0;
-        cursor: pointer;
-    }
-
-    #addPromptCheckbox {
         cursor: pointer;
     }
 
@@ -1364,15 +1336,13 @@
 		}
 
 		// 快速编辑页面 (Alt+E)
-		<?php if (current_user_can('administrator')): ?>
-		if (event.altKey && !event.shiftKey && (event.key === 'd' || event.key === '∂')) {
+		if (window.editUrl && event.altKey && !event.shiftKey && (event.key === 'd' || event.key === '∂')) {
 			event.preventDefault();
 			if (window.editUrl) {
 				window.open(window.editUrl, '_blank');
 			}
 			event.stopPropagation();
 		}
-		<?php endif; ?>
 
 		// 页面切换 (Alt+Z/X 或 Alt+←/→)
 		if (navContainer.style.display === 'block') {
@@ -1448,7 +1418,7 @@
 	 */
 	function goToRandomPost(type, min, max) {
 		const num = Math.floor(Math.random() * (max - min + 1)) + min;
-		const url = `https://www.hyperplasma.top/${type}-${num}`;
+		const url = "https://www.hyperplasma.top/" + type + "-" + num;
 		window.location.href = url;
 	}
 
@@ -1793,43 +1763,6 @@
 
 		// 笔记和字体控制初始化
 		initFontSizeControls();
-
-		// 缓存复制正文按钮和附加提问提示词复选框为全局变量
-		if (!window._hyplusCopyCache) {
-			window._hyplusCopyCache = {
-				copyContentBtn: document.getElementById('copyContentBtn'),
-				addPromptCheckbox: document.getElementById('addPromptCheckbox')
-			};
-		}
-		const copyContentBtn = window._hyplusCopyCache.copyContentBtn;
-		const addPromptCheckbox = window._hyplusCopyCache.addPromptCheckbox;
-		if (copyContentBtn) {
-			copyContentBtn.addEventListener('click', function() {
-				let content = '';
-				// 获取正文
-				const article = document.querySelector('#main');
-				if (article) {
-					content = article.innerText;
-				} else {
-					content = document.body.innerText;
-				}
-				content = "来源：Hyperplasma 链接：" + window.location.href + "\n" + content;
-				// 检查复选框是否选中
-				const addPrompt = addPromptCheckbox && addPromptCheckbox.checked;
-				if (addPrompt) {
-					const before = '请你认真阅读学习以下重要内容（其中第1行是所属网站及其permalink，第2行是所属分类、字数统计、预估阅读时间等元信息，第3行是标题，第4行是初版发表日期、作者名、最近修改日期等元信息，之后为正文；最后几行可能有若干注解(以返回符`↩`结尾)、分类/tag信息、评论栏、网友评论等额外内容），准备据此回答问题：\n```````````````````````````\n';
-					const after = '\n```````````````````````````\n';
-					content = before + content + after;
-				}
-				if (navigator.clipboard) {
-					navigator.clipboard.writeText(content).then(function() {
-						alert('✓ 页面正文已复制到剪贴板');
-					}).catch(function() {
-						alert('✗ 复制失败，请重试');
-					});
-				}
-			});
-		}
 
 		// 移动端禁用侧边栏单选群
 		if (window.innerWidth <= 768) {
