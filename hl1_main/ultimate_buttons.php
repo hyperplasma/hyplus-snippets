@@ -1364,6 +1364,7 @@
 		}
 
 		// 快速编辑页面 (Alt+E)
+		<?php if (current_user_can('administrator')): ?>
 		if (event.altKey && !event.shiftKey && (event.key === 'd' || event.key === '∂')) {
 			event.preventDefault();
 			if (window.editUrl) {
@@ -1371,6 +1372,7 @@
 			}
 			event.stopPropagation();
 		}
+		<?php endif; ?>
 
 		// 页面切换 (Alt+Z/X 或 Alt+←/→)
 		if (navContainer.style.display === 'block') {
@@ -1673,7 +1675,7 @@
 
 	// 页面加载完成后的初始化
 	window.onload = function() {
-	<?php
+	window.editUrl = "<?php
 	if (current_user_can('administrator')) {
 		$edit_url = '';
 		if (is_single() || is_page()) {
@@ -1685,11 +1687,10 @@
 			}
 		}
 		if ($edit_url) {
-			$edit_url = html_entity_decode($edit_url, ENT_QUOTES, 'UTF-8');
-			echo "window.editUrl = " . json_encode($edit_url) . ";";
+			echo html_entity_decode($edit_url, ENT_QUOTES, 'UTF-8');
 		}
 	}
-	?>
+	?>";
 
 		// 首先切换到上次访问的页面（确保切换功能正常工作）
 		const lastVisitedPage = localStorage.getItem('lastVisitedNavPage') || 'nav';
