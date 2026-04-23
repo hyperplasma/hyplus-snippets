@@ -9,7 +9,7 @@
 // 自动在正文第一个被TOC捕获的标题前插入[toc]（仅文章页且未手动插入时）
 add_filter('the_content', 'hyplus_auto_insert_toc_before_first_toc_heading');
 function hyplus_auto_insert_toc_before_first_toc_heading($content) {
-    if (!is_singular('post') || is_home()) return $content;
+    if (!is_single() && !is_page()) return $content;
     // if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
 
     // 捕获三种格式：1. 数字（可多位）或单大写字母+点分段，且后面必须有空格（如1 标题、10 标题、2.1 标题、3.A.4 标题、B.1.3 标题、11.2.3 标题）；2. ep+数字（如ep01、ep24、ep103）；3. "第"+阿拉伯数字（如第1、第2、第3）；4. 以"Hyplus"开头（如Hyplus注释）
