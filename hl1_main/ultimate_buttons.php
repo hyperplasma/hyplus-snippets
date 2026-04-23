@@ -176,6 +176,20 @@
 					</div>
 				</div>
 
+				<!-- 背景图选择区 -->
+				<div class="language-selector" style="margin-top: 12px;">
+					<div class="language-selector-row">
+						<span class="language-label">背景图选择:</span>
+						<select id="backgroundSelect" class="font-select" onchange="changeBackground()">
+							<option value="none">无</option>
+							<option value="seifuku">Seifuku</option>
+							<option value="clovers">Clovers</option>
+							<option value="sukusui">Sukusui</option>
+							<option value="kikazaru">Uso wo Kikazaru</option>
+						</select>
+					</div>
+				</div>
+
 			<?php
 				if (current_user_can('administrator')) :
 			?>
@@ -1638,9 +1652,99 @@
 		}
 	}
 
+	// 背景图配置映射（可扩展）
+	const BACKGROUND_CONFIGS = {
+		'seifuku': {
+			imageUrl: '/wp-content/uploads/2026/04/20260423180946.webp',
+			opacity: 0.15
+		},
+		'clovers': {
+			imageUrl: '/wp-content/uploads/2026/03/20260306170205.webp',
+			opacity: 0.15
+		},
+		'sukusui': {
+			imageUrl: '/wp-content/uploads/2026/03/20260306172335.webp',
+			opacity: 0.15
+		},
+		'kikazaru': {
+			imageUrl: '/wp-content/uploads/2026/04/20260423183102.webp',
+			opacity: 0.15
+		}
+		// 可以在这里添加更多背景配置
+	};
+
+	// ========== 背景图切换功能 ==========
+	/**
+	 * 修改网站背景图
+	 */
+	function changeBackground(background) {
+		// 如果没有传入参数，则从选择器中获取
+		if (!background) {
+			const select = document.getElementById('backgroundSelect');
+			background = select ? select.value : 'none';
+		}
+		
+		// 移除之前的动态样式
+		const existingStyle = document.getElementById('dynamic-background-style');
+		if (existingStyle) {
+			existingStyle.remove();
+		}
+		
+		// 应用新的背景
+		const config = BACKGROUND_CONFIGS[background];
+		if (config) {
+			// 动态创建样式
+			const style = document.createElement('style');
+			style.id = 'dynamic-background-style';
+			style.textContent = `
+				body::before {
+					content: '';
+					position: fixed;
+					top: 0;
+					left: 50%;
+					width: 100%;
+					height: 100%;
+					transform: translateX(-50%);
+					background-image: url('${config.imageUrl}');
+					background-position: top center;
+					background-size: auto max(100%, 600px);
+					background-repeat: no-repeat;
+					background-attachment: fixed;
+					opacity: ${config.opacity};
+					z-index: -1;
+					pointer-events: none;
+				}
+				/* 使主要内容区域背景透明，以便背景图片可见 */
+				.page-header, .site-main, .content-area, .sidebar, .widget, .inside-article, .post, .page, .entry-content, .comments-area {
+					background: transparent !important;
+				}
+			`;
+			document.head.appendChild(style);
+		}
+		// 'none'不需要添加样式，默认无背景
+		
+		// 保存用户选择到cookie
+		setCookie('selectedBackground', background);
+	}
+
+	function initBackground() {
+		// 从cookie读取保存的背景图选择
+		const savedBackground = getCookie('selectedBackground') || 'none';
+		
+		// 应用保存的背景图
+		changeBackground(savedBackground);
+		
+		// 更新下拉菜单的值
+		const select = document.getElementById('backgroundSelect');
+		if (select) {
+			select.value = savedBackground;
+		}
+	}
+
 	// 在DOMContentLoaded时立即应用气氛，避免白色遮罩消失时闪烁
 	document.addEventListener('DOMContentLoaded', function() {
 		initAtmosphere();
+		initBackground();
 	});
 
 	// 页面加载完成后的初始化
@@ -1678,6 +1782,18 @@
 
 			fontSelect.addEventListener('change', function() {
 				setFontFamily(this.value);
+			});
+		}
+
+		// 初始化背景图选择
+		const backgroundSelect = document.getElementById('backgroundSelect');
+		if (backgroundSelect) {
+			const savedBackground = getCookie('selectedBackground') || 'none';
+			backgroundSelect.value = savedBackground;
+			changeBackground(savedBackground);
+
+			backgroundSelect.addEventListener('change', function() {
+				changeBackground(this.value);
 			});
 		}
 
