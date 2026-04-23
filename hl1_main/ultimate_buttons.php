@@ -184,7 +184,7 @@
 							<option value="none">无</option>
 							<option value="seifuku">Seifuku</option>
 							<option value="clovers">Clovers</option>
-							<option value="sukusui">Sukusui</option>
+							<option value="kotaro">Kotaro (♀)</option>
 							<option value="kikazaru">Uso wo Kikazaru</option>
 						</select>
 					</div>
@@ -1662,13 +1662,13 @@
 			imageUrl: '/wp-content/uploads/2026/03/20260306170205.webp',
 			opacity: 0.15
 		},
-		'sukusui': {
-			imageUrl: '/wp-content/uploads/2026/03/20260306172335.webp',
-			opacity: 0.15
+		'kotaro': {
+			imageUrl: '/wp-content/uploads/2026/04/20260423200054.webp',
+			opacity: 0.18
 		},
 		'kikazaru': {
 			imageUrl: '/wp-content/uploads/2026/04/20260423183102.webp',
-			opacity: 0.15
+			opacity: 0.18
 		}
 		// 可以在这里添加更多背景配置
 	};
