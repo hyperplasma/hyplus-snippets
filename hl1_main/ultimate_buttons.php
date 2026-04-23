@@ -1715,7 +1715,7 @@
 					pointer-events: none;
 				}
 				/* 使主要内容区域背景透明，以便背景图片可见 */
-				.page-header, .site-main, .content-area, .sidebar, .widget, .inside-article, .post, .page, .entry-content, .comments-area {
+				.page-header, .site-main, .content-area, .sidebar, .widget, .inside-article, .post, .page, .entry-content, .comments-area, .paging-navigation {
 					background: transparent !important;
 				}
 			`;

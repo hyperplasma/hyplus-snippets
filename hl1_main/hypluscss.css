@@ -21,6 +21,7 @@
 	/* 背景颜色 */
 	--hyplus-bg-overall: rgba(187,255,255,0.05);
 	--hyplus-bg-container: #fbfdfe8c;
+	--hyplus-bg-container-solid: #fbfdfe;
 	--hyplus-bg-code: #e4edf7;
 	--hyplus-bg-settings: #f8f9fa;
 	--hyplus-bg-button-light: #f3fcff;
@@ -96,6 +97,7 @@ body.hyplus-atmosphere-red :root {
 	/* 背景颜色 - 红色调 */
 	--hyplus-bg-overall: rgba(255,200,200,0.05);
 	--hyplus-bg-container: #fff9f98c;
+	--hyplus-bg-container-solid: #fff9f9;
 	--hyplus-bg-code: #fdf0f0;
 	--hyplus-bg-settings: #fffbfb;
 	--hyplus-bg-button-light: #fbf1f1;
@@ -171,6 +173,7 @@ body.hyplus-atmosphere-purple :root {
 	/* 背景颜色 - 紫色调 */
 	--hyplus-bg-overall: rgba(225, 190, 231, 0.05);
 	--hyplus-bg-container: #fbf5fc8c;
+	--hyplus-bg-container-solid: #fbf5fc;
 	--hyplus-bg-code: #f3e5f5;
 	--hyplus-bg-settings: #faf7fb;
 	--hyplus-bg-button-light: #f8f4ff;
@@ -246,6 +249,7 @@ body.hyplus-atmosphere-green :root {
 	/* 背景颜色 - 绿色调 */
 	--hyplus-bg-overall: rgba(128, 203, 196, 0.05);
 	--hyplus-bg-container: #f5fbfb8c;
+	--hyplus-bg-container-solid: #f5fbfb;
 	--hyplus-bg-code: #e0f2f1;
 	--hyplus-bg-settings: #f8fbfb;
 	--hyplus-bg-button-light: #ebf6f5;
@@ -1131,7 +1135,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	position: fixed;
 	z-index: 99999;
 	max-width: 400px;
-	background: var(--hyplus-bg-container);
+	background: var(--hyplus-bg-container-solid);
 	color: #222;
 	/* border: 1px solid var(--hyplus-border-color-light); */
 	border-radius: 12px;
@@ -1184,4 +1188,21 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 
 .um .um-profile-nav-item.active a:hover {
 	background: var(--hyplus-btn-back-bg);
+}
+
+/**
+ * HY-特色图片 - 特色图片容器
+ */
+.hypost-featured-image {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.hypost-featured-image img {
+	display:inline-block;
+	max-width:100%;
+	height:auto;
+
+	border-radius: 12px;
+	box-shadow: 0 0 16px var(--hyplus-shadow-deep);
 }

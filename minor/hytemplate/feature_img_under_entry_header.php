@@ -23,9 +23,7 @@ add_action('generate_after_entry_header', function() {
     global $hyplus_featured_img_post_id;
     if (!is_single() || empty($hyplus_featured_img_post_id)) return;
     if (!has_post_thumbnail($hyplus_featured_img_post_id)) return;
-    echo '<div class="hypost-featured-image" style="text-align:center;margin-top:20px;">';
-    echo get_the_post_thumbnail($hyplus_featured_img_post_id, 'full', [
-        'style' => 'display:inline-block;max-width:100%;height:auto;'
-    ]);
+    echo '<div class="hypost-featured-image">';
+    echo get_the_post_thumbnail($hyplus_featured_img_post_id, 'full');
     echo '</div>';
 });
