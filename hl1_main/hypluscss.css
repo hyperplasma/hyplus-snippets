@@ -471,7 +471,7 @@ footer {
  * Overall Hyplus style css (Including Inline Code Block, HomeTempButtons, NoSidebarOnMobile, commentForm...) CSS
  */
 body {
-	background-color: var(--hyplus-bg-overall) !important;
+	background-color: var(--hyplus-bg-overall);
 	border: none !important;
 }
 

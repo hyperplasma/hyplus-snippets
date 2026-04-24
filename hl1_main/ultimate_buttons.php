@@ -181,10 +181,10 @@
 					<div class="language-selector-row">
 						<span class="language-label">背景图选择:</span>
 						<select id="backgroundSelect" class="font-select" onchange="changeBackground()">
-							<option value="none">无</option>
+							<option value="none">不透明（默认）</option>
 							<option value="seifuku">Seifuku</option>
 							<option value="clovers">Clovers</option>
-							<option value="kotaro">Kotaro (♀)</option>
+							<option value="kotaro">Kotaro ♀</option>
 							<option value="kikazaru">Uso wo Kikazaru</option>
 						</select>
 					</div>
@@ -289,7 +289,7 @@
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.5.1.1 by Akira37
+			Ultimate Buttons v1.6 by Akira37
 		</div>
 	</div>
 </div>
@@ -1667,7 +1667,7 @@
 			opacity: 0.18
 		},
 		'kikazaru': {
-			imageUrl: '/wp-content/uploads/2026/04/20260423183102.webp',
+			imageUrl: '/wp-content/uploads/2026/04/20260424035924.webp',
 			opacity: 0.18
 		}
 		// 可以在这里添加更多背景配置
@@ -1697,6 +1697,9 @@
 			const style = document.createElement('style');
 			style.id = 'dynamic-background-style';
 			style.textContent = `
+				body {
+					background: white !important;
+				}
 				body::before {
 					content: '';
 					position: fixed;
