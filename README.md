@@ -15,11 +15,23 @@ This repository contains custom **Hyplus** code snippets of our WordPress site -
   * `security`: Site security enhancements
   * `shortcodes`: WP shortcodes of simple custom blocks (also see `hl`'s for more complex custom blocks with shortcodes)
 
+
+## Featured Snippets
+
+* Ultimate Buttons (+ HyNav)
+* HyplusCSS (+ HyplusCSS-Admin)
+* HyLightBox
+* HyProgbar
+* HyTOC (+ SideInfo)
+* HyTable.js
+* HyGal (+ HyImg)
+* ......
+
 ## Related plugins
 
 * **[Advanced Post Password](https://wordpress.org/plugins/advanced-post-password/ "Advanced Post Password")**
 * **[Better Messages](https://wordpress.org/plugins/bp-better-messages/ "Better Messages")**
-* GTranslate (currently unused)
+* GTranslate ()
 * **[Ultimate Member](https://wordpress.org/plugins/ultimate-member/ "终极会员")**
 * **[WPCode](https://wordpress.org/plugins/insert-headers-and-footers/ "WPCode")** (Lite is enough!)
 * **[WP Githuber MD Hyplusified](https://github.com/hyperplasma/githuber-md "WP Githuber MD")** (H)
