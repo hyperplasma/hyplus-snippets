@@ -219,9 +219,24 @@ function hyplus_profile_shortcode_callback() {
                 align-items: center;
             }
         }
-        @media screen and (min-width: 769px) {
-            .profile-card-mobile-categories {
-                display: none;
+        /* 资源分类和热门文章并排布局 */
+        .profile-cards-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .profile-cards-container > .profile-card {
+            min-width: 250px;
+            justify-content: flex-start;
+        }
+        @media (max-width: 598px) {
+            .profile-cards-container {
+                grid-template-columns: 1fr;
+            }
+            .profile-cards-container > .profile-card {
+                min-width: unset;
             }
         }
         /* 随机博文功能样式 */
@@ -276,6 +291,26 @@ function hyplus_profile_shortcode_callback() {
         }
         .custom-randpost {
             margin-bottom: 6px;
+        }
+
+        /* 日历表格样式 */
+        #hy-calendar-table { width: 100% !important; font-size: 14px; }
+        #hy-calendar-table th { padding: 8px; border: 1px solid var(--hyplus-border-color-neutral); background-color: var(--hyplus-bg-container); font-weight: 600; }
+        #hy-calendar-table td { padding: 8px; height: 30px; }
+        #hy-calendar-table td:hover { background: var(--hyplus-bg-button-light); }
+        .hy-today { background: var(--hyplus-bg-button-hover); font-size: 16px; font-weight: 900; }
+        
+        /* 热门文章列表样式 - 调整margin为文字腾出空间 并居中 */
+        .recent-posts-card ul {
+            margin: 0 auto;
+            padding-left: 20px;
+            width: auto;
+            text-align: left;
+            display: inline-block;
+        }
+        .recent-posts-card ul li {
+            margin-left: 0;
+            padding-left: 0;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap" rel="stylesheet" />

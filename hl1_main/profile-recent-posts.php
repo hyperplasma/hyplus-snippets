@@ -12,13 +12,6 @@
         </div>
         <table id="hy-calendar-table" class="hyplus-excluded-table" style="width: 100%; border-collapse: collapse"></table>
     </div>
-    <style>
-        #hy-calendar-table { width: 100% !important; font-size: 14px; }
-        #hy-calendar-table th { padding: 8px; border: 1px solid var(--hyplus-border-color-neutral); background-color: var(--hyplus-bg-container); font-weight: 600; }
-        #hy-calendar-table td { padding: 8px; height: 30px; }
-        #hy-calendar-table td:hover { background: var(--hyplus-bg-button-light); }
-        .hy-today { background: var(--hyplus-bg-button-hover); font-size: 16px; font-weight: 900; }
-    </style>
     <script>
         let hyCurrentDate = new Date();
         function hyCalendarRender() {
@@ -41,21 +34,23 @@
         hyCalendarRender();
     </script>
 
-    <div class="profile-card profile-card-mobile-categories" style="text-align: left">
-        <div style="font-size: 26px; font-weight: 600; text-align: left">资源分类</div>
-        <?php
-        echo '<ul class="home-categories">';
-        wp_list_categories([
-            'show_count' => true,
-            'title_li' => '',
-            'hierarchical' => true
-        ]);
-        echo '</ul>';
-        ?>
-    </div>
-    <div class="profile-card" style="text-align: left">
-        <div style="font-size: 26px; font-weight: 600; text-align: left">热门文章</div>
-        <?php echo do_shortcode('[recently_modified_posts posts_per_page=10 show_modified_date=true]'); ?>
+    <div class="profile-cards-container">
+        <div class="profile-card" style="text-align: left">
+            <div style="font-size: 26px; font-weight: 600; text-align: left">资源分类</div>
+            <?php
+            echo '<ul class="home-categories">';
+            wp_list_categories([
+                'show_count' => true,
+                'title_li' => '',
+                'hierarchical' => true
+            ]);
+            echo '</ul>';
+            ?>
+        </div>
+        <div class="profile-card recent-posts-card" style="text-align: left">
+            <div style="font-size: 26px; font-weight: 600; text-align: left">热门文章</div>
+            <?php echo do_shortcode('[recently_modified_posts posts_per_page=8 show_modified_date=true]'); ?>
+        </div>
     </div>
     <div style="margin-top: 30px"><?php echo do_shortcode('[wpcode id="4726"]'); ?></div>
 </div>
