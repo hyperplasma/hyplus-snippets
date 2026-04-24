@@ -181,11 +181,10 @@
 					<div class="language-selector-row">
 						<span class="language-label">背景图选择:</span>
 						<select id="backgroundSelect" class="font-select" onchange="changeBackground()">
-							<option value="none">不透明（默认）</option>
+							<option value="default">默认背景</option>
 							<option value="seifuku">Seifuku</option>
 							<option value="clovers">Clovers</option>
-							<option value="kotaro">Kotaro ♀</option>
-							<option value="kikazaru">Uso wo Kikazaru</option>
+							<option value="kotaro">Kotaro♀</option>
 						</select>
 					</div>
 				</div>
@@ -1654,6 +1653,10 @@
 
 	// 背景图配置映射（可扩展）
 	const BACKGROUND_CONFIGS = {
+		'default': {
+			imageUrl: '/wp-content/uploads/2026/04/20260424035924.webp',
+			opacity: 0.18
+		},
 		'seifuku': {
 			imageUrl: '/wp-content/uploads/2026/04/20260423180946.webp',
 			opacity: 0.15
@@ -1664,10 +1667,6 @@
 		},
 		'kotaro': {
 			imageUrl: '/wp-content/uploads/2026/04/20260423200054.webp',
-			opacity: 0.18
-		},
-		'kikazaru': {
-			imageUrl: '/wp-content/uploads/2026/04/20260424035924.webp',
 			opacity: 0.18
 		}
 		// 可以在这里添加更多背景配置
@@ -1681,7 +1680,7 @@
 		// 如果没有传入参数，则从选择器中获取
 		if (!background) {
 			const select = document.getElementById('backgroundSelect');
-			background = select ? select.value : 'none';
+			background = select ? select.value : 'default';
 		}
 		
 		// 移除之前的动态样式
@@ -1697,9 +1696,6 @@
 			const style = document.createElement('style');
 			style.id = 'dynamic-background-style';
 			style.textContent = `
-				body {
-					background: white !important;
-				}
 				body::before {
 					content: '';
 					position: fixed;
@@ -1732,7 +1728,7 @@
 
 	function initBackground() {
 		// 从cookie读取保存的背景图选择
-		const savedBackground = getCookie('selectedBackground') || 'none';
+		const savedBackground = getCookie('selectedBackground') || 'default';
 		
 		// 应用保存的背景图
 		changeBackground(savedBackground);
@@ -1791,7 +1787,7 @@
 		// 初始化背景图选择
 		const backgroundSelect = document.getElementById('backgroundSelect');
 		if (backgroundSelect) {
-			const savedBackground = getCookie('selectedBackground') || 'none';
+			const savedBackground = getCookie('selectedBackground') || 'default';
 			backgroundSelect.value = savedBackground;
 			changeBackground(savedBackground);
 
