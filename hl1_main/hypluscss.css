@@ -830,13 +830,13 @@ blockquote {
 	margin-bottom: 1em;
 }
 
-.taxonomy-description h3 {
+/* .taxonomy-description h3 { */
 	/* text-align: center; */
 	/* margin: 0 0 12px 0; */
 	/* color: var(--hyplus-text-heading); */
 	/* font-size: 30px; */
-	font-weight: 600;
-}
+	/* font-weight: 600; */
+/* } */
 
 h1, h2, h3, h4, h5, h6, ol, ul ,body p {
 	margin-bottom: 0.5em;
@@ -847,7 +847,7 @@ h2, h3, h4, h5, h6 {
 }
 
 /* .entry-header h1, .page-header h1,  */
-.entry-content h1, .entry-content h2, .entry-content h3, .entry-content h4, .entry-content h5, .entry-content h6, .taxonomy-description > h3 {
+.entry-content h1, .entry-content h2, .entry-content h3, .entry-content h4, .entry-content h5, .entry-content h6, .taxonomy-description > h3, .hyplus-category-popup-container h3 {
 	/* margin-top: 1.2em; */
 	/* margin-left: -8px;
 	margin-right: -8px; */
@@ -878,7 +878,7 @@ h2, h3, h4, h5, h6 {
 	margin-right: -8px;
 }
 
-.entry-content h3, .entry-content h4, .entry-content h5, .entry-content h6, .taxonomy-description > h3 {
+.entry-content h3, .entry-content h4, .entry-content h5, .entry-content h6, .taxonomy-description > h3, .hyplus-category-popup-container h3 {
 	border-left: 3px solid var(--hyplus-border-color-light);
 	border-right: 3px solid var(--hyplus-border-color-light);
 	margin-left: -6px;

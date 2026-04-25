@@ -83,9 +83,10 @@ function lh_single_cats_above_title() {
                 $cat_links_html .= '<span style="margin: 0 2px;"> | </span>';
             }
             $cat_links_html .= sprintf(
-                '<a href="#" class="hyplus-cat-popup-trigger hyplus-scale" data-category-id="%d" data-category-name="%s" style="text-decoration: none; cursor: pointer;">%s</a>',
+                '<a href="#" class="hyplus-cat-popup-trigger hyplus-scale" data-category-id="%d" data-category-name="%s" data-category-link="%s" style="text-decoration: none; cursor: pointer;">%s</a>',
                 esc_attr($category->term_id),
                 esc_attr($category->name),
+                esc_attr(get_category_link($category->term_id)),
                 esc_html($category->name)
             );
         }
@@ -131,7 +132,7 @@ function lh_single_cats_above_title() {
         }
 
         .hyplus-category-popup-container #hyplus-popup-content {
-            padding: 10px 15px;
+            padding: 10px 22px;
             font-size: 0.9em;
         }
 
@@ -172,7 +173,6 @@ function lh_single_cats_above_title() {
             var popup = document.getElementById('hyplus-category-popup');
             var popupContent = document.getElementById('hyplus-popup-content');
             var categoryCache = {}; // 缓存分类描述
-            var categoryLinkCache = {}; // 缓存分类链接
             var currentActiveLink = null; // 当前激活的分类链接
             var minLeftPosition = null; // 最左侧分类的left位置
 
@@ -243,13 +243,14 @@ function lh_single_cats_above_title() {
                 if (categoryCache[categoryId] !== undefined) {
                     // 使用缓存内容
                     popup.style.display = 'block';
-                    displayCategoryContent(categoryCache[categoryId], categoryLinkCache[categoryId]);
+                    displayCategoryContent(categoryCache[categoryId]);
                     positionPopup();
                     return;
                 }
                 
-                // 显示加载状态
-                popupContent.innerHTML = '<div style="text-align: center; padding: 20px;">加载中...</div>';
+                // 显示加载状态（带标题）
+                var titleHtml = getCategoryTitleHtml();
+                popupContent.innerHTML = titleHtml + '<div style="text-align: center; padding: 10px 20px; color: #999; font-style: italic;">加载中...</div>';
                 
                 popup.style.display = 'block';
                 positionPopup();
@@ -270,30 +271,26 @@ function lh_single_cats_above_title() {
                 .then(function(result) {
                     if (result.success) {
                         var fullDescription = result.data.description;
-                        var categoryLink = result.data.category_link;
                         var extractedContent = extractContentFromFirstH3(fullDescription);
-                        
-                        // 缓存分类链接
-                        categoryLinkCache[categoryId] = categoryLink;
                         
                         if (extractedContent) {
                             // 缓存提取后的内容
                             categoryCache[categoryId] = extractedContent;
-                            displayCategoryContent(extractedContent, categoryLink);
+                            displayCategoryContent(extractedContent);
                         } else {
                             // 没有找到有id的h3标签
                             categoryCache[categoryId] = null;
-                            displayCategoryContent(null, categoryLink);
+                            displayCategoryContent(null);
                         }
                     } else {
                         categoryCache[categoryId] = null;
-                        displayCategoryContent(null, null);
+                        displayCategoryContent(null);
                     }
                 })
                 .catch(function(error) {
                     console.error('Error:', error);
                     categoryCache[categoryId] = null;
-                    displayCategoryContent(null, null);
+                    displayCategoryContent(null);
                 });
             }
 
@@ -323,15 +320,24 @@ function lh_single_cats_above_title() {
                 popup.style.top = (rect.bottom + scrollTop + 10) + 'px';
             }
 
-            function displayCategoryContent(content, categoryLink) {
-                if (content === null) {
-                    popupContent.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">无系列内容</div>';
+            function getCategoryTitleHtml() {
+                if (!currentActiveLink) return '<div class="hyplus-category-title">分类</div>';
+                
+                var categoryName = currentActiveLink.getAttribute('data-category-name');
+                var categoryLink = currentActiveLink.getAttribute('data-category-link');
+                
+                if (categoryLink) {
+                    return '<div class="hyplus-category-title"><a href="' + categoryLink + '">' + categoryName + '</a></div>';
                 } else {
-                    // 获取当前激活分类的名称
-                    var categoryName = currentActiveLink ? currentActiveLink.getAttribute('data-category-name') : '分类';
-                    var titleHtml = categoryLink 
-                        ? '<div class="hyplus-category-title"><a href="' + categoryLink + '">' + categoryName + '</a></div>'
-                        : '';
+                    return '<div class="hyplus-category-title">' + categoryName + '</div>';
+                }
+            }
+
+            function displayCategoryContent(content) {
+                var titleHtml = getCategoryTitleHtml();
+                if (content === null) {
+                    popupContent.innerHTML = titleHtml + '<div style="text-align: center; padding: 10px 20px; color: #999; font-style: italic;">无系列内容</div>';
+                } else {
                     popupContent.innerHTML = titleHtml + content;
                 }
             }
