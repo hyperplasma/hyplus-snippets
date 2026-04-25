@@ -1213,6 +1213,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	box-shadow: 0 0 16px var(--hyplus-shadow-light);
 }
 
-.gravatar {
-	box-shadow: 0 0 16px var(--hyplus-shadow-deep);
+.um-profile-photo-img, .gravatar {
+	/* box-shadow: 0 0 16px rgba(0, 64, 128, 0.754); */
+	box-shadow: 0 0 16px var(--hyplus-shadow-nav-hover);
 }
