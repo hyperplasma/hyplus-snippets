@@ -1192,7 +1192,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 }
 
 /**
- * HY-特色图片 - 特色图片容器
+ * HY-Featured and UM Image - 特色图片和Ultimate Member图片设置
  */
 .hypost-featured-image {
 	text-align: center;
@@ -1205,5 +1205,14 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	height:auto;
 
 	border-radius: 12px;
+	box-shadow: 0 0 16px var(--hyplus-shadow-deep);
+}
+
+.um-cover, .um-cover-e {
+	border-radius: 12px;
+	box-shadow: 0 0 16px var(--hyplus-shadow-light);
+}
+
+.gravatar {
 	box-shadow: 0 0 16px var(--hyplus-shadow-deep);
 }
