@@ -311,6 +311,8 @@ body.hyplus-atmosphere-green :root {
 a, .um .um-item-meta a, .um-item-link a {
 	text-decoration: none !important;
 	color: var(--hyplus-primary-link-color);
+    -webkit-user-drag: none;
+	-webkit-tap-highlight-color: transparent;
 }
 
 a:hover, a:focus, a:active, 
