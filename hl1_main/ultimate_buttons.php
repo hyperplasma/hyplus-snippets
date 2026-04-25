@@ -1429,11 +1429,11 @@
 	/**
 	 * Random post function for PAT category page
 	 */
-	function goToRandomPost(type, min, max) {
-		const num = Math.floor(Math.random() * (max - min + 1)) + min;
-		const url = "https://www.hyperplasma.top/" + type + "-" + num;
-		window.location.href = url;
-	}
+	// function goToRandomPost(type, min, max) {
+	// 	const num = Math.floor(Math.random() * (max - min + 1)) + min;
+	// 	const url = "https://www.hyperplasma.top/" + type + "-" + num;
+	// 	window.location.href = url;
+	// }
 
 	// 主体点击事件处理（优化条件判断顺序，避免不必要的计算）
 	document.body.addEventListener('click', function(event) {
