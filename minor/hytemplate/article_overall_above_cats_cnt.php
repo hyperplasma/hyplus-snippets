@@ -83,7 +83,7 @@ function lh_single_cats_above_title() {
                 $cat_links_html .= '<span style="margin: 0 2px;"> | </span>';
             }
             $cat_links_html .= sprintf(
-                '<a href="#" class="hyplus-cat-popup-trigger hyplus-scale" data-category-id="%d" data-category-name="%s" data-category-link="%s" style="text-decoration: none; cursor: pointer;">%s</a>',
+                '<a href="#" class="hyplus-cat-popup-trigger hyplus-scale" data-category-id="%d" data-category-name="%s" data-category-link="%s">%s</a>',
                 esc_attr($category->term_id),
                 esc_attr($category->name),
                 esc_attr(get_category_link($category->term_id)),
@@ -97,7 +97,7 @@ function lh_single_cats_above_title() {
             <span class="entry-meta cat-links">
                 <?php echo $cat_links_html; ?>
                 <span style="color: green;">
-                    <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '&nbsp;&nbsp;<a class="hyplus-scale" href="/user/akira37/"  style="text-decoration: none; display: inline-block;" title="受限内容">' . $emoji . '</a>' : ''; ?></span>
+                    <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '&nbsp;&nbsp;<a class="hyplus-scale" href="/user/akira37/"  style="display: inline-block;" title="受限内容">' . $emoji . '</a>' : ''; ?></span>
                 </span>
             </span>
         </div>
@@ -148,16 +148,15 @@ function lh_single_cats_above_title() {
             font-weight: bold;
             margin: 0;
         }
-
+/* 
         .hyplus-category-popup-container .hyplus-category-title a {
-            text-decoration: none;
             color: var(--hyplus-primary-link-color);
             transition: color 0.2s ease;
         }
 
         .hyplus-category-popup-container .hyplus-category-title a:hover {
             color: var(--hyplus-link-hover-color);
-        }
+        } */
 
         /* 移动端适配 */
         @media screen and (max-width: 768px) {
