@@ -71,10 +71,10 @@ function hyplus_profile_shortcode_callback() {
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--hyplus-primary-link-color);
+            /* border: 3px solid var(--hyplus-primary-link-color); */
             background: #fff;
             margin-bottom: 18px;
-            box-shadow: 0 2px 8px var(--hyplus-shadow-light);
+            /* box-shadow: 0 2px 8px var(--hyplus-shadow-light); */
         }
         /* 使用艺术字样式显示个人简介行 */
         .profile-desc {
@@ -382,7 +382,7 @@ function hyplus_profile_shortcode_callback() {
     </script>
     <div class="profile-main-row">
         <div class="profile-card profile-info-card">
-            <img class="profile-avatar" src="/wp-content/uploads/2026/03/20260306122902.webp" alt="kokuyou" />
+            <img class="profile-avatar gravatar" src="/wp-content/uploads/2026/03/20260306122902.webp" alt="kokuyou" />
             <div class="profile-info-text">
                 <div class="profile-desc"><a href="https://www.hyperplasma.top/user/akira37/">Akira37 - The Hyplus</a></div>
                 <div class="custom-randpost">
