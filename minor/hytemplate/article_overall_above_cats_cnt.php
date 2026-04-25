@@ -35,6 +35,7 @@ function hyplus_get_category_description_ajax() {
     wp_send_json_success([
         'category_name' => $category->name,
         'category_id' => $category_id,
+        'category_link' => get_category_link($category_id),
         'description' => $description
     ]);
     wp_die();
@@ -130,14 +131,31 @@ function lh_single_cats_above_title() {
         }
 
         .hyplus-category-popup-container #hyplus-popup-content {
-            padding: 15px;
-            font-size: 0.85em;
+            padding: 10px 15px;
+            font-size: 0.9em;
         }
 
         .hyplus-category-popup-container h3 {
             font-size: 1.1em;
             margin-top: 0.5em;
             margin-bottom: 0.5em;
+        }
+
+        .hyplus-category-popup-container .hyplus-category-title {
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .hyplus-category-popup-container .hyplus-category-title a {
+            text-decoration: none;
+            color: var(--hyplus-primary-link-color);
+            transition: color 0.2s ease;
+        }
+
+        .hyplus-category-popup-container .hyplus-category-title a:hover {
+            color: var(--hyplus-link-hover-color);
         }
 
         /* 移动端适配 */
@@ -154,6 +172,7 @@ function lh_single_cats_above_title() {
             var popup = document.getElementById('hyplus-category-popup');
             var popupContent = document.getElementById('hyplus-popup-content');
             var categoryCache = {}; // 缓存分类描述
+            var categoryLinkCache = {}; // 缓存分类链接
             var currentActiveLink = null; // 当前激活的分类链接
             var minLeftPosition = null; // 最左侧分类的left位置
 
@@ -224,7 +243,7 @@ function lh_single_cats_above_title() {
                 if (categoryCache[categoryId] !== undefined) {
                     // 使用缓存内容
                     popup.style.display = 'block';
-                    displayCategoryContent(categoryCache[categoryId]);
+                    displayCategoryContent(categoryCache[categoryId], categoryLinkCache[categoryId]);
                     positionPopup();
                     return;
                 }
@@ -251,26 +270,30 @@ function lh_single_cats_above_title() {
                 .then(function(result) {
                     if (result.success) {
                         var fullDescription = result.data.description;
+                        var categoryLink = result.data.category_link;
                         var extractedContent = extractContentFromFirstH3(fullDescription);
+                        
+                        // 缓存分类链接
+                        categoryLinkCache[categoryId] = categoryLink;
                         
                         if (extractedContent) {
                             // 缓存提取后的内容
                             categoryCache[categoryId] = extractedContent;
-                            displayCategoryContent(extractedContent);
+                            displayCategoryContent(extractedContent, categoryLink);
                         } else {
                             // 没有找到有id的h3标签
                             categoryCache[categoryId] = null;
-                            displayCategoryContent(null);
+                            displayCategoryContent(null, categoryLink);
                         }
                     } else {
                         categoryCache[categoryId] = null;
-                        displayCategoryContent(null);
+                        displayCategoryContent(null, null);
                     }
                 })
                 .catch(function(error) {
                     console.error('Error:', error);
                     categoryCache[categoryId] = null;
-                    displayCategoryContent(null);
+                    displayCategoryContent(null, null);
                 });
             }
 
@@ -300,11 +323,16 @@ function lh_single_cats_above_title() {
                 popup.style.top = (rect.bottom + scrollTop + 10) + 'px';
             }
 
-            function displayCategoryContent(content) {
+            function displayCategoryContent(content, categoryLink) {
                 if (content === null) {
                     popupContent.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">无系列内容</div>';
                 } else {
-                    popupContent.innerHTML = content;
+                    // 获取当前激活分类的名称
+                    var categoryName = currentActiveLink ? currentActiveLink.getAttribute('data-category-name') : '分类';
+                    var titleHtml = categoryLink 
+                        ? '<div class="hyplus-category-title"><a href="' + categoryLink + '">' + categoryName + '</a></div>'
+                        : '';
+                    popupContent.innerHTML = titleHtml + content;
                 }
             }
 
@@ -330,6 +358,13 @@ function lh_single_cats_above_title() {
             // 防止弹窗内的点击导致关闭
             popup.addEventListener('click', function(e) {
                 e.stopPropagation();
+            });
+
+            // ESC键关闭弹窗
+            document.addEventListener('keydown', function(e) {
+                if ((e.key === 'Escape' || e.keyCode === 27) && popup.style.display !== 'none') {
+                    closePopup();
+                }
             });
         })();
         </script>
