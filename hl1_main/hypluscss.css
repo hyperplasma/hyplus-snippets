@@ -311,8 +311,8 @@ body.hyplus-atmosphere-green :root {
 a, .um .um-item-meta a, .um-item-link a {
 	text-decoration: none !important;
 	color: var(--hyplus-primary-link-color);
-    -webkit-user-drag: none;
-	-webkit-tap-highlight-color: transparent;
+    /* -webkit-user-drag: none;
+	-webkit-tap-highlight-color: transparent; */
 }
 
 a:hover, a:focus, a:active, 
@@ -1082,6 +1082,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	position: relative;
 	overflow: hidden;
 	will-change: transform, box-shadow;
+	-webkit-user-drag: none;
 }
 
 .hyplus-nav-link:hover,
