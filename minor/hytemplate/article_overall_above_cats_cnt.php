@@ -82,11 +82,13 @@ function lh_single_cats_above_title() {
             if ($index > 0) {
                 $cat_links_html .= '<span style="margin: 0 2px;"> | </span>';
             }
+            $category_link = get_category_link($category->term_id);
             $cat_links_html .= sprintf(
-                '<a href="#" class="hyplus-cat-popup-trigger hyplus-scale" data-category-id="%d" data-category-name="%s" data-category-link="%s">%s</a>',
+                '<a href="%s" class="hyplus-cat-popup-trigger hyplus-scale" data-category-id="%d" data-category-name="%s" data-category-link="%s">%s</a>',
+                esc_url($category_link),
                 esc_attr($category->term_id),
                 esc_attr($category->name),
-                esc_attr(get_category_link($category->term_id)),
+                esc_attr($category_link),
                 esc_html($category->name)
             );
         }
