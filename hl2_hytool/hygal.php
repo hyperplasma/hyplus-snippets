@@ -97,6 +97,7 @@ function hygal_unified_handler($atts) {
         .hygal-no-scroll { overflow: hidden !important; width: 100%; }
     </style>
 
+    <?php if ($is_admin_manage === 'true'): ?>
     <div id="hygal-admin-modal" class="hyplus-unselectable">
         <div class="hygal-modal-content">
             <div id="hygal-delete-trigger" class="hygal-btn-delete" title="删除此图片">🗑️</div>
@@ -117,6 +118,7 @@ function hygal_unified_handler($atts) {
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <div class="hygal-merged-wrapper">
         <div class="hygal-component-container hyplus-unselectable <?php echo ($is_admin_manage === 'true') ? 'is-admin' : ''; ?>">
@@ -180,7 +182,7 @@ function hygal_unified_handler($atts) {
                 </div>
             </div>
 
-            <div class="hytool-version">HyGal v1.5.0.1</div>
+            <div class="hytool-version">HyGal v1.5.1</div>
         </div>
     </div>
 
@@ -294,6 +296,13 @@ function hygal_unified_handler($atts) {
 
         // 管理逻辑
         if (isAdmin) {
+            // ESC 快捷键关闭编辑面板
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && $('#hygal-admin-modal').css('display') !== 'none') {
+                    closeHyModal();
+                }
+            });
+
             $('#hygal-output').on('click', '.hygal-title', function() {
                 const $item = $(this).closest('.hygal-item');
                 currentTargetId = $item.data('id');
@@ -537,27 +546,68 @@ function hygal_ajax_fetch_minimal_handler() {
     $prefix = sanitize_text_field($_POST['prefix']);
     $ppp = intval($_POST['ppp']);
     $paged = intval($_POST['paged']);
-    $offset = ($paged - 1) * $ppp;
     $order_type = $_POST['order'];
 
-    $sql_where = $wpdb->prepare("
+    // 优化：一次查询获取所有需要的元数据，包括attached_file，减少函数调用
+    $all_results = $wpdb->get_results($wpdb->prepare("
+        SELECT p.ID, p.post_title, p.post_date, p.guid, pm_file.meta_value as attached_file, m_ord.meta_value as raw_order
         FROM {$wpdb->posts} p
         INNER JOIN {$wpdb->postmeta} m_cat ON p.ID = m_cat.post_id AND m_cat.meta_key = '_hygal_category'
         LEFT JOIN {$wpdb->postmeta} m_ord ON p.ID = m_ord.post_id AND m_ord.meta_key = '_hygal_order'
+        LEFT JOIN {$wpdb->postmeta} pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
         WHERE p.post_type = 'attachment' AND m_cat.meta_value = %s
-    ", $prefix);
+    ", $prefix));
+    
+    $total_items = count($all_results);
 
-    $orderby = ($order_type === 'RAND') ? "ORDER BY RAND()" : "ORDER BY CASE WHEN m_ord.meta_value IS NULL OR m_ord.meta_value = '' THEN 1 ELSE 0 END ASC, CAST(m_ord.meta_value AS SIGNED) DESC, p.post_date ".($order_type==='ASC'?'ASC':'DESC');
+    // 应用层RAND()排序 - 避免数据库RAND()低效问题
+    if ($order_type === 'RAND') {
+        shuffle($all_results);
+    } else {
+        // 非随机排序时应用排序逻辑
+        usort($all_results, function($a, $b) use ($order_type) {
+            // 权重排序：有权重的排前面
+            $a_has_order = ($a->raw_order !== '' && $a->raw_order !== null) ? 1 : 0;
+            $b_has_order = ($b->raw_order !== '' && $b->raw_order !== null) ? 1 : 0;
+            if ($a_has_order !== $b_has_order) {
+                return $b_has_order - $a_has_order;
+            }
+            
+            // 权重值排序
+            if ($a_has_order && $b_has_order) {
+                $cmp = intval($b->raw_order) - intval($a->raw_order);
+                if ($cmp !== 0) return $cmp;
+            }
+            
+            // 日期排序
+            $date_a = strtotime($a->post_date);
+            $date_b = strtotime($b->post_date);
+            return $order_type === 'ASC' ? $date_a - $date_b : $date_b - $date_a;
+        });
+    }
 
-    $results = $wpdb->get_results("SELECT p.ID, p.post_title, p.post_date, m_ord.meta_value as raw_order " . $sql_where . $orderby . $wpdb->prepare(" LIMIT %d, %d", $offset, $ppp));
-    $total_items = $wpdb->get_var("SELECT COUNT(*) " . $sql_where);
+    // 分页处理
+    $offset = ($paged - 1) * $ppp;
+    $results = array_slice($all_results, $offset, $ppp);
 
+    $upload_dir = wp_upload_dir();
+    $base_url = $upload_dir['baseurl'];
+    
     $html = '';
     foreach ($results as $post) {
-        $url = wp_get_attachment_url($post->ID);
-        $file_path = get_attached_file($post->ID);
-        $size_str = file_exists($file_path) ? size_format(filesize($file_path)) : '未知';
-        $date_str = get_the_date('Y-m-d', $post->ID);
+        // 优化：直接使用已查询的guid和attached_file数据，避免多次WordPress函数调用
+        $url = !empty($post->guid) ? $post->guid : $base_url . '/';
+        
+        // 获取文件大小：先尝试使用attached_file构建路径
+        $size_str = '未知';
+        if (!empty($post->attached_file)) {
+            $full_path = $upload_dir['basedir'] . '/' . $post->attached_file;
+            if (file_exists($full_path)) {
+                $size_str = size_format(filesize($full_path));
+            }
+        }
+        
+        $date_str = wp_date('Y-m-d', strtotime($post->post_date));
         $has_order = ($post->raw_order !== '' && $post->raw_order !== null) ? 'has-order' : '';
         $html .= '<div class="hygal-item '.$has_order.'" data-id="'.$post->ID.'" data-raw-order="'.esc_attr($post->raw_order).'" data-current-prefix="'.esc_attr($prefix).'" data-size="'.$size_str.'" data-date="'.$date_str.'"><div class="hygal-img-wrapper"><img src="'.esc_url($url).'" loading="lazy"></div><div class="hygal-title">'.esc_html($post->post_title).'</div></div>';
     }
