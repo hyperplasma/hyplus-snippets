@@ -209,6 +209,13 @@
 								菜单
 							</button>
 						</label>
+						<label class="language-label">
+							<button class="font-size-btn"
+								onclick="window.open('https://www.hyperplasma.top/wp-admin/customize.php?return=%2Fwp-admin%2F', '_blank');"
+							>
+								CSS
+							</button>
+						</label>
 					</div>
 					<div class="language-selector-row" style="margin-top: 5px;">
 						<label class="language-label">便捷服务:</label>
