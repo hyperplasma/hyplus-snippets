@@ -6,7 +6,13 @@
  * 
  * Parameters:
  * - src: 图片URL（必需）。相对路径会自动加上本站域名
- * - title: 按钮文字（可选，默认为"图片"）
+ * - title: 链接文字（可选，默认为"图片"）
+ * 
+ * Features:
+ * - 无需 data 属性，直接从 href 读取图片 URL
+ * - 使用 MutationObserver 监听灯箱关闭事件，性能高效
+ * - 自动清理临时元素，防止内存泄漏
+ * - 容器缓存，减少 DOM 查询
  */
 
 // 注册短代码
@@ -39,20 +45,18 @@ function hyimg_shortcode_handler($atts) {
     $unique_id = 'hyimg-' . uniqid();
 
     // 获取安全的属性值
-    $btn_text     = esc_html($atts['title']);
-    $safe_url     = esc_attr($img_url);
-    $safe_id      = esc_attr($unique_id);
+    $btn_text = esc_html($atts['title']);
+    $safe_url = esc_attr($img_url);
 
     // 构建HTML
     ob_start();
     ?>
-    <button 
-        class="hyplus-nav-link hyimg-button" 
-        data-hyimg-url="<?php echo $safe_url; ?>"
-        type="button"
+    <a 
+        href="<?php echo $safe_url; ?>"
+        class="hyplus-nav-link hyimg-button"
     >
         <?php echo $btn_text; ?>
-    </button>
+    </a>
     <?php
     $html = ob_get_clean();
 
@@ -74,26 +78,43 @@ function hyimg_get_script() {
     ?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 存储已打开过的图片（用于避免重复点击操作）
-    const hyimgOpened = new Set();
+    // 缓存容器和灯箱包装器
+    let cachedContainer = null;
+    let cachedWrapper = null;
+    let mutationObserver = null;
 
-    // 监听所有HyImg按钮的点击事件
+    function getContainer() {
+        if (!cachedContainer) {
+            cachedContainer = document.querySelector('article');
+        }
+        return cachedContainer;
+    }
+
+    function getWrapper() {
+        if (!cachedWrapper) {
+            cachedWrapper = document.querySelector('.hylightbox-wrapper');
+        }
+        return cachedWrapper;
+    }
+
+    // 监听所有HyImg链接的点击事件
     document.addEventListener('click', function(event) {
-        const button = event.target.closest('.hyimg-button');
-        if (!button) return;
+        const link = event.target.closest('.hyimg-button');
+        if (!link) return;
 
-        const imgUrl = button.getAttribute('data-hyimg-url');
+        const imgUrl = link.href;
         if (!imgUrl) return;
+
+        // 阻止默认的链接跳转行为
+        event.preventDefault();
 
         // 直接打开灯箱，让图片在灯箱中加载
         openImageInLightbox(imgUrl);
-        hyimgOpened.add(imgUrl);
     });
 
     function openImageInLightbox(imgUrl) {
-        const container = document.querySelector('article');
+        const container = getContainer();
         if (!container) {
-            // console.warn('HyImg: 需要页面内存在 article 标签');
             return;
         }
 
@@ -110,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(tempImg);
 
         // 设置src后，浏览器会开始加载图片
-        // 灯箱打开后，用户会在灯箱中看到图片逐渐加载的过程
         tempImg.src = imgUrl;
 
         // 触发click事件让hylightbox打开灯箱
@@ -118,16 +138,58 @@ document.addEventListener('DOMContentLoaded', function() {
             tempImg.click();
         }, 0);
 
-        // 监听灯箱关闭，清理临时元素
-        const wrapper = document.querySelector('.hylightbox-wrapper');
-        if (wrapper) {
-            const checkClose = setInterval(() => {
-                if (!wrapper.classList.contains('active') && tempImg.parentNode) {
-                    tempImg.remove();
-                    clearInterval(checkClose);
-                }
-            }, 100);
+        // 使用 MutationObserver 监听灯箱关闭
+        setupLightboxCloseListener(tempImg);
+    }
+
+    function setupLightboxCloseListener(tempImg) {
+        const wrapper = getWrapper();
+        if (!wrapper) return;
+
+        // 如果已有观察者，先清理
+        if (mutationObserver) {
+            mutationObserver.disconnect();
         }
+
+        // 创建新的观察者监听 class 变化
+        mutationObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    // 检查灯箱是否还有 active 类
+                    if (!wrapper.classList.contains('active') && tempImg.parentNode) {
+                        // 灯箱已关闭，清理临时元素
+                        tempImg.remove();
+                        mutationObserver.disconnect();
+                        mutationObserver = null;
+                    }
+                }
+            });
+        });
+
+        // 监听 wrapper 的 class 属性变化
+        mutationObserver.observe(wrapper, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+
+        // 防止内存泄漏：如果灯箱在10秒后仍未打开，清理临时元素
+        const cleanupTimeout = setTimeout(() => {
+            if (tempImg.parentNode && wrapper && !wrapper.classList.contains('active')) {
+                tempImg.remove();
+                if (mutationObserver) {
+                    mutationObserver.disconnect();
+                    mutationObserver = null;
+                }
+            }
+        }, 10000);
+
+        // 当临时元素被删除时，清理超时
+        const checkRemoval = setInterval(() => {
+            if (!tempImg.parentNode) {
+                clearTimeout(cleanupTimeout);
+                clearInterval(checkRemoval);
+            }
+        }, 100);
     }
 });
 </script>
