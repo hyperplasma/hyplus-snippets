@@ -1062,12 +1062,12 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	padding: 4px 10px;
+	padding: 3px 10px;
 	background: var(--hyplus-bg-button-light);
 	color: var(--hyplus-text-nav-link);
 	text-decoration: none;
 	border-radius: 16px;
-	font-size: 16px;
+	/* font-size: 16px; */
 	font-weight: 600;
 	transition:
 		background 0.18s cubic-bezier(0.4,0,0.2,1),
@@ -1077,7 +1077,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	box-shadow: 0 2.5px 10px 0 var(--hyplus-shadow-nav), 0 1px 2px 0 var(--hyplus-shadow-nav-text);
 	min-width: fit-content;
 	text-align: center;
-	margin: 0;
+	margin-bottom: 3px;
 	border: 1.5px solid var(--hyplus-border-color-light);
 	position: relative;
 	overflow: hidden;
