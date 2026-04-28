@@ -109,66 +109,6 @@ function lh_single_cats_above_title() {
             <div id="hyplus-popup-content"></div>
         </div>
 
-        <style>
-        .hyplus-category-popup-container {
-            position: fixed;
-            z-index: 88888;
-            max-width: 600px;
-            max-height: 70vh;
-            min-height: 100px;
-            background: var(--hyplus-bg-container-solid);
-            color: var(--hyplus-text-primary);
-            border: 1px solid var(--hyplus-border-color-light);
-            border-radius: 12px;
-            box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
-            padding: 0;
-            font-size: 0.9em;
-            line-height: 1.6;
-            display: none;
-            word-break: break-word;
-            pointer-events: auto;
-            overflow: hidden;
-            overflow-y: auto;
-            overscroll-behavior: none;
-            will-change: transform;
-        }
-
-        .hyplus-category-popup-container #hyplus-popup-content {
-            padding: 10px 22px;
-            font-size: 0.9em;
-        }
-
-        .hyplus-category-popup-container h3 {
-            font-size: 1.1em;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-        }
-
-        .hyplus-category-popup-container .hyplus-category-title {
-            text-align: center;
-            font-size: 1.1em;
-            font-weight: bold;
-            margin: 0;
-        }
-/* 
-        .hyplus-category-popup-container .hyplus-category-title a {
-            color: var(--hyplus-primary-link-color);
-            transition: color 0.2s ease;
-        }
-
-        .hyplus-category-popup-container .hyplus-category-title a:hover {
-            color: var(--hyplus-link-hover-color);
-        } */
-
-        /* 移动端适配 */
-        @media screen and (max-width: 768px) {
-            .hyplus-category-popup-container {
-                max-width: 85vw;
-                max-height: 60vh;
-            }
-        }
-        </style>
-
         <script>
         (function() {
             var popup = document.getElementById('hyplus-category-popup');
