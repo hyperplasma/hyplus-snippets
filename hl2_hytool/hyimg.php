@@ -54,6 +54,7 @@ function hyimg_shortcode_handler($atts) {
     <a 
         href="<?php echo $safe_url; ?>"
         class="hyplus-nav-link hyimg-button"
+        target="_blank"
     >
         <?php echo $btn_text; ?>
     </a>

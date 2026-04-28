@@ -52,6 +52,7 @@ function hysnip_shortcode_handler($atts) {
     <a 
         href="<?php echo $safe_href; ?>"
         class="hyplus-nav-link hysnip-button"
+        target="_blank"
     >
         <?php echo $btn_text; ?>
     </a>

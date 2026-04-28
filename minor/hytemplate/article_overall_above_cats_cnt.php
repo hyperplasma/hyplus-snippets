@@ -84,7 +84,7 @@ function lh_single_cats_above_title() {
             }
             $category_link = get_category_link($category->term_id);
             $cat_links_html .= sprintf(
-                '<a href="%s" class="hyplus-cat-popup-trigger hyplus-scale" data-category-id="%d" data-category-name="%s" data-category-link="%s">%s</a>',
+                '<a href="%s" class="hyplus-cat-popup-trigger hyplus-scale" data-category-id="%d" data-category-name="%s" data-category-link="%s" target="_blank">%s</a>',
                 esc_url($category_link),
                 esc_attr($category->term_id),
                 esc_attr($category->name),
