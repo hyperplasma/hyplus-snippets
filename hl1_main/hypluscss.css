@@ -1173,10 +1173,10 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 }
 
 /* 
- * HY-Tools (HyImg, Article Overall Above, HyFrame, etc.)
+ * HY-Tools (HyImg, Article Overall Above, HySnip, etc.)
  */
 /* HyImg */
-.hyimg-button {
+.hyimg-button, .hysnip-button {
 	/* margin: 4px; */
 	cursor: pointer;
 	display: inline-flex;
@@ -1245,7 +1245,93 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	}
 }
 
-/* HyFrame (WIP) */
+/* HySnip */
+/* .hysnip-button { */
+	/* 继承hyimg-button和hyplus-nav-link的样式 */
+/* } */
+
+.hysnip-popup-wrapper {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 88888;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	box-sizing: border-box;
+	pointer-events: none;
+}
+
+.hysnip-popup-wrapper.active {
+	display: flex;
+	pointer-events: auto;
+}
+
+.hysnip-popup-content {
+	position: relative;
+	width: 100%;
+	max-width: 650px;
+	max-height: 75vh;
+	min-height: 100px;
+	background: var(--hyplus-bg-container-solid);
+	color: var(--hyplus-text-primary);
+	border: 1px solid var(--hyplus-border-color-light);
+	border-radius: 12px;
+	box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
+	padding: 0;
+	font-size: 0.9em;
+	line-height: 1.6;
+	word-break: break-word;
+	pointer-events: auto;
+	overflow: hidden;
+	overflow-y: auto;
+	overscroll-behavior: none;
+	will-change: transform;
+}
+
+.hysnip-popup-header {
+	text-align: center;
+	font-size: 1.1em;
+	font-weight: bold;
+	margin: 0;
+	padding: 10px 22px;
+}
+
+.hysnip-popup-header a {
+	color: var(--hyplus-primary-link-color);
+	text-decoration: none;
+}
+
+.hysnip-popup-header a:hover {
+	color: var(--hyplus-link-hover-color);
+	text-decoration: underline;
+}
+
+.hysnip-popup-body {
+	padding: 10px 22px;
+	font-size: 0.9em;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+	.hysnip-popup-content {
+		max-width: 95vw;
+		max-height: 80vh;
+	}
+
+	.hysnip-popup-header {
+		padding: 12px 15px;
+		font-size: 1em;
+	}
+
+	.hysnip-popup-body {
+		padding: 12px 15px;
+		font-size: 0.9em;
+	}
+}
 
 
 /**
