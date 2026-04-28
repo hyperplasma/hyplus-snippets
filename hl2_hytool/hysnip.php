@@ -25,7 +25,8 @@ function hysnip_shortcode_handler($atts) {
     // 解析短代码参数，设置默认值
     $atts = shortcode_atts(array(
         'href'  => '',
-        'title' => '查看内容'
+        'title' => '查看内容',
+        'limit' => 0
     ), $atts, 'hysnip');
 
     // 验证href参数
@@ -135,20 +136,26 @@ document.addEventListener('DOMContentLoaded', function() {
         
         popup.classList.add('active');
 
-        // 发送 AJAX 请求获取内容
+        // 发送 AJAX 请求获取内容（添加 AbortController 超时控制）
         var data = new FormData();
         data.append('action', 'hysnip_get_content');
         data.append('permalink', permalink);
         data.append('nonce', '<?php echo wp_create_nonce('hysnip_popup'); ?>');
 
+        // 创建 AbortController 用于超时控制
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+
         fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
             method: 'POST',
-            body: data
+            body: data,
+            signal: controller.signal
         })
         .then(function(response) {
             return response.json();
         })
         .then(function(result) {
+            clearTimeout(timeoutId);
             // 只处理与当前打开的 permalink 匹配的响应
             if (currentPermalink !== permalink) return;
             
@@ -161,7 +168,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(function(error) {
-            console.error('Error:', error);
+            clearTimeout(timeoutId);
+            // 只在非中止情况下打印错误
+            if (error.name !== 'AbortError') {
+                console.error('Error:', error);
+            }
             // 只处理与当前打开的 permalink 匹配的错误
             if (currentPermalink === permalink) {
                 displaySnippetContent(null, title, permalink);
@@ -208,8 +219,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 初始化弹出框事件
-    setTimeout(setupPopupEvents, 100);
+    // 立即初始化弹出框事件（移除不必要的延迟）
+    setupPopupEvents();
 
     // 辅助函数：HTML转义
     function esc(str) {

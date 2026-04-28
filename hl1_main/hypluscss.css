@@ -393,7 +393,9 @@ ol li {
 }
 
 /* 调整无序列表（Hyplus目录除外）和有序列表的左侧缩进 */
-#main ul li:not([class*="level-"]), #main ol li, .hysnip-popup-content ul li, .hysnip-popup-content ol li {
+#main ul li:not([class*="level-"]), #main ol li, 
+.hysnip-popup-content ul li, .hysnip-popup-content ol li,
+.hyplus-popup-content ul li, .hyplus-popup-content ol li {
 	margin-left: -0.7em;
 }
 
