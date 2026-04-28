@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 缓存容器和弹出框
     let cachedContainer = null;
     let snippetCache = {}; // 缓存加载的内容
+    let currentPermalink = null; // 记录当前打开的 permalink
     let mutationObserver = null;
 
     function getContainer() {
@@ -117,6 +118,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function openSnippetPopup(permalink, title) {
         const popup = getSnippetPopup();
+        
+        // 记录当前打开的 permalink
+        currentPermalink = permalink;
 
         // 检查缓存
         if (snippetCache[permalink] !== undefined) {
@@ -145,6 +149,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(function(result) {
+            // 只处理与当前打开的 permalink 匹配的响应
+            if (currentPermalink !== permalink) return;
+            
             if (result.success) {
                 // 缓存加载的内容
                 snippetCache[permalink] = result.data.content;
@@ -155,7 +162,10 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(function(error) {
             console.error('Error:', error);
-            displaySnippetContent(null, title, permalink);
+            // 只处理与当前打开的 permalink 匹配的错误
+            if (currentPermalink === permalink) {
+                displaySnippetContent(null, title, permalink);
+            }
         });
     }
 

@@ -323,7 +323,7 @@ a:hover, a:focus, a:active,
 }
 
 /* Bold Text 加粗文本 */
-.post b, .post strong {
+b, strong {
 	/* font-weight: 900; */
 	color: var(--hyplus-text-title);
 }
@@ -393,7 +393,7 @@ ol li {
 }
 
 /* 调整无序列表（Hyplus目录除外）和有序列表的左侧缩进 */
-#main ul li:not([class*="level-"]), #main ol li {
+#main ul li:not([class*="level-"]), #main ol li, .hysnip-popup-content ul li, .hysnip-popup-content ol li {
 	margin-left: -0.7em;
 }
 
@@ -1300,18 +1300,8 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	padding: 10px 22px;
 }
 
-.hysnip-popup-header a {
-	color: var(--hyplus-primary-link-color);
-	text-decoration: none;
-}
-
-.hysnip-popup-header a:hover {
-	color: var(--hyplus-link-hover-color);
-	text-decoration: underline;
-}
-
 .hysnip-popup-body {
-	padding: 10px 22px;
+	padding: 0 22px;
 	font-size: 0.9em;
 }
 
@@ -1321,7 +1311,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 		max-width: 95vw;
 		max-height: 80vh;
 	}
-
+/* 
 	.hysnip-popup-header {
 		padding: 12px 15px;
 		font-size: 1em;
@@ -1330,7 +1320,7 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	.hysnip-popup-body {
 		padding: 12px 15px;
 		font-size: 0.9em;
-	}
+	} */
 }
 
 
