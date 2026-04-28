@@ -144,23 +144,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setupLightboxCloseListener(tempImg) {
         const wrapper = getWrapper();
-        if (!wrapper) return;
+        const container = getContainer();
+        if (!wrapper || !container) return;
 
-        // 如果已有观察者，先清理
-        if (mutationObserver) {
-            mutationObserver.disconnect();
-        }
+        // 标记是否已清理，防止重复清理
+        let isCleanedUp = false;
 
         // 创建新的观察者监听 class 变化
         mutationObserver = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     // 检查灯箱是否还有 active 类
-                    if (!wrapper.classList.contains('active') && tempImg.parentNode) {
+                    if (!wrapper.classList.contains('active') && tempImg.parentNode && !isCleanedUp) {
                         // 灯箱已关闭，清理临时元素
-                        tempImg.remove();
-                        mutationObserver.disconnect();
-                        mutationObserver = null;
+                        cleanupTempImg();
                     }
                 }
             });
@@ -174,22 +171,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 防止内存泄漏：如果灯箱在10秒后仍未打开，清理临时元素
         const cleanupTimeout = setTimeout(() => {
-            if (tempImg.parentNode && wrapper && !wrapper.classList.contains('active')) {
-                tempImg.remove();
-                if (mutationObserver) {
-                    mutationObserver.disconnect();
-                    mutationObserver = null;
-                }
+            if (tempImg.parentNode && wrapper && !wrapper.classList.contains('active') && !isCleanedUp) {
+                cleanupTempImg();
             }
         }, 10000);
 
-        // 当临时元素被删除时，清理超时
-        const checkRemoval = setInterval(() => {
-            if (!tempImg.parentNode) {
-                clearTimeout(cleanupTimeout);
-                clearInterval(checkRemoval);
+        // 统一的清理函数，避免重复清理和内存泄漏
+        function cleanupTempImg() {
+            if (isCleanedUp) return;
+            isCleanedUp = true;
+            
+            if (tempImg.parentNode) {
+                tempImg.remove();
             }
-        }, 100);
+            
+            clearTimeout(cleanupTimeout);
+            
+            if (mutationObserver) {
+                mutationObserver.disconnect();
+                mutationObserver = null;
+            }
+        }
     }
 });
 </script>
