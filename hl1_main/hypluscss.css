@@ -849,7 +849,10 @@ h2, h3, h4, h5, h6 {
 }
 
 /* .entry-header h1, .page-header h1,  */
-.entry-content h1, .entry-content h2, .entry-content h3, .entry-content h4, .entry-content h5, .entry-content h6, .taxonomy-description > h3, .hyplus-category-popup-container h3 {
+.entry-content :is(h1,h2,h3,h4,h5,h6),
+.taxonomy-description > h3,
+.hyplus-category-popup-container h3,
+.hysnip-popup-content :is(h1,h2,h3,h4,h5,h6) { 
 	/* margin-top: 1.2em; */
 	/* margin-left: -8px;
 	margin-right: -8px; */
@@ -866,21 +869,24 @@ h2, h3, h4, h5, h6 {
 }
 
 /* .entry-header h1, .page-header h1, */
-.entry-content h1 {
+.entry-content h1, .hysnip-popup-content h1 {
 	border-left: 5px solid var(--hyplus-border-color-light2);
 	border-right: 5px solid var(--hyplus-border-color-light2);
 	margin-left: -10px;
 	margin-right: -10px;
 }
 
-.entry-content h2 {
+.entry-content h2, .hysnip-popup-content h2 {
 	border-left: 4px solid var(--hyplus-border-color-light);
 	border-right: 4px solid var(--hyplus-border-color-light);
 	margin-left: -8px;
 	margin-right: -8px;
 }
 
-.entry-content h3, .entry-content h4, .entry-content h5, .entry-content h6, .taxonomy-description > h3, .hyplus-category-popup-container h3 {
+.entry-content :is(h3,h4,h5,h6),
+.taxonomy-description > h3,
+.hyplus-category-popup-container h3,
+.hysnip-popup-content :is(h3,h4,h5,h6) { 
 	border-left: 3px solid var(--hyplus-border-color-light);
 	border-right: 3px solid var(--hyplus-border-color-light);
 	margin-left: -6px;
