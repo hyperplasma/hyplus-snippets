@@ -419,6 +419,9 @@ ol li {
 	order: 4;
 }
 
+textarea, textarea:focus {
+	background-color: #f7f8f9a0;
+}
 
 /**
  * HY-Custom Header and Footer CSS 自定义页眉页脚
