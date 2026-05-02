@@ -10,18 +10,13 @@
 if ( !function_exists('wb_site_count_user') ) {
     // 统计全站总访问量/今日总访问量/当前是第几个访客
     function wb_site_count_user(){
-        // 防止重复执行
-        if ( did_action('wb_site_count_user_done') ) {
-            return;
-        }
-        
         if ( !session_id() ) {
             @session_start();  // 使用 @ 抑制已启动的警告
         }
         
         $date = date('ymd', time());
         
-        // 检查该访客是否已计数过
+        // 使用 session 变量防止同一访客重复计数（针对单个访客，不是全局）
         if(!isset($_SESSION['wb_counted_'.$date])){        
             // 先从缓存获取，没有再从数据库获取
             $count = wp_cache_get('site_count');
@@ -53,8 +48,6 @@ if ( !function_exists('wb_site_count_user') ) {
             wp_cache_set('site_count', $newcount, '', 3600); // 更新缓存
             $_SESSION['wb_counted_'.$date] = true;  // 标记该访客已计数
         }
-        
-        do_action('wb_site_count_user_done');
     }
     
     // 注册 init hook，启用访问计数（使用 has_action 检测，防止重复注册）
@@ -63,9 +56,16 @@ if ( !function_exists('wb_site_count_user') ) {
     }
 }
 
-// 短代码展示访问统计 - 只在未执行过 hook 的情况下执行函数
+// 短代码展示访问统计 - 确保计数函数已执行
+// 禁用此输出被页面缓存（确保每个访客都能看到正确的计数）
+// if ( function_exists('define_sitewide_constants') ) {
+//     // WP Super Cache 和其他缓存插件会检查这个常量
+//     define('DONOTCACHEPAGE', true);
+// }
+
+// 仅在 init 还未执行时作为备用调用计数（通常不会执行，因为 init hook 已注册）
+// 短代码主要职责是展示数据，计数逻辑由 init hook 负责
 if ( !did_action('init') ) {
-    // 如果在 init 之前被调用，手动触发计数
     wb_site_count_user();
 }
 
@@ -74,7 +74,7 @@ if ( !session_id() ) {
     @session_start();
 }
 
-// 从缓存获取统计数据
+// 从缓存获取最新统计数据
 $sitecount = wp_cache_get('site_count');
 if ( $sitecount === false ) {
     $sitecount = get_option('site_count');
@@ -91,8 +91,8 @@ if ( !$sitecount || !is_array($sitecount) ) {
     );
 }
 
-$date = date('ymd', time());
-$today_count = isset($_SESSION['wb_counted_'.$date]) ? $sitecount['today'] : ($sitecount['today'] + 1);
+// 直接使用数据库中的计数（不再与 session 混淆）
+$today_count = $sitecount['today'];
 
 // 只有在未缓冲时才开始缓冲
 if ( ob_get_level() === 0 ) {
