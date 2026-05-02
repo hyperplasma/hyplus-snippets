@@ -22,7 +22,7 @@
 	--hyplus-bg-overall: rgba(187,255,255,0.05);
 	--hyplus-bg-container: #fbfdfe8c;
 	--hyplus-bg-container-solid: #fbfdfe;
-	--hyplus-bg-code: #e4edf7;
+	--hyplus-bg-code: #e4edf7a0;
 	--hyplus-bg-settings: #f8f9fa;
 	--hyplus-bg-button-light: #f3fcff;
 	--hyplus-bg-button-hover: #d0ecf8;
@@ -250,7 +250,7 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-bg-overall: rgba(128, 203, 196, 0.05);
 	--hyplus-bg-container: #f5fbfb8c;
 	--hyplus-bg-container-solid: #f5fbfb;
-	--hyplus-bg-code: #e0f2f1;
+	--hyplus-bg-code: #e0f2f1b7;
 	--hyplus-bg-settings: #f8fbfb;
 	--hyplus-bg-button-light: #ebf6f5;
 	--hyplus-bg-button-hover: #d0e8e8;
@@ -513,6 +513,9 @@ div:has(> .hljs) {
 .copy-button {
 	color: var(--hyplus-text-code);
 	border-radius: 14px;
+}
+.copy-button:before {
+	display: none;
 }
 
 .footnotes ol {
