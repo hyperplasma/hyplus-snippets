@@ -812,6 +812,10 @@ add_action('wp_ajax_hyu_webp_upload', function() {
     
     $id = media_handle_sideload(['name' => $ts . '.webp', 'tmp_name' => $target], 0);
     
+    // 立即移除过滤器（重要！防止过滤器持久存在）
+    remove_filter('intermediate_image_sizes_advanced', '__return_empty_array', 999);
+    remove_filter('big_image_size_threshold', '__return_false', 999);
+    
     // 立即清理 WebP 文件
     if (file_exists($target)) {
         @unlink($target);
