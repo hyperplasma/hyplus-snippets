@@ -1249,11 +1249,11 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	font-size: 1.1em;
 	font-weight: bold;
 	margin: 0;
-	padding: 10px 22px;
+	padding: 10px 22px 0.5em 22px;
 }
 
 .hysnip-popup-body {
-	padding: 0 22px;
+	padding: 0 22px 0.5em 22px;
 	font-size: 0.9em;
 }
 
