@@ -6,17 +6,17 @@
  * Shortcode: [toc mode=post | ub | widget]
  */
 
-// 自动在正文第一个被TOC捕获的标题前插入[toc]（仅文章页且未手动插入时）
+// 自动在正文第一个标题前插入[toc]（仅文章页且未手动插入时）
 add_filter('the_content', 'hyplus_auto_insert_toc_before_first_toc_heading');
 function hyplus_auto_insert_toc_before_first_toc_heading($content) {
     if (!is_single() && !is_page()) return $content;
     // if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
 
-    // 捕获三种格式：1. 数字（可多位）或单字母+点分段，且后面必须有空格（如1 标题、10 标题、2.1 标题、3.A.4 标题、B.1.3 标题、a.1.2 标题、11.2.3 标题）；2. ep+数字（如ep01、ep24、ep103）；3. "第"+阿拉伯数字（如第1、第2、第3）；4. 以"Hyplus"开头（如Hyplus注释）
-    if (preg_match('/(<h[1-6][^>]*>\s*((第\d+|Hyplus|(?:[eE][pP]\d+))|((?:[0-9]+|[A-Za-z])(?:\.(?:[0-9]+|[A-Za-z]))* )).*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
+    // 捕获 .entry-content 内的第一个标题
+    if (preg_match('/(<h[1-6][^>]*>.*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
         $pos = $matches[0][1];
         $toc = '[toc]';
-        // 在第一个被TOC捕获的标题前插入
+        // 在第一个标题前插入
         return substr($content, 0, $pos) . $toc . substr($content, $pos);
     }
     return $content;
@@ -208,8 +208,6 @@ function hyplus_output_toc_scripts() {
         window.hyplus_add_toc_header_incremental = function(headerElement) {
             if (!headerElement) return;
             
-            var pattern = /^(第\d+|Hyplus|(?:[eE][pP]\d+)|(?:[0-9]+|[A-Za-z])(?:\.(?:[0-9]+|[A-Za-z]))* )/;
-            
             function getHeaderTextWithoutSup(header) {
                 var clone = header.cloneNode(true);
                 var sups = clone.querySelectorAll('sup');
@@ -218,9 +216,6 @@ function hyplus_output_toc_scripts() {
             }
             
             var pureText = getHeaderTextWithoutSup(headerElement);
-            if (!pattern.test(pureText)) {
-                return; // 不匹配TOC模式
-            }
             
             // 为该元素分配anchor（避免重复）
             var anchorSet = new Set();
@@ -375,9 +370,10 @@ function hyplus_output_toc_scripts() {
         function preprocessAllHeaders() {
             if (cachedValidHeaders !== null) return; // 已缓存，直接返回
             
-            var article = document.querySelector('article') || document.getElementById('main') || document.body;
-            var headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
-            var pattern = /^(第\d+|Hyplus|(?:[eE][pP]\d+)|(?:[0-9]+|[A-Za-z])(?:\.(?:[0-9]+|[A-Za-z]))* )/;
+            var entryContent = document.querySelector('.entry-content');
+            if (!entryContent) return; // 如果没有 .entry-content，不处理
+            
+            var headers = entryContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
             var anchorSet = new Set();
 
             function getHeaderTextWithoutSup(header) {
@@ -391,132 +387,32 @@ function hyplus_output_toc_scripts() {
             Array.prototype.forEach.call(headers, function(header) {
                 if (header.classList && header.classList.contains('entry-title')) return;
                 var pureText = getHeaderTextWithoutSup(header);
-                if (pattern.test(pureText)) {
-                    // 为每个header一次性预处理和存储anchor
-                    var originalId = header.getAttribute('id');
-                    var baseAnchor = originalId ? originalId.replace(/_.+$/, '') : pureText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
-                    var anchor = baseAnchor;
-                    var suffix = 2;
-                    while (anchorSet.has(anchor)) {
-                        anchor = baseAnchor + '_' + suffix;
-                        suffix++;
-                    }
-                    anchorSet.add(anchor);
-                    // 一次性存储anchor和pureText到dataset，后续所有mode共享
-                    header.dataset.hypluscurrentAnchor = anchor;
-                    header.dataset.hypluspureText = pureText;
-                    header.id = anchor;
-                    validHeaders.push({header: header, pureText: pureText});
+                
+                // 为每个header一次性预处理和存储anchor
+                var originalId = header.getAttribute('id');
+                var baseAnchor = originalId ? originalId.replace(/_.+$/, '') : pureText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+                var anchor = baseAnchor;
+                var suffix = 2;
+                while (anchorSet.has(anchor)) {
+                    anchor = baseAnchor + '_' + suffix;
+                    suffix++;
                 }
+                anchorSet.add(anchor);
+                // 一次性存储anchor和pureText到dataset，后续所有mode共享
+                header.dataset.hypluscurrentAnchor = anchor;
+                header.dataset.hypluspureText = pureText;
+                header.id = anchor;
+                validHeaders.push({header: header, pureText: pureText});
             });
             cachedValidHeaders = validHeaders;
         }
 
         function generateToc(container, mode, hideParent, emptyMsg) {
-            // 分类页面特殊处理：捕获 taxonomy description 中的 hyplus-nav-section 分区
-            var isCategoryPage = false;
-            if (typeof window.hyplus_is_category_page !== 'undefined') {
-                isCategoryPage = window.hyplus_is_category_page;
-            } else {
-                // 兜底：通过 body class 检测
-                var body = document.body;
-                if (body && (body.classList.contains('category') || body.classList.contains('tax'))) {
-                    isCategoryPage = true;
-                }
-            }
-
             var tocContent = container.querySelector('.hyplus-toc-content');
             var tocHeader = container.querySelector('.hyplus-toc-header');
             var tocSection = (mode === 'ub') ? container.closest('.toc-section') : container;
 
-            if (isCategoryPage) {
-                // 分类页面：查找 taxonomy description 区域
-                var desc = document.querySelector('.taxonomy-description, .term-description, .category-description');
-                if (!desc) {
-                    // 没有描述，显示空
-                    if (tocHeader) tocHeader.style.display = 'none';
-                    tocContent.innerHTML = '';
-                    if (tocSection) tocSection.style.display = 'none';
-                    return;
-                }
-                // 查找所有分区
-                var navSections = desc.querySelectorAll('.hyplus-nav-section');
-                if (!navSections.length) {
-                    // 没有分区，显示空
-                    if (tocHeader) tocHeader.style.display = 'none';
-                    tocContent.innerHTML = '';
-                    if (tocSection) tocSection.style.display = 'none';
-                    return;
-                }
-                var ul = document.createElement('ul');
-                navSections.forEach(function(section) {
-                    // 1级标题：h3文本，纯文本加粗
-                    var h3 = section.querySelector('h3');
-                    if (h3) {
-                        var li1 = document.createElement('li');
-                        li1.className = 'level-1';
-                        var span = document.createElement('span');
-                        span.textContent = h3.textContent.trim();
-                        span.style.fontWeight = 'bold';
-                        li1.appendChild(span);
-                        ul.appendChild(li1);
-                    }
-                    // 2级：该分区下所有 hyplus-nav-link 的 a
-                    var navLinks = section.querySelectorAll('.hyplus-nav-link');
-                    navLinks.forEach(function(a) {
-                        var li2 = document.createElement('li');
-                        li2.className = 'level-2';
-                        var link = document.createElement('a');
-                        link.textContent = a.textContent.trim();
-                        link.href = a.getAttribute('href');
-                        li2.appendChild(link);
-                        ul.appendChild(li2);
-                    });
-                });
-                tocContent.innerHTML = '';
-                tocContent.appendChild(ul);
-
-                // 建立链接元素映射，注册到全局管理器
-                var linkElements = [];
-                var links = tocContent.querySelectorAll('a');
-                links.forEach(function(link) {
-                    var href = link.getAttribute('href');
-                    if (!href || !href.startsWith('#')) return;
-                    var anchorId = href.substring(1);
-                    var targetElement = document.getElementById(anchorId);
-                    if (targetElement) {
-                        linkElements.push({
-                            link: link,
-                            element: targetElement
-                        });
-                    }
-                });
-                
-                if (linkElements.length > 0) {
-                    tocContainers.push({
-                        container: container,
-                        linkElements: linkElements,
-                        currentActiveLink: null,
-                        mode: mode
-                    });
-                    // 初始更新
-                    updateAllActiveLinks();
-                }
-
-                // 点击事件处理
-                tocContent.addEventListener('click', function(e){
-                    if (e.target.tagName.toLowerCase() === 'a') {
-                        if (mode === 'ub') {
-                            hideUBNav();
-                        }
-                    }
-                });
-                if (tocHeader) tocHeader.style.display = 'block';
-                if (tocSection) tocSection.style.display = 'inline-block';
-                return;
-            }
-
-            // 非分类页面，原逻辑
+            // 预处理所有headers
             preprocessAllHeaders();
             var validHeaders = cachedValidHeaders;
             if (validHeaders.length === 0) {
