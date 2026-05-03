@@ -1,7 +1,7 @@
 <?php
 /**
  * Articles Overall - Display cnt and sth else above - PHP
- * 系列链接功能：如果文章设置了 hy_seires_link，显示 hysnip 短代码链接
+ * 系列链接功能：如果文章设置了 hy_series_id，显示 hysnip 短代码链接
  */
 add_action('generate_before_entry_title', 'lh_single_cats_above_title');
 
@@ -37,7 +37,7 @@ function lh_single_cats_above_title() {
         }
         
         // 获取系列页面ID
-        $series_id = absint(get_post_meta($post->ID, 'hy_seires_id', true));
+        $series_id = absint(get_post_meta($post->ID, 'hy_series_id', true));
         $series_html = '';
         
         if (!empty($series_id)) {
