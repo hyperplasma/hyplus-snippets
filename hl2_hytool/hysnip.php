@@ -26,7 +26,8 @@ function hysnip_shortcode_handler($atts) {
     $atts = shortcode_atts(array(
         'href'  => '',
         'title' => '查看内容',
-        'limit' => 0
+        'limit' => 0,
+        'mode'  => 'button'
     ), $atts, 'hysnip');
 
     // 验证href参数
@@ -45,13 +46,20 @@ function hysnip_shortcode_handler($atts) {
     // 获取安全的属性值
     $btn_text  = esc_html($atts['title']);
     $safe_href = esc_attr($permalink);
+    $mode      = esc_attr($atts['mode']);
+
+    // 根据mode参数设置class
+    $classes = array();
+    if ($mode === 'button') {
+        $classes = array('hyplus-nav-link', 'hysnip-button');
+    }
+    $class_attr = !empty($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
 
     // 构建HTML
     ob_start();
     ?>
     <a 
-        href="<?php echo $safe_href; ?>"
-        class="hyplus-nav-link hysnip-button"
+        href="<?php echo $safe_href; ?>"<?php echo $class_attr; ?>
         target="_blank"
     >
         <?php echo $btn_text; ?>
