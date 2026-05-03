@@ -857,7 +857,6 @@ h2, h3, h4, h5, h6 {
 /* .entry-header h1, .page-header h1,  */
 .entry-content :is(h1,h2,h3,h4,h5,h6),
 .taxonomy-description > h3,
-.hyplus-category-popup-container h3,
 .hysnip-popup-content :is(h1,h2,h3,h4,h5,h6) { 
 	/* margin-top: 1.2em; */
 	/* margin-left: -8px;
@@ -891,7 +890,6 @@ h2, h3, h4, h5, h6 {
 
 .entry-content :is(h3,h4,h5,h6),
 .taxonomy-description > h3,
-.hyplus-category-popup-container h3,
 .hysnip-popup-content :is(h3,h4,h5,h6) { 
 	border-left: 3px solid var(--hyplus-border-color-light);
 	border-right: 3px solid var(--hyplus-border-color-light);
@@ -1197,65 +1195,6 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 	justify-content: center;
 	vertical-align: middle;
 	text-align: center;
-}
-
-/* Article Overall Above */
-.hyplus-category-popup-container {
-	position: fixed;
-	z-index: 88888;
-	max-width: 600px;
-	max-height: 70vh;
-	min-height: 100px;
-	background: var(--hyplus-bg-container-solid);
-	color: var(--hyplus-text-primary);
-	border: 1px solid var(--hyplus-border-color-light);
-	border-radius: 12px;
-	box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
-	padding: 0;
-	font-size: 0.9em;
-	line-height: 1.6;
-	display: none;
-	word-break: break-word;
-	pointer-events: auto;
-	overflow: hidden;
-	overflow-y: auto;
-	overscroll-behavior: none;
-	will-change: transform;
-}
-
-.hyplus-category-popup-container #hyplus-popup-content {
-	padding: 10px 22px;
-	font-size: 0.9em;
-}
-
-.hyplus-category-popup-container h3 {
-	font-size: 1.1em;
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
-}
-
-.hyplus-category-popup-container .hyplus-category-title {
-	text-align: center;
-	font-size: 1.1em;
-	font-weight: bold;
-	margin: 0;
-}
-/* 
-.hyplus-category-popup-container .hyplus-category-title a {
-	color: var(--hyplus-primary-link-color);
-	transition: color 0.2s ease;
-}
-
-.hyplus-category-popup-container .hyplus-category-title a:hover {
-	color: var(--hyplus-link-hover-color);
-} */
-
-/* 移动端适配 */
-@media screen and (max-width: 768px) {
-	.hyplus-category-popup-container {
-		max-width: 85vw;
-		max-height: 60vh;
-	}
 }
 
 /* HySnip */
