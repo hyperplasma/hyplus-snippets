@@ -47,7 +47,7 @@ function lh_single_cats_above_title() {
                 $series_title = esc_attr($series_post->post_title);
                 $series_link = esc_attr(get_permalink($series_id));
                 $series_html = sprintf(
-                    '[hysnip href="%s" title="%s" mode="link"]',
+                    '[hysnip href="%s" title="%s" mode="link"]&nbsp;&nbsp;',
                     $series_link,
                     $series_title
                 );
@@ -64,7 +64,7 @@ function lh_single_cats_above_title() {
                     </span>
                 <?php endif; ?>
                 <span style="color: green;">
-                    <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '&nbsp;&nbsp;<a class="hyplus-scale" href="/user/akira37/"  style="display: inline-block;" title="受限内容">' . $emoji . '</a>' : ''; ?></span>
+                    <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '<a class="hyplus-scale" href="/user/akira37/"  style="display: inline-block;" title="受限内容">' . $emoji . '</a>' : ''; ?></span>
                 </span>
             </span>
         </div>
