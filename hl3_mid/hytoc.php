@@ -442,6 +442,13 @@ function hyplus_output_toc_scripts() {
                 if (tocSection) tocSection.style.display = 'inline-block';
             }
 
+            // 首先找到最小的标题级别，使得最上一级标题无论如何都从 level-1 开始
+            var minLevel = 6;
+            validHeaders.forEach(function(item){
+                var level = parseInt(item.header.tagName.substring(1), 10);
+                if (level < minLevel) minLevel = level;
+            });
+
             var ul = document.createElement('ul');
             validHeaders.forEach(function(item){
                 var header = item.header;
@@ -454,7 +461,8 @@ function hyplus_output_toc_scripts() {
                 a.textContent = titleText;
                 a.href = '#' + anchor;
                 var level = parseInt(header.tagName.substring(1), 10);
-                li.className = 'level-' + level;
+                var relativeLevel = level - minLevel + 1;
+                li.className = 'level-' + relativeLevel;
                 li.appendChild(a);
                 ul.appendChild(li);
             });
