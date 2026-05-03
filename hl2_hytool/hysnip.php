@@ -49,22 +49,17 @@ function hysnip_shortcode_handler($atts) {
     $mode      = esc_attr($atts['mode']);
 
     // 根据mode参数设置class
-    $classes = array();
+    $classes = array('hysnip-trigger'); // 总是添加触发器class
     if ($mode === 'button') {
-        $classes = array('hyplus-nav-link', 'hysnip-button');
+        $classes[] = 'hyplus-nav-link';
     }
-    $class_attr = !empty($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
+    $class_attr = ' class="' . implode(' ', $classes) . '"';
 
     // 构建HTML
     ob_start();
-    ?>
-    <a 
-        href="<?php echo $safe_href; ?>"<?php echo $class_attr; ?>
-        target="_blank"
-    >
-        <?php echo $btn_text; ?>
-    </a>
-    <?php
+    ?><a href="<?php echo $safe_href; ?>"<?php echo $class_attr; ?> 
+       target="_blank"
+    ><?php echo $btn_text; ?></a><?php
     $html = ob_get_clean();
 
     // 注入JavaScript代码（只注入一次）
@@ -113,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 监听所有HySnip链接的点击事件
     document.addEventListener('click', function(event) {
-        const link = event.target.closest('.hysnip-button');
+        const link = event.target.closest('.hysnip-trigger');
         if (!link) return;
 
         const permalink = link.href;

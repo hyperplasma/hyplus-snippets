@@ -20,7 +20,7 @@ function count_words_read_time() {
     $text_num = $chinese_chars + $other_words;
     
     $read_time = $text_num > 0 ? ceil($text_num / 200) : 0;
-    $output = '<span title="每个汉字或其他连续非空白字符算1个字">' . $text_num . '字</span>&nbsp;&nbsp;<span title="预估阅读时间（200字/分钟）">' . $read_time . '分钟</span>&nbsp;&nbsp;';
+    $output = '<span title="每个汉字或其他连续非空白字符算1个字">' . $text_num . '字</span>&nbsp;<span title="预估阅读时间（200字/分钟）">' . $read_time . '分钟</span>';
     return $output;
 }
 
@@ -47,7 +47,7 @@ function lh_single_cats_above_title() {
                 $series_title = $series_post->post_title;
                 $series_link = get_permalink($series_id);
                 $series_html = sprintf(
-                    "[hysnip href='%s' title='%s' mode='link']&nbsp;&nbsp;",
+                    "[hysnip href='%s' title='%s' mode='link']",
                     $series_link,
                     $series_title
                 );
@@ -64,7 +64,7 @@ function lh_single_cats_above_title() {
                     </span>
                 <?php endif; ?>
                 <span style="color: green;">
-                    <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '<a class="hyplus-scale" href="/user/akira37/"  style="display: inline-block;" title="受限内容">' . $emoji . '</a>' : ''; ?></span>
+                    <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '&nbsp;<a class="hyplus-scale" href="/user/akira37/"  style="display: inline-block;" title="受限内容">' . $emoji . '</a>' : ''; ?></span>
                 </span>
             </span>
         </div>
