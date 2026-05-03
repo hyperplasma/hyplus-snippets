@@ -36,25 +36,43 @@ function lh_single_cats_above_title() {
             $emoji .= '🔐';
         }
         
-        // 获取系列页面ID
-        $series_id = absint(get_post_meta($post->ID, 'hy_series_id', true));
+        // 获取系列页面ID（可能有多个，以逗号分隔）
+        $series_ids_raw = get_post_meta($post->ID, 'hy_series_id', true);
         $series_html = '';
         
-        if (!empty($series_id)) {
-            // 验证该页面是否存在
-            $series_post = get_post($series_id);
-            if ($series_post && $series_post->post_status === 'publish') {
-                $series_title = $series_post->post_title;
-                $series_link = get_permalink($series_id);
-                $series_html = sprintf(
-                    "[hysnip href='%s' title='%s' mode='link']",
-                    $series_link,
-                    $series_title
-                );
+        if (!empty($series_ids_raw)) {
+            // 检测是否为纯数字（单个ID的常见情况）
+            if (ctype_digit((string)$series_ids_raw)) {
+                // 快速路径：单个ID
+                $series_post = get_post((int)$series_ids_raw);
+                if ($series_post && $series_post->post_status === 'publish') {
+                    $series_html = sprintf(
+                        "[hysnip href='%s' title='%s' mode='link']",
+                        get_permalink($series_post->ID),
+                        $series_post->post_title
+                    );
+                }
+            } else {
+                // 完整路径：多个ID
+                $series_snippets = array();
+                foreach (array_map('trim', explode(',', $series_ids_raw)) as $series_id) {
+                    $series_id = (int)$series_id;
+                    if ($series_id <= 0) continue;
+                    
+                    $series_post = get_post($series_id);
+                    if ($series_post && $series_post->post_status === 'publish') {
+                        $series_snippets[] = sprintf(
+                            "[hysnip href='%s' title='%s' mode='link']",
+                            get_permalink($series_post->ID),
+                            $series_post->post_title
+                        );
+                    }
+                }
+                
+                $series_html = implode(' ', $series_snippets);
             }
         }
 
-        ob_start();
         ?>
         <div class="post-buttons">
             <span class="entry-meta post-meta">
@@ -69,7 +87,6 @@ function lh_single_cats_above_title() {
             </span>
         </div>
         <?php
-        echo ob_get_clean();
     }
 }
 ?>
