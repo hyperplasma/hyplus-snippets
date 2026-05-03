@@ -20,7 +20,7 @@ function count_words_read_time() {
     $text_num = $chinese_chars + $other_words;
     
     $read_time = $text_num > 0 ? ceil($text_num / 200) : 0;
-    $output = '&nbsp;<span title="每个汉字或其他连续非空白字符算1个字">' . $text_num . '字</span>&nbsp;&nbsp;<span title="预估阅读时间（200字/分钟）">' . $read_time . '分钟</span>';
+    $output = '<span title="每个汉字或其他连续非空白字符算1个字">' . $text_num . '字</span>&nbsp;&nbsp;<span title="预估阅读时间（200字/分钟）">' . $read_time . '分钟</span>&nbsp;&nbsp;';
     return $output;
 }
 
@@ -44,10 +44,10 @@ function lh_single_cats_above_title() {
             // 验证该页面是否存在
             $series_post = get_post($series_id);
             if ($series_post && $series_post->post_status === 'publish') {
-                $series_title = esc_attr($series_post->post_title);
-                $series_link = esc_attr(get_permalink($series_id));
+                $series_title = $series_post->post_title;
+                $series_link = get_permalink($series_id);
                 $series_html = sprintf(
-                    '[hysnip href="%s" title="%s" mode="link"]&nbsp;&nbsp;',
+                    "[hysnip href='%s' title='%s' mode='link']&nbsp;&nbsp;",
                     $series_link,
                     $series_title
                 );
