@@ -7,11 +7,13 @@
  * Parameters:
  * - href: 博文或页面的相对链接（必需）。会自动加上本站域名
  * - title: 按钮文字（可选，默认为"查看内容"）
+ * - async: 是否异步预加载内容（可选，默认为0）。设为1时会在页面加载时预加载内容
  * 
  * Features:
  * - 生成与HyImg一致的按钮式链接
  * - 点击后在弹出框中展示内容
  * - 自动缓存加载的内容
+ * - 支持异步预加载，不阻塞页面渲染
  * - 支持点击框外关闭和ESC快速关闭
  */
 
@@ -27,7 +29,8 @@ function hysnip_shortcode_handler($atts) {
         'href'  => '',
         'title' => '查看内容',
         'limit' => 0,
-        'mode'  => 'button'
+        'mode'  => 'button',
+        'async' => 0
     ), $atts, 'hysnip');
 
     // 验证href参数
@@ -47,6 +50,7 @@ function hysnip_shortcode_handler($atts) {
     $btn_text  = esc_html($atts['title']);
     $safe_href = esc_attr($permalink);
     $mode      = esc_attr($atts['mode']);
+    $async     = (int)$atts['async'];
 
     // 根据mode参数设置class
     $classes = array('hysnip-trigger'); // 总是添加触发器class
@@ -54,10 +58,13 @@ function hysnip_shortcode_handler($atts) {
         $classes[] = 'hyplus-nav-link';
     }
     $class_attr = ' class="' . implode(' ', $classes) . '"';
+    
+    // 如果启用异步加载，添加data属性
+    $async_attr = $async ? ' data-async="1"' : '';
 
     // 构建HTML
     ob_start();
-    ?><a href="<?php echo $safe_href; ?>"<?php echo $class_attr; ?> 
+    ?><a href="<?php echo $safe_href; ?>"<?php echo $class_attr; ?><?php echo $async_attr; ?> 
        target="_blank"
     ><?php echo $btn_text; ?></a><?php
     $html = ob_get_clean();
@@ -225,6 +232,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 立即初始化弹出框事件（移除不必要的延迟）
     setupPopupEvents();
+
+    // 预加载异步内容
+    function preloadAsyncContent() {
+        const asyncLinks = document.querySelectorAll('.hysnip-trigger[data-async="1"]');
+        asyncLinks.forEach(link => {
+            const permalink = link.href;
+            if (permalink && snippetCache[permalink] === undefined) {
+                // 发送 AJAX 请求预加载内容
+                var data = new FormData();
+                data.append('action', 'hysnip_get_content');
+                data.append('permalink', permalink);
+                data.append('nonce', '<?php echo wp_create_nonce('hysnip_popup'); ?>');
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+
+                fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                    method: 'POST',
+                    body: data,
+                    signal: controller.signal
+                })
+                .then(response => response.json())
+                .then(result => {
+                    clearTimeout(timeoutId);
+                    if (result.success) {
+                        snippetCache[permalink] = result.data.content;
+                    }
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    // 静默处理错误，不影响页面
+                });
+            }
+        });
+    }
+
+    // 页面加载完成后预加载异步内容（不阻塞页面渲染）
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', preloadAsyncContent);
+    } else {
+        setTimeout(preloadAsyncContent, 0);
+    }
 
     // 辅助函数：HTML转义
     function esc(str) {

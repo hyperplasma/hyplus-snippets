@@ -47,7 +47,7 @@ function lh_single_cats_above_title() {
                 $series_post = get_post((int)$series_ids_raw);
                 if ($series_post && $series_post->post_status === 'publish') {
                     $series_html = sprintf(
-                        "[hysnip href='%s' title='%s' mode='link']",
+                        "[hysnip href='%s' title='%s' mode='link' async='1']",
                         get_permalink($series_post->ID),
                         $series_post->post_title
                     );
