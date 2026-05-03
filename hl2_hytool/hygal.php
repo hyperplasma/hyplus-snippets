@@ -2,7 +2,6 @@
 /**
  * Plugin Name: HyGal 极致画廊 (Dual Pager Edition)
  * Description: 集成上传、管理、上下双翻页组件、批量下载功能。修复了顶部翻页丢失问题。
- * Version: 1.5.0.1
  */
 
 add_shortcode('hygal', 'hygal_unified_handler');
@@ -69,7 +68,9 @@ function hygal_unified_handler($atts) {
         }
         .close-btn { color: var(--hyplus-btn-close-control) !important; font-size: 28px !important; }
         .dl-batch-btn { color: #43a5f5 !important; font-size: 16px !important; }
-        .close-btn:hover, .dl-batch-btn:hover { transform: scale(1.2); }
+        .close-btn:hover, .dl-batch-btn:hover, .pager-btn:hover { transform: scale(1.2); }
+        .close-btn:active, .dl-batch-btn:active, .pager-btn:active { transform: scale(0.92); }
+        .pager-btn.disabled:hover, .pager-btn.disabled:active { transform: none; }
 
         /* 内容区 */
         #hygal-output { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 5px; }
@@ -178,11 +179,11 @@ function hygal_unified_handler($atts) {
 
             <div class="footer-pager-wrap">
                 <div class="hygal-pager footer-pager">
-                    <span class="pager-btn prev-btn">&lt;</span><span class="pager-text" title="点击跳转页码">1 / 1</span><span class="pager-btn next-btn">&gt;</span>
+                    <span class="pager-btn prev-btn hyplus-scale">&lt;</span><span class="pager-text" title="点击跳转页码">1 / 1</span><span class="pager-btn next-btn hyplus-scale">&gt;</span>
                 </div>
             </div>
 
-            <div class="hytool-version">HyGal v1.5.1</div>
+            <div class="hytool-version">HyGal v1.5.2</div>
         </div>
     </div>
 

@@ -1183,7 +1183,6 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 .menu-toggle:active,
 .dropdown-menu-toggle:active {
     transform: scale(0.93);
-    transition: none;
 }
 
 /* 
