@@ -20,10 +20,15 @@ if ( !function_exists('wb_site_count_user') ) {
         if(!isset($_SESSION['wb_counted_'.$date])){        
             // 先从缓存获取，没有再从数据库获取
             $count = wp_cache_get('site_count');
+            // 如果缓存存在但日期已改变，舍弃缓存（解决午夜跨境问题）
+            if ( $count && is_array($count) && isset($count['date']) && $count['date'] !== $date ) {
+                wp_cache_delete('site_count');
+                $count = false;
+            }
             if ( $count === false ) {
                 $count = get_option('site_count');
                 if ( $count && is_array($count) ) {
-                    wp_cache_set('site_count', $count, '', 3600); // 缓存1小时
+                    wp_cache_set('site_count', $count, '', 600); // 缓存10分钟（足够覆盖高峰访问，但短于日期变化）
                 }
             }
             
@@ -74,12 +79,20 @@ if ( !session_id() ) {
     @session_start();
 }
 
+// 获取当前日期（用于缓存检查）
+$date = date('ymd', time());
+
 // 从缓存获取最新统计数据
 $sitecount = wp_cache_get('site_count');
+// 如果缓存存在但日期已改变，舍弃缓存
+if ( $sitecount && is_array($sitecount) && isset($sitecount['date']) && $sitecount['date'] !== $date ) {
+    wp_cache_delete('site_count');
+    $sitecount = false;
+}
 if ( $sitecount === false ) {
     $sitecount = get_option('site_count');
     if ( $sitecount && is_array($sitecount) ) {
-        wp_cache_set('site_count', $sitecount, '', 3600);
+        wp_cache_set('site_count', $sitecount, '', 600);
     }
 }
 
