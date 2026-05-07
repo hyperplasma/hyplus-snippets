@@ -203,6 +203,21 @@ function hyplus_output_toc_scripts() {
         var HEADER_HEIGHT = 70;
         var tocContainers = [];
         var globalScrollTimeout;
+        var tocAnchorCounter = 0; // 全局计数器，用于生成纯中文标题的锚点
+        
+        // 生成基础锚点：优先使用已有id，其次使用文本，最后使用计数器
+        function generateBaseAnchor(pureText, originalId) {
+            if (originalId) {
+                return originalId.replace(/_.+$/, '');
+            }
+            var baseAnchor = pureText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+            // 如果替换后为空或只有空格，使用计数器生成默认锚点
+            if (!baseAnchor || /^\s*$/.test(baseAnchor)) {
+                tocAnchorCounter++;
+                baseAnchor = 'toc-' + tocAnchorCounter;
+            }
+            return baseAnchor;
+        }
         
         // 轻量级增量添加：仅为新插入的标题生成anchor和toc项，无需重新扫描整篇文章
         window.hyplus_add_toc_header_incremental = function(headerElement) {
@@ -230,7 +245,7 @@ function hyplus_output_toc_scripts() {
                 if (el.id) anchorSet.add(el.id);
             });
             
-            var baseAnchor = pureText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+            var baseAnchor = generateBaseAnchor(pureText, headerElement.getAttribute('id'));
             var anchor = baseAnchor;
             var suffix = 2;
             while (anchorSet.has(anchor)) {
@@ -390,7 +405,7 @@ function hyplus_output_toc_scripts() {
                 
                 // 为每个header一次性预处理和存储anchor
                 var originalId = header.getAttribute('id');
-                var baseAnchor = originalId ? originalId.replace(/_.+$/, '') : pureText.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+                var baseAnchor = generateBaseAnchor(pureText, originalId);
                 var anchor = baseAnchor;
                 var suffix = 2;
                 while (anchorSet.has(anchor)) {
