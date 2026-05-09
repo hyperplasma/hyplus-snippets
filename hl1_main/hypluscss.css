@@ -1230,6 +1230,96 @@ body.nav-buttons-left #refreshButton {
 	pointer-events: auto;
 }
 
+/* 系列按钮群容器 */
+.series-button-container {
+	position: fixed;
+	bottom: 100px;
+	z-index: 119;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0;
+	width: 30px;
+	box-shadow: 0 2px 6px 1px rgba(102, 139, 139, 0.45);
+	border-radius: 8px;
+}
+
+body.nav-buttons-left .series-button-container {
+	right: 0;
+	left: auto;
+}
+
+body:not(.nav-buttons-left) .series-button-container {
+	left: 0;
+	right: auto;
+}
+
+/* 系列按钮通用样式 */
+.series-button {
+	position: relative;
+	width: 30px;
+	height: 50px;
+	color: white !important;
+	text-align: center;
+	line-height: 50px;
+	cursor: pointer;
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+	transition: transform 0.2s ease, background-color 0.5s ease;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	border: none;
+	margin: 0;
+	flex-shrink: 0;
+	background-color: rgb(255, 193, 7) !important;
+	font-size: 16px;
+	text-decoration: none;
+	display: block;
+}
+
+/* 系列按钮右侧布局圆角（当 HyButton 在右侧时，系列按钮在左侧） */
+body:not(.nav-buttons-left) .series-button:only-child {
+	border-radius: 0 8px 8px 0;
+}
+body:not(.nav-buttons-left) .series-button:first-child:not(:last-child) {
+	border-radius: 0 8px 0 0;
+}
+body:not(.nav-buttons-left) .series-button:not(:first-child):not(:last-child) {
+	border-radius: 0;
+}
+body:not(.nav-buttons-left) .series-button:last-child:not(:first-child) {
+	border-radius: 0 0 8px 0;
+}
+
+/* 系列按钮左侧布局圆角（当 HyButton 在左侧时，系列按钮在右侧） */
+body.nav-buttons-left .series-button:only-child {
+	border-radius: 8px 0 0 8px;
+}
+body.nav-buttons-left .series-button:first-child:not(:last-child) {
+	border-radius: 8px 0 0 0;
+}
+body.nav-buttons-left .series-button:not(:first-child):not(:last-child) {
+	border-radius: 0;
+}
+body.nav-buttons-left .series-button:last-child:not(:first-child) {
+	border-radius: 0 0 0 8px;
+}
+
+/* 系列按钮悬停效果 */
+.series-button:hover {
+	transform: scale(1.05);
+	background-color: rgb(255, 213, 79) !important;
+	color: white !important;
+}
+
+.series-button:active {
+	transform: scale(1.00);
+	background-color: rgb(255, 179, 0) !important;
+	color: white !important;
+}
+
 /* 导航框样式 */
 #navContainer {
 	display: none;

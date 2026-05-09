@@ -24,10 +24,11 @@ add_shortcode('hysnip', 'hysnip_shortcode_handler');
  * HySnip 短代码处理函数
  */
 function hysnip_shortcode_handler($atts) {
-    // 解析短代码参数，设置默认值
+    // 解析短代码参数，初始化为空值
     $atts = shortcode_atts(array(
         'href'  => '',
-        'title' => '查看内容',
+        'name'  => '',
+        'title' => '',
         'limit' => 0,
         'mode'  => 'button',
         'async' => 0
@@ -36,6 +37,17 @@ function hysnip_shortcode_handler($atts) {
     // 验证href参数
     if (empty($atts['href'])) {
         return '<p style="color: #d9534f; font-weight: bold;">⚠ HySnip: href参数为必需</p>';
+    }
+
+    // 智能处理 name 参数：
+    // 1. 如果 name 为空但 title 不为空，则 name = title
+    // 2. 如果 name 和 title 都为空，则 name = "查看内容"
+    if (empty($atts['name'])) {
+        if (!empty($atts['title'])) {
+            $atts['name'] = $atts['title'];
+        } else {
+            $atts['name'] = '查看内容';
+        }
     }
 
     // 处理链接URL
@@ -47,7 +59,8 @@ function hysnip_shortcode_handler($atts) {
     }
 
     // 获取安全的属性值
-    $btn_text  = esc_html($atts['title']);
+    $btn_text  = esc_html($atts['name']);
+    $popup_title = esc_html($atts['title']);
     $safe_href = esc_attr($permalink);
     $mode      = esc_attr($atts['mode']);
     $async     = (int)$atts['async'];
@@ -61,10 +74,13 @@ function hysnip_shortcode_handler($atts) {
     
     // 如果启用异步加载，添加data属性
     $async_attr = $async ? ' data-async="1"' : '';
+    
+    // 将弹出框标题作为 data 属性传递给 JavaScript
+    $title_attr = $popup_title ? ' data-popup-title="' . $popup_title . '"' : '';
 
     // 构建HTML
     ob_start();
-    ?><a href="<?php echo $safe_href; ?>"<?php echo $class_attr; ?><?php echo $async_attr; ?> 
+    ?><a href="<?php echo $safe_href; ?>"<?php echo $class_attr; ?><?php echo $async_attr; ?><?php echo $title_attr; ?> 
        target="_blank"
     ><?php echo $btn_text; ?></a><?php
     $html = ob_get_clean();
@@ -124,11 +140,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // 阻止默认的链接跳转行为
         event.preventDefault();
 
+        // 从 data 属性获取自定义弹出框标题，如果没有则为空（后续会使用页面真实标题）
+        const customTitle = link.getAttribute('data-popup-title');
+        
         // 打开弹出框
-        openSnippetPopup(permalink, link.textContent.trim());
+        openSnippetPopup(permalink, customTitle || '');
     });
 
-    function openSnippetPopup(permalink, title) {
+    function openSnippetPopup(permalink, customTitle) {
         const popup = getSnippetPopup();
         
         // 记录当前打开的 permalink
@@ -136,14 +155,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 检查缓存
         if (snippetCache[permalink] !== undefined) {
-            displaySnippetContent(snippetCache[permalink], title, permalink);
+            displaySnippetContent(snippetCache[permalink], customTitle, permalink);
             popup.classList.add('active');
             return;
         }
 
         // 显示加载状态
         const contentDiv = popup.querySelector('.hysnip-popup-content');
-        contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(title) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
+        const headerTitle = customTitle || '加载中...';
+        contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
         
         popup.classList.add('active');
 
@@ -173,9 +193,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.success) {
                 // 缓存加载的内容
                 snippetCache[permalink] = result.data.content;
-                displaySnippetContent(result.data.content, title, permalink);
+                // 如果没有自定义标题，使用页面的真实标题
+                const titleToDisplay = customTitle || result.data.post_title;
+                displaySnippetContent(result.data.content, titleToDisplay, permalink);
             } else {
-                displaySnippetContent(null, title, permalink);
+                displaySnippetContent(null, customTitle, permalink);
             }
         })
         .catch(function(error) {
@@ -186,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             // 只处理与当前打开的 permalink 匹配的错误
             if (currentPermalink === permalink) {
-                displaySnippetContent(null, title, permalink);
+                displaySnippetContent(null, customTitle, permalink);
             }
         });
     }
@@ -318,7 +340,8 @@ function hysnip_get_content_ajax() {
     $content = apply_filters('the_content', $post->post_content);
 
     wp_send_json_success(array(
-        'content' => $content
+        'content' => $content,
+        'post_title' => $post->post_title
     ));
 }
 

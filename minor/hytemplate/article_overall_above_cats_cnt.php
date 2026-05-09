@@ -4,6 +4,44 @@
  * 系列链接功能：如果文章设置了 hy_series_id，显示 hysnip 短代码链接
  */
 add_action('generate_before_entry_title', 'lh_single_cats_above_title');
+add_action('wp_footer', 'hyplus_render_series_buttons_container');
+
+/**
+ * 获取系列博文
+ * @param int $post_id 当前文章ID
+ * @return array 返回系列博文对象数组
+ */
+function hyplus_get_series_posts($post_id) {
+    $series_ids_raw = get_post_meta($post_id, 'hy_series_id', true);
+    if (empty($series_ids_raw)) {
+        return array();
+    }
+    
+    $series_posts = array();
+    if (ctype_digit((string)$series_ids_raw)) {
+        // 单个ID
+        $series_id = (int)$series_ids_raw;
+        if ($series_id > 0) {
+            $series_post = get_post($series_id);
+            if ($series_post && $series_post->post_status === 'publish') {
+                $series_posts[] = $series_post;
+            }
+        }
+    } else {
+        // 多个ID
+        foreach (array_map('trim', explode(',', $series_ids_raw)) as $series_id) {
+            $series_id = (int)$series_id;
+            if ($series_id <= 0) continue;
+            
+            $series_post = get_post($series_id);
+            if ($series_post && $series_post->post_status === 'publish') {
+                $series_posts[] = $series_post;
+            }
+        }
+    }
+    
+    return $series_posts;
+}
 
 // 统计预估阅读时间
 function count_words_read_time() {
@@ -36,40 +74,23 @@ function lh_single_cats_above_title() {
             $emoji .= '🔐';
         }
         
-        // 获取系列页面ID（可能有多个，以逗号分隔）
-        $series_ids_raw = get_post_meta($post->ID, 'hy_series_id', true);
+        // 获取系列博文
+        $series_posts = hyplus_get_series_posts($post->ID);
         $series_html = '';
         
-        if (!empty($series_ids_raw)) {
-            // 检测是否为纯数字（单个ID的常见情况）
-            if (ctype_digit((string)$series_ids_raw)) {
-                // 快速路径：单个ID
-                $series_post = get_post((int)$series_ids_raw);
-                if ($series_post && $series_post->post_status === 'publish') {
-                    $series_html = sprintf(
-                        "[hysnip href='%s' title='%s' mode='link' async='1']",
-                        get_permalink($series_post->ID),
-                        $series_post->post_title
-                    );
-                }
-            } else {
-                // 完整路径：多个ID
-                $series_snippets = array();
-                foreach (array_map('trim', explode(',', $series_ids_raw)) as $series_id) {
-                    $series_id = (int)$series_id;
-                    if ($series_id <= 0) continue;
-                    
-                    $series_post = get_post($series_id);
-                    if ($series_post && $series_post->post_status === 'publish') {
-                        $series_snippets[] = sprintf(
-                            "[hysnip href='%s' title='%s' mode='link' async='1']",
-                            get_permalink($series_post->ID),
-                            $series_post->post_title
-                        );
-                    }
-                }
+        // 生成短代码
+        if (!empty($series_posts)) {
+            foreach ($series_posts as $series_post) {
+                // 正确转义短代码参数
+                $series_url = esc_url(get_permalink($series_post->ID));
+                $series_title = esc_attr($series_post->post_title);
                 
-                $series_html = implode(' ', $series_snippets);
+                $series_html .= sprintf(
+                    " [hysnip href='%s' name='%s' title='%s' mode='link' async='1']",
+                    $series_url,
+                    $series_title,
+                    $series_title
+                );
             }
         }
 
@@ -88,5 +109,57 @@ function lh_single_cats_above_title() {
         </div>
         <?php
     }
+}
+
+/**
+ * 在页脚渲染系列按钮群容器
+ * 仅在单篇博文页面显示，为 #seriesButtonContainer 添加内容
+ */
+function hyplus_render_series_buttons_container() {
+    // 仅在单篇文章页面执行
+    if (!is_single()) {
+        return;
+    }
+    
+    global $post;
+    
+    // 获取系列博文
+    $series_posts = hyplus_get_series_posts($post->ID);
+    if (empty($series_posts)) {
+        return;
+    }
+    
+    // 构建按钮数据数组，使用 wp_json_encode() 统一转义
+    $buttons_data = array();
+    foreach ($series_posts as $index => $series_post) {
+        $buttons_data[] = array(
+            'href' => get_permalink($series_post->ID),
+            'number' => $index + 1,
+            'title' => $series_post->post_title
+        );
+    }
+    
+    // 直接输出 HTML，使用 wp_json_encode() 安全转义数据
+    ?>
+    <script>
+        (function() {
+            const container = document.getElementById('seriesButtonContainer');
+            if (!container) return;
+            
+            const buttons = <?php echo wp_json_encode($buttons_data); ?>;
+            
+            buttons.forEach(btn => {
+                const link = document.createElement('a');
+                link.href = btn.href;
+                link.target = '_blank';
+                link.className = 'series-button hysnip-trigger';
+                link.textContent = btn.number;
+                link.title = btn.title;
+                link.setAttribute('data-popup-title', btn.title);
+                container.appendChild(link);
+            });
+        })();
+    </script>
+    <?php
 }
 ?>

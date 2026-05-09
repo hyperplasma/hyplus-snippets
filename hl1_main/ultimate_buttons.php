@@ -14,6 +14,9 @@
     <div id="refreshButton" class="hybutton" title="刷新页面（⌘R）">↻</div>
 </div>
 
+<!-- 系列按钮群（仅在博文页面显示，由 article_overall_above_cats_cnt.php 动态生成） -->
+<div id="seriesButtonContainer" class="series-button-container"></div>
+
 <!-- 导航弹出框 -->
 <div id="navContainer">
 	<!-- 标题栏按钮 -->
@@ -111,11 +114,11 @@
 				<div class="language-selector" id="navButtonsRadioGroup" style="margin-top: 12px;">
 					<div class="config-item">
 						<input type="radio" id="navButtonsLeftRadio" name="navButtonsPosition" value="left">
-						<label for="navButtonsLeftRadio">导航按钮群位于左侧</label>
+						<label for="navButtonsLeftRadio">导航按钮群在左、系列按钮群在右</label>
 					</div>
 					<div class="config-item">
 						<input type="radio" id="navButtonsRightRadio" name="navButtonsPosition" value="right">
-						<label for="navButtonsRightRadio">导航按钮群位于右侧</label>
+						<label for="navButtonsRightRadio">导航按钮群在右、系列按钮群在左</label>
 					</div>
 				</div>
 
@@ -126,7 +129,7 @@
 					</div>
 					<div class="config-item">
 						<input type="checkbox" id="hideButtonsToggle" />
-						<label for="hideButtonsToggle">临时隐藏导航按钮群</label>
+						<label for="hideButtonsToggle">临时隐藏导航和系列按钮群</label>
 					</div>
 					<div class="config-item">
 						<input type="checkbox" id="hideLightboxControlsToggle" />
@@ -402,10 +405,14 @@
 			document.getElementById('goForwardButton'),
 			document.getElementById('refreshButton')
 		];
+		const seriesButtonContainer = document.getElementById('seriesButtonContainer');
 		const display = isVisible ? 'block' : 'none';
 		buttons.forEach(btn => {
 			if (btn) btn.style.display = display;
 		});
+		if (seriesButtonContainer) {
+			seriesButtonContainer.style.display = display;
+		}
 	}
 
 	function handleHideButtonsToggle(event) {
