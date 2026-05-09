@@ -1020,6 +1020,613 @@ table:not(.hyplus-excluded-table) tr:first-child th {
 }
 
 /*
+ * HY-Ultimate Buttons
+ * all styles from ultimate_buttons.php
+ */
+/* 以sideinfo的切换按钮样式为基础作为搜索引擎按钮样式（直接从sideinfo.php取用，因为两个snippet均在任何时候都启用） */
+/* .sideinfo-toggle {
+	padding: 4px 12px;
+	background: var(--hyplus-bg-button-light);
+	color: var(--hyplus-text-nav-link);
+	border-radius: 16px;
+	border: 1.5px solid var(--hyplus-border-color-light2);
+	box-shadow: 0 2.5px 10px 0 var(--hyplus-shadow-nav), 0 1px 2px 0 var(--hyplus-shadow-nav-text);
+	font-weight: 600;
+	min-width: fit-content;
+	transition: background 0.18s cubic-bezier(0.4,0,0.2,1), color 0.18s cubic-bezier(0.4,0,0.2,1), box-shadow 0.18s cubic-bezier(0.4,0,0.2,1), transform 0.18s cubic-bezier(0.4,0,0.2,1);
+	outline: none;
+	cursor: pointer;
+} */
+
+/* .sideinfo-toggle.disabled {
+	background: #f0f0f0 !important;
+	color: #999 !important;
+	border-color: #ddd !important;
+	box-shadow: none !important;
+	cursor: default !important;
+	transform: none !important;
+	pointer-events: none;
+	margin-bottom: 12px;
+	user-select: none;
+} */
+
+.sideinfo-toggle:hover,
+.sideinfo-toggle:focus {
+	background: var(--hyplus-bg-button-hover);
+	color: var(--hyplus-text-nav-link-hover);
+	border-color: var(--hyplus-border-color-light2);
+	box-shadow: 0 4px 14px 0 var(--hyplus-shadow-nav-hover), 0 1.5px 4px 0 var(--hyplus-shadow-nav-text);
+	transform: translateY(-1px) scale(1.025);
+	z-index: 2;
+}
+
+.sideinfo-toggle:active {
+	background: var(--hyplus-bg-button-active);
+	color: var(--hyplus-text-nav-link-hover);
+	box-shadow: 0 1px 4px 0 var(--hyplus-shadow-nav-text);
+	transform: translateY(1px) scale(0.98);
+}
+
+.engine-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center; 
+	min-width: 90px;
+}
+
+/* 基础字体缩放 */
+:root {
+	--font-scale: 1;
+}
+p, span, a, li, td, th, div:not(.font-size-controls *), 
+label:not(.font-size-controls *), 
+input[type="text"], textarea, 
+button:not(.font-size-btn),
+.post-content, .entry-content,
+article, section, blockquote, code, pre {
+	font-size: calc(var(--font-scale) * 1em);
+}
+
+/* 按钮组容器 */
+#hybuttonContainer {
+	position: fixed;
+	bottom: 100px;
+	z-index: 119;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0;
+	width: 30px;
+}
+
+body.nav-buttons-left #hybuttonContainer {
+	left: 0;
+	right: auto;
+}
+
+body:not(.nav-buttons-left) #hybuttonContainer {
+	right: 0;
+	left: auto;
+}
+
+/* 按钮通用样式 */
+.hybutton {
+	position: relative;
+	width: 30px;
+	height: 50px;
+	color: white;
+	text-align: center;
+	line-height: 50px;
+	cursor: pointer;
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+	box-shadow: 0 2px 6px 1px rgba(102, 139, 139, 0.45);
+	transition: transform 0.2s ease, background-color 0.5s ease;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	border: none;
+	margin: 0;
+	flex-shrink: 0;
+}
+
+#scrollToTopButton {
+	font-size: 18px;
+	background-color: rgb(33, 182, 137);
+}
+
+#navButton {
+	font-size: 20px;
+	background-color: rgba(220, 38, 127, 1);
+}
+
+#goBackButton {
+	font-size: 18px;
+	background-color: rgba(84, 126, 239, 1);
+}
+
+#goForwardButton {
+	font-size: 18px;
+	background-color: rgba(84, 126, 239, 1);
+}
+
+#refreshButton {
+	font-size: 20px;
+	background-color: rgba(40, 167, 69, 1);
+}
+
+/* 右侧布局圆角（默认） */
+body:not(.nav-buttons-left) #scrollToTopButton {
+	border-radius: 8px 0 0 0;
+}
+body:not(.nav-buttons-left) #navButton,
+body:not(.nav-buttons-left) #goBackButton,
+body:not(.nav-buttons-left) #goForwardButton {
+	border-radius: 0;
+}
+body:not(.nav-buttons-left) #refreshButton {
+	border-radius: 0 0 0 8px;
+}
+
+/* 左侧布局圆角 */
+body.nav-buttons-left #scrollToTopButton {
+	border-radius: 0 8px 0 0;
+}
+body.nav-buttons-left #navButton,
+body.nav-buttons-left #goBackButton,
+body.nav-buttons-left #goForwardButton {
+	border-radius: 0;
+}
+body.nav-buttons-left #refreshButton {
+	border-radius: 0 0 8px 0;
+}
+
+/* 鼠标悬停效果 */
+#scrollToTopButton:hover {
+	transform: scale(1.05);
+	background-color: rgba(52, 211, 161, 1);
+}
+#scrollToTopButton:active {
+	transform: scale(1.00);
+	background-color: rgb(40, 159, 121);
+}
+
+#navButton:hover {
+	transform: scale(1.05);
+	background-color: rgba(240, 58, 147, 1);
+}
+#navButton:active {
+	transform: scale(1.00);
+	background-color: rgb(195, 37, 111);
+}
+
+#goBackButton:hover,
+#goForwardButton:hover {
+	transform: scale(1.05);
+	background-color: rgba(94, 136, 249, 1);
+}
+#goBackButton:active,
+#goForwardButton:active {
+	transform: scale(1.00);
+	background-color: rgb(65, 95, 177);
+}
+
+#refreshButton:hover {
+	transform: scale(1.05);
+	background-color: rgba(60, 187, 89, 1);
+}
+#refreshButton:active {
+	transform: scale(1.00);
+	background-color: rgb(29, 116, 49);
+}
+
+/* 按钮组悬浮时禁用滚轮 */
+#scrollToTopButton:hover,
+#navButton:hover,
+#goBackButton:hover,
+#goForwardButton:hover,
+#refreshButton:hover {
+	pointer-events: auto;
+}
+
+/* 导航框样式 */
+#navContainer {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 85%;
+	height: 85%;
+	max-width: 850px;
+	overflow: hidden;
+	background-color: #ffffff;
+	border: 1px solid var(--hyplus-border-color-neutral);
+	box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5);
+	padding: 0;
+	z-index: 99999;
+	border-radius: 12px;
+}
+
+@media screen and (min-width: 769px) {
+	#navContainer {
+		transition: all 0.3s ease;
+	}
+}
+
+/* 导航框控制按钮 */
+.control-button {
+	position: absolute;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	cursor: pointer;
+	z-index: 121;
+	transition: all 0.15s ease;
+}
+
+.control-button:hover {
+	transform: scale(1.2);
+}
+
+.back-button {
+	background-color: purple;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 10px;
+	font-weight: bold;
+}
+
+.back-button:hover {
+	box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.maximize-button {
+	background-color: #4CAF50;
+}
+
+.maximize-button:hover {
+	box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.maximize-button.maximized {
+	background-color: #FF9800;
+}
+
+.close-button {
+	background-color: red;
+}
+
+.close-button:hover {
+	box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+/* 导航切换按钮样式 */
+.nav-switch-buttons {
+	padding: 8px 15px;
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	background-color: white;
+	border-radius: 12px 12px 0 0;
+	overflow-x: auto;
+	scroll-behavior: smooth;
+	width: calc(100% - 80px);
+	margin: 0 auto;
+	position: relative;
+	left: 0;
+}
+
+.nav-switch-buttons .switch-button {
+	padding: 4px 12px;
+	border: none;
+	border-radius: 4px;
+	background-color: var(--hyplus-bg-button-light);
+	color: var(--hyplus-text-primary);
+	cursor: pointer;
+	font-size: 14px !important;
+	transition: background-color 0.3s ease;
+	white-space: nowrap;
+	min-width: fit-content;
+}
+
+.switch-button.active {
+	background-color: var(--hyplus-bg-button-hover);
+}
+
+.switch-button:hover {
+	color: var(--hyplus-text-primary);
+	background-color: var(--hyplus-bg-button-hover);
+}
+
+.switch-button:active {
+	transform: scale(0.97);
+}
+
+/* 内容区域样式 */
+.nav-content {
+	height: calc(100% - 37px);
+	overflow-y: auto;
+	padding: 0 15px;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding-bottom: 20px;
+}
+
+
+/* 目录内容样式 */
+.directory-toc-content {
+	font-size: 1.25em;
+	min-width: 220px;
+	max-width: 600px;
+	margin: 0 auto;
+	text-align: left;
+	word-break: break-all;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* 设置页面样式 */
+.settings-columns-container {
+	display: flex;
+	gap: 30px;
+	padding: 0 20px;
+	margin-bottom: 20px;
+	max-width: 1200px;
+	margin: 0 auto 20px;
+}
+
+.settings-column {
+	flex: 1;
+	min-width: 0;
+}
+
+.language-selector-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.language-label {
+	font-size: 14px !important;    
+	color: var(--hyplus-text-primary);
+	/* white-space: nowrap;	*/
+}
+
+.language-selector {
+	padding: 10px;
+	background-color: var(--hyplus-bg-settings);
+	border-radius: 8px;
+	border: 1px solid var(--hyplus-border-color-light);
+}
+
+.language-selector select,
+.language-selector .switcher {
+	flex: 1;
+	min-width: 0;
+}
+
+.config-item {
+	margin: 10px 0;
+	margin-left: 30px;
+	display: flex;
+	align-items: center;
+}
+
+.config-item input[type="checkbox"] {
+	margin: 0;
+	cursor: pointer;
+}
+
+.config-item label {
+	margin-left: 10px;
+	cursor: pointer;
+	color: var(--hyplus-text-primary);
+	font-size: 14px;
+}
+
+/* 快捷键说明样式 */
+.shortcuts-container {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+	/* border: 1px solid var(--hyplus-border-color-light); */
+	border-radius: 4px;
+}
+
+.shortcuts-column {
+	flex: 1;
+	min-width: 250px;
+}
+
+
+/* .shortcuts-column:first-child {
+	border-right: 1px solid #b6dded;
+} */
+
+@media screen and (max-width: 768px) {
+	.shortcuts-container {
+		flex-direction: column;
+	}
+	.shortcuts-column {
+		min-width: 0;
+	}
+}
+
+.shortcut-item {
+	padding: 8px;
+	/* border-bottom: 1px solid #b6dded;	*/
+	border: 1px solid var(--hyplus-border-color-light);
+	display: flex;
+	justify-content: space-between;
+}
+
+.shortcut-key {
+	color: var(--hyplus-text-gray);
+}
+
+/* 字体控制样式 */
+.font-select {
+	max-width: 180px;
+	padding: 4px 8px;
+	border: 1px solid var(--hyplus-border-color-neutral);
+	border-radius: 4px;
+	background-color: #fff;
+	color: var(--hyplus-text-primary);
+	font-size: 14px !important;
+	flex: 1;
+	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+	background-repeat: no-repeat;
+	background-position: right 8px center;
+	background-size: 16px;
+	padding-right: 32px;
+}
+
+.font-select:focus {
+	outline: none;
+	border-color: #b6dded;
+	box-shadow: 0 0 0 2px rgba(182, 221, 237, 0.25);
+}
+
+.font-select:hover {
+	border-color: #b6dded;
+}
+
+.font-size-controls {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex: 1;
+}
+
+.font-size-btn {
+	padding: 2px 10px;
+	border: 1px solid var(--hyplus-border-color-neutral);
+	border-radius: 4px;
+	background-color: #fff;
+	color: var(--hyplus-text-primary);
+	cursor: pointer;
+	font-size: 14px !important;
+	transition: all 0.2s ease;
+}
+
+.font-size-btn:hover, .font-size-btn:focus {
+	color: var(--hyplus-text-primary);
+	background-color: #f0f0f0;
+}
+
+.font-size-btn:active {
+	transform: scale(0.93);
+}
+
+.font-size-btn.reset {
+	padding: 2px 8px;
+	background-color: var(--hyplus-bg-button-light);
+	color: #333 !important;
+}
+
+.font-size-btn.reset:hover {
+	color: var(--hyplus-text-primary);
+	background-color: #d0e8ff;
+}
+
+.font-size-display {
+	min-width: 50px;
+	text-align: center;
+	font-size: 14px;
+	color: var(--hyplus-text-primary);
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 768px) {
+	.directory-toc-center {
+		margin-top: 8px;
+		margin-bottom: 16px;
+	}
+	.directory-toc-content {
+		max-width: 98vw;
+		font-size: 1.05em;
+	}
+}
+
+/* 杂项样式 */
+body.nav-open {
+	overflow: hidden !important;
+}
+
+body.nav-open .sidebar {
+	overflow: hidden !important;
+}
+
+#navContainer.maximized {
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	border-radius: 0;
+}
+
+.sidebar {
+	order: 2;
+}
+.content-area {
+	order: 1;
+	flex: 1 1 auto;
+}
+body.sidebar-left .sidebar {
+	order: 1;
+	width: 28.7%;
+	padding-left: -13px;
+	margin-left: 0 !important;
+	margin-right: 5px;
+}
+body.sidebar-left .content-area {
+	order: 2;
+	margin-right: 8px;
+}
+
+.language-selector.disabled {
+	opacity: 0.6;
+	pointer-events: none;
+}
+.language-selector.disabled input[type="radio"] {
+	pointer-events: none;
+}
+.language-selector.disabled label {
+	cursor: not-allowed;
+}
+
+@media screen and (max-width: 768px) {
+	.sidebar {
+		display: none !important;
+	}
+}
+
+/* Responsive tweaks for settings (slightly more than 768px) */
+@media screen and (max-width: 785px) {
+	.settings-columns-container {
+		flex-direction: column;
+		gap: 12px;
+		padding: 0 12px;
+		align-items: stretch;
+	}
+
+	.settings-column {
+		width: 100%;
+	}
+
+	.language-selector {
+		padding: 10px;
+	}
+}
+
+/*
  * HY-Ultimate Buttons Addon - HyNav
  * (including footnote hover popup CSS)
  */
