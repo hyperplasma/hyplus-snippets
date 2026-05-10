@@ -436,6 +436,10 @@ textarea, textarea:focus {
 	box-shadow: 0 0 20px var(--hyplus-header-footer-shadow) !important;
 }
 
+.site-branding a {
+	color: var(--hyplus-text-title) !important;
+}
+
 /* Destroy paddings in Header */
 header .inside-header {
 	padding-top: 0px;
