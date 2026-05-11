@@ -56,8 +56,8 @@
 	--hyplus-btn-nav-bg: rgba(220, 38, 127, 1);
 	--hyplus-btn-nav-hover: rgba(240, 58, 147, 1);
 	--hyplus-btn-nav-active: rgb(195, 37, 111);
-	--hyplus-btn-back-bg: rgba(84, 126, 239, 1);
-	--hyplus-btn-back-hover: rgba(94, 136, 249, 1);
+	--hyplus-btn-back-bg: rgb(109, 143, 239);
+	--hyplus-btn-back-hover: rgb(118, 154, 252);
 	--hyplus-btn-back-active: rgb(65, 95, 177);
 	--hyplus-btn-refresh-bg: rgba(40, 167, 69, 1);
 	--hyplus-btn-refresh-hover: rgba(60, 187, 89, 1);
@@ -1277,7 +1277,7 @@ body:not(.nav-buttons-left) .series-button-container {
 	border: none;
 	margin: 0;
 	flex-shrink: 0;
-	background-color: rgb(255, 193, 7) !important;
+	background-color: var(--hyplus-btn-back-bg) !important;
 	font-size: 16px;
 	text-decoration: none;
 	display: block;
@@ -1314,13 +1314,13 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 /* 系列按钮悬停效果 */
 .series-button:hover {
 	transform: scale(1.05);
-	background-color: rgb(255, 213, 79) !important;
+	background-color: var(--hyplus-btn-back-hover) !important;
 	color: white !important;
 }
 
 .series-button:active {
 	transform: scale(1.00);
-	background-color: rgb(255, 179, 0) !important;
+	background-color: var(--hyplus-btn-back-active) !important;
 	color: white !important;
 }
 
