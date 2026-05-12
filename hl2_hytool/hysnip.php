@@ -109,8 +109,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // 缓存容器和弹出框
     let cachedContainer = null;
     let snippetCache = {}; // 缓存加载的内容
+    let loadingPromises = {}; // 记录正在加载的 Promise，防止并发请求相同URL
     let currentPermalink = null; // 记录当前打开的 permalink
     let mutationObserver = null;
+    let activePreloads = 0; // 当前活跃的预加载数
+    const MAX_CONCURRENT_PRELOADS = 5; // 最多同时5个预加载
+    let preloadQueue = []; // 待加载的URL队列
 
     function getContainer() {
         if (!cachedContainer) {
@@ -137,8 +141,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const link = event.target.closest('.hysnip-trigger');
         if (!link) return;
 
-        const permalink = link.href;
+        let permalink = link.href;
         if (!permalink) return;
+
+        // 规范化URL以确保缓存key一致
+        permalink = normalizeUrl(permalink);
 
         // 阻止默认的链接跳转行为
         event.preventDefault();
@@ -163,6 +170,23 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // 检查是否已经在加载中，如果是则等待已有的请求完成
+        if (loadingPromises[permalink]) {
+            loadingPromises[permalink].then(() => {
+                // 加载完成后，如果缓存中有内容就使用缓存
+                if (snippetCache[permalink] !== undefined && currentPermalink === permalink) {
+                    displaySnippetContent(snippetCache[permalink], customTitle, permalink);
+                    popup.classList.add('active'); 
+                }
+            });
+            // 显示加载状态
+            const contentDiv = popup.querySelector('.hysnip-popup-content');
+            const headerTitle = customTitle || '加载中...';
+            contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
+            popup.classList.add('active');
+            return;
+        }
+
         // 显示加载状态
         const contentDiv = popup.querySelector('.hysnip-popup-content');
         const headerTitle = customTitle || '加载中...';
@@ -180,7 +204,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
 
-        fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+        // 创建 Promise 并保存到 loadingPromises，供其他相同URL的请求等待
+        loadingPromises[permalink] = fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
             method: 'POST',
             body: data,
             signal: controller.signal
@@ -213,6 +238,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentPermalink === permalink) {
                 displaySnippetContent(null, customTitle, permalink);
             }
+        })
+        .finally(function() {
+            // 请求完成后，从 loadingPromises 中删除，允许后续相同URL的请求重新发起
+            delete loadingPromises[permalink];
         });
     }
 
@@ -258,38 +287,76 @@ document.addEventListener('DOMContentLoaded', function() {
     // 立即初始化弹出框事件（移除不必要的延迟）
     setupPopupEvents();
 
+    // 规范化URL函数：确保末尾有斜杠，移除查询参数和hash
+    function normalizeUrl(url) {
+        // 移除查询参数和hash
+        url = url.split('?')[0].split('#')[0];
+        // 确保末尾有斜杠
+        if (!url.endsWith('/')) {
+            url += '/';
+        }
+        return url;
+    }
+
     // 预加载异步内容
     function preloadAsyncContent() {
         const asyncLinks = document.querySelectorAll('.hysnip-trigger[data-async="1"]');
         asyncLinks.forEach(link => {
-            const permalink = link.href;
-            if (permalink && snippetCache[permalink] === undefined) {
-                // 发送 AJAX 请求预加载内容
-                var data = new FormData();
-                data.append('action', 'hysnip_get_content');
-                data.append('permalink', permalink);
-                data.append('nonce', '<?php echo wp_create_nonce('hysnip_popup'); ?>');
-
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
-
-                fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
-                    method: 'POST',
-                    body: data,
-                    signal: controller.signal
-                })
-                .then(response => response.json())
-                .then(result => {
-                    clearTimeout(timeoutId);
-                    if (result.success) {
-                        snippetCache[permalink] = result.data.content;
-                    }
-                })
-                .catch(error => {
-                    clearTimeout(timeoutId);
-                    // 静默处理错误，不影响页面
-                });
+            let permalink = link.href;
+            if (permalink) {
+                // 规范化URL以确保缓存key一致
+                permalink = normalizeUrl(permalink);
+                if (snippetCache[permalink] === undefined && !loadingPromises[permalink]) {
+                    preloadQueue.push(permalink);
+                }
             }
+        });
+        // 开始处理队列
+        processPreloadQueue();
+    }
+
+    // 处理预加载队列，限制并发数
+    function processPreloadQueue() {
+        // 如果队列为空或达到并发上限，则返回
+        if (preloadQueue.length === 0 || activePreloads >= MAX_CONCURRENT_PRELOADS) {
+            return;
+        }
+        
+        // 从队列中取一个URL
+        const permalink = preloadQueue.shift();
+        activePreloads++;
+        
+        // 发送 AJAX 请求预加载内容
+        var data = new FormData();
+        data.append('action', 'hysnip_get_content');
+        data.append('permalink', permalink);
+        data.append('nonce', '<?php echo wp_create_nonce('hysnip_popup'); ?>');
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+
+        // 记录加载状态，防止并发
+        loadingPromises[permalink] = fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+            method: 'POST',
+            body: data,
+            signal: controller.signal
+        })
+        .then(response => response.json())
+        .then(result => {
+            clearTimeout(timeoutId);
+            if (result.success) {
+                snippetCache[permalink] = result.data.content;
+            }
+        })
+        .catch(error => {
+            clearTimeout(timeoutId);
+            // 静默处理错误，不影响页面
+        })
+        .finally(() => {
+            delete loadingPromises[permalink];
+            activePreloads--;
+            // 继续处理队列中的下一个
+            processPreloadQueue();
         });
     }
 
