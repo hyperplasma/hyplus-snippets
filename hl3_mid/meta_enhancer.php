@@ -1,7 +1,8 @@
 <?php
 /**
- * Articles Overall - Display cnt and sth else above - PHP
- * 系列链接功能：如果文章设置了 hy_series_id，显示 hysnip 短代码链接
+ * Meta Enhancer - 文章元信息增强功能
+ * 1. Articles Overall - Display cnt and sth else above
+ * 2. 系列链接功能：如果文章设置了`hy_series_id`，显示 hysnip 短代码链接；可通过`hy_series_button_label`设置系列按钮标签（逗号分隔），默认使用数字索引。
  */
 add_action('generate_before_entry_title', 'lh_single_cats_above_title');
 add_action('wp_footer', 'hyplus_render_series_buttons_container');
@@ -78,9 +79,26 @@ function lh_single_cats_above_title() {
         $series_posts = hyplus_get_series_posts($post->ID);
         $series_html = '';
         
-        // 生成短代码
+        // 获取按钮标签配置（逗号分隔的字符串）
+        $labels_raw = get_post_meta($post->ID, 'hy_series_button_label', true);
+        $labels = array();
+        if (!empty($labels_raw)) {
+            $labels = array_map('trim', explode(',', $labels_raw));
+        }
+        
+        // 生成短代码（仅包含标签为数字的系列博文）
         if (!empty($series_posts)) {
-            foreach ($series_posts as $series_post) {
+            foreach ($series_posts as $index => $series_post) {
+                // 获取对应位置的标签
+                $button_label = isset($labels[$index]) && !empty($labels[$index]) 
+                    ? $labels[$index] 
+                    : ($index + 1);
+                
+                // 仅当标签为数字时才生成hysnip短代码
+                if (!is_numeric($button_label)) {
+                    continue;
+                }
+                
                 // 正确转义短代码参数
                 $series_url = esc_url(get_permalink($series_post->ID));
                 $series_title = esc_attr($series_post->post_title);
@@ -129,13 +147,29 @@ function hyplus_render_series_buttons_container() {
         return;
     }
     
+    // 获取当前文章的按钮标签配置（逗号分隔的字符串）
+    $labels_raw = get_post_meta($post->ID, 'hy_series_button_label', true);
+    $labels = array();
+    if (!empty($labels_raw)) {
+        $labels = array_map('trim', explode(',', $labels_raw));
+    }
+    
     // 构建按钮数据数组，使用 wp_json_encode() 统一转义
     $buttons_data = array();
     foreach ($series_posts as $index => $series_post) {
+        // 获取对应位置的标签
+        $button_label = isset($labels[$index]) && !empty($labels[$index]) 
+            ? $labels[$index] 
+            : ($index + 1); // fallback 到数字
+        
+        // 根据标签是否为数字来设置async参数
+        $async = is_numeric($button_label) ? '1' : '0';
+        
         $buttons_data[] = array(
             'href' => get_permalink($series_post->ID),
-            'number' => $index + 1,
-            'title' => $series_post->post_title
+            'label' => $button_label,
+            'title' => $series_post->post_title,
+            'async' => $async
         );
     }
     
@@ -153,9 +187,10 @@ function hyplus_render_series_buttons_container() {
                 link.href = btn.href;
                 link.target = '_blank';
                 link.className = 'series-button hysnip-trigger';
-                link.textContent = btn.number;
+                link.textContent = btn.label;
                 link.title = btn.title;
                 link.setAttribute('data-popup-title', btn.title);
+                link.setAttribute('data-async', btn.async);
                 container.appendChild(link);
             });
         })();
