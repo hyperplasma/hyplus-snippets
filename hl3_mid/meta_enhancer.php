@@ -1,7 +1,7 @@
 <?php
 /**
  * Meta Enhancer - 文章元信息增强功能
- * 1. Articles Overall - Display cnt and sth else above
+ * 1. Articles Overall - Display cnt and sth else above：在文章标题上方显示字数、阅读估时间等信息
  * 2. 系列链接功能：如果文章设置了`hy_series_id`，显示 hysnip 短代码链接；可通过`hy_series_button_label`设置系列按钮标签（逗号分隔），默认使用数字索引。
  */
 add_action('generate_before_entry_title', 'lh_single_cats_above_title');
