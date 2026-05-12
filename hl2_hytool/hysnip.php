@@ -2,7 +2,7 @@
 /**
  * HySnip - 本站内容快速引用短代码插件
  * Description: 通过[hysnip]短代码实现加载并展示本站博文或页面的弹出框
- * Usage: [hysnip href="/blog/post-name/" title="查看文章"]
+ * Usage: [hysnip href="/kokuyou" name="黑曜酱与白玉君" mode="link" async="1"]
  * 
  * Parameters:
  * - href: 博文或页面的相对链接（必需）。会自动加上本站域名
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 加载完成后，如果缓存中有内容就使用缓存
                 if (snippetCache[permalink] !== undefined && currentPermalink === permalink) {
                     displaySnippetContent(snippetCache[permalink], customTitle, permalink);
-                    popup.classList.add('active'); 
+                    popup.classList.add('active');
                 }
             });
             // 显示加载状态
