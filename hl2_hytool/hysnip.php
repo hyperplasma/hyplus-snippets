@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const popup = getSnippetPopup();
         const contentDiv = popup.querySelector('.hysnip-popup-content');
         
-        let html = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(title) + '</a></div>';
+        let html = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(title) + '</a><button class="hysnip-close-btn" aria-label="关闭"></button></div>';
         
         if (content === null) {
             html += '<div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载失败</div>';
@@ -293,6 +293,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         contentDiv.innerHTML = html;
+        
+        // 为关闭按钮添加事件处理（使用事件委托避免重复绑定）
+        const closeBtn = contentDiv.querySelector('.hysnip-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeSnippetPopup();
+            });
+        }
     }
 
     function closeSnippetPopup() {
