@@ -29,6 +29,10 @@ add_shortcode('hysnip', 'hysnip_shortcode_handler');
  * HySnip 短代码处理函数
  */
 function hysnip_shortcode_handler($atts) {
+    // 标记页面上存在 hysnip 短代码，用于在 footer 中注入 JavaScript
+    global $hysnip_page_has_shortcode;
+    $hysnip_page_has_shortcode = true;
+
     // 解析短代码参数，初始化为空值
     $atts = shortcode_atts(array(
         'href'  => '',
@@ -116,19 +120,8 @@ function hysnip_shortcode_handler($atts) {
     // 将弹出框标题作为 data 属性传递给 JavaScript
     $title_attr = $popup_title ? ' data-popup-title="' . $popup_title . '"' : '';
 
-    // 构建HTML
-    ob_start();
-    ?><a href="<?php echo $safe_href; ?>"<?php echo $class_attr; ?><?php echo $async_attr; ?><?php echo $title_attr; ?> 
-       target="_blank"
-    ><?php echo $btn_text; ?></a><?php
-    $html = ob_get_clean();
-
-    // 注入JavaScript代码（只注入一次）
-    static $script_injected = false;
-    if (!$script_injected) {
-        $html .= hysnip_get_script();
-        $script_injected = true;
-    }
+    // 构建HTML（单行输出，避免换行符被转换为<br>标签）
+    $html = '<a href="' . $safe_href . '"' . $class_attr . $async_attr . $title_attr . ' target="_blank">' . $btn_text . '</a>';
 
     return $html;
 }
@@ -200,7 +193,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 检查缓存
         if (snippetCache[permalink] !== undefined) {
-            displaySnippetContent(snippetCache[permalink], customTitle, permalink);
+            const cachedData = snippetCache[permalink];
+            const titleToDisplay = customTitle || cachedData.title;
+            displaySnippetContent(cachedData.content, titleToDisplay, permalink);
             popup.classList.add('active');
             return;
         }
@@ -210,7 +205,9 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingPromises[permalink].then(() => {
                 // 加载完成后，如果缓存中有内容就使用缓存
                 if (snippetCache[permalink] !== undefined && currentPermalink === permalink) {
-                    displaySnippetContent(snippetCache[permalink], customTitle, permalink);
+                    const cachedData = snippetCache[permalink];
+                    const titleToDisplay = customTitle || cachedData.title;
+                    displaySnippetContent(cachedData.content, titleToDisplay, permalink);
                     popup.classList.add('active');
                 }
             });
@@ -254,8 +251,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentPermalink !== permalink) return;
             
             if (result.success) {
-                // 缓存加载的内容
-                snippetCache[permalink] = result.data.content;
+                // 缓存加载的内容和标题
+                snippetCache[permalink] = {
+                    content: result.data.content,
+                    title: result.data.post_title
+                };
                 // 如果没有自定义标题，使用页面的真实标题
                 const titleToDisplay = customTitle || result.data.post_title;
                 displaySnippetContent(result.data.content, titleToDisplay, permalink);
@@ -380,7 +380,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(result => {
             clearTimeout(timeoutId);
             if (result.success) {
-                snippetCache[permalink] = result.data.content;
+                snippetCache[permalink] = {
+                    content: result.data.content,
+                    title: result.data.post_title
+                };
             }
         })
         .catch(error => {
@@ -452,4 +455,17 @@ function hysnip_get_content_ajax() {
 
 add_action('wp_ajax_hysnip_get_content', 'hysnip_get_content_ajax');
 add_action('wp_ajax_nopriv_hysnip_get_content', 'hysnip_get_content_ajax');
+
+/**
+ * 在页脚注入 HySnip JavaScript（仅在有 hysnip 短代码的页面注入）
+ */
+function hysnip_inject_script_to_footer() {
+    global $hysnip_page_has_shortcode;
+    
+    // 仅在页面上存在 hysnip 短代码时注入
+    if (!empty($hysnip_page_has_shortcode)) {
+        echo hysnip_get_script();
+    }
+}
+add_action('wp_footer', 'hysnip_inject_script_to_footer');
 ?>

@@ -8,8 +8,10 @@
 remove_filter('pre_term_description', 'wp_filter_kses');
 remove_filter('term_description', 'wp_kses_data');
 
-// 添加简单的换行处理
+// 添加简单的换行处理和短代码渲染
 function hyperplasma_preserve_linebreaks($description) {
+    // 处理短代码
+    $description = do_shortcode($description);
     // 将连续两个换行符转换为段落
     $description = preg_replace('/\n\n+/', '</p><p>', $description);
     // 将单个换行符转换为<br>
