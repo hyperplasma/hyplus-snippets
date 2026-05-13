@@ -3,10 +3,12 @@
  * HySnip - 本站内容快速引用短代码插件
  * Description: 通过[hysnip]短代码实现加载并展示本站博文或页面的弹出框
  * Usage: [hysnip href="/kokuyou" name="黑曜酱与白玉君" mode="link" async="1"]
+ *        [hysnip id="123" name="自定义名称" title="弹出框标题" mode="button" async="1"]
  * 
  * Parameters:
- * - href: 博文或页面的相对链接（必需）。会自动加上本站域名
- * - name: 按钮文字（可选，默认为"查看内容"）。如果未设置但设置了title，则使用title作为按钮文字
+ * - href: 博文或页面的相对链接（可选，如果设置了id则无效）。会自动加上本站域名
+ * - id: 博文或页面的post ID（可选，优先级高于href）
+ * - name: 按钮文字（可选）。如果未设置，则使用title；如果title也未设置，则使用博文的真实标题
  * - title: 弹出框标题（可选）。如果未设置则使用页面的真实标题
  * - limit: 内容字数限制（可选，默认为0，表示不限制）。如果设置为大于0的值，将只显示指定字数的内容，并在末尾添加省略号
  * - mode: 显示模式（可选，默认为"button"）。可选值为"button"（按钮式链接）或"link"（普通文本链接）
@@ -30,6 +32,7 @@ function hysnip_shortcode_handler($atts) {
     // 解析短代码参数，初始化为空值
     $atts = shortcode_atts(array(
         'href'  => '',
+        'id'    => '',
         'name'  => '',
         'title' => '',
         'limit' => 0,
@@ -37,28 +40,60 @@ function hysnip_shortcode_handler($atts) {
         'async' => 0
     ), $atts, 'hysnip');
 
-    // 验证href参数
-    if (empty($atts['href'])) {
-        return '<p style="color: #d9534f; font-weight: bold;">⚠ HySnip: href参数为必需</p>';
+    // 使用静态缓存避免重复数据库查询
+    static $post_cache = array();
+
+    // 确定 post_id：优先使用 id 参数
+    $post_id = null;
+    if (!empty($atts['id'])) {
+        $post_id = (int)$atts['id'];
+    } elseif (!empty($atts['href'])) {
+        // 如果是相对路径（不以http开头），则加上本站域名
+        $permalink = $atts['href'];
+        if (strpos($permalink, 'http') !== 0) {
+            $permalink = home_url() . '/' . ltrim($permalink, '/');
+        }
+        $post_id = url_to_postid($permalink);
     }
+
+    // 验证 post_id
+    if (!$post_id) {
+        return '<p style="color: #d9534f; font-weight: bold;">⚠ HySnip: 无效的 id 或 href 参数</p>';
+    }
+
+    // 检查缓存，如果没有则查询数据库
+    if (!isset($post_cache[$post_id])) {
+        $post_cache[$post_id] = get_post($post_id);
+    }
+    $post = $post_cache[$post_id];
+
+    if (!$post || $post->post_status !== 'publish') {
+        return '<p style="color: #d9534f; font-weight: bold;">⚠ HySnip: 页面不存在或不可访问</p>';
+    }
+
+    // 获取真实标题
+    $real_title = $post->post_title;
 
     // 智能处理 name 参数：
     // 1. 如果 name 为空但 title 不为空，则 name = title
-    // 2. 如果 name 和 title 都为空，则 name = "查看内容"
+    // 2. 如果 name 和 title 都为空，则 name = 真实标题
     if (empty($atts['name'])) {
         if (!empty($atts['title'])) {
             $atts['name'] = $atts['title'];
         } else {
-            $atts['name'] = '查看内容';
+            $atts['name'] = $real_title;
         }
     }
 
     // 处理链接URL
-    $permalink = $atts['href'];
-    
-    // 如果是相对路径（不以http开头），则加上本站域名
-    if (strpos($permalink, 'http') !== 0) {
-        $permalink = home_url() . '/' . ltrim($permalink, '/');
+    if (!empty($atts['id'])) {
+        $permalink = get_permalink($post_id);
+    } else {
+        $permalink = $atts['href'];
+        // 如果是相对路径（不以http开头），则加上本站域名
+        if (strpos($permalink, 'http') !== 0) {
+            $permalink = home_url() . '/' . ltrim($permalink, '/');
+        }
     }
 
     // 获取安全的属性值
