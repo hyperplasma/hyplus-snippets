@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const popup = getSnippetPopup();
         const contentDiv = popup.querySelector('.hysnip-popup-content');
         
-        let html = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(title) + '</a><button class="hysnip-close-btn" aria-label="关闭"></button></div>';
+        let html = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(title) + '</a><button class="hysnip-close-btn hyplus-scale hyplus-unselectable" aria-label="关闭" title="关闭（ESC）"></button></div>';
         
         if (content === null) {
             html += '<div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载失败</div>';
