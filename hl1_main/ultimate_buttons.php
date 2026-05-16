@@ -241,10 +241,6 @@
 					</div>
 				</div>
 			<?php endif; ?>
-			<!-- GTranslate -->
-				<div style="margin: 12px 0;">
-					<?php echo do_shortcode('[gtranslate]'); ?>
-				</div>
 			</div>
 		</div>
 
@@ -300,7 +296,7 @@
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.6 by Akira37
+			Ultimate Buttons v1.6.1 by Akira37
 		</div>
 	</div>
 </div>
