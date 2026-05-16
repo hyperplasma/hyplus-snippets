@@ -1343,11 +1343,11 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 	border-radius: 12px;
 }
 
-@media screen and (min-width: 769px) {
+/* @media screen and (min-width: 769px) { */
 	#navContainer {
 		transition: all 0.3s ease;
 	}
-}
+/* } */
 
 /* 导航框控制按钮 */
 .control-button {
