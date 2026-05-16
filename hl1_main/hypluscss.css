@@ -1651,14 +1651,6 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 }
 
 /* 杂项样式 */
-body.nav-open {
-	overflow: hidden !important;
-}
-
-body.nav-open .sidebar {
-	overflow: hidden !important;
-}
-
 #navContainer.maximized {
 	width: 100%;
 	height: 100%;

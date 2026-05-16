@@ -475,17 +475,28 @@
 		setNavMaximizedStyle(navContainer, maximizeButton, isNavMaximized);
 	}
 
+	// 延迟初始化导航内容（仅在第一次打开时执行）
+	function initializeNavContent() {
+		// 初始化清空搜索框功能
+		setupClearSearchButton();
+		
+		// 初始化目录可见性
+		updateTocVisibility();
+	}
+
 	function navOnClickFunc() {
 		const nav = document.getElementById('navContainer');
-		const body = document.body;
 		const maximizeButton = document.querySelector('.maximize-button');
 
 		if (nav.style.display === 'block') {
 			nav.style.display = 'none';
-			body.classList.remove('nav-open');
 		} else {
+			// 第一次打开时，延迟初始化导航内容
+			if (!window._navContentInitialized) {
+				initializeNavContent();
+				window._navContentInitialized = true;
+			}
 			nav.style.display = 'block';
-			body.classList.add('nav-open');
 
 			if (isNavMaximized) {
 				setNavMaximizedStyle(nav, maximizeButton, true);
@@ -497,7 +508,6 @@
 		event.stopPropagation();
 		const navContainer = document.getElementById('navContainer');
 		navContainer.style.display = 'none';
-		document.body.classList.remove('nav-open');
 	}
 
 	// 按钮控制
@@ -847,7 +857,6 @@
 			  event.clientY <= rectNav.bottom;
 		if (!isInNav) {
 			nav.style.display = 'none';
-			document.body.classList.remove('nav-open');
 		}
 	});
 
@@ -1165,9 +1174,6 @@
 		const lastVisitedPage = localStorage.getItem('lastVisitedNavPage') || 'nav';
 		switchNavContent(lastVisitedPage);
 
-		// 初始化清空搜索框功能
-		setupClearSearchButton();
-
 		// 初始化字体选择
 		const fontSelect = document.getElementById('fontSelect');
 		if (fontSelect) {
@@ -1282,8 +1288,6 @@
 			setSidebarRadioGroupEnabled(true);
 			setHeaderFooterToggleEnabled(true);
 		}
-
-		updateTocVisibility();
 
 		// 响应式布局
 		const throttledResize = throttle(function() {
