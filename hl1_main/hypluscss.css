@@ -1248,6 +1248,14 @@ body.nav-buttons-left #refreshButton {
 	border-radius: 8px;
 }
 
+/* 如果容器为空（没有系列按钮），则彻底隐藏，避免留下阴影或占位 */
+.series-button-container:empty {
+    display: none;
+    box-shadow: none;
+    width: 0;
+    pointer-events: none;
+}
+
 body.nav-buttons-left .series-button-container {
 	right: 0;
 	left: auto;
