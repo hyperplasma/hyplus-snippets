@@ -188,8 +188,11 @@
 						<select id="backgroundSelect" class="font-select" onchange="changeBackground()">
 							<option value="default">默认背景</option>
 							<option value="seifuku">Seifuku</option>
+							<option value="pajama">Pajama</option>
+							<option value="winter">Winter</option>
 							<option value="clovers">Clovers</option>
 							<option value="kotaro">Kotaro♀</option>
+							<option value="none">空白背景</option>
 						</select>
 					</div>
 				</div>
@@ -1064,15 +1067,27 @@
 		},
 		'seifuku': {
 			imageUrl: '/wp-content/uploads/2026/04/20260423180946.webp',
-			opacity: 0.15
+			opacity: 0.16
+		},
+		'pajama': {
+			imageUrl: '/wp-content/uploads/2026/05/20260517143025.webp',
+			opacity: 0.2
+		},
+		'winter': {
+			imageUrl: '/wp-content/uploads/2026/05/20260517145355.webp',
+			opacity: 0.19
 		},
 		'clovers': {
 			imageUrl: '/wp-content/uploads/2026/03/20260306170205.webp',
-			opacity: 0.15
+			opacity: 0.16
 		},
 		'kotaro': {
 			imageUrl: '/wp-content/uploads/2026/04/20260423200054.webp',
-			opacity: 0.18
+			opacity: 0.12
+		},
+		'none': {
+			imageUrl: '',
+			opacity: 0
 		}
 		// 可以在这里添加更多背景配置
 	};
