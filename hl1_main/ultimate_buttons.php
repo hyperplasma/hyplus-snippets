@@ -189,9 +189,14 @@
 							<option value="default">默认背景</option>
 							<option value="seifuku">Seifuku</option>
 							<option value="pajama">Pajama</option>
-							<option value="winter">Winter</option>
+							<?php if (is_user_logged_in()) : ?>
+							<option value="summer1">Summer 1</option>
+							<option value="summer2">Summer 2</option>
+							<?php endif; ?>
+							<option value="winter1">Winter 1</option>
+							<option value="winter2">Winter 2</option>
 							<option value="clovers">Clovers</option>
-							<option value="kotaro">Kotaro♀</option>
+							<option value="kotaro">Kotaro ♀</option>
 							<option value="none">空白背景</option>
 						</select>
 					</div>
@@ -1073,8 +1078,20 @@
 			imageUrl: '/wp-content/uploads/2026/05/20260517143025.webp',
 			opacity: 0.2
 		},
-		'winter': {
+		'summer1': {
+			imageUrl: '/wp-content/uploads/2026/05/20260517160144.webp',
+			opacity: 0.19
+		},
+		'summer2': {
+			imageUrl: '/wp-content/uploads/2026/05/20260517155655.webp',
+			opacity: 0.19
+		},
+		'winter1': {
 			imageUrl: '/wp-content/uploads/2026/05/20260517145355.webp',
+			opacity: 0.19
+		},
+		'winter2': {
+			imageUrl: '/wp-content/uploads/2026/05/20260517155707.webp',
 			opacity: 0.19
 		},
 		'clovers': {
