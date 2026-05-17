@@ -188,13 +188,13 @@
 						<select id="backgroundSelect" class="font-select" onchange="changeBackground()">
 							<option value="default">默认背景</option>
 							<option value="seifuku">Seifuku</option>
-							<option value="pajama">Pajama</option>
 							<?php if (is_user_logged_in()) : ?>
+							<option value="pajama">Pajama</option>
 							<option value="summer1">Summer 1</option>
 							<option value="summer2">Summer 2</option>
-							<?php endif; ?>
 							<option value="winter1">Winter 1</option>
 							<option value="winter2">Winter 2</option>
+							<?php endif; ?>
 							<option value="clovers">Clovers</option>
 							<option value="kotaro">Kotaro ♀</option>
 							<option value="none">空白背景</option>
