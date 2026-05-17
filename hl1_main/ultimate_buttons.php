@@ -14,7 +14,7 @@
     <div id="refreshButton" class="hybutton" title="刷新页面（⌘R）">↻</div>
 </div>
 
-<!-- 系列按钮群（仅在博文页面显示，由 article_overall_above_cats_cnt.php 动态生成） -->
+<!-- 系列按钮群（仅在博文页面显示，由 meta_enhancer.php 动态生成） -->
 <div id="seriesButtonContainer" class="series-button-container"></div>
 
 <!-- 导航弹出框 -->
