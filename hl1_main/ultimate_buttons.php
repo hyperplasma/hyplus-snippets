@@ -1076,23 +1076,23 @@
 		},
 		'pajama': {
 			imageUrl: '/wp-content/uploads/2026/05/20260517143025.webp',
-			opacity: 0.2
+			opacity: 0.18
 		},
 		'summer1': {
 			imageUrl: '/wp-content/uploads/2026/05/20260517160144.webp',
-			opacity: 0.19
+			opacity: 0.16
 		},
 		'summer2': {
 			imageUrl: '/wp-content/uploads/2026/05/20260517155655.webp',
-			opacity: 0.19
+			opacity: 0.16
 		},
 		'winter1': {
 			imageUrl: '/wp-content/uploads/2026/05/20260517145355.webp',
-			opacity: 0.19
+			opacity: 0.18
 		},
 		'winter2': {
 			imageUrl: '/wp-content/uploads/2026/05/20260517155707.webp',
-			opacity: 0.19
+			opacity: 0.18
 		},
 		'clovers': {
 			imageUrl: '/wp-content/uploads/2026/03/20260306170205.webp',
@@ -1100,7 +1100,7 @@
 		},
 		'kotaro': {
 			imageUrl: '/wp-content/uploads/2026/04/20260423200054.webp',
-			opacity: 0.12
+			opacity: 0.13
 		},
 		'none': {
 			imageUrl: '',
