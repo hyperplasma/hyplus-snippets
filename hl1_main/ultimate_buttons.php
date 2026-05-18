@@ -195,8 +195,10 @@
 							<option value="winter1">Winter 1</option>
 							<option value="winter2">Winter 2</option>
 							<?php endif; ?>
+							<option value="wedding-dress">Wedding Dress</option>
 							<option value="clovers">Clovers</option>
-							<option value="kotaro">Kotaro ♀</option>
+							<option value="kotaro">Kotaro♀ Maid</option>
+							<option value="kokuyou-jk">Kokuyou JK</option>
 							<option value="none">空白背景</option>
 						</select>
 					</div>
@@ -1087,11 +1089,15 @@
 			opacity: 0.16
 		},
 		'winter1': {
-			imageUrl: '/wp-content/uploads/2026/05/20260517145355.webp',
+			imageUrl: '/wp-content/uploads/2026/05/20260518144015.webp',
 			opacity: 0.18
 		},
 		'winter2': {
 			imageUrl: '/wp-content/uploads/2026/05/20260517155707.webp',
+			opacity: 0.18
+		},
+		'wedding-dress': {
+			imageUrl: '/wp-content/uploads/2026/05/20260518151051.webp',
 			opacity: 0.18
 		},
 		'clovers': {
@@ -1101,6 +1107,10 @@
 		'kotaro': {
 			imageUrl: '/wp-content/uploads/2026/04/20260423200054.webp',
 			opacity: 0.13
+		},
+		'kokuyou-jk': {
+			imageUrl: '/wp-content/uploads/2026/05/20260518145830.webp',
+			opacity: 0.16
 		},
 		'none': {
 			imageUrl: '',
