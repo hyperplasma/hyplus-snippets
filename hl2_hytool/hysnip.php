@@ -11,7 +11,8 @@
  * - name: 按钮文字（可选）。如果未设置，则使用title；如果title也未设置，则使用博文的真实标题
  * - title: 弹出框标题（可选）。如果未设置则使用页面的真实标题
  * - limit: 内容字数限制（可选，默认为0，表示不限制）。如果设置为大于0的值，将只显示指定字数的内容，并在末尾添加省略号
- * - mode: 显示模式（可选，默认为"button"）。可选值为"button"（按钮式链接）或"link"（普通文本链接）
+ * - mode: 显示模式（可选，默认为"button"）。可选值为"button"（【默认】按钮式链接，带hyplus-nav-link类）、"link"（普通文本链接，无hyplus-nav-link类）或"none"（纯普通a链接，无任何特殊class）
+ * - newtab: 是否在新标签页打开（可选，仅与mode搭配使用）。可选值为"1"（强制新标签页打开）或"0"（强制当前标签页打开）。未设置时，mode="button"或"link"默认新标签页打开，mode="none"默认当前标签页打开
  * - async: 是否异步预加载内容（可选，默认为0）。设为1时会在页面加载时预加载内容
  * 
  * Features:
@@ -35,13 +36,14 @@ function hysnip_shortcode_handler($atts) {
 
     // 解析短代码参数，初始化为空值
     $atts = shortcode_atts(array(
-        'href'  => '',
-        'id'    => '',
-        'name'  => '',
-        'title' => '',
-        'limit' => 0,
-        'mode'  => 'button',
-        'async' => 0
+        'href'    => '',
+        'id'      => '',
+        'name'    => '',
+        'title'   => '',
+        'limit'   => 0,
+        'mode'    => 'button',
+        'newtab'  => '',
+        'async'   => 0
     ), $atts, 'hysnip');
 
     // 使用静态缓存避免重复数据库查询
@@ -108,11 +110,26 @@ function hysnip_shortcode_handler($atts) {
     $async     = (int)$atts['async'];
 
     // 根据mode参数设置class
-    $classes = array('hysnip-trigger'); // 总是添加触发器class
+    $classes = array();
     if ($mode === 'button') {
+        $classes[] = 'hysnip-trigger';
         $classes[] = 'hyplus-nav-link';
+    } elseif ($mode === 'link') {
+        $classes[] = 'hysnip-trigger';
     }
-    $class_attr = ' class="' . implode(' ', $classes) . '"';
+    // 'none' 模式不添加任何class
+    $class_attr = !empty($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
+    
+    // 确定是否在新标签页打开
+    $open_in_new_tab = false;
+    if (!empty($atts['newtab'])) {
+        // 如果显式设置了newtab参数，则遵循该设置
+        $open_in_new_tab = (int)$atts['newtab'] === 1;
+    } else {
+        // 默认情况：mode="button" 或 "link" 时在新标签页打开，mode="none" 时不打开
+        $open_in_new_tab = ($mode !== 'none');
+    }
+    $target_attr = $open_in_new_tab ? ' target="_blank"' : '';
     
     // 如果启用异步加载，添加data属性
     $async_attr = $async ? ' data-async="1"' : '';
@@ -121,7 +138,7 @@ function hysnip_shortcode_handler($atts) {
     $title_attr = $popup_title ? ' data-popup-title="' . $popup_title . '"' : '';
 
     // 构建HTML（单行输出，避免换行符被转换为<br>标签）
-    $html = '<a href="' . $safe_href . '"' . $class_attr . $async_attr . $title_attr . ' target="_blank">' . $btn_text . '</a>';
+    $html = '<a href="' . $safe_href . '"' . $class_attr . $async_attr . $title_attr . $target_attr . '>' . $btn_text . '</a>';
 
     return $html;
 }
