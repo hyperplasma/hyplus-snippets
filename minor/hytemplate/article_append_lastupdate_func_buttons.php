@@ -23,7 +23,7 @@ add_action('wp_footer', function() {
         // 创建按钮HTML
         $buttons_html = sprintf(
             '<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;</span>' .
-            '<span class="hyplus-scale" style="display: inline-block;"><a href="#" onclick="window.copyIdLink(this, %s); return false;" title="复制朴素相对路径（ID：%s）" style="text-decoration: none;" class="hyplus-unselectable">📋</a></span>' .
+            '<span class="hyplus-scale" style="display: inline-block;"><a href="#" onclick="window.copyHysnipCode(this, %s); return false;" title="复制非弹窗式HySnip短代码（ID：%s）" style="text-decoration: none;" class="hyplus-unselectable">📋</a></span>' .
             '<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;&nbsp;</span>' .
             '<span class="hyplus-scale" style="display: inline-block;"><a href="#" onclick="window.shareArticle(\'%s\', \'%s\'); return false;" title="分享文章" style="text-decoration: none;" class="hyplus-unselectable">📤</a></span>' .
             '<span class="hyplus-unselectable" style="display: inline-block;">&nbsp;&nbsp;</span>' .
@@ -78,16 +78,15 @@ add_action('wp_footer', function() {
         }
     };
     
-    window.copyIdLink = function(el, postId) {
-        // var url = 'https://www.hyperplasma.top/?p=' + postId;
-        var url = '/?p=' + postId;
+    window.copyHysnipCode = function(el, postId) {
+        var code = '[hysnip id="' + postId + '" mode="none"]';
         if (navigator.clipboard) {
-            navigator.clipboard.writeText(url).then(function() {
+            navigator.clipboard.writeText(code).then(function() {
                 alert('复制成功！ID：' + postId);
             });
         } else {
             var input = document.createElement('input');
-            input.value = url;
+            input.value = code;
             document.body.appendChild(input);
             input.select();
             document.execCommand('copy');
