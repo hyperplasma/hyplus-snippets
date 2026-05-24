@@ -26,3 +26,8 @@
 .edit-tag-actions #delete-link {
 	display: none !important;
 }
+
+/* Edit - CodeMirror adjustments */
+.CodeMirror-code {
+	margin-right: 16px;
+}
