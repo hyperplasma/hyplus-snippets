@@ -939,11 +939,11 @@ ul ul ul {
 }
 
 ul ul ul ul {
-	list-style-type: disc;
+	list-style-type: disclosure-closed;
 }
 
 ul ul ul ul ul {
-	list-style-type: circle;
+	list-style-type: disc;
 }
 
 /* ol li marker style */
