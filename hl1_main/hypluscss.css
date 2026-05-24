@@ -22,6 +22,7 @@
 	--hyplus-bg-overall: rgba(187,255,255,0.05);
 	--hyplus-bg-container: #fbfdfe8c;
 	--hyplus-bg-container-solid: #fbfdfe;
+	--hyplus-bg-code-block: #eaeef398;
 	--hyplus-bg-code: #e4edf7a0;
 	--hyplus-bg-settings: #f8f9fa;
 	--hyplus-bg-button-light: #f3fcff;
@@ -98,6 +99,7 @@ body.hyplus-atmosphere-red :root {
 	--hyplus-bg-overall: rgba(255,200,200,0.05);
 	--hyplus-bg-container: #fff9f98c;
 	--hyplus-bg-container-solid: #fff9f9;
+	--hyplus-bg-code-block: #eaeef398;
 	--hyplus-bg-code: #fdf0f0;
 	--hyplus-bg-settings: #fffbfb;
 	--hyplus-bg-button-light: #fbf1f1;
@@ -174,6 +176,7 @@ body.hyplus-atmosphere-purple :root {
 	--hyplus-bg-overall: rgba(225, 190, 231, 0.05);
 	--hyplus-bg-container: #fbf5fc8c;
 	--hyplus-bg-container-solid: #fbf5fc;
+	--hyplus-bg-code-block: #eaeef398;
 	--hyplus-bg-code: #f3e5f5;
 	--hyplus-bg-settings: #faf7fb;
 	--hyplus-bg-button-light: #f8f4ff;
@@ -250,6 +253,7 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-bg-overall: rgba(128, 203, 196, 0.05);
 	--hyplus-bg-container: #f5fbfb8c;
 	--hyplus-bg-container-solid: #f5fbfb;
+	--hyplus-bg-code-block: #eaeef398;
 	--hyplus-bg-code: #e0f2f1b7;
 	--hyplus-bg-settings: #f8fbfb;
 	--hyplus-bg-button-light: #ebf6f5;
@@ -507,7 +511,12 @@ pre {
 /* highlight.js */
 .hljs {
 	border-radius: 14px;
+	background-color: var(--hyplus-bg-code-block);
 }
+.hljs .hljs {
+	background-color: #ffffff00 !important;
+}
+
 div:has(> .hljs) {
 	/* border: 1px solid var(--hyplus-border-color-light); */
 	border-radius: 14px;
