@@ -28,6 +28,16 @@
 }
 
 /* Edit - CodeMirror adjustments */
-.CodeMirror-code {
+#wp-content-editor-container .CodeMirror-code {
 	margin-right: 16px;
+}
+#wp-content-editor-container .CodeMirror-gutters {
+	display: none;
+}
+
+/* Make toolbar no longer wonkily sticky */
+.editormd-toolbar {
+	position: absolute !important;
+	width: 100% !important;
+	left: 0px !important;
 }
