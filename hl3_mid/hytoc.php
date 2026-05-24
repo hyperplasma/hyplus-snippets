@@ -204,6 +204,8 @@ function hyplus_output_toc_scripts() {
         var tocContainers = [];
         var globalScrollTimeout;
         var tocAnchorCounter = 0; // 全局计数器，用于生成纯中文标题的锚点
+        var isTocLinkScrolling = false; // 标记是否正在进行由TOC链接触发的页面滚动（用于防止侧边栏抽搐）
+        var targetScrollAnchor = null; // 记录正在滚动到的目标锚点（用于检测滚动是否完成）
         
         // 生成基础锚点：优先使用已有id，其次使用文本，最后使用计数器
         function generateBaseAnchor(pureText, originalId) {
@@ -291,7 +293,8 @@ function hyplus_output_toc_scripts() {
                 if (targetTocContainer) {
                     targetTocContainer.linkElements.push({
                         link: a,
-                        element: headerElement
+                        element: headerElement,
+                        scrollableContainer: findScrollableContainer(a) // 预缓存可滚动容器
                     });
                 }
             });
@@ -324,17 +327,13 @@ function hyplus_output_toc_scripts() {
                     });
                     
                     if (targetLink) {
-                        // 找到最近的可滚动祖先容器（不包括 body）
+                        // 从缓存中获取可滚动容器（无需遍历DOM）
                         var scrollableContainer = null;
-                        var parent = targetLink.parentElement;
-                        while (parent && parent !== document.body) {
-                            var style = window.getComputedStyle(parent);
-                            if (style.overflow === 'auto' || style.overflow === 'scroll' || 
-                                style.overflowY === 'auto' || style.overflowY === 'scroll') {
-                                scrollableContainer = parent;
+                        for (var i = 0; i < container.linkElements.length; i++) {
+                            if (container.linkElements[i].link === targetLink) {
+                                scrollableContainer = container.linkElements[i].scrollableContainer;
                                 break;
                             }
-                            parent = parent.parentElement;
                         }
                         
                         if (scrollableContainer) {
@@ -386,6 +385,20 @@ function hyplus_output_toc_scripts() {
             }
         }
 
+        // 查找包含元素的最近可滚动祖先容器（缓存版本）
+        function findScrollableContainer(element) {
+            var parent = element.parentElement;
+            while (parent && parent !== document.body) {
+                var style = window.getComputedStyle(parent);
+                if (style.overflow === 'auto' || style.overflow === 'scroll' || 
+                    style.overflowY === 'auto' || style.overflowY === 'scroll') {
+                    return parent;
+                }
+                parent = parent.parentElement;
+            }
+            return null;
+        }
+
         // 查找最接近顶部的活跃链接
         function findNearestActiveLink(linkElements, scrollOffset) {
             var nextActiveLink = null;
@@ -406,7 +419,7 @@ function hyplus_output_toc_scripts() {
             return nextActiveLink;
         }
 
-        // 全局更新所有活跃链接
+        // 全局更新所有活跃链接，并自动滚动widget模式的TOC容器
         function updateAllActiveLinks() {
             var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             var scrollOffset = scrollTop + HEADER_HEIGHT + 45;
@@ -420,6 +433,40 @@ function hyplus_output_toc_scripts() {
                     }
                     if (nextActiveLink) {
                         nextActiveLink.classList.add('hyplus-toc-active');
+                        
+                        // 检查是否已到达目标（解除静默期）— 基于实际的DOM状态而非时间
+                        if (isTocLinkScrolling && targetScrollAnchor) {
+                            var linkHref = nextActiveLink.getAttribute('href');
+                            if (linkHref === '#' + targetScrollAnchor) {
+                                isTocLinkScrolling = false;
+                                targetScrollAnchor = null;
+                            }
+                        }
+                        
+                        // 对widget模式自动滚动TOC容器到活跃项（仅在非TOC链接触发的滚动期间执行）
+                        if (container.mode === 'widget' && !isTocLinkScrolling) {
+                            // 从缓存中获取可滚动容器（无需每次遍历DOM）
+                            var scrollableContainer = null;
+                            for (var i = 0; i < container.linkElements.length; i++) {
+                                if (container.linkElements[i].link === nextActiveLink) {
+                                    scrollableContainer = container.linkElements[i].scrollableContainer;
+                                    break;
+                                }
+                            }
+                            
+                            if (scrollableContainer) {
+                                // 计算滚动位置，使活跃项位于容器的中偏上位置
+                                var linkRect = nextActiveLink.getBoundingClientRect();
+                                var containerRect = scrollableContainer.getBoundingClientRect();
+                                var currentScrollTop = scrollableContainer.scrollTop;
+                                var relativeTop = linkRect.top - containerRect.top + currentScrollTop;
+                                var linkHeight = linkRect.height;
+                                var containerHeight = containerRect.height;
+                                var targetScrollTop = Math.max(0, relativeTop - containerHeight / 3 + linkHeight / 2);
+                                
+                                scrollableContainer.scrollTo({top: targetScrollTop, behavior: 'smooth'});
+                            }
+                        }
                     }
                     container.currentActiveLink = nextActiveLink;
                 }
@@ -541,7 +588,7 @@ function hyplus_output_toc_scripts() {
             tocContent.innerHTML = '';
             tocContent.appendChild(ul);
 
-            // 建立链接元素映射，注册到全局管理器
+            // 建立链接元素映射，注册到全局管理器（预缓存可滚动容器）
             var linkElements = [];
             var links = tocContent.querySelectorAll('a');
             links.forEach(function(link) {
@@ -552,7 +599,8 @@ function hyplus_output_toc_scripts() {
                 if (targetElement) {
                     linkElements.push({
                         link: link,
-                        element: targetElement
+                        element: targetElement,
+                        scrollableContainer: findScrollableContainer(link) // 预缓存可滚动容器
                     });
                 }
             });
@@ -704,17 +752,13 @@ function hyplus_output_toc_scripts() {
                         });
                         
                         if (targetLink) {
-                            // 找到最近的可滚动祖先容器（不包括 body）
+                            // 从缓存中获取可滚动容器（无需每次遍历DOM）
                             var scrollableContainer = null;
-                            var parent = targetLink.parentElement;
-                            while (parent && parent !== document.body) {
-                                var style = window.getComputedStyle(parent);
-                                if (style.overflow === 'auto' || style.overflow === 'scroll' || 
-                                    style.overflowY === 'auto' || style.overflowY === 'scroll') {
-                                    scrollableContainer = parent;
+                            for (var i = 0; i < container.linkElements.length; i++) {
+                                if (container.linkElements[i].link === targetLink) {
+                                    scrollableContainer = container.linkElements[i].scrollableContainer;
                                     break;
                                 }
-                                parent = parent.parentElement;
                             }
                             
                             if (scrollableContainer) {
@@ -748,10 +792,31 @@ function hyplus_output_toc_scripts() {
                 var targetElement = document.getElementById(anchorId);
                 if (!targetElement) return;
                 
+                // 检查链接是否来自任何TOC容器
+                var isFromTocContainer = false;
+                for (var i = 0; i < tocContainers.length; i++) {
+                    if (tocContainers[i].container.contains(target)) {
+                        isFromTocContainer = true;
+                        break;
+                    }
+                }
+                
                 e.preventDefault();
                 var rect = targetElement.getBoundingClientRect();
                 var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 var targetY = rect.top + scrollTop - HEADER_HEIGHT;
+                
+                // 如果是从TOC容器点击的链接，设置静默期标志，防止侧边栏抽搐
+                if (isFromTocContainer) {
+                    isTocLinkScrolling = true;
+                    targetScrollAnchor = anchorId; // 记录目标锚点，用于检测滚动完成
+                    // 设置保险超时，防止极端情况下的无限等待（一般滚动会更快完成）
+                    setTimeout(function() {
+                        isTocLinkScrolling = false;
+                        targetScrollAnchor = null;
+                    }, 10000);
+                }
+                
                 window.scrollTo({top: targetY, behavior: "smooth"});
             }, true);
             
