@@ -295,6 +295,63 @@ function hyplus_output_toc_scripts() {
                     });
                 }
             });
+            
+            // 为新添加的标题添加点击监听
+            headerElement.addEventListener('click', function(e) {
+                var headerAnchor = headerElement.id;
+                if (!headerAnchor) return;
+                
+                // 如果点击的是脚注链接，让其继续执行原定行为
+                if (e.target.tagName.toLowerCase() === 'a') return;
+                
+                // 页面滚动到该标题的位置（如同点击 TOC 链接的效果）
+                var rect = headerElement.getBoundingClientRect();
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                var targetY = rect.top + scrollTop - HEADER_HEIGHT;
+                window.scrollTo({top: targetY, behavior: "smooth"});
+                
+                // 遍历所有 widget 模式的 TOC 容器（ub 模式在点击时隐藏，无法实现滚动）
+                tocContainers.forEach(function(container) {
+                    // 仅处理 widget 模式
+                    if (container.mode !== 'widget') return;
+                    
+                    // 在该容器的链接中找到对应该标题的链接
+                    var targetLink = null;
+                    container.linkElements.forEach(function(item) {
+                        if (item.element === headerElement) {
+                            targetLink = item.link;
+                        }
+                    });
+                    
+                    if (targetLink) {
+                        // 找到最近的可滚动祖先容器（不包括 body）
+                        var scrollableContainer = null;
+                        var parent = targetLink.parentElement;
+                        while (parent && parent !== document.body) {
+                            var style = window.getComputedStyle(parent);
+                            if (style.overflow === 'auto' || style.overflow === 'scroll' || 
+                                style.overflowY === 'auto' || style.overflowY === 'scroll') {
+                                scrollableContainer = parent;
+                                break;
+                            }
+                            parent = parent.parentElement;
+                        }
+                        
+                        if (scrollableContainer) {
+                            // 手动计算滚动位置，只滚动容器，不影响页面
+                            var linkRect = targetLink.getBoundingClientRect();
+                            var containerRect = scrollableContainer.getBoundingClientRect();
+                            var currentScrollTop = scrollableContainer.scrollTop;
+                            var relativeTop = linkRect.top - containerRect.top + currentScrollTop;
+                            var linkHeight = linkRect.height;
+                            var containerHeight = containerRect.height;
+                            var targetScrollTop = Math.max(0, relativeTop - containerHeight / 3 + linkHeight / 2);
+                            
+                            scrollableContainer.scrollTo({top: targetScrollTop, behavior: 'smooth'});
+                        }
+                    }
+                });
+            });
         };
 
         function setCookie(name, value, days) {
@@ -612,6 +669,72 @@ function hyplus_output_toc_scripts() {
         }
 
         // 全局处理所有锚点链接点击事件，减去 sticky header 高度
+        // 处理标题被直接点击时，自动滚动TOC容器到该标题对应的目录项，同时滚动页面到该标题位置
+        function setupHeaderClickListeners() {
+            var entryContent = document.querySelector('.entry-content');
+            if (!entryContent) return;
+            
+            var headers = entryContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            
+            headers.forEach(function(header) {
+                header.addEventListener('click', function(e) {
+                    var headerAnchor = header.id;
+                    if (!headerAnchor) return;
+                    
+                    // 如果点击的是脚注链接，让其继续执行原定行为
+                    if (e.target.tagName.toLowerCase() === 'a') return;
+                    
+                    // 页面滚动到该标题的位置（如同点击 TOC 链接的效果）
+                    var rect = header.getBoundingClientRect();
+                    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    var targetY = rect.top + scrollTop - HEADER_HEIGHT;
+                    window.scrollTo({top: targetY, behavior: "smooth"});
+                    
+                    // 遍历所有 widget 模式的 TOC 容器（ub 模式在点击时隐藏，无法实现滚动）
+                    tocContainers.forEach(function(container) {
+                        // 仅处理 widget 模式
+                        if (container.mode !== 'widget') return;
+                        
+                        // 在该容器的链接中找到对应该标题的链接
+                        var targetLink = null;
+                        container.linkElements.forEach(function(item) {
+                            if (item.element === header) {
+                                targetLink = item.link;
+                            }
+                        });
+                        
+                        if (targetLink) {
+                            // 找到最近的可滚动祖先容器（不包括 body）
+                            var scrollableContainer = null;
+                            var parent = targetLink.parentElement;
+                            while (parent && parent !== document.body) {
+                                var style = window.getComputedStyle(parent);
+                                if (style.overflow === 'auto' || style.overflow === 'scroll' || 
+                                    style.overflowY === 'auto' || style.overflowY === 'scroll') {
+                                    scrollableContainer = parent;
+                                    break;
+                                }
+                                parent = parent.parentElement;
+                            }
+                            
+                            if (scrollableContainer) {
+                                // 手动计算滚动位置，只滚动容器，不影响页面
+                                var linkRect = targetLink.getBoundingClientRect();
+                                var containerRect = scrollableContainer.getBoundingClientRect();
+                                var currentScrollTop = scrollableContainer.scrollTop;
+                                var relativeTop = linkRect.top - containerRect.top + currentScrollTop;
+                                var linkHeight = linkRect.height;
+                                var containerHeight = containerRect.height;
+                                var targetScrollTop = Math.max(0, relativeTop - containerHeight / 3 + linkHeight / 2);
+                                
+                                scrollableContainer.scrollTo({top: targetScrollTop, behavior: 'smooth'});
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
         function handleAllAnchorLinks() {
             var HEADER_HEIGHT = 70; // Sticky header height with a little extra offset
             document.addEventListener('click', function(e){
@@ -661,6 +784,7 @@ function hyplus_output_toc_scripts() {
         document.addEventListener('DOMContentLoaded', function(){
             insertPostToc();
             initToc();
+            setupHeaderClickListeners();
             handleAllAnchorLinks();
             
             // 注册全局 scroll 监听（仅当有需要高亮的容器时）
