@@ -108,6 +108,14 @@ function hysnip_shortcode_handler($atts) {
     $safe_href = esc_attr($permalink);
     $mode      = esc_attr($atts['mode']);
     $async     = (int)$atts['async'];
+    $edit_link_attr = '';
+
+    if ($post_id && current_user_can('manage_options')) {
+        $edit_link = html_entity_decode(get_edit_post_link($post_id), ENT_QUOTES, 'UTF-8');
+        if (!empty($edit_link)) {
+            $edit_link_attr = ' data-edit-link="' . esc_attr($edit_link) . '"';
+        }
+    }
 
     // 根据mode参数设置class
     $classes = array();
@@ -138,7 +146,7 @@ function hysnip_shortcode_handler($atts) {
     $title_attr = $popup_title ? ' data-popup-title="' . $popup_title . '"' : '';
 
     // 构建HTML（单行输出，避免换行符被转换为<br>标签）
-    $html = '<a href="' . $safe_href . '"' . $class_attr . $async_attr . $title_attr . $target_attr . '>' . $btn_text . '</a>';
+    $html = '<a href="' . $safe_href . '"' . $class_attr . $async_attr . $title_attr . $edit_link_attr . $target_attr . '>' . $btn_text . '</a>';
 
     return $html;
 }
@@ -197,14 +205,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 从 data 属性获取自定义弹出框标题，如果没有则为空（后续会使用页面真实标题）
         const customTitle = link.getAttribute('data-popup-title');
-        
+        const editLink = link.getAttribute('data-edit-link') || '';
+
         // 打开弹出框
-        openSnippetPopup(permalink, customTitle || '');
+        openSnippetPopup(permalink, customTitle || '', editLink);
     });
 
-    function openSnippetPopup(permalink, customTitle) {
+    function openSnippetPopup(permalink, customTitle, editLink) {
         const popup = getSnippetPopup();
-        
+        const headerHref = editLink || permalink;
+
         // 记录当前打开的 permalink
         currentPermalink = permalink;
 
@@ -212,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (snippetCache[permalink] !== undefined) {
             const cachedData = snippetCache[permalink];
             const titleToDisplay = customTitle || cachedData.title;
-            displaySnippetContent(cachedData.content, titleToDisplay, permalink);
+            displaySnippetContent(cachedData.content, titleToDisplay, headerHref);
             popup.classList.add('active');
             return;
         }
@@ -224,14 +234,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (snippetCache[permalink] !== undefined && currentPermalink === permalink) {
                     const cachedData = snippetCache[permalink];
                     const titleToDisplay = customTitle || cachedData.title;
-                    displaySnippetContent(cachedData.content, titleToDisplay, permalink);
+                    displaySnippetContent(cachedData.content, titleToDisplay, headerHref);
                     popup.classList.add('active');
                 }
             });
             // 显示加载状态
             const contentDiv = popup.querySelector('.hysnip-popup-content');
             const headerTitle = customTitle || '加载中...';
-            contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
+            contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
             popup.classList.add('active');
             return;
         }
@@ -239,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // 显示加载状态
         const contentDiv = popup.querySelector('.hysnip-popup-content');
         const headerTitle = customTitle || '加载中...';
-        contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
+        contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
         
         popup.classList.add('active');
 
@@ -275,9 +285,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 // 如果没有自定义标题，使用页面的真实标题
                 const titleToDisplay = customTitle || result.data.post_title;
-                displaySnippetContent(result.data.content, titleToDisplay, permalink);
+                displaySnippetContent(result.data.content, titleToDisplay, headerHref);
             } else {
-                displaySnippetContent(null, customTitle, permalink);
+                displaySnippetContent(null, customTitle, headerHref);
             }
         })
         .catch(function(error) {
@@ -288,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             // 只处理与当前打开的 permalink 匹配的错误
             if (currentPermalink === permalink) {
-                displaySnippetContent(null, customTitle, permalink);
+                displaySnippetContent(null, customTitle, headerHref);
             }
         })
         .finally(function() {
@@ -297,11 +307,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function displaySnippetContent(content, title, permalink) {
+    function displaySnippetContent(content, title, headerHref) {
         const popup = getSnippetPopup();
         const contentDiv = popup.querySelector('.hysnip-popup-content');
         
-        let html = '<div class="hysnip-popup-header"><a href="' + esc(permalink) + '" target="_blank">' + esc(title) + '</a><button class="hysnip-close-btn hyplus-scale hyplus-unselectable" aria-label="关闭" title="关闭（ESC）"></button></div>';
+        let html = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(title) + '</a><button class="hysnip-close-btn hyplus-scale hyplus-unselectable" aria-label="关闭" title="关闭（ESC）"></button></div>';
         
         if (content === null) {
             html += '<div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载失败</div>';

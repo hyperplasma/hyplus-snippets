@@ -164,12 +164,16 @@ function hyplus_render_series_buttons_container() {
         
         // 根据标签是否为数字来设置async参数
         $async = is_numeric($button_label) ? '1' : '0';
+        $edit_link = current_user_can('manage_options')
+            ? html_entity_decode(get_edit_post_link($series_post->ID), ENT_QUOTES, 'UTF-8')
+            : '';
         
         $buttons_data[] = array(
             'href' => get_permalink($series_post->ID),
             'label' => $button_label,
             'title' => $series_post->post_title,
-            'async' => $async
+            'async' => $async,
+            'edit_link' => $edit_link
         );
     }
     
@@ -191,6 +195,9 @@ function hyplus_render_series_buttons_container() {
                 link.title = btn.title;
                 link.setAttribute('data-popup-title', btn.title);
                 link.setAttribute('data-async', btn.async);
+                if (btn.edit_link) {
+                    link.setAttribute('data-edit-link', btn.edit_link);
+                }
                 container.appendChild(link);
             });
         })();
