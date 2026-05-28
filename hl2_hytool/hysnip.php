@@ -191,10 +191,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 监听所有HySnip链接的点击事件
     document.addEventListener('click', function(event) {
-        const link = event.target.closest('.hysnip-trigger');
-        if (!link) return;
+        const triggerElement = event.target.closest('.hysnip-trigger');
+        if (!triggerElement) return;
 
-        let permalink = link.href;
+        let permalink, customTitle, editLink;
+
+        // 区分是a标签还是li标签
+        if (triggerElement.tagName === 'A') {
+            // 如果是a标签，直接使用其href和属性
+            permalink = triggerElement.href;
+            customTitle = triggerElement.getAttribute('data-popup-title');
+            editLink = triggerElement.getAttribute('data-edit-link') || '';
+        } else if (triggerElement.tagName === 'LI') {
+            // 如果是li标签，找到其内部的第一个a标签
+            const innerLink = triggerElement.querySelector('a');
+            if (!innerLink) return;
+            
+            permalink = innerLink.href;
+            // 从li标签获取自定义属性
+            customTitle = triggerElement.getAttribute('data-popup-title');
+            editLink = triggerElement.getAttribute('data-edit-link') || '';
+        } else {
+            return;
+        }
+
         if (!permalink) return;
 
         // 规范化URL以确保缓存key一致
@@ -202,10 +222,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 阻止默认的链接跳转行为
         event.preventDefault();
-
-        // 从 data 属性获取自定义弹出框标题，如果没有则为空（后续会使用页面真实标题）
-        const customTitle = link.getAttribute('data-popup-title');
-        const editLink = link.getAttribute('data-edit-link') || '';
 
         // 打开弹出框
         openSnippetPopup(permalink, customTitle || '', editLink);
@@ -493,15 +509,10 @@ add_action('wp_ajax_hysnip_get_content', 'hysnip_get_content_ajax');
 add_action('wp_ajax_nopriv_hysnip_get_content', 'hysnip_get_content_ajax');
 
 /**
- * 在页脚注入 HySnip JavaScript（仅在有 hysnip 短代码的页面注入）
+ * 在页脚注入 HySnip JavaScript（在全部页面中注入，以支持导航菜单中的hysnip-trigger类）
  */
 function hysnip_inject_script_to_footer() {
-    global $hysnip_page_has_shortcode;
-    
-    // 仅在页面上存在 hysnip 短代码时注入
-    if (!empty($hysnip_page_has_shortcode)) {
-        echo hysnip_get_script();
-    }
+    echo hysnip_get_script();
 }
 add_action('wp_footer', 'hysnip_inject_script_to_footer');
 ?>
