@@ -1899,7 +1899,8 @@ body.sidebar-left .content-area {
  * HY-Tools (HyImg, Article Overall Above, HySnip, etc.)
  */
 /* HyImg */
-.hyimg-button, .hysnip-button {
+/* .hyimg-button, */
+.hysnip-button {
 	/* margin: 4px; */
 	cursor: pointer;
 	display: inline-flex;

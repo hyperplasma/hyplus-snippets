@@ -25,7 +25,8 @@ function hyimg_shortcode_handler($atts) {
     // 解析短代码参数，设置默认值
     $atts = shortcode_atts(array(
         'src'    => '',
-        'title'  => '图片'
+        'title'  => '图片',
+        'mode'   => 'button'
     ), $atts, 'hyimg');
 
     // 验证URL参数
@@ -48,17 +49,16 @@ function hyimg_shortcode_handler($atts) {
     $btn_text = esc_html($atts['title']);
     $safe_url = esc_attr($img_url);
 
+    // 根据mode参数构建class属性
+    $class = $atts['mode'] === 'button' ? 'hyplus-nav-link hyimg-button' : 'hyimg-button';
+
     // 构建HTML
     ob_start();
-    ?>
-    <a 
+    ?><a 
         href="<?php echo $safe_url; ?>"
-        class="hyplus-nav-link hyimg-button"
+        class="<?php echo esc_attr($class); ?>"
         target="_blank"
-    >
-        <?php echo $btn_text; ?>
-    </a>
-    <?php
+    ><?php echo $btn_text; ?></a><?php
     $html = ob_get_clean();
 
     // 注入JavaScript代码（只注入一次）
