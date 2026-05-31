@@ -8,7 +8,7 @@
 <!-- HyButton按钮群 -->
 <div id="hybuttonContainer" class="hybutton-container">
     <div id="scrollToTopButton" class="hybutton" title="返回顶部（⌘↑）">⇧</div>
-    <div id="navButton" class="hybutton" onclick="navOnClickFunc()" title="HyNav面板（⌥S）">✤</div>
+    <div id="navButton" class="hybutton" onclick="navOnClickFunc()" title="UB中心面板（⌥S）">✤</div>
     <div id="goBackButton" class="hybutton" title="返回上一页（⌘←）">❮</div>
     <div id="goForwardButton" class="hybutton" title="前往下一页（⌘→）">❯</div>
     <div id="refreshButton" class="hybutton" title="刷新页面（⌘R）">↻</div>
@@ -42,7 +42,8 @@
 		Shortcode: [wpcode id="11647"] (auto-generated)
 		-->
 		<?php
-		echo do_shortcode('[wpcode id="11647"]');
+		// 双持解析短代码，渲染HyNav中的HySnip按钮
+		echo do_shortcode(do_shortcode('[wpcode id="11647"]'));
 		?>
 		<div id="navMessage" class="hyplus-unselectable" style="color: var(--hyplus-text-gray); font-style: italic; text-align: center; margin-top: 16px;">Explore your Hyplusite!</div>
 	</div>
@@ -306,7 +307,7 @@
 			</div>
 		</div>
 		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.6.1 by Akira37
+			Ultimate Buttons v1.6.2 by Akira37
 		</div>
 	</div>
 </div>
