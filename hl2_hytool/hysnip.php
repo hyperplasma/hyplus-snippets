@@ -51,7 +51,7 @@ function hysnip_shortcode_handler($atts) {
 
     // 验证 post_id
     if (!$post_id) {
-        return '<p style="color: #d9534f; font-weight: bold;">⚠ HySnip: 无效的 id 或 href 参数</p>';
+        return '<p style="color: #d9534f; font-weight: bold;">⚠ HySnip: 无效的 id 参数</p>';
     }
 
     // 检查缓存，如果没有则查询数据库

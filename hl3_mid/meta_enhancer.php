@@ -100,12 +100,11 @@ function lh_single_cats_above_title() {
                 }
                 
                 // 正确转义短代码参数
-                $series_url = esc_url(get_permalink($series_post->ID));
                 $series_title = esc_attr($series_post->post_title);
                 
                 $series_html .= sprintf(
-                    " [hysnip href='%s' name='%s' title='%s' mode='link' async='1']",
-                    $series_url,
+                    " [hysnip id='%d' name='%s' title='%s' mode='link' async='1']",
+                    $series_post->ID,
                     $series_title,
                     $series_title
                 );
@@ -170,6 +169,7 @@ function hyplus_render_series_buttons_container() {
         
         $buttons_data[] = array(
             'href' => get_permalink($series_post->ID),
+            'post_id' => $series_post->ID,
             'label' => $button_label,
             'title' => $series_post->post_title,
             'async' => $async,
@@ -193,6 +193,7 @@ function hyplus_render_series_buttons_container() {
                 link.className = 'series-button hysnip-trigger';
                 link.textContent = btn.label;
                 link.title = btn.title;
+                link.setAttribute('data-post-id', btn.post_id);
                 link.setAttribute('data-popup-title', btn.title);
                 link.setAttribute('data-async', btn.async);
                 if (btn.edit_link) {
