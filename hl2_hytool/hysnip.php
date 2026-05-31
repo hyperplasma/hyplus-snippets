@@ -2,13 +2,11 @@
 /**
  * HySnip - 本站内容快速引用短代码插件
  * Description: 通过[hysnip]短代码实现加载并展示本站博文或页面的弹出框
- * Usage: [hysnip href="/kokuyou" name="黑曜酱与白玉君" mode="link" async="1"]
- *        [hysnip id="123" name="自定义名称" title="弹出框标题" mode="button" async="1"]
+ * Usage: [hysnip id="123" name="自定义名称" title="弹出框标题" mode="button" async="1"]
  * 
  * Parameters:
- * - href: 博文或页面的相对链接（可选，如果设置了id则无效）。会自动加上本站域名
- * - id: 博文或页面的post ID（可选，优先级高于href）
- * - name: 按钮文字（可选）。如果未设置，则使用title；如果title也未设置，则使用博文的真实标题
+ * - id: 博文或页面的 post ID（必填）
+ * - name: 按钮文字（可选）。如果未设置，则使用 title；如果 title 也未设置，则使用博文的真实标题
  * - title: 弹出框标题（可选）。如果未设置则使用页面的真实标题
  * - limit: 内容字数限制（可选，默认为0，表示不限制）。如果设置为大于0的值，将只显示指定字数的内容，并在末尾添加省略号
  * - mode: 显示模式（可选，默认为"button"）。可选值为"button"（【默认】按钮式链接，带hyplus-nav-link类）、"link"（普通文本链接，无hyplus-nav-link类）或"none"（纯普通a链接，无任何特殊class）
@@ -36,7 +34,6 @@ function hysnip_shortcode_handler($atts) {
 
     // 解析短代码参数，初始化为空值
     $atts = shortcode_atts(array(
-        'href'    => '',
         'id'      => '',
         'name'    => '',
         'title'   => '',
@@ -49,18 +46,8 @@ function hysnip_shortcode_handler($atts) {
     // 使用静态缓存避免重复数据库查询
     static $post_cache = array();
 
-    // 确定 post_id：优先使用 id 参数
-    $post_id = null;
-    if (!empty($atts['id'])) {
-        $post_id = (int)$atts['id'];
-    } elseif (!empty($atts['href'])) {
-        // 如果是相对路径（不以http开头），则加上本站域名
-        $permalink = $atts['href'];
-        if (strpos($permalink, 'http') !== 0) {
-            $permalink = home_url() . '/' . ltrim($permalink, '/');
-        }
-        $post_id = url_to_postid($permalink);
-    }
+    // 确定 post_id：仅使用 id 参数
+    $post_id = !empty($atts['id']) ? (int)$atts['id'] : null;
 
     // 验证 post_id
     if (!$post_id) {
@@ -91,16 +78,8 @@ function hysnip_shortcode_handler($atts) {
         }
     }
 
-    // 处理链接URL
-    if (!empty($atts['id'])) {
-        $permalink = get_permalink($post_id);
-    } else {
-        $permalink = $atts['href'];
-        // 如果是相对路径（不以http开头），则加上本站域名
-        if (strpos($permalink, 'http') !== 0) {
-            $permalink = home_url() . '/' . ltrim($permalink, '/');
-        }
-    }
+    // 处理链接URL，始终使用 post_id 的永久链接
+    $permalink = get_permalink($post_id);
 
     // 获取安全的属性值
     $btn_text  = esc_html($atts['name']);
@@ -144,9 +123,10 @@ function hysnip_shortcode_handler($atts) {
     
     // 将弹出框标题作为 data 属性传递给 JavaScript
     $title_attr = $popup_title ? ' data-popup-title="' . $popup_title . '"' : '';
+    $post_id_attr = ' data-post-id="' . esc_attr($post_id) . '"';
 
     // 构建HTML（单行输出，避免换行符被转换为<br>标签）
-    $html = '<a href="' . $safe_href . '"' . $class_attr . $async_attr . $title_attr . $edit_link_attr . $target_attr . '>' . $btn_text . '</a>';
+    $html = '<a href="' . $safe_href . '"' . $class_attr . $post_id_attr . $async_attr . $title_attr . $edit_link_attr . $target_attr . '>' . $btn_text . '</a>';
 
     return $html;
 }
@@ -162,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // 缓存容器和弹出框
     let cachedContainer = null;
     let snippetCache = {}; // 缓存加载的内容
-    let loadingPromises = {}; // 记录正在加载的 Promise，防止并发请求相同URL
-    let currentPermalink = null; // 记录当前打开的 permalink
+    let loadingPromises = {}; // 记录正在加载的 Promise，防止并发请求相同postId
+    let currentPostId = null; // 记录当前打开的 postId
     let mutationObserver = null;
     let activePreloads = 0; // 当前活跃的预加载数
     const MAX_CONCURRENT_PRELOADS = 5; // 最多同时5个预加载
@@ -194,49 +174,48 @@ document.addEventListener('DOMContentLoaded', function() {
         const triggerElement = event.target.closest('.hysnip-trigger');
         if (!triggerElement) return;
 
-        let permalink, customTitle, editLink;
+        let permalink = '';
+        let customTitle = '';
+        let editLink = '';
+        let postId = '';
 
         // 区分是a标签还是li标签
         if (triggerElement.tagName === 'A') {
-            // 如果是a标签，直接使用其href和属性
+            postId = triggerElement.getAttribute('data-post-id');
             permalink = triggerElement.href;
             customTitle = triggerElement.getAttribute('data-popup-title');
             editLink = triggerElement.getAttribute('data-edit-link') || '';
         } else if (triggerElement.tagName === 'LI') {
-            // 如果是li标签，找到其内部的第一个a标签
-            const innerLink = triggerElement.querySelector('a');
+            const innerLink = triggerElement.querySelector('a[data-post-id]');
             if (!innerLink) return;
-            
+
+            postId = innerLink.getAttribute('data-post-id');
             permalink = innerLink.href;
-            // 从li标签获取自定义属性
-            customTitle = triggerElement.getAttribute('data-popup-title');
-            editLink = triggerElement.getAttribute('data-edit-link') || '';
+            customTitle = triggerElement.getAttribute('data-popup-title') || innerLink.getAttribute('data-popup-title');
+            editLink = triggerElement.getAttribute('data-edit-link') || innerLink.getAttribute('data-edit-link') || '';
         } else {
             return;
         }
 
-        if (!permalink) return;
-
-        // 规范化URL以确保缓存key一致
-        permalink = normalizeUrl(permalink);
+        if (!postId) return;
 
         // 阻止默认的链接跳转行为
         event.preventDefault();
 
         // 打开弹出框
-        openSnippetPopup(permalink, customTitle || '', editLink);
+        openSnippetPopup(postId, permalink, customTitle || '', editLink);
     });
 
-    function openSnippetPopup(permalink, customTitle, editLink) {
+    function openSnippetPopup(postId, permalink, customTitle, editLink) {
         const popup = getSnippetPopup();
         const headerHref = editLink || permalink;
 
-        // 记录当前打开的 permalink
-        currentPermalink = permalink;
+        // 记录当前打开的 postId
+        currentPostId = postId;
 
         // 检查缓存
-        if (snippetCache[permalink] !== undefined) {
-            const cachedData = snippetCache[permalink];
+        if (snippetCache[postId] !== undefined) {
+            const cachedData = snippetCache[postId];
             const titleToDisplay = customTitle || cachedData.title;
             displaySnippetContent(cachedData.content, titleToDisplay, headerHref);
             popup.classList.add('active');
@@ -244,17 +223,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // 检查是否已经在加载中，如果是则等待已有的请求完成
-        if (loadingPromises[permalink]) {
-            loadingPromises[permalink].then(() => {
-                // 加载完成后，如果缓存中有内容就使用缓存
-                if (snippetCache[permalink] !== undefined && currentPermalink === permalink) {
-                    const cachedData = snippetCache[permalink];
+        if (loadingPromises[postId]) {
+            loadingPromises[postId].then(() => {
+                if (snippetCache[postId] !== undefined && currentPostId === postId) {
+                    const cachedData = snippetCache[postId];
                     const titleToDisplay = customTitle || cachedData.title;
                     displaySnippetContent(cachedData.content, titleToDisplay, headerHref);
                     popup.classList.add('active');
                 }
             });
-            // 显示加载状态
             const contentDiv = popup.querySelector('.hysnip-popup-content');
             const headerTitle = customTitle || '加载中...';
             contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
@@ -262,25 +239,21 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // 显示加载状态
         const contentDiv = popup.querySelector('.hysnip-popup-content');
         const headerTitle = customTitle || '加载中...';
         contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
         
         popup.classList.add('active');
 
-        // 发送 AJAX 请求获取内容（添加 AbortController 超时控制）
         var data = new FormData();
         data.append('action', 'hysnip_get_content');
-        data.append('permalink', permalink);
+        data.append('post_id', postId);
         data.append('nonce', '<?php echo wp_create_nonce('hysnip_popup'); ?>');
 
-        // 创建 AbortController 用于超时控制
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
 
-        // 创建 Promise 并保存到 loadingPromises，供其他相同URL的请求等待
-        loadingPromises[permalink] = fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+        loadingPromises[postId] = fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
             method: 'POST',
             body: data,
             signal: controller.signal
@@ -290,16 +263,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(function(result) {
             clearTimeout(timeoutId);
-            // 只处理与当前打开的 permalink 匹配的响应
-            if (currentPermalink !== permalink) return;
+            if (currentPostId !== postId) return;
             
             if (result.success) {
-                // 缓存加载的内容和标题
-                snippetCache[permalink] = {
+                snippetCache[postId] = {
                     content: result.data.content,
                     title: result.data.post_title
                 };
-                // 如果没有自定义标题，使用页面的真实标题
                 const titleToDisplay = customTitle || result.data.post_title;
                 displaySnippetContent(result.data.content, titleToDisplay, headerHref);
             } else {
@@ -308,18 +278,15 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(function(error) {
             clearTimeout(timeoutId);
-            // 只在非中止情况下打印错误
             if (error.name !== 'AbortError') {
                 console.error('Error:', error);
             }
-            // 只处理与当前打开的 permalink 匹配的错误
-            if (currentPermalink === permalink) {
+            if (currentPostId === postId) {
                 displaySnippetContent(null, customTitle, headerHref);
             }
         })
         .finally(function() {
-            // 请求完成后，从 loadingPromises 中删除，允许后续相同URL的请求重新发起
-            delete loadingPromises[permalink];
+            delete loadingPromises[postId];
         });
     }
 
@@ -374,56 +341,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // 立即初始化弹出框事件（移除不必要的延迟）
     setupPopupEvents();
 
-    // 规范化URL函数：确保末尾有斜杠，移除查询参数和hash
-    function normalizeUrl(url) {
-        // 移除查询参数和hash
-        url = url.split('?')[0].split('#')[0];
-        // 确保末尾有斜杠
-        if (!url.endsWith('/')) {
-            url += '/';
-        }
-        return url;
-    }
-
     // 预加载异步内容
     function preloadAsyncContent() {
         const asyncLinks = document.querySelectorAll('.hysnip-trigger[data-async="1"]');
         asyncLinks.forEach(link => {
-            let permalink = link.href;
-            if (permalink) {
-                // 规范化URL以确保缓存key一致
-                permalink = normalizeUrl(permalink);
-                if (snippetCache[permalink] === undefined && !loadingPromises[permalink]) {
-                    preloadQueue.push(permalink);
-                }
+            const postId = link.getAttribute('data-post-id');
+            if (postId && snippetCache[postId] === undefined && !loadingPromises[postId]) {
+                preloadQueue.push(postId);
             }
         });
-        // 开始处理队列
         processPreloadQueue();
     }
 
     // 处理预加载队列，限制并发数
     function processPreloadQueue() {
-        // 如果队列为空或达到并发上限，则返回
         if (preloadQueue.length === 0 || activePreloads >= MAX_CONCURRENT_PRELOADS) {
             return;
         }
         
-        // 从队列中取一个URL
-        const permalink = preloadQueue.shift();
+        const postId = preloadQueue.shift();
         activePreloads++;
         
-        // 发送 AJAX 请求预加载内容
         var data = new FormData();
         data.append('action', 'hysnip_get_content');
-        data.append('permalink', permalink);
+        data.append('post_id', postId);
         data.append('nonce', '<?php echo wp_create_nonce('hysnip_popup'); ?>');
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
 
-        // 记录加载状态，防止并发
-        loadingPromises[permalink] = fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+        loadingPromises[postId] = fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
             method: 'POST',
             body: data,
             signal: controller.signal
@@ -432,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(result => {
             clearTimeout(timeoutId);
             if (result.success) {
-                snippetCache[permalink] = {
+                snippetCache[postId] = {
                     content: result.data.content,
                     title: result.data.post_title
                 };
@@ -443,9 +390,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // 静默处理错误，不影响页面
         })
         .finally(() => {
-            delete loadingPromises[permalink];
+            delete loadingPromises[postId];
             activePreloads--;
-            // 继续处理队列中的下一个
             processPreloadQueue();
         });
     }
@@ -478,16 +424,10 @@ function hysnip_get_content_ajax() {
         wp_send_json_error('Security check failed');
     }
 
-    // 获取并验证permalink
-    $permalink = isset($_POST['permalink']) ? esc_url_raw($_POST['permalink']) : '';
-    if (empty($permalink)) {
-        wp_send_json_error('Invalid permalink');
-    }
-
-    // 通过permalink获取post ID
-    $post_id = url_to_postid($permalink);
+    // 获取并验证 post_id
+    $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
     if (!$post_id) {
-        wp_send_json_error('Post not found');
+        wp_send_json_error('Invalid post_id');
     }
 
     // 获取post对象
