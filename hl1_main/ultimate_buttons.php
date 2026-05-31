@@ -29,6 +29,7 @@
 		<!-- <button id="chatPageButton" class="switch-button" onclick="switchNavContent('chat')">通讯</button> -->
 		<!-- <button id="aiPageButton" class="switch-button" onclick="switchNavContent('ai')">KINA</button> -->
 		<button id="navPageButton" class="switch-button active" onclick="switchNavContent('nav')">导航</button>
+		<button id="seriesPageButton" class="switch-button" onclick="switchNavContent('series')">系列</button>
 		<button id="notePageButton" class="switch-button" onclick="switchNavContent('note')">检索</button>
 		<button id="settingsPageButton" class="switch-button" onclick="switchNavContent('settings')">设置</button>
 	</div>
@@ -42,10 +43,33 @@
 		Shortcode: [wpcode id="11647"] (auto-generated)
 		-->
 		<?php
-		// 双持解析短代码，渲染HyNav中的HySnip按钮
+		// 双层解析短代码，渲染HyNav中的HySnip按钮
 		echo do_shortcode(do_shortcode('[wpcode id="11647"]'));
 		?>
-		<div id="navMessage" class="hyplus-unselectable" style="color: var(--hyplus-text-gray); font-style: italic; text-align: center; margin-top: 16px;">Explore your Hyplusite!</div>
+		<div class="hynav-bottom-message hyplus-unselectable">
+			<?php if (current_user_can('administrator')) echo "<a href='/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647' target='_blank'>" ?>
+			Explore your Hyplusite!
+		<?php if (current_user_can('administrator')) echo "</a>" ?>
+		</div>
+	</div>
+
+	<!-- 系列导航页面 -->
+	<div id="seriesContent" class="nav-content" style="display: none;">
+		<!-- HyNav: Series Nav Page, Ultimate Button popup addon (Desc is moved here for easier editing in Code Snippets)
+		Description: similar to HyNav
+		Code type: HTML (no need to compress the codes)
+		Special Permissions: Direct Edit; No Header Desc; No Formatting
+		Shortcode: [wpcode id="21041"] (auto-generated)
+		-->
+		<?php
+		// 双层解析短代码，渲染系列导航中的内容
+		echo do_shortcode(do_shortcode('[wpcode id="21041"]'));
+		?>
+		<div class="hynav-bottom-message hyplus-unselectable">
+			<?php if (current_user_can('administrator')) echo "<a href='/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=21041' target='_blank'>" ?>
+				Enjoy series content!
+			<?php if (current_user_can('administrator')) echo "</a>" ?>
+		</div>
 	</div>
 
 	<!-- AI内容
@@ -213,13 +237,6 @@
 						<label class="language-label">修改<a href="https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode" target="_blank">组件</a>:</label>
 						<label class="language-label">
 							<button class="font-size-btn"
-								onclick="window.open('https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647', '_blank');"
-							>
-								HyNav
-							</button>
-						</label>
-						<label class="language-label">
-							<button class="font-size-btn"
 								onclick="window.open('https://www.hyperplasma.top/wp-admin/nav-menus.php', '_blank');"
 							>
 								菜单
@@ -306,8 +323,8 @@
 				推荐使用Safari浏览器进行页面PDF打印（若需要），以获得最佳效果。
 			</div>
 		</div>
-		<div id="configMessage" class="hyplus-unselectable" style="color: #d6d6d6; font-size: 16px; font-style: italic; text-align: center; margin: 24px 0;">
-			Ultimate Buttons v1.6.2 by Akira37
+		<div class="hynav-bottom-message hyplus-unselectable">
+			Ultimate Buttons v1.7 by Akira37
 		</div>
 	</div>
 </div>
@@ -615,6 +632,7 @@
 					// chat: document.getElementById('chatContent'),
 					ai: document.getElementById('aiContent'),
 					settings: document.getElementById('settingsContent'),
+					series: document.getElementById('seriesContent'),
 					note: document.getElementById('noteContent')
 				},
 				buttons: {
@@ -622,6 +640,7 @@
 					// chat: document.getElementById('chatPageButton'),
 					ai: document.getElementById('aiPageButton'),
 					settings: document.getElementById('settingsPageButton'),
+					series: document.getElementById('seriesPageButton'),
 					note: document.getElementById('notePageButton')
 				}
 			};
@@ -736,7 +755,7 @@
 	}
 
 	// 页面导航名称数组（用于Alt+Z/X快捷键）
-	const NAV_PAGES = ['nav', 'note', 'settings'];
+	const NAV_PAGES = ['nav', 'series', 'note', 'settings'];
 	
 	// 字体控制快捷键映射
 	const FONT_KEY_MAP = {

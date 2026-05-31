@@ -37,7 +37,7 @@
 	--hyplus-text-heading: #132d51;
 	--hyplus-text-title: #013664;
 	--hyplus-text-quote: #454545;
-	--hyplus-text-gray: gray;
+	--hyplus-text-gray: #b4b3b3;
 	--hyplus-text-code: rgba(7, 1, 114, 0.468);
 	--hyplus-text-counter: #FF8C00;
 	
@@ -114,7 +114,7 @@ body.hyplus-atmosphere-red :root {
 	--hyplus-text-heading: #914242;
 	--hyplus-text-title: #570000;
 	--hyplus-text-quote: #443131;
-	--hyplus-text-gray: gray;
+	--hyplus-text-gray: #b4b3b3;
 	--hyplus-text-code: rgba(139, 0, 0, 0.6);
 	--hyplus-text-counter: #d9534f;
 	
@@ -191,7 +191,7 @@ body.hyplus-atmosphere-purple :root {
 	--hyplus-text-heading: #8b6bc8;
 	--hyplus-text-title: #2a005a;
 	--hyplus-text-quote: #352d45;
-	--hyplus-text-gray: gray;
+	--hyplus-text-gray: #b4b3b3;
 	--hyplus-text-code: rgba(123, 31, 162, 0.6);
 	--hyplus-text-counter: #9c27b0;
 	
@@ -268,7 +268,7 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-text-heading: #66a39f;
 	--hyplus-text-title: #003932;
 	--hyplus-text-quote: #344542;
-	--hyplus-text-gray: gray;
+	--hyplus-text-gray: #b4b3b3;
 	--hyplus-text-code: rgba(0, 121, 107, 0.6);
 	--hyplus-text-counter: #26a69a;
 	
@@ -1467,6 +1467,12 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 	padding-bottom: 20px;
 }
 
+.hynav-bottom-message, .hynav-bottom-message a {
+	color: var(--hyplus-text-gray) !important;
+	font-style: italic !important;
+	text-align: center;
+	margin-top: 16px;
+}
 
 /* 目录内容样式 */
 .directory-toc-content {
