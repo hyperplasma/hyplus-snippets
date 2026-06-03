@@ -1,7 +1,14 @@
-<!-- Hyplus 导航 - Profile - Recent Posts
- Code type: Universal Snippet (HTML + PHP)
- Shortcode: [wpcode id="14382"]
--->
+<?php
+/**
+ * Hyplus 导航 - Profile - Recent Posts
+ * Code type: Universal Snippet (HTML + PHP)
+ * Shortcode: [hyplus_homepage_2nd_panel_render]
+ */
+add_shortcode('hyplus_homepage_2nd_panel_render', 'hyplus_homepage_2nd_panel_render');
+
+function hyplus_homepage_2nd_panel_render() {
+    ob_start();
+?>
 <div class="profile-main-row">
     <div class="profile-cards-container">
         <div class="profile-card" style="text-align: left">
@@ -51,5 +58,9 @@
         function hyCalendarNextMonth() { hyCurrentDate.setMonth(hyCurrentDate.getMonth() + 1); hyCalendarRender(); }
         hyCalendarRender();
     </script>
-    <div><?php echo do_shortcode('[wpcode id="4726"]'); ?></div>
+    <div><?php echo do_shortcode('[hyplus_timezone_displayer]'); ?></div>
 </div>
+<?php
+    return ob_get_clean();
+}
+?>
