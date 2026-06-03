@@ -154,7 +154,7 @@ function hygal_unified_handler($atts) {
                         <?php endforeach; ?>
                     </select>
                     <select id="f-ppp" class="hygal-input"><option value="10">10项/页</option><option value="30">30项/页</option><option value="60">60项/页</option><option value="1">1项/页</option></select>
-                    <select id="f-order" class="hygal-input"><option value="DESC">最新优先</option><option value="ASC">最早优先</option><option value="RAND">随机排序</option></select>
+                    <select id="f-order" class="hygal-input"><option value="DESC">最新优先</option><option value="ASC">最早优先</option><option value="SIZE_DESC">大文件优先</option><option value="RAND">随机排序</option></select>
                 </div>
                 <div style="margin-top:15px; display:flex; justify-content:center;">
                     <button id="btn-fetch" class="hyplus-nav-link hygal-btn-submit">展示图片</button>
@@ -561,9 +561,27 @@ function hygal_ajax_fetch_minimal_handler() {
     
     $total_items = count($all_results);
 
+    $upload_dir = wp_upload_dir();
+    $base_url = $upload_dir['baseurl'];
+
+    // 预先为每个附件补齐文件大小，用于“大文件优先”排序
+    foreach ($all_results as $item) {
+        $item->file_size = 0;
+        if (!empty($item->attached_file)) {
+            $full_path = $upload_dir['basedir'] . '/' . $item->attached_file;
+            if (file_exists($full_path)) {
+                $item->file_size = filesize($full_path);
+            }
+        }
+    }
+
     // 应用层RAND()排序 - 避免数据库RAND()低效问题
     if ($order_type === 'RAND') {
         shuffle($all_results);
+    } elseif ($order_type === 'SIZE_DESC') {
+        usort($all_results, function($a, $b) {
+            return $b->file_size - $a->file_size;
+        });
     } else {
         // 非随机排序时应用排序逻辑
         usort($all_results, function($a, $b) use ($order_type) {
