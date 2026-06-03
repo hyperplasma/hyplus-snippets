@@ -36,15 +36,8 @@
 
 	<!-- 导航内容 -->
 	<div id="navContent" class="nav-content">
-		<!-- HyNav: Hyplus Nav Page, Ultimate Button popup addon (Desc is moved here for easier editing in Code Snippets)
-		Description: currently only implemented in Ultimate Button, but the CSS is shared with other components.
-		Code type: HTML (no need to compress the codes)
-		Special Permissions: Direct Edit; No Header Desc; No Formatting
-		Shortcode: [wpcode id="11647"] (auto-generated)
-		-->
 		<?php
-		// 双层解析短代码，渲染HyNav中的HySnip按钮
-		echo do_shortcode(do_shortcode('[wpcode id="11647"]'));
+		echo do_shortcode('[hynav_panel_render]');
 		?>
 		<div class="hynav-bottom-message hyplus-unselectable">
 			<?php if (current_user_can('administrator')) echo "<a href='/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647' target='_blank'>" ?>
@@ -55,15 +48,9 @@
 
 	<!-- 系列导航页面 -->
 	<div id="seriesContent" class="nav-content" style="display: none;">
-		<!-- HyNav: Series Nav Page, Ultimate Button popup addon (Desc is moved here for easier editing in Code Snippets)
-		Description: similar to HyNav
-		Code type: HTML (no need to compress the codes)
-		Special Permissions: Direct Edit; No Header Desc; No Formatting
-		Shortcode: [wpcode id="21041"] (auto-generated)
-		-->
 		<?php
-		// 双层解析短代码，渲染系列导航中的内容
-		echo do_shortcode(do_shortcode('[wpcode id="21041"]'));
+		// 渲染系列导航中的内容（series_nav_panel_render 内部会处理嵌套的 hysnip 短代码）
+		echo do_shortcode('[series_nav_panel_render]');
 		?>
 		<div class="hynav-bottom-message hyplus-unselectable">
 			<?php if (current_user_can('administrator')) echo "<a href='/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=21041' target='_blank'>" ?>
