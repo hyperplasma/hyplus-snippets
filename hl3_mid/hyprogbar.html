@@ -111,6 +111,80 @@
         const topBarInner = document.getElementById("pageLeavingTopBarInner");
         let progressRaf = null;
 
+        function getBackgroundConfig(background) {
+            if (window.getHyplusBackgroundConfig) {
+                return window.getHyplusBackgroundConfig(background);
+            }
+            if (!background) {
+                const selected = document.cookie
+                    .split(";")
+                    .map((c) => c.trim())
+                    .find((c) => c.startsWith("selectedBackground="));
+                background = selected ? selected.split("=")[1] : "default";
+            }
+            if (window.HYPLUS_BACKGROUND_CONFIGS) {
+                return window.HYPLUS_BACKGROUND_CONFIGS[background] || window.HYPLUS_BACKGROUND_CONFIGS["default"];
+            }
+            return { imageUrl: "", opacity: 0 };
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const parts = document.cookie.split(";");
+            for (let part of parts) {
+                part = part.trim();
+                if (part.indexOf(nameEQ) === 0) {
+                    return decodeURIComponent(part.substring(nameEQ.length));
+                }
+            }
+            return null;
+        }
+
+        function getSavedBackgroundConfigFromCookie() {
+            const imageUrl = getCookie("selectedBackgroundImage");
+            const opacity = parseFloat(getCookie("selectedBackgroundOpacity"));
+            if (imageUrl) {
+                return { imageUrl, opacity: isNaN(opacity) ? 0 : opacity };
+            }
+            return null;
+        }
+
+        function applyHyprogbarBackground() {
+            const savedConfig = getSavedBackgroundConfigFromCookie();
+            const config = savedConfig || getBackgroundConfig();
+            const styleId = "hyprogbar-background-style";
+            let style = document.getElementById(styleId);
+            if (!style) {
+                style = document.createElement("style");
+                style.id = styleId;
+                document.head.appendChild(style);
+            }
+            if (config && config.imageUrl) {
+                style.textContent = `#pageLeavingMask { background: transparent; }
+#pageLeavingMask::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translateX(-50%);
+    background-image: url('${config.imageUrl}');
+    background-position: top center;
+    background-size: auto max(100%, 600px);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: ${config.opacity};
+    z-index: -1;
+    pointer-events: none;
+}`;
+            } else {
+                style.textContent = `#pageLeavingMask { background: #fff; }`;
+            }
+        }
+
+        applyHyprogbarBackground();
+
         function setTopBarProgress(val) {
             val = Math.max(0, Math.min(100, Math.round(val)));
             topBarInner.style.width = val + "%";

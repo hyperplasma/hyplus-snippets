@@ -1126,6 +1126,19 @@
 		// 可以在这里添加更多背景配置
 	};
 
+	function getBackgroundConfig(background) {
+		if (!background) {
+			background = getCookie('selectedBackground') || 'default';
+		}
+		return BACKGROUND_CONFIGS[background] || BACKGROUND_CONFIGS['default'];
+	}
+
+	// 让其他脚本复用当前选中的背景配置
+	window.HYPLUS_BACKGROUND_CONFIGS = BACKGROUND_CONFIGS;
+	window.getHyplusBackgroundConfig = function(background) {
+		return getBackgroundConfig(background);
+	};
+
 	// ========== 背景图切换功能 ==========
 	/**
 	 * 修改网站背景图
@@ -1178,6 +1191,10 @@
 		
 		// 保存用户选择到cookie
 		setCookie('selectedBackground', background);
+		const imageUrl = config ? (config.imageUrl || '') : '';
+		const opacity = config && config.opacity !== undefined ? config.opacity : 0;
+		setCookie('selectedBackgroundImage', imageUrl);
+		setCookie('selectedBackgroundOpacity', opacity);
 	}
 
 	function initBackground() {
