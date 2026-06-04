@@ -17,6 +17,7 @@ function hyplus_timezone_display_shortcode() {
     ];
 
     $date_format = 'Y-m-d H:i:s';
+    ob_start();
     ?>
 
     <div class="timezone-times" title="Pacific: Auckland; Europe: Paris; EST: New York; PST: Los Angeles" style="text-align: center;">
@@ -127,5 +128,6 @@ function hyplus_timezone_display_shortcode() {
     }
     </script>
     <?php
-    }
+    return ob_get_clean();
+}
 ?>
