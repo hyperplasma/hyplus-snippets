@@ -1,7 +1,7 @@
 <?php
 /**
- * Non-admin No Copy (currently only check if logged in) php
- * Current status: fluid
+ * Copy Restriction for Frontend: Non-admin No Copy php
+ * Current status: fluid (currently only check if logged in)
  */
 add_action('wp_head', function () {
     // 检查用户是否已经登陆

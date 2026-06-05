@@ -9,10 +9,10 @@
 if (!defined('HYPERPLASMA_SPECIAL_LINK_PATHS')) {
     define('HYPERPLASMA_SPECIAL_LINK_PATHS', array(
         '/wp-admin/',
-        '/wp-admin/edit.php',
-        '/wp-admin/edit.php?post_type=page',
-        '/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647',
-        '/wp-admin/plugins.php',
+        // '/wp-admin/edit.php',
+        // '/wp-admin/edit.php?post_type=page',
+        // '/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647',
+        // '/wp-admin/plugins.php',
         ':27782/39933f96'
     ));
 }

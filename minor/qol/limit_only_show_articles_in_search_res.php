@@ -1,6 +1,6 @@
 <?php
 /**
- * Only show posts/articles in the results page PHP
+ * Only show articles (literal "posts") in the results page PHP
  */
 function ScanWPostFilter($query) {
     if ($query->is_search) {

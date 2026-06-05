@@ -149,3 +149,4 @@ if ( ! function_exists( 'hy_display_menu_shortcode' ) ) {
     // 注册短代码
     add_shortcode( 'display_menu', 'hy_display_menu_shortcode' );
 }
+?>

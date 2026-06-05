@@ -1,6 +1,6 @@
 <?php
 /**
- * My time snippet php
+ * Current time snippet php
  * Description: 实时显示当前时间（中文）
  * Code type: universal (html + js + php)
  * Shortcode: [hyplus_current_time]
