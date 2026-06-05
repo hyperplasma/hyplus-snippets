@@ -11,7 +11,7 @@ function hynav_panel_render() {
 ?>
 <div class="hyplus-nav-container hyplus-unselectable">
 	<div class="hyplus-nav-section">
-		<h3>综合大模型</h3>
+		<div class="hyplus-nav-title">综合大模型</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
 				<a href="https://chat.deepseek.com" class="hyplus-nav-link" target="_blank">DeepSeek</a>
@@ -32,7 +32,7 @@ function hynav_panel_render() {
 	</div>
 
 	<div class="hyplus-nav-section">
-		<h3>控制台</h3>
+		<div class="hyplus-nav-title">控制台</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
 				<a href="https://www.aliyun.com/benefit/select/ecs" class="hyplus-nav-link" target="_blank">阿里云</a>
@@ -54,7 +54,7 @@ function hynav_panel_render() {
 	</div>
 
 	<div class="hyplus-nav-section">
-		<h3>实用工具·极</h3>
+		<div class="hyplus-nav-title">实用工具·极</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
 				<a href="https://www.photopea.com/" class="hyplus-nav-link" target="_blank">Photopea</a>
@@ -76,7 +76,7 @@ function hynav_panel_render() {
 	</div>
 
 	<div class="hyplus-nav-section">
-		<h3>信息检索</h3>
+		<div class="hyplus-nav-title">信息检索</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
 				<a href="https://www.baidu.com" class="hyplus-nav-link" target="_blank">百度</a>
@@ -102,7 +102,7 @@ function hynav_panel_render() {
 	</div>
 
 	<div class="hyplus-nav-section">
-		<h3>其他工具/资源</h3>
+		<div class="hyplus-nav-title">其他工具/资源</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
 				<a href="https://perchance.org/ai-story-generator" class="hyplus-nav-link" target="_blank">Perchance</a>
@@ -123,7 +123,7 @@ function hynav_panel_render() {
 	</div>
 
 	<div class="hyplus-nav-section">
-		<h3>非常规搜索引擎</h3>
+		<div class="hyplus-nav-title">非常规搜索引擎</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
 				<a href="https://xclient.info" class="hyplus-nav-link" target="_blank">Xclient</a>

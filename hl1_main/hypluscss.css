@@ -1753,7 +1753,7 @@ body.sidebar-left .content-area {
 	box-shadow: 0 2px 6px var(--hyplus-shadow-light);
 }
 
-.hyplus-nav-section h3 {
+.hyplus-nav-section .hyplus-nav-title {
 	text-align: center;
 	margin: 0 0 12px 0;
 	color: var(--hyplus-text-heading);

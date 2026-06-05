@@ -12,7 +12,7 @@ function series_nav_panel_render() {
     ?>
 <div class="hyplus-nav-container hyplus-unselectable"  style="grid-template-columns: 1fr;">
 	<div class="hyplus-nav-section">
-		<h3>常规</h3>
+		<div class="hyplus-nav-title">常规</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
 				[hysnip id="20627"][hysnip id="20613"][hysnip id="20633"]
@@ -24,10 +24,10 @@ function series_nav_panel_render() {
 	</div>
 
 	<div class="hyplus-nav-section">
-		<h3>系统开发综合</h3>
+		<div class="hyplus-nav-title">系统开发综合</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
-				[hysnip id="20651"][hysnip id="20650"][hysnip id="20652"][hysnip id="20654"][hysnip id="20661"]
+				[hysnip id="20651"][hysnip id="20652"][hysnip id="20654"][hysnip id="20661"]
 			</div>
 			<div class="hyplus-nav-group">
 				[hysnip id="20851"][hysnip id="20667"][hysnip id="20668"]
@@ -36,7 +36,7 @@ function series_nav_panel_render() {
 	</div>
 	
 	<div class="hyplus-nav-section">
-		<h3>大数据·人工智能</h3>
+		<div class="hyplus-nav-title">大数据·人工智能</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
 				[hysnip id="20672"][hysnip id="20674"]
@@ -48,7 +48,7 @@ function series_nav_panel_render() {
 	</div>
 
 	<div class="hyplus-nav-section">
-		<h3>其他HyPress系列</h3>
+		<div class="hyplus-nav-title">其他HyPress系列</div>
 		<div class="hyplus-nav-links">
 			<div class="hyplus-nav-group">
 				<?php if (current_user_can('administrator')): ?>
