@@ -40,7 +40,7 @@
 		echo do_shortcode('[hynav_panel_render]');
 		?>
 		<div class="hynav-bottom-message hyplus-unselectable">
-			<?php if (current_user_can('administrator')) echo "<a href='/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=11647' target='_blank'>" ?>
+			<?php if (current_user_can('administrator')) echo "<a href='/wp-admin/admin.php?page=fluent-snippets#/snippets/2-hynav-direct-edit.php' target='_blank'>" ?>
 			Explore your Hyplusite!
 		<?php if (current_user_can('administrator')) echo "</a>" ?>
 		</div>
@@ -53,7 +53,7 @@
 		echo do_shortcode('[series_nav_panel_render]');
 		?>
 		<div class="hynav-bottom-message hyplus-unselectable">
-			<?php if (current_user_can('administrator')) echo "<a href='/wp-admin/admin.php?page=wpcode-snippet-manager&snippet_id=21041' target='_blank'>" ?>
+			<?php if (current_user_can('administrator')) echo "<a href='/wp-admin/admin.php?page=fluent-snippets#/snippets/5-series-nav-direct-edit.php' target='_blank'>" ?>
 				Enjoy series content!
 			<?php if (current_user_can('administrator')) echo "</a>" ?>
 		</div>
@@ -221,17 +221,17 @@
 			?>
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<label class="language-label">修改<a href="https://www.hyperplasma.top/wp-admin/admin.php?page=wpcode" target="_blank">组件</a>:</label>
+						<label class="language-label">修改<a href="/wp-admin/admin.php?page=fluent-snippets" target="_blank">组件</a>:</label>
 						<label class="language-label">
 							<button class="font-size-btn"
-								onclick="window.open('https://www.hyperplasma.top/wp-admin/nav-menus.php', '_blank');"
+								onclick="window.open('/wp-admin/nav-menus.php', '_blank');"
 							>
 								菜单
 							</button>
 						</label>
 						<label class="language-label">
 							<button class="font-size-btn"
-								onclick="window.open('https://www.hyperplasma.top/wp-admin/customize.php?return=%2Fwp-admin%2F', '_blank');"
+								onclick="window.open('/wp-admin/customize.php?return=%2Fwp-admin%2F', '_blank');"
 							>
 								CSS
 							</button>
@@ -241,14 +241,14 @@
 						<label class="language-label">便捷服务:</label>
 						<label class="language-label">
 							<button class="font-size-btn"
-								onclick="window.open('https://www.hyperplasma.top/wp-admin/admin.php?page=ultimatemember', '_blank');"
+								onclick="window.open('/wp-admin/admin.php?page=ultimatemember', '_blank');"
 							>
 								会员
 							</button>
 						</label>
 						<label class="language-label">
 							<button class="font-size-btn"
-								onclick="window.open('https://www.hyperplasma.top/wp-admin/edit-comments.php', '_blank');"
+								onclick="window.open('/wp-admin/edit-comments.php', '_blank');"
 							>
 								评论
 							</button>
