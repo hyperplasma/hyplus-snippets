@@ -1932,6 +1932,11 @@ body.sidebar-left .content-area {
 	text-align: center;
 }
 
+.hyimg-button {
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
 /* HySnip */
 /* .hysnip-button { */
 	/* 继承hyimg-button和hyplus-nav-link的样式 */
