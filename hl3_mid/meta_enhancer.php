@@ -173,7 +173,8 @@ function hyplus_render_series_buttons_container() {
             'label' => $button_label,
             'title' => $series_post->post_title,
             'async' => $async,
-            'edit_link' => $edit_link
+            'edit_link' => $edit_link,
+            'nonce' => wp_create_nonce('hysnip_popup_' . $series_post->ID)
         );
     }
     
@@ -196,6 +197,7 @@ function hyplus_render_series_buttons_container() {
                 link.setAttribute('data-post-id', btn.post_id);
                 link.setAttribute('data-popup-title', btn.title);
                 link.setAttribute('data-async', btn.async);
+                link.setAttribute('data-nonce', btn.nonce);
                 if (btn.edit_link) {
                     link.setAttribute('data-edit-link', btn.edit_link);
                 }
