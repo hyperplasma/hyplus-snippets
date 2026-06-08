@@ -96,6 +96,9 @@ function hysnip_shortcode_handler($atts) {
         }
     }
 
+    $nonce = wp_create_nonce('hysnip_popup_' . $post_id);
+    $nonce_attr = ' data-nonce="' . esc_attr($nonce) . '"';
+
     // 根据mode参数设置class
     $classes = array();
     if ($mode === 'button') {
@@ -124,9 +127,10 @@ function hysnip_shortcode_handler($atts) {
     // 将弹出框标题作为 data 属性传递给 JavaScript
     $title_attr = $popup_title ? ' data-popup-title="' . $popup_title . '"' : '';
     $post_id_attr = ' data-post-id="' . esc_attr($post_id) . '"';
+    $nonce_attr = ' data-nonce="' . esc_attr($nonce) . '"';
 
     // 构建HTML（单行输出，避免换行符被转换为<br>标签）
-    $html = '<a href="' . $safe_href . '"' . $class_attr . $post_id_attr . $async_attr . $title_attr . $edit_link_attr . $target_attr . '>' . $btn_text . '</a>';
+    $html = '<a href="' . $safe_href . '"' . $class_attr . $post_id_attr . $nonce_attr . $async_attr . $title_attr . $edit_link_attr . $target_attr . '>' . $btn_text . '</a>';
 
     return $html;
 }
@@ -178,6 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let customTitle = '';
         let editLink = '';
         let postId = '';
+        let nonce = '';
 
         // 区分是a标签还是li标签
         if (triggerElement.tagName === 'A') {
@@ -185,6 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
             permalink = triggerElement.href;
             customTitle = triggerElement.getAttribute('data-popup-title');
             editLink = triggerElement.getAttribute('data-edit-link') || '';
+            nonce = triggerElement.getAttribute('data-nonce') || '';
         } else if (triggerElement.tagName === 'LI') {
             const innerLink = triggerElement.querySelector('a[data-post-id]');
             if (!innerLink) return;
@@ -193,20 +199,21 @@ document.addEventListener('DOMContentLoaded', function() {
             permalink = innerLink.href;
             customTitle = triggerElement.getAttribute('data-popup-title') || innerLink.getAttribute('data-popup-title');
             editLink = triggerElement.getAttribute('data-edit-link') || innerLink.getAttribute('data-edit-link') || '';
+            nonce = innerLink.getAttribute('data-nonce') || '';
         } else {
             return;
         }
 
-        if (!postId) return;
+        if (!postId || !nonce) return;
 
         // 阻止默认的链接跳转行为
         event.preventDefault();
 
         // 打开弹出框
-        openSnippetPopup(postId, permalink, customTitle || '', editLink);
+        openSnippetPopup(postId, permalink, customTitle || '', editLink, nonce);
     });
 
-    function openSnippetPopup(postId, permalink, customTitle, editLink) {
+    function openSnippetPopup(postId, permalink, customTitle, editLink, nonce) {
         const popup = getSnippetPopup();
         const headerHref = editLink || permalink;
 
@@ -248,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var data = new FormData();
         data.append('action', 'hysnip_get_content');
         data.append('post_id', postId);
-        data.append('nonce', '<?php echo wp_create_nonce('hysnip_popup'); ?>');
+        data.append('nonce', nonce);
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
@@ -346,8 +353,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const asyncLinks = document.querySelectorAll('.hysnip-trigger[data-async="1"]');
         asyncLinks.forEach(link => {
             const postId = link.getAttribute('data-post-id');
-            if (postId && snippetCache[postId] === undefined && !loadingPromises[postId]) {
-                preloadQueue.push(postId);
+            const nonce = link.getAttribute('data-nonce');
+            if (postId && nonce && snippetCache[postId] === undefined && !loadingPromises[postId]) {
+                preloadQueue.push({ postId, nonce });
             }
         });
         processPreloadQueue();
@@ -359,13 +367,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        const postId = preloadQueue.shift();
+        const item = preloadQueue.shift();
+        const postId = item.postId;
+        const nonce = item.nonce;
         activePreloads++;
         
         var data = new FormData();
         data.append('action', 'hysnip_get_content');
         data.append('post_id', postId);
-        data.append('nonce', '<?php echo wp_create_nonce('hysnip_popup'); ?>');
+        data.append('nonce', nonce);
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
@@ -419,13 +429,17 @@ document.addEventListener('DOMContentLoaded', function() {
  * AJAX 处理器：获取博文或页面内容
  */
 function hysnip_get_content_ajax() {
-    // 验证nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'hysnip_popup')) {
+    // 获取并验证 post_id
+    $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
+    if (!$post_id) {
+        wp_send_json_error('Invalid post_id');
+    }
+
+    // 验证nonce，必须与指定 post_id 绑定
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'hysnip_popup_' . $post_id)) {
         wp_send_json_error('Security check failed');
     }
 
-    // 获取并验证 post_id
-    $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
     if (!$post_id) {
         wp_send_json_error('Invalid post_id');
     }
