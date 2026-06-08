@@ -46,3 +46,8 @@ pnpm-lock.yaml
 .cache/
 
 test/
+
+# 压缩文件
+*.gz
+*.tar.gz
+*.zip
