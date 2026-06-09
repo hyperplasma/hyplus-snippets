@@ -868,9 +868,9 @@ h2, h3, h4, h5, h6 {
 }
 
 /* .entry-header h1, .page-header h1,  */
-.entry-content :is(h1,h2,h3,h4,h5,h6),
+.entry-content :is(h1,h2,h3,h4,h5),
 .taxonomy-description > h3,
-.hysnip-popup-content :is(h1,h2,h3,h4,h5,h6) { 
+.hysnip-popup-content :is(h1,h2,h3,h4,h5) { 
 	/* margin-top: 1.2em; */
 	/* margin-left: -8px;
 	margin-right: -8px; */
@@ -918,12 +918,18 @@ h2, h3, h4, h5, h6 {
 	margin-right: -4px;
 }
 
-.entry-content :is(h5,h6),
-.hysnip-popup-content :is(h5,h6) { 
+.entry-content :is(h5),
+.hysnip-popup-content :is(h5) { 
 	border-left: 2px solid var(--hyplus-border-color-light);
 	border-right: 2px solid var(--hyplus-border-color-light);
 	margin-left: -3px;
 	margin-right: -3px;
+}
+
+.entry-content :is(h6),
+.hysnip-popup-content :is(h6) { 
+	background-color: var(--hyplus-bg-container);
+	border-radius: 12px;
 }
 
 /* .entry-content h1, */

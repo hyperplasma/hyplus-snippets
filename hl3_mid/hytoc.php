@@ -12,8 +12,8 @@ function hyplus_auto_insert_toc_before_first_toc_heading($content) {
     if (!is_single() && !is_page()) return $content;
     // if (strpos($content, '[toc') !== false) return $content; // 已有短代码则不自动插入
 
-    // 捕获 .entry-content 内的第一个标题
-    if (preg_match('/(<h[1-6][^>]*>.*?<\/h[1-6]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
+    // 捕获 .entry-content 内的第一个 h1-h5 标题
+    if (preg_match('/(<h[1-5][^>]*>.*?<\/h[1-5]>)/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
         $pos = $matches[0][1];
         $toc = '[toc]';
         // 在第一个标题前插入
@@ -224,6 +224,8 @@ function hyplus_output_toc_scripts() {
         // 轻量级增量添加：仅为新插入的标题生成anchor和toc项，无需重新扫描整篇文章
         window.hyplus_add_toc_header_incremental = function(headerElement) {
             if (!headerElement) return;
+            var tag = headerElement.tagName.toUpperCase();
+            if (tag !== 'H1' && tag !== 'H2' && tag !== 'H3' && tag !== 'H4' && tag !== 'H5') return;
             
             function getHeaderTextWithoutSup(header) {
                 var clone = header.cloneNode(true);
@@ -243,7 +245,7 @@ function hyplus_output_toc_scripts() {
                 });
             }
             // 从DOM中收集所有已有的id（仅必要时）
-            document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').forEach(function(el) {
+            document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id]').forEach(function(el) {
                 if (el.id) anchorSet.add(el.id);
             });
             
@@ -492,7 +494,7 @@ function hyplus_output_toc_scripts() {
             var entryContent = document.querySelector('.entry-content');
             if (!entryContent) return; // 如果没有 .entry-content，不处理
             
-            var headers = entryContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            var headers = entryContent.querySelectorAll('h1, h2, h3, h4, h5');
             var anchorSet = new Set();
 
             function getHeaderTextWithoutSup(header) {
@@ -722,7 +724,7 @@ function hyplus_output_toc_scripts() {
             var entryContent = document.querySelector('.entry-content');
             if (!entryContent) return;
             
-            var headers = entryContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            var headers = entryContent.querySelectorAll('h1, h2, h3, h4, h5');
             
             headers.forEach(function(header) {
                 header.addEventListener('click', function(e) {
