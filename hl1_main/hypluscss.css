@@ -505,6 +505,7 @@ body {
 
 /* Mathjax / KaTeX */
 pre {
+	border-radius: 14px;
 	margin-bottom: 0.05em;
 }
 
