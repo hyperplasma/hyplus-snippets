@@ -29,6 +29,7 @@ if ( is_category() || is_search()) {
             <div class="hylightbox-help-tooltip">
                 <p class="hylb-help-title">快捷键指南</p>
                 <p>切换图片：, / . (或 ← / →)</p>
+                <p>移动焦点：W / A / S / D</p>
                 <p>缩放：- / = (或使用滚轮)</p>
                 <p>旋转：R / T</p>
                 <p>还原位置：0</p>
@@ -280,6 +281,9 @@ if ( is_category() || is_search()) {
             initialPinchDistance: 0,
             initialScale: 1,
         };
+        const pressedKeys = new Set();
+        let lastFrameTime = 0;
+        const MOVE_SPEED = 0.5;
 
         function checkCookieUI() {
             const getCookie = (name) => {
@@ -479,23 +483,66 @@ if ( is_category() || is_search()) {
             applyTransform();
         };
 
+        function moveLoop(timestamp) {
+            if (!lastFrameTime) {
+                lastFrameTime = timestamp;
+            }
+            const delta = Math.min(32, timestamp - lastFrameTime);
+            lastFrameTime = timestamp;
+            const step = Math.max(1, Math.round(delta * MOVE_SPEED));
+
+            if (pressedKeys.has("w")) state.transform.yOffset += step;
+            if (pressedKeys.has("s")) state.transform.yOffset -= step;
+            if (pressedKeys.has("a")) state.transform.xOffset += step;
+            if (pressedKeys.has("d")) state.transform.xOffset -= step;
+
+            if (pressedKeys.size > 0) {
+                applyTransform();
+            }
+
+            requestAnimationFrame(moveLoop);
+        }
+        requestAnimationFrame(moveLoop);
+
         document.addEventListener("keydown", (e) => {
             if (!wrapper.classList.contains("active")) return;
             const k = e.key;
-            if (k === "," || k === "ArrowLeft") navigate(-1);
-            if (k === "." || k === "ArrowRight") navigate(1);
-            if (k === "=" || k === "+") handleZoom("in");
-            if (k === "-" || k === "_") handleZoom("out");
-            if (k.toLowerCase() === "r") {
+            const lowerK = k.toLowerCase();
+
+            if (["w", "a", "s", "d"].includes(lowerK)) {
+                e.preventDefault();
+                pressedKeys.add(lowerK);
+            }
+
+            if (lowerK === "," || k === "ArrowLeft") navigate(-1);
+            if (lowerK === "." || k === "ArrowRight") navigate(1);
+            if (lowerK === "=" || lowerK === "+") {
+                e.preventDefault();
+                handleZoom("in");
+            }
+            if (lowerK === "-" || lowerK === "_") {
+                e.preventDefault();
+                handleZoom("out");
+            }
+            if (lowerK === "r") {
+                e.preventDefault();
                 state.transform.rotation += 45;
                 applyTransform();
             }
-            if (k.toLowerCase() === "t") {
+            if (lowerK === "t") {
+                e.preventDefault();
                 state.transform.rotation -= 45;
                 applyTransform();
             }
             if (k === "0") resetPos();
             if (k === "Escape") closeLightbox();
+        });
+
+        document.addEventListener("keyup", (e) => {
+            const lowerK = e.key.toLowerCase();
+            if (["w", "a", "s", "d"].includes(lowerK)) {
+                pressedKeys.delete(lowerK);
+            }
         });
 
         lightboxImg.onmousedown = startDrag;
