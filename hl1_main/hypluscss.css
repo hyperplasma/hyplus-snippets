@@ -496,7 +496,8 @@ body {
 }
 
 /* Inline Code */
-:not(pre) > code {
+/* :not(pre) >  */
+code:not(.katex-container, .katex-inline) {
 	background-color: var(--hyplus-bg-code);
 	padding: 2px 4px;
 	border-radius: 4px;
