@@ -319,9 +319,15 @@ a, .um .um-item-meta a, .um-item-link a {
 	-webkit-tap-highlight-color: transparent; */
 }
 
+/* mode=none hysnip 的当前页面高亮 */
+.hysnip-mode-none.hysnip-current-page {
+	color: var(--hyplus-primary-link-active);
+}
+
 a:hover, a:focus, a:active, 
 .um-item-link a:hover, .um-item-link a:focus, .um-item-link a:active,
-.um .um-item-meta a:hover, .um .um-item-meta a:focus, .um .um-item-meta a:active {
+.um .um-item-meta a:hover, .um .um-item-meta a:focus, .um .um-item-meta a:active,
+.hysnip-mode-none.hysnip-current-page:hover, .hysnip-mode-none.hysnip-current-page:focus, .hysnip-mode-none.hysnip-current-page:active {
 	text-decoration: none !important;
 	color: var(--hyplus-link-hover-color);
 }

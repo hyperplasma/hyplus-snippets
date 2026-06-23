@@ -106,8 +106,10 @@ function hysnip_shortcode_handler($atts) {
         $classes[] = 'hyplus-nav-link';
     } elseif ($mode === 'link') {
         $classes[] = 'hysnip-trigger';
+    } else {
+        // mode='none' 模式添加标识class，用于当前页面高亮检测
+        $classes[] = 'hysnip-mode-none';
     }
-    // 'none' 模式不添加任何class
     $class_attr = !empty($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
     
     // 确定是否在新标签页打开
@@ -311,6 +313,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         contentDiv.innerHTML = html;
         
+        // 对弹出框内容中的 mode=none hysnip 应用当前页面高亮
+        highlightCurrentPageHysnips(contentDiv);
+        
         // 为关闭按钮添加事件处理（使用事件委托避免重复绑定）
         const closeBtn = contentDiv.querySelector('.hysnip-close-btn');
         if (closeBtn) {
@@ -347,6 +352,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 立即初始化弹出框事件（移除不必要的延迟）
     setupPopupEvents();
+
+    // 检查并应用 mode=none hysnip 的当前页面高亮
+    function highlightCurrentPageHysnips(container = document) {
+        const currentPostId = window.hysnipCurrentPostId;
+        if (!currentPostId) return;
+        
+        // 只查询 mode=none 的 hysnip（带有 hysnip-mode-none class）
+        const modeNoneLinks = container.querySelectorAll('a.hysnip-mode-none[data-post-id]');
+        modeNoneLinks.forEach(link => {
+            const linkPostId = parseInt(link.getAttribute('data-post-id'), 10);
+            if (linkPostId === currentPostId) {
+                link.classList.add('hysnip-current-page');
+            }
+        });
+    }
+
+    // 在初始化时应用一次
+    highlightCurrentPageHysnips();
 
     // 预加载异步内容
     function preloadAsyncContent() {
@@ -466,6 +489,9 @@ add_action('wp_ajax_nopriv_hysnip_get_content', 'hysnip_get_content_ajax');
  * 在页脚注入 HySnip JavaScript（在全部页面中注入，以支持导航菜单中的hysnip-trigger类）
  */
 function hysnip_inject_script_to_footer() {
+    // 获取当前页面的postID，用于JavaScript进行高亮检测
+    $current_post_id = (int)get_the_ID();
+    echo '<script>window.hysnipCurrentPostId = ' . $current_post_id . ';</script>';
     echo hysnip_get_script();
 }
 add_action('wp_footer', 'hysnip_inject_script_to_footer');
