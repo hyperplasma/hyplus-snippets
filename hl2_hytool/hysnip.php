@@ -315,6 +315,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 对弹出框内容中的 mode=none hysnip 应用当前页面高亮
         highlightCurrentPageHysnips(contentDiv);
+        requestAnimationFrame(function() {
+            scrollHighlightedHysnipIntoView(contentDiv);
+        });
         
         // 为关闭按钮添加事件处理（使用事件委托避免重复绑定）
         const closeBtn = contentDiv.querySelector('.hysnip-close-btn');
@@ -370,6 +373,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 在初始化时应用一次
     highlightCurrentPageHysnips();
+
+    function scrollHighlightedHysnipIntoView(container) {
+        const target = container.querySelector('a.hysnip-mode-none.hysnip-current-page');
+        if (!target) return;
+
+        const offsetTop = Math.max(0, target.offsetTop - (container.clientHeight / 2) + (target.offsetHeight / 2));
+        if (typeof container.scrollTo === 'function') {
+            container.scrollTo({ top: offsetTop, behavior: 'smooth' });
+        } else {
+            container.scrollTop = offsetTop;
+        }
+    }
 
     // 预加载异步内容
     function preloadAsyncContent() {
