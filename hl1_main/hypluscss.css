@@ -1990,6 +1990,8 @@ body.sidebar-left .content-area {
 
 .hysnip-popup-content {
 	position: relative;
+	display: flex;
+	flex-direction: column;
 	width: 100%;
 	max-width: 650px;
 	max-height: 75vh;
@@ -2005,13 +2007,11 @@ body.sidebar-left .content-area {
 	word-break: break-word;
 	pointer-events: auto;
 	overflow: hidden;
-	overflow-y: auto;
-	overscroll-behavior: none;
 	will-change: transform;
 }
 
 .hysnip-popup-header {
-	position: relative;
+	flex-shrink: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -2020,6 +2020,7 @@ body.sidebar-left .content-area {
 	margin: 0;
 	padding: 10px 22px 0.5em 22px;
 	padding-right: 42px;
+	background: var(--hyplus-bg-container-solid);
 }
 
 .hysnip-popup-header a {
@@ -2052,8 +2053,13 @@ body.sidebar-left .content-area {
 }
 
 .hysnip-popup-body {
+	flex: 1 1 auto;
+	min-height: 0;
 	padding: 0 22px 0.5em 22px;
 	font-size: 0.9em;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	-webkit-overflow-scrolling: touch;
 }
 
 /* 移动端适配 */

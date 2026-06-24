@@ -243,14 +243,29 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const contentDiv = popup.querySelector('.hysnip-popup-content');
             const headerTitle = customTitle || '加载中...';
-            contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
+            contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(headerTitle) + '</a><button class="hysnip-close-btn hyplus-scale hyplus-unselectable" aria-label="关闭" title="关闭（ESC）"></button></div><div class="hysnip-popup-body"><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div></div>';
+            const closeBtn = contentDiv.querySelector('.hysnip-close-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeSnippetPopup();
+                });
+            }
             popup.classList.add('active');
             return;
         }
 
         const contentDiv = popup.querySelector('.hysnip-popup-content');
         const headerTitle = customTitle || '加载中...';
-        contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(headerTitle) + '</a></div><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div>';
+        contentDiv.innerHTML = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(headerTitle) + '</a><button class="hysnip-close-btn hyplus-scale hyplus-unselectable" aria-label="关闭" title="关闭（ESC）"></button></div><div class="hysnip-popup-body"><div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载中...</div></div>';
+        
+        const closeBtn = contentDiv.querySelector('.hysnip-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeSnippetPopup();
+            });
+        }
         
         popup.classList.add('active');
 
@@ -303,15 +318,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const popup = getSnippetPopup();
         const contentDiv = popup.querySelector('.hysnip-popup-content');
         
-        let html = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(title) + '</a><button class="hysnip-close-btn hyplus-scale hyplus-unselectable" aria-label="关闭" title="关闭（ESC）"></button></div>';
+        let headerHtml = '<div class="hysnip-popup-header"><a href="' + esc(headerHref) + '" target="_blank">' + esc(title) + '</a><button class="hysnip-close-btn hyplus-scale hyplus-unselectable" aria-label="关闭" title="关闭（ESC）"></button></div>';
+        let bodyHtml = '';
         
         if (content === null) {
-            html += '<div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载失败</div>';
+            bodyHtml = '<div style="text-align: center; padding: 20px; color: #999; font-style: italic;">加载失败</div>';
         } else {
-            html += '<div class="hysnip-popup-body">' + content + '</div>';
+            bodyHtml = content;
         }
         
-        contentDiv.innerHTML = html;
+        contentDiv.innerHTML = headerHtml + '<div class="hysnip-popup-body">' + bodyHtml + '</div>';
         
         // 对弹出框内容中的 mode=none hysnip 应用当前页面高亮
         highlightCurrentPageHysnips(contentDiv);
@@ -375,14 +391,21 @@ document.addEventListener('DOMContentLoaded', function() {
     highlightCurrentPageHysnips();
 
     function scrollHighlightedHysnipIntoView(container) {
-        const target = container.querySelector('a.hysnip-mode-none.hysnip-current-page');
+        const scrollableBody = container.querySelector('.hysnip-popup-body');
+        if (!scrollableBody) return;
+
+        const target = scrollableBody.querySelector('a.hysnip-mode-none.hysnip-current-page');
         if (!target) return;
 
-        const offsetTop = Math.max(0, target.offsetTop - (container.clientHeight / 2) + (target.offsetHeight / 2));
-        if (typeof container.scrollTo === 'function') {
-            container.scrollTo({ top: offsetTop, behavior: 'smooth' });
+        const targetRect = target.getBoundingClientRect();
+        const bodyRect = scrollableBody.getBoundingClientRect();
+        const offset = targetRect.top - bodyRect.top - (scrollableBody.clientHeight / 2) + (targetRect.height / 2);
+        const targetScrollTop = Math.max(0, scrollableBody.scrollTop + offset);
+
+        if (typeof scrollableBody.scrollTo === 'function') {
+            scrollableBody.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
         } else {
-            container.scrollTop = offsetTop;
+            scrollableBody.scrollTop = targetScrollTop;
         }
     }
 
