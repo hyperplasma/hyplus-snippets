@@ -497,6 +497,10 @@ body {
 	border: none !important;
 }
 
+html {
+	overscroll-behavior-y: none;
+}
+
 .entry-content:not(:first-child) {
 	margin-top: 1.5em;
 }
@@ -1013,8 +1017,11 @@ table:not(.hyplus-excluded-table) {
 	max-width: 100%;
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-x: none;
 	box-sizing: border-box;
 	border: none !important;
+	/* border: 1px solid var(--hyplus-border-color-neutral); */
+	box-shadow: 0 2px 6px var(--hyplus-shadow-light);
 }
 
 /* 手动为表格添加所需的边框 */
@@ -1503,6 +1510,7 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 .nav-content {
 	height: calc(100% - 37px);
 	overflow-y: auto;
+	overscroll-behavior-y: none;
 	padding: 0 15px;
 	max-width: 1200px;
 	margin: 0 auto;
@@ -1725,6 +1733,7 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 
 .sidebar {
 	order: 2;
+	overscroll-behavior-y: none;
 }
 .content-area {
 	order: 1;
@@ -2058,7 +2067,7 @@ body.sidebar-left .content-area {
 	padding: 0 22px 0.5em 22px;
 	font-size: 0.9em;
 	overflow-y: auto;
-	overscroll-behavior: contain;
+	overscroll-behavior-y: none;
 	-webkit-overflow-scrolling: touch;
 }
 
