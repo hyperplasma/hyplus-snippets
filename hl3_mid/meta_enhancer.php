@@ -200,7 +200,7 @@ function hyplus_render_series_buttons_container() {
                 link.target = '_blank';
                 link.className = 'series-button hysnip-trigger';
                 link.textContent = btn.label;
-                link.title = btn.title;
+                link.title = btn.shortcut_target ? (btn.title + '（⌥A）') : btn.title;
                 link.setAttribute('data-post-id', btn.post_id);
                 link.setAttribute('data-popup-title', btn.title);
                 link.setAttribute('data-async', btn.async);
