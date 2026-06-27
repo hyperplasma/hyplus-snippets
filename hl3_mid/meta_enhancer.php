@@ -155,6 +155,7 @@ function hyplus_render_series_buttons_container() {
     
     // 构建按钮数据数组，使用 wp_json_encode() 统一转义
     $buttons_data = array();
+    $shortcut_target_post_id = null;
     foreach ($series_posts as $index => $series_post) {
         // 获取对应位置的标签
         $button_label = isset($labels[$index]) && !empty($labels[$index]) 
@@ -166,6 +167,10 @@ function hyplus_render_series_buttons_container() {
         $edit_link = current_user_can('manage_options')
             ? html_entity_decode(get_edit_post_link($series_post->ID), ENT_QUOTES, 'UTF-8')
             : '';
+
+        if ($shortcut_target_post_id === null && is_numeric($button_label)) {
+            $shortcut_target_post_id = $series_post->ID;
+        }
         
         $buttons_data[] = array(
             'href' => get_permalink($series_post->ID),
@@ -174,7 +179,8 @@ function hyplus_render_series_buttons_container() {
             'title' => $series_post->post_title,
             'async' => $async,
             'edit_link' => $edit_link,
-            'nonce' => wp_create_nonce('hysnip_popup_' . $series_post->ID)
+            'nonce' => wp_create_nonce('hysnip_popup_' . $series_post->ID),
+            'shortcut_target' => ($shortcut_target_post_id !== null && $series_post->ID === $shortcut_target_post_id) ? 1 : 0
         );
     }
     
@@ -186,6 +192,7 @@ function hyplus_render_series_buttons_container() {
             if (!container) return;
             
             const buttons = <?php echo wp_json_encode($buttons_data); ?>;
+            let shortcutTargetButton = null;
             
             buttons.forEach(btn => {
                 const link = document.createElement('a');
@@ -198,11 +205,49 @@ function hyplus_render_series_buttons_container() {
                 link.setAttribute('data-popup-title', btn.title);
                 link.setAttribute('data-async', btn.async);
                 link.setAttribute('data-nonce', btn.nonce);
+                link.setAttribute('data-shortcut-target', btn.shortcut_target ? '1' : '0');
                 if (btn.edit_link) {
                     link.setAttribute('data-edit-link', btn.edit_link);
                 }
+                if (btn.shortcut_target) {
+                    shortcutTargetButton = link;
+                }
                 container.appendChild(link);
             });
+
+            if (shortcutTargetButton) {
+                document.addEventListener('keydown', function(event) {
+                    const isShortcutKey = event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey &&
+                        (event.key === 'a' || event.key === 'A' || event.key == 'å');
+
+                    if (!isShortcutKey) {
+                        return;
+                    }
+
+                    const activeElement = document.activeElement;
+                    // if (activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeElement.tagName)) {
+                    //     return;
+                    // }
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const popup = document.getElementById('hysnip-popup-wrapper');
+                    const targetPostId = shortcutTargetButton.getAttribute('data-post-id');
+                    const activePostId = popup ? popup.getAttribute('data-active-post-id') : null;
+                    const isTargetPopupOpen = popup && popup.classList.contains('active') && activePostId === targetPostId;
+
+                    if (isTargetPopupOpen) {
+                        const closeBtn = popup.querySelector('.hysnip-close-btn');
+                        if (closeBtn) {
+                            closeBtn.click();
+                        }
+                        return;
+                    }
+
+                    shortcutTargetButton.click();
+                });
+            }
         })();
     </script>
     <?php

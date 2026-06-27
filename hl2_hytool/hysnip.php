@@ -221,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 记录当前打开的 postId
         currentPostId = postId;
+        popup.setAttribute('data-active-post-id', postId);
 
         // 检查缓存
         if (snippetCache[postId] !== undefined) {
@@ -348,6 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeSnippetPopup() {
         const popup = getSnippetPopup();
         popup.classList.remove('active');
+        popup.removeAttribute('data-active-post-id');
     }
 
     // 获取弹出框实例以便绑定事件
