@@ -1633,7 +1633,8 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 .shortcut-item {
 	padding: 8px;
 	/* border-bottom: 1px solid #b6dded;	*/
-	border: 1px solid var(--hyplus-border-color-light);
+	border: 0.5px solid var(--hyplus-border-color-light3);
+	background-color: var(--hyplus-bg-container);
 	display: flex;
 	justify-content: space-between;
 }

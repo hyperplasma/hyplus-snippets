@@ -282,16 +282,16 @@
 				</div>
 				<div class="shortcuts-column">
 					<div class="shortcut-item">
+						显示/隐藏博文主系列
+						<span class="shortcut-key">⌥A</span>
+					</div>
+					<div class="shortcut-item">
 						编辑页面（仅限管理员）
 						<span class="shortcut-key">⌥D</span>
 					</div>
 					<div class="shortcut-item">
-						减小字体大小
-						<span class="shortcut-key">⌥-</span>
-					</div>
-					<div class="shortcut-item">
-						增大字体大小
-						<span class="shortcut-key">⌥=</span>
+						减小/增大字体
+						<span class="shortcut-key">⌥-/=</span>
 					</div>
 					<div class="shortcut-item">
 						还原字体大小
@@ -311,7 +311,7 @@
 			</div>
 		</div>
 		<div class="hynav-bottom-message hyplus-unselectable">
-			Ultimate Buttons v1.7 by Akira37
+			Ultimate Buttons v1.7.1 by Akira37
 		</div>
 	</div>
 </div>
