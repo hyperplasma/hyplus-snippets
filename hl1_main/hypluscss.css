@@ -17,6 +17,7 @@
 	--hyplus-border-color-light: #9ac8da;
 	--hyplus-border-color-neutral: #ddd;
 	--hyplus-border-color-light2: #72b8d3;
+	--hyplus-border-color-light3: #bfd7e1;
 	
 	/* 背景颜色 */
 	--hyplus-bg-overall: rgba(187,255,255,0.05);
@@ -94,6 +95,7 @@ body.hyplus-atmosphere-red :root {
 	--hyplus-border-color-light: #f5c0c0;
 	--hyplus-border-color-neutral: #ddd;
 	--hyplus-border-color-light2: #ffb3b3;
+	--hyplus-border-color-light3: #e2cacb;
 	
 	/* 背景颜色 - 红色调 */
 	--hyplus-bg-overall: rgba(255,200,200,0.05);
@@ -171,6 +173,7 @@ body.hyplus-atmosphere-purple :root {
 	--hyplus-border-color-light: #d1a4d4;
 	--hyplus-border-color-neutral: #ddd;
 	--hyplus-border-color-light2: #c786d3;
+	--hyplus-border-color-light3: #decfe4;
 	
 	/* 背景颜色 - 紫色调 */
 	--hyplus-bg-overall: rgba(225, 190, 231, 0.05);
@@ -248,7 +251,8 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-border-color-light: #80cbc4;
 	--hyplus-border-color-neutral: #ddd;
 	--hyplus-border-color-light2: #5dcbc0;
-	
+	--hyplus-border-color-light3: #bfd7e1;
+
 	/* 背景颜色 - 绿色调 */
 	--hyplus-bg-overall: rgba(128, 203, 196, 0.05);
 	--hyplus-bg-container: #f5fbfb8c;
@@ -1020,23 +1024,25 @@ table:not(.hyplus-excluded-table) {
 	overscroll-behavior-x: none;
 	box-sizing: border-box;
 	border: none !important;
-	/* border: 1px solid var(--hyplus-border-color-neutral); */
-	box-shadow: 0 2px 6px var(--hyplus-shadow-light);
+	/* border: 0.5px solid var(--hyplus-border-color-light3); */
 }
 
 /* 手动为表格添加所需的边框 */
 table:not(.hyplus-excluded-table) td,
 table:not(.hyplus-excluded-table) th {
-	border: 1px solid var(--hyplus-border-color-neutral);
+	border: 0.5px solid var(--hyplus-border-color-light3);
 	border-collapse: collapse;
 	background-color: var(--hyplus-bg-container);
 }
 
-/* 可选：如果需要调整边框样式 */
+/* 可选：如果需要调整边框样式
 table:not(.hyplus-excluded-table) tr:first-child th {
-	border-top: 1px solid var(--hyplus-border-color-neutral);
+	border-top: 1px solid var(--hyplus-border-color-light3);
 }
 
+table:not(.hyplus-excluded-table) tbody:last-child td {
+	border-bottom: 1px solid var(--hyplus-border-color-light3);
+} */
 
 /**
  * HY-from Counters of Pages and Apps PHP
