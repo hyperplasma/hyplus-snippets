@@ -10,26 +10,44 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-function hyplus_user_counter_start_session() {
-    if ( session_status() === PHP_SESSION_NONE ) {
-        @session_start();
+function hyplus_user_counter_get_client_ip() {
+    $ip = '';
+    $server_keys = array( 'HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR' );
+
+    foreach ( $server_keys as $key ) {
+        if ( empty( $_SERVER[ $key ] ) ) {
+            continue;
+        }
+
+        $value = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
+        if ( $value !== '' ) {
+            $ip = trim( current( preg_split( '/,/', $value ) ) );
+            break;
+        }
     }
+
+    if ( $ip === '' ) {
+        return '';
+    }
+
+    return filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '';
 }
-add_action( 'init', 'hyplus_user_counter_start_session', 1 );
 
-function hyplus_user_counter_track_visit() {
-    if ( is_admin() ) {
-        return;
+function hyplus_user_counter_get_user_agent() {
+    if ( empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
+        return 'unknown';
     }
 
-    hyplus_user_counter_start_session();
+    return substr( sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ), 0, 512 );
+}
 
-    $date = date( 'Ymd' );
-    $session_key = 'hyplus_user_counted_' . $date;
+function hyplus_user_counter_get_fingerprint( $ip, $date, $user_agent ) {
+    $salt = defined( 'AUTH_KEY' ) && AUTH_KEY ? AUTH_KEY : 'hyplus-user-counter';
+    return hash( 'sha256', $ip . '|' . $date . '|' . $user_agent . '|' . $salt );
+}
 
-    if ( ! empty( $_SESSION[ $session_key ] ) ) {
-        return;
-    }
+function hyplus_user_counter_get_sitecount_data( $date = null ) {
+    $date = $date ? $date : date( 'Ymd' );
 
     $sitecount = wp_cache_get( 'site_count', 'hyplus_user_counter' );
     if ( ! is_array( $sitecount ) || empty( $sitecount['date'] ) || $sitecount['date'] !== $date ) {
@@ -38,43 +56,68 @@ function hyplus_user_counter_track_visit() {
 
     if ( ! is_array( $sitecount ) ) {
         $sitecount = array(
-            'all'   => 0,
-            'today' => 0,
-            'date'  => $date,
+            'all'       => 0,
+            'today'     => 0,
+            'date'      => $date,
+            'log_cache' => array(),
         );
     }
+
+    $sitecount['all']   = isset( $sitecount['all'] ) ? absint( $sitecount['all'] ) : 0;
+    $sitecount['today'] = isset( $sitecount['today'] ) ? absint( $sitecount['today'] ) : 0;
 
     if ( ! isset( $sitecount['date'] ) || $sitecount['date'] !== $date ) {
         $sitecount['date']  = $date;
         $sitecount['today'] = 0;
+        $sitecount['log_cache'] = array();
     }
 
-    $sitecount['all']   = isset( $sitecount['all'] ) ? intval( $sitecount['all'] ) + 1 : 1;
-    $sitecount['today'] = isset( $sitecount['today'] ) ? intval( $sitecount['today'] ) + 1 : 1;
+    if ( ! isset( $sitecount['log_cache'] ) || ! is_array( $sitecount['log_cache'] ) ) {
+        $sitecount['log_cache'] = array();
+    }
+
+    if ( ! isset( $sitecount['log_cache'][ $date ] ) || ! is_array( $sitecount['log_cache'][ $date ] ) ) {
+        $sitecount['log_cache'][ $date ] = array();
+    }
+
+    return $sitecount;
+}
+
+function hyplus_user_counter_track_visit() {
+    if ( is_admin() || wp_doing_ajax() ) {
+        return;
+    }
+
+    $ip = hyplus_user_counter_get_client_ip();
+    if ( $ip === '' ) {
+        return;
+    }
+
+    $date = date( 'Ymd' );
+    $user_agent = hyplus_user_counter_get_user_agent();
+    $sitecount = hyplus_user_counter_get_sitecount_data( $date );
+    $fingerprint = hyplus_user_counter_get_fingerprint( $ip, $date, $user_agent );
+
+    if ( isset( $sitecount['log_cache'][ $date ][ $fingerprint ] ) ) {
+        return;
+    }
+
+    $sitecount['all']   = intval( $sitecount['all'] ) + 1;
+    $sitecount['today'] = intval( $sitecount['today'] ) + 1;
+    $sitecount['log_cache'][ $date ][ $fingerprint ] = array(
+        'ip'   => $ip,
+        'ua'   => $user_agent,
+        'time' => time(),
+    );
 
     update_option( 'site_count', $sitecount );
     wp_cache_set( 'site_count', $sitecount, 'hyplus_user_counter', HOUR_IN_SECONDS );
-    $_SESSION[ $session_key ] = true;
 }
 add_action( 'init', 'hyplus_user_counter_track_visit', 5 );
 
 function hyplus_user_counter_shortcode() {
-    hyplus_user_counter_start_session();
-
     $date = date( 'Ymd' );
-    $sitecount = wp_cache_get( 'site_count', 'hyplus_user_counter' );
-
-    if ( ! is_array( $sitecount ) || empty( $sitecount['date'] ) || $sitecount['date'] !== $date ) {
-        $sitecount = get_option( 'site_count' );
-    }
-
-    if ( ! is_array( $sitecount ) ) {
-        $sitecount = array(
-            'all'   => 0,
-            'today' => 0,
-            'date'  => $date,
-        );
-    }
+    $sitecount = hyplus_user_counter_get_sitecount_data( $date );
 
     $all = absint( $sitecount['all'] );
     $today_count = absint( $sitecount['today'] );
