@@ -783,9 +783,9 @@ padding-left: 3px;
 		overscroll-behavior: contain;
 	}
 
-	/* .main-navigation {
+	.main-navigation {
 		transition: all 0.5s ease;
-	} */
+	}
 
 	/* footer margin top */
 	footer {
