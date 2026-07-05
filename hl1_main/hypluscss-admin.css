@@ -41,3 +41,8 @@
 	width: 100% !important;
 	left: 0px !important;
 }
+
+/* Hide useless old toolbar */
+#ed_toolbar {
+	display: none !important;
+}
