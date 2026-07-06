@@ -415,8 +415,8 @@ body.hyplus-atmosphere-night .hyplus-nav-group,
 body.hyplus-atmosphere-night .settings-column,
 body.hyplus-atmosphere-night .shortcut-item,
 body.hyplus-atmosphere-night .font-select,
-body.hyplus-atmosphere-night .hybutton,
-body.hyplus-atmosphere-night .series-button,
+/* body.hyplus-atmosphere-night .hybutton, */
+/* body.hyplus-atmosphere-night .series-button, */
 body.hyplus-atmosphere-night .widget,
 body.hyplus-atmosphere-night .comments-area,
 body.hyplus-atmosphere-night .page-header,
@@ -440,10 +440,11 @@ body.hyplus-atmosphere-night .widget-title,
 body.hyplus-atmosphere-night .site-title a,
 body.hyplus-atmosphere-night .site-description, */
 /* body.hyplus-atmosphere-night .main-navigation a, */
-body.hyplus-atmosphere-night .hyplus-nav-link,
+body.hyplus-atmosphere-night .hyplus-nav-link
 /* body.hyplus-atmosphere-night .hynav-bottom-message a, */
 /* body.hyplus-atmosphere-night .series-button, */
-body.hyplus-atmosphere-night .hybutton {
+/* body.hyplus-atmosphere-night .hybutton  */
+{
 	color: var(--hyplus-text-nav-link);
 }
 
@@ -2093,7 +2094,7 @@ body.sidebar-left .content-area {
 	z-index: 99999;
 	max-width: 400px;
 	background: var(--hyplus-bg-container-solid);
-	color: #222;
+	/* color: #222; */
 	/* border: 1px solid var(--hyplus-border-color-light); */
 	border-radius: 12px;
 	box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
