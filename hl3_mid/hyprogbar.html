@@ -149,6 +149,12 @@
             return null;
         }
 
+        function getActiveAtmosphere() {
+            if (document.body.classList.contains("hyplus-atmosphere-night")) return "night";
+            const stored = localStorage.getItem("selectedAtmosphere");
+            return stored || "default";
+        }
+
         function applyHyprogbarBackground() {
             const savedConfig = getSavedBackgroundConfigFromCookie();
             const config = savedConfig || getBackgroundConfig();
@@ -159,7 +165,19 @@
                 style.id = styleId;
                 document.head.appendChild(style);
             }
-            if (config && config.imageUrl) {
+            const activeAtmosphere = getActiveAtmosphere();
+            if (activeAtmosphere === "night") {
+                style.textContent = `#pageLeavingMask {
+    background: #000 !important;
+    color: #f4f7fb;
+}
+#pageLeavingMask::before {
+    content: none;
+}
+.pageLeavingDot {
+    background: #f4f7fb !important;
+}`;
+            } else if (config && config.imageUrl) {
                 style.textContent = `#pageLeavingMask { background: transparent; }
 #pageLeavingMask::before {
     content: '';
@@ -177,13 +195,27 @@
     opacity: ${config.opacity};
     z-index: -1;
     pointer-events: none;
+}
+.pageLeavingDot {
+    background: #000 !important;
 }`;
             } else {
-                style.textContent = `#pageLeavingMask { background: #fff; }`;
+                style.textContent = `#pageLeavingMask { background: #fff; }
+.pageLeavingDot {
+    background: #000 !important;
+}`;
             }
         }
 
         applyHyprogbarBackground();
+
+        const atmosphereObserver = new MutationObserver(() => {
+            applyHyprogbarBackground();
+        });
+        atmosphereObserver.observe(document.body, {
+            attributes: true,
+            attributeFilter: ["class"],
+        });
 
         function setTopBarProgress(val) {
             val = Math.max(0, Math.min(100, Math.round(val)));

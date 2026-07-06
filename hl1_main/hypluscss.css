@@ -316,6 +316,173 @@ body.hyplus-atmosphere-green :root {
 	--hyplus-header-footer-shadow: rgba(38, 166, 154, 0.35);
 }
 
+/* 夜间模式气氛 */
+body.hyplus-atmosphere-night,
+body.hyplus-atmosphere-night :root {
+	--hyplus-primary-link-color: #7ec0ff;
+	--hyplus-primary-link-active: #c77cfd;
+	--hyplus-link-hover-color: #ea91fd;
+
+	--hyplus-border-color-main: rgba(126, 192, 255, 0.24);
+	--hyplus-border-color-light: rgba(255, 255, 255, 0.18);
+	--hyplus-border-color-neutral: rgba(255, 255, 255, 0.14);
+	--hyplus-border-color-light2: rgba(255, 255, 255, 0.16);
+	--hyplus-border-color-light3: rgba(255, 255, 255, 0.12);
+
+	--hyplus-bg-overall: rgba(2, 6, 12, 0.9);
+	--hyplus-bg-container: rgba(12, 16, 24, 0.92);
+	--hyplus-bg-container-solid: #0d121b;
+	--hyplus-bg-code-block: rgba(16, 24, 36, 0.94);
+	--hyplus-bg-code: rgba(17, 24, 34, 0.95);
+	--hyplus-bg-settings: #101722;
+	--hyplus-bg-button-light: #121a24;
+	--hyplus-bg-button-hover: #172232;
+	--hyplus-bg-button-active: #1b2b3c;
+	--hyplus-bg-search-input: #111827;
+
+	--hyplus-text-primary: #f3f7fb;
+	--hyplus-text-nav-link: #8ec5ff;
+	--hyplus-text-nav-link-hover: #b8dbff;
+	--hyplus-text-heading: #f4f7fb;
+	--hyplus-text-title: #f7fbff;
+	--hyplus-text-quote: #dce4ef;
+	--hyplus-text-gray: #8e97a8;
+	/* --hyplus-text-code: rgba(183, 220, 255, 0.86); */
+	--hyplus-text-code: #f3f7fb;
+	--hyplus-text-counter: #ffd166;
+
+	--hyplus-shadow-light: rgba(0, 0, 0, 0.45);
+	--hyplus-shadow-nav: rgba(91, 139, 255, 0.2);
+	--hyplus-shadow-nav-hover: rgba(91, 139, 255, 0.26);
+	--hyplus-shadow-nav-text: rgba(91, 139, 255, 0.16);
+	--hyplus-shadow-button: rgba(0, 0, 0, 0.55);
+	--hyplus-shadow-deep: rgba(0, 0, 0, 0.5);
+	--hyplus-shadow-input: rgba(0, 0, 0, 0.35);
+
+	--hyplus-btn-scroll-top-bg: #4c86ff;
+	--hyplus-btn-scroll-top-hover: #6ca5ff;
+	--hyplus-btn-scroll-top-active: #2e63c7;
+	--hyplus-btn-nav-bg: #4c86ff;
+	--hyplus-btn-nav-hover: #6ca5ff;
+	--hyplus-btn-nav-active: #2e63c7;
+	--hyplus-btn-back-bg: #5d7ff4;
+	--hyplus-btn-back-hover: #7b96ff;
+	--hyplus-btn-back-active: #445cc2;
+	--hyplus-btn-refresh-bg: #4c86ff;
+	--hyplus-btn-refresh-hover: #6ca5ff;
+	--hyplus-btn-refresh-active: #2e63c7;
+	--hyplus-btn-home-bg: #4c86ff;
+	--hyplus-btn-home-hover: #5e95ff;
+	--hyplus-btn-back-control: #6ea8ff;
+	--hyplus-btn-maximize-control: #4c86ff;
+	--hyplus-btn-close-control: #ff7b72;
+
+	--hyplus-progress-bar-color: #6ea8ff;
+	--hyplus-progress-dot-color: #6ea8ff;
+	--hyplus-search-border: rgba(255, 255, 255, 0.16);
+	--hyplus-search-text: #f6fbff;
+	--hyplus-header-footer-shadow: rgba(0, 0, 0, 0.45);
+}
+
+body.hyplus-atmosphere-night, body.hyplus-atmosphere-night .um {
+	background-color: #04070b !important;
+	color: var(--hyplus-text-primary) !important;
+}
+
+body.hyplus-atmosphere-night::before {
+	background-image: none !important;
+	background-color: #000 !important;
+	opacity: 1 !important;
+}
+
+body.hyplus-atmosphere-night mark, body.hyplus-atmosphere-night mark strong {
+	color: var(--hyplus-bg-overall);
+}
+
+body.hyplus-atmosphere-night .site-header,
+body.hyplus-atmosphere-night .site-footer,
+body.hyplus-atmosphere-night header,
+body.hyplus-atmosphere-night footer,
+body.hyplus-atmosphere-night .inside-header,
+body.hyplus-atmosphere-night .inside-footer-widgets,
+body.hyplus-atmosphere-night .main-navigation .main-nav ul,
+body.hyplus-atmosphere-night .main-navigation .main-nav ul ul,
+body.hyplus-atmosphere-night #navContainer,
+body.hyplus-atmosphere-night .nav-content,
+body.hyplus-atmosphere-night .hyplus-nav-container,
+body.hyplus-atmosphere-night .hyplus-nav-section,
+body.hyplus-atmosphere-night .hyplus-nav-group,
+body.hyplus-atmosphere-night .settings-column,
+body.hyplus-atmosphere-night .shortcut-item,
+body.hyplus-atmosphere-night .font-select,
+body.hyplus-atmosphere-night .hybutton,
+body.hyplus-atmosphere-night .series-button,
+body.hyplus-atmosphere-night .widget,
+body.hyplus-atmosphere-night .comments-area,
+body.hyplus-atmosphere-night .page-header,
+body.hyplus-atmosphere-night .paging-navigation,
+body.hyplus-atmosphere-night .inside-article,
+body.hyplus-atmosphere-night .post,
+body.hyplus-atmosphere-night .page,
+body.hyplus-atmosphere-night .entry-content,
+body.hyplus-atmosphere-night .sidebar,
+body.hyplus-atmosphere-night .site-main {
+	background-color: var(--hyplus-bg-container-solid) !important;
+	color: var(--hyplus-text-primary) !important;
+	border-color: var(--hyplus-border-color-main) !important;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
+}
+
+body.hyplus-atmosphere-night a,
+/* body.hyplus-atmosphere-night a:visited, */
+/* body.hyplus-atmosphere-night .entry-title a,
+body.hyplus-atmosphere-night .widget-title,
+body.hyplus-atmosphere-night .site-title a,
+body.hyplus-atmosphere-night .site-description, */
+/* body.hyplus-atmosphere-night .main-navigation a, */
+body.hyplus-atmosphere-night .hyplus-nav-link,
+/* body.hyplus-atmosphere-night .hynav-bottom-message a, */
+/* body.hyplus-atmosphere-night .series-button, */
+body.hyplus-atmosphere-night .hybutton {
+	color: var(--hyplus-text-nav-link);
+}
+
+body.hyplus-atmosphere-night a:hover, body.hyplus-atmosphere-night a:focus, body.hyplus-atmosphere-night a:active,
+body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:hover, body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:focus, body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:active {
+	color: var(--hyplus-link-hover-color);
+}
+
+/* body.hyplus-atmosphere-night .series-button a {
+	color: var(--hyplus-text-primary) !important;
+} */
+
+body.hyplus-atmosphere-night .main-navigation a,
+body.hyplus-atmosphere-night .hyplus-nav-link {
+	color: var(--hyplus-text-nav-link) !important;
+}
+
+body.hyplus-atmosphere-night input,
+body.hyplus-atmosphere-night textarea,
+body.hyplus-atmosphere-night select,
+body.hyplus-atmosphere-night button {
+	color: var(--hyplus-text-primary) !important;
+	background-color: #111827 !important;
+	border-color: var(--hyplus-border-color-light) !important;
+}
+
+body.hyplus-atmosphere-night code,
+body.hyplus-atmosphere-night pre
+/* body.hyplus-atmosphere-night blockquotenav-switch-buttons */
+ {
+	color: var(--hyplus-text-code) !important;
+	background-color: var(--hyplus-bg-code-block) !important;
+	border-color: var(--hyplus-border-color-light) !important;
+}
+
+body.hyplus-atmosphere-night .pageLeavingDot {
+	background: #f4f7fb !important;
+}
+
 a, .um .um-item-meta a, .um-item-link a {
 	text-decoration: none !important;
 	color: var(--hyplus-primary-link-color);
@@ -1476,7 +1643,7 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 	display: flex;
 	justify-content: center;
 	gap: 10px;
-	background-color: white;
+	/* background-color: white; */
 	border-radius: 12px 12px 0 0;
 	overflow-x: auto;
 	scroll-behavior: smooth;

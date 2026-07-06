@@ -162,6 +162,7 @@
 							<option value="red">艳阳高照(Vermillion)</option>
 							<option value="purple">紫气东来(Violet)</option>
 							<option value="green">翠绿雷凌(Verdant)</option>
+							<option value="night">夜幕星河(Night)</option>
 						</select>
 					</div>
 				</div>
@@ -1033,8 +1034,16 @@
 	// ========== 气氛切换功能 ==========
 	/**
 	 * 修改网站整体气氛（颜色主题）
-	 * 可选值: 'default' (Hyplus水蓝), 'red' , 'purple', 'green'等
+	 * 可选值: 'default' (Hyplus水蓝), 'red' , 'purple', 'green', 'night'等
 	 */
+	function getActiveAtmosphere() {
+		if (document.body.classList.contains('hyplus-atmosphere-night')) return 'night';
+		if (document.body.classList.contains('hyplus-atmosphere-red')) return 'red';
+		if (document.body.classList.contains('hyplus-atmosphere-purple')) return 'purple';
+		if (document.body.classList.contains('hyplus-atmosphere-green')) return 'green';
+		return localStorage.getItem('selectedAtmosphere') || 'default';
+	}
+
 	function changeAtmosphere(atmosphere) {
 		// 如果没有传入参数，则从选择器中获取
 		if (!atmosphere) {
@@ -1043,7 +1052,7 @@
 		}
 		
 		// 移除所有旧的atmosphere类
-		document.body.classList.remove('hyplus-atmosphere-red', 'hyplus-atmosphere-purple', 'hyplus-atmosphere-green');
+		document.body.classList.remove('hyplus-atmosphere-red', 'hyplus-atmosphere-purple', 'hyplus-atmosphere-green', 'hyplus-atmosphere-night');
 		
 		// 应用新的atmosphere类
 		if (atmosphere === 'red') {
@@ -1052,11 +1061,15 @@
 			document.body.classList.add('hyplus-atmosphere-purple');
 		} else if (atmosphere === 'green') {
 			document.body.classList.add('hyplus-atmosphere-green');
+		} else if (atmosphere === 'night') {
+			document.body.classList.add('hyplus-atmosphere-night');
 		}
 		// 'default'不需要添加类，默认样式已由:root定义
 		
 		// 保存用户选择到localStorage
 		localStorage.setItem('selectedAtmosphere', atmosphere);
+		const currentBackground = getCookie('selectedBackground') || 'default';
+		changeBackground(currentBackground);
 	}
 
 	function initAtmosphere() {
@@ -1069,7 +1082,7 @@
 		// 更新下拉菜单的值
 		const select = document.getElementById('atmosphereSelect');
 		if (select) {
-			select.value = savedAtmosphere;
+			select.value = savedAtmosphere || 'default';
 		}
 	}
 
@@ -1158,10 +1171,30 @@
 		
 		// 应用新的背景
 		const config = BACKGROUND_CONFIGS[background];
-		if (config) {
-			// 动态创建样式
-			const style = document.createElement('style');
-			style.id = 'dynamic-background-style';
+		const activeAtmosphere = getActiveAtmosphere();
+		const style = document.createElement('style');
+		style.id = 'dynamic-background-style';
+		if (activeAtmosphere === 'night') {
+			style.textContent = `
+				body::before {
+					content: '';
+					position: fixed;
+					top: 0;
+					left: 50%;
+					width: 100%;
+					height: 100%;
+					transform: translateX(-50%);
+					background: #000;
+					background-image: none;
+					opacity: 1;
+					z-index: -1;
+					pointer-events: none;
+				}
+				.page-header, .site-main, .content-area, .sidebar, .widget, .inside-article, .post, .page, .entry-content, .comments-area, .paging-navigation {
+					background: transparent !important;
+				}
+			`;
+		} else if (config) {
 			style.textContent = `
 				body::before {
 					content: '';
@@ -1180,13 +1213,12 @@
 					z-index: -1;
 					pointer-events: none;
 				}
-				/* 使主要内容区域背景透明，以便背景图片可见 */
 				.page-header, .site-main, .content-area, .sidebar, .widget, .inside-article, .post, .page, .entry-content, .comments-area, .paging-navigation {
 					background: transparent !important;
 				}
 			`;
-			document.head.appendChild(style);
 		}
+		document.head.appendChild(style);
 		// 'none'不需要添加样式，默认无背景
 		
 		// 保存用户选择到cookie
