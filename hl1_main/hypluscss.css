@@ -438,23 +438,23 @@ body.hyplus-atmosphere-night .site-main {
 	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
 }
 
-body.hyplus-atmosphere-night a,
+/* body.hyplus-atmosphere-night a, */
 /* body.hyplus-atmosphere-night a:visited, */
 /* body.hyplus-atmosphere-night .entry-title a,
 body.hyplus-atmosphere-night .widget-title,
 body.hyplus-atmosphere-night .site-title a,
 body.hyplus-atmosphere-night .site-description, */
 /* body.hyplus-atmosphere-night .main-navigation a, */
-body.hyplus-atmosphere-night .hyplus-nav-link
+/* body.hyplus-atmosphere-night .hyplus-nav-link */
 /* body.hyplus-atmosphere-night .hynav-bottom-message a, */
 /* body.hyplus-atmosphere-night .series-button, */
 /* body.hyplus-atmosphere-night .hybutton  */
-{
+/* {
 	color: var(--hyplus-text-nav-link);
-}
+} */
 
-body.hyplus-atmosphere-night a:hover, body.hyplus-atmosphere-night a:focus, body.hyplus-atmosphere-night a:active,
-body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:hover, body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:focus, body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:active {
+/* body.hyplus-atmosphere-night a:hover, body.hyplus-atmosphere-night a:focus, body.hyplus-atmosphere-night a:active, */
+body.hyplus-atmosphere-night .hysnip-mode-none .hysnip-current-page:hover, body.hyplus-atmosphere-night .hysnip-mode-none .hysnip-current-page:focus, body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:active {
 	color: var(--hyplus-link-hover-color);
 }
 
