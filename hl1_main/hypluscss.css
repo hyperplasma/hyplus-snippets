@@ -458,7 +458,8 @@ body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:hover, body.h
 } */
 
 body.hyplus-atmosphere-night .main-navigation a,
-body.hyplus-atmosphere-night .hyplus-nav-link {
+body.hyplus-atmosphere-night .hyplus-nav-link,
+body.hyplus-atmosphere-night .nav-switch-buttons .active {
 	color: var(--hyplus-text-nav-link) !important;
 }
 
@@ -614,12 +615,15 @@ textarea, textarea:focus {
 	z-index: 99998;
 	background-color: white;
 
-	/* border: 1px solid LightGray; */
 	box-shadow: 0 0 20px var(--hyplus-header-footer-shadow) !important;
 }
 
 .site-branding a {
 	color: var(--hyplus-text-title) !important;
+}
+
+.is-logo-image {
+	border-radius: 6px;
 }
 
 /* Destroy paddings in Header */
@@ -643,6 +647,10 @@ header .inside-header ol li {
 	/* border: 1px solid LightGray; */
 	z-index: 110;
 	box-shadow: 0 0 20px var(--hyplus-header-footer-shadow);
+}
+
+.site-header, .site-footer {
+	border: 1px solid var(--hyplus-border-color-main);
 }
 
 header {
@@ -1669,6 +1677,7 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 
 .switch-button.active {
 	background-color: var(--hyplus-bg-button-hover);
+
 }
 
 .switch-button:hover {
