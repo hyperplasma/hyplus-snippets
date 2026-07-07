@@ -119,7 +119,7 @@ function lh_single_cats_above_title() {
                         <?php echo do_shortcode($series_html); ?>
                     </span>
                 <?php endif; ?>
-                <span style="color: green;">
+                <span class="post-meta-counter">
                     <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '&nbsp;<a class="hyplus-scale" href="/user/akira37/"  style="display: inline-block;" title="受限内容">' . $emoji . '</a>' : ''; ?></span>
                 </span>
             </span>
