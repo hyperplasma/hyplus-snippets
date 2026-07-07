@@ -344,15 +344,15 @@ body.hyplus-atmosphere-night :root {
 	--hyplus-bg-button-active: #1b2b3c;
 	--hyplus-bg-search-input: #111827;
 
-	--hyplus-text-primary: #f3f7fb;
+	--hyplus-text-primary: rgb(231, 233, 234);
 	--hyplus-text-nav-link: #8ec5ff;
 	--hyplus-text-nav-link-hover: #b8dbff;
 	--hyplus-text-heading: #f4f7fb;
-	--hyplus-text-title: #f7fbff;
-	--hyplus-text-quote: #dce4ef;
+	--hyplus-text-title: rgb(231, 233, 234);
+	--hyplus-text-quote: rgb(231, 233, 234);
 	--hyplus-text-gray: #8e97a8;
 	--hyplus-text-code: rgba(139, 0, 0, 0.6); /* rgba(183, 220, 255, 0.86) */
-	--hyplus-text-code: #f3f7fb;
+	--hyplus-text-code: rgb(231, 233, 234);
 	--hyplus-text-counter: #ffd166;
 	--hyplus-text-green: #08f33f;
 
