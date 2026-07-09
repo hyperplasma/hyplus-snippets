@@ -1593,8 +1593,11 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 	max-width: 850px;
 	overflow: hidden;
 	background-color: #ffffff;
-	border: 1px solid var(--hyplus-border-color-neutral);
-	box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5);
+	/* border: 1px solid var(--hyplus-border-color-neutral); */
+	border: 1px solid var(--hyplus-border-color-light);
+	/* box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.5); */
+	/* box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2); */
+	box-shadow: 0 5px 10px var(--hyplus-shadow-nav), 0 2px 8px 0 var(--hyplus-shadow-nav-text);
 	padding: 0;
 	z-index: 99999;
 	border-radius: 12px;
@@ -2115,7 +2118,9 @@ body.sidebar-left .content-area {
 	/* color: #222; */
 	border: 1px solid var(--hyplus-border-color-light);
 	border-radius: 12px;
-	box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
+	/* box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2); */
+	/* box-shadow: 0 2.5px 10px 0 var(--hyplus-shadow-nav), 0 1px 2px 0 var(--hyplus-shadow-nav-text); */
+	box-shadow: 0 5px 10px var(--hyplus-shadow-nav), 0 2px 8px 0 var(--hyplus-shadow-nav-text);
 	padding: 15px;
 	font-size: 0.75em !important;
 	line-height: 1.6;
@@ -2202,7 +2207,9 @@ body.sidebar-left .content-area {
 	color: var(--hyplus-text-primary);
 	border: 1px solid var(--hyplus-border-color-light);
 	border-radius: 12px;
-	box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
+	/* box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2); */
+	/* box-shadow: 0 2.5px 10px 0 var(--hyplus-shadow-nav), 0 1px 2px 0 var(--hyplus-shadow-nav-text); */
+	box-shadow: 0 5px 10px var(--hyplus-shadow-nav), 0 2px 8px 0 var(--hyplus-shadow-nav-text);
 	padding: 0;
 	font-size: 0.9em;
 	line-height: 1.6;
