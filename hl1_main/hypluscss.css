@@ -2113,7 +2113,7 @@ body.sidebar-left .content-area {
 	max-width: 400px;
 	background: var(--hyplus-bg-container-solid);
 	/* color: #222; */
-	/* border: 1px solid var(--hyplus-border-color-light); */
+	border: 1px solid var(--hyplus-border-color-light);
 	border-radius: 12px;
 	box-shadow: 0 5px 10px rgba(0, 64, 128, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
 	padding: 15px;
