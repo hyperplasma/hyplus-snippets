@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const targetScrollTop = Math.max(0, scrollableBody.scrollTop + offset);
 
         if (typeof scrollableBody.scrollTo === 'function') {
-            scrollableBody.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
+            scrollableBody.scrollTo({ top: targetScrollTop });
         } else {
             scrollableBody.scrollTop = targetScrollTop;
         }
