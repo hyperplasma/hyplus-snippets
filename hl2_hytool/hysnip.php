@@ -2,7 +2,7 @@
 /**
  * HySnip - 本站内容快速引用短代码插件
  * Description: 通过[hysnip]短代码实现加载并展示本站博文或页面的弹出框
- * Usage: [hysnip id="123" name="自定义名称" title="弹出框标题" mode="button" async="1"]
+ * Usage: [hysnip id="123" name="自定义名称" title="弹出框标题" mode="button" async="1" adminonly="1"]
  * 
  * Parameters:
  * - id: 博文或页面的 post ID（必填）
@@ -12,6 +12,7 @@
  * - mode: 显示模式（可选，默认为"button"）。可选值为"button"（【默认】按钮式链接，带hyplus-nav-link类）、"link"（普通文本链接，无hyplus-nav-link类）或"none"（纯普通a链接，无任何特殊class）
  * - newtab: 是否在新标签页打开（可选，仅与mode搭配使用）。可选值为"1"（强制新标签页打开）或"0"（强制当前标签页打开）。未设置时，mode="button"或"link"默认新标签页打开，mode="none"默认当前标签页打开
  * - async: 是否异步预加载内容（可选，默认为0）。设为1时会在页面加载时预加载内容
+ * - adminonly: 是否仅对管理员显示（可选，默认为0）。设为1时仅当当前用户为管理员时才渲染
  * 
  * Features:
  * - 生成与HyImg一致的按钮式链接
@@ -34,14 +35,20 @@ function hysnip_shortcode_handler($atts) {
 
     // 解析短代码参数，初始化为空值
     $atts = shortcode_atts(array(
-        'id'      => '',
-        'name'    => '',
-        'title'   => '',
-        'limit'   => 0,
-        'mode'    => 'button',
-        'newtab'  => '',
-        'async'   => 0
+        'id'        => '',
+        'name'      => '',
+        'title'     => '',
+        'limit'     => 0,
+        'mode'      => 'button',
+        'newtab'    => '',
+        'async'     => 0,
+        'adminonly' => 0
     ), $atts, 'hysnip');
+
+    $admin_only = (int)$atts['adminonly'];
+    if ($admin_only === 1 && !current_user_can('manage_options')) {
+        return '';
+    }
 
     // 使用静态缓存避免重复数据库查询
     static $post_cache = array();
