@@ -569,23 +569,27 @@ p {
 	margin-bottom: 14px;	*/
 }
 
+ul, ol {
+	margin: 0 0 1.5em 1.75em;
+}
+
 /* 调整各种列表项的间隙等属性 */
-ul li {
-	margin-top: 0.5em; /* 列表顶部间隙 */
-	margin-bottom: 0.5em; /* 增加列表项之间的间隙 */
+/* ul li {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
 }
 
 ol li {
-	margin-top: 0.5em; /* 列表顶部间隙 */
-	margin-bottom: 0.5em; /* 增加列表项之间的间隙 */
-}
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+} */
 
 /* 调整无序列表（Hyplus目录除外）和有序列表的左侧缩进 */
-#main ul li:not([class*="level-"]), #main ol li, 
+/* #main ul li:not([class*="level-"]), #main ol li, 
 .hysnip-popup-content ul li, .hysnip-popup-content ol li,
 .hyplus-popup-content ul li, .hyplus-popup-content ol li {
 	margin-left: -0.7em;
-}
+} */
 
 /**
  * HY-Move comment textarea above comments, etc. CSS 评论框移动到评论区上方
