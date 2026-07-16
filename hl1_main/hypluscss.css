@@ -351,7 +351,7 @@ body.hyplus-atmosphere-night :root {
 	--hyplus-text-title: rgb(231, 233, 234);
 	--hyplus-text-quote: rgb(231, 233, 234);
 	--hyplus-text-gray: #8e97a8;
-	--hyplus-text-code: rgba(139, 0, 0, 0.6); /* rgba(183, 220, 255, 0.86) */
+	/* --hyplus-text-code: rgba(139, 0, 0, 0.6); rgba(183, 220, 255, 0.86) */
 	--hyplus-text-code: rgb(231, 233, 234);
 	--hyplus-text-counter: #ffd166;
 	--hyplus-text-green: #08f33f;
@@ -1158,15 +1158,10 @@ h2, h3, h4, h5, h6 {
 	color: var(--hyplus-text-green);
 }
 
-/* Lists (ul, ol) and List Items (li) */
-ul li {
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
-}
-
-/* li::marker {
+/* Lists (ul, ol) and List Items (li) Extra (see more before) */
+li::marker {
 	color: var(--hyplus-text-title);
-} */
+}
 
 /* ul li marker style */
 ul ul {
