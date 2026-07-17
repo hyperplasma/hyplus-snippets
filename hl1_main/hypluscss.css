@@ -548,7 +548,7 @@ b, strong, th {
 /* 确保 sidebar 是 sticky 的 */
 .sidebar {
 	position: sticky;
-	top: 58px;	/* offset */
+	top: 60px;	/* offset */
 	height: 100vh;
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -652,11 +652,17 @@ header .inside-header ol li {
 }
 
 .site-footer {
+	/* display: none !important; */
 	position: relative;
 	/* border: 1px solid LightGray; */
+	/* bottom: 0; */
 	z-index: 110;
 	box-shadow: 0 0 20px var(--hyplus-header-footer-shadow);
 }
+/* 
+.site-content {
+	margin-bottom: -2em;
+} */
 
 .site-header, .site-footer {
 	border: 1px solid var(--hyplus-border-color-main);
@@ -667,7 +673,7 @@ header {
 }
 
 footer {
-	margin-bottom: -2px;
+	margin-bottom: -2em;
 }
 
 @media (min-width: 769px) {
@@ -973,7 +979,7 @@ padding-left: 3px;
 	}
 
 	/* footer margin top */
-	footer {
+	.site-footer {
 		margin-top: 1.5em;
 	}
 }
