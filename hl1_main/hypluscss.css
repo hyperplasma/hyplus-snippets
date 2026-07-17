@@ -659,20 +659,16 @@ header .inside-header ol li {
 	z-index: 110;
 	box-shadow: 0 0 20px var(--hyplus-header-footer-shadow);
 }
-/* 
-.site-content {
-	margin-bottom: -2em;
-} */
 
 .site-header, .site-footer {
 	border: 1px solid var(--hyplus-border-color-main);
 }
 
-header {
+.site-header {
 	margin-top: -2px;
 }
 
-footer {
+.site-footer {
 	margin-bottom: -2em;
 }
 
