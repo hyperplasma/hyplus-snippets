@@ -86,10 +86,18 @@ function hyperplasma_modify_menu_items($items) {
     return $items;
 }
 
+function hyperplasma_append_external_link_marker($link_text) {
+    // if (strpos($link_text, '⧉') !== false) {
+    //     return $link_text;
+    // }
+
+    return $link_text . '<sup>⧉</sup>';
+}
+
 // 处理文章内容中链接的函数
 function hyperplasma_modify_content_links($content) {
-    // 如果内容为空，直接返回
-    if (empty($content)) {
+    // 如果内容为空，或没有链接，直接返回
+    if (empty($content) || stripos($content, '<a') === false || (stripos($content, 'http://') === false && stripos($content, 'https://') === false)) {
         return $content;
     }
 
@@ -102,18 +110,19 @@ function hyperplasma_modify_content_links($content) {
     $special_paths = HYPERPLASMA_SPECIAL_LINK_PATHS;
 
     // 使用正则表达式处理链接
-    // 改进的正则：支持href前后的任意属性，且处理更加严格
-    $pattern = '/<a\s+([^>]*?\s+)?href=[\'"]([^\'"]*?)[\'"]([^>]*)>/i';
+    // 匹配完整的 <a>...</a> 结构，以便在链接文字末尾添加外部链接符号
+    $pattern = '/(<a\b[^>]*?href=[\'\"]([^\'\"]*?)[\'\"]([^>]*)>)(.*?)(<\/a>)/is';
     
     return preg_replace_callback($pattern, function($matches) use ($site_domain, $site_domain_escaped, $special_internal_links, $special_paths) {
-        $before_href = isset($matches[1]) ? $matches[1] : '';
+        $opening_tag = $matches[1];
         $url = $matches[2];
-        $after_href = $matches[3];
-        $full_tag = $matches[0];
+        $attr_part = $matches[3];
+        $link_text = $matches[4];
+        $closing_tag = $matches[5];
 
         // 若链接不以http开头，完全不做处理
         if (!preg_match('/^https?:/i', $url)) {
-            return $full_tag;
+            return $matches[0];
         }
 
         // // 如果包含 class="hyplus-nav-link"，则不修改
@@ -143,19 +152,24 @@ function hyperplasma_modify_content_links($content) {
             }
         }
         
+        $new_opening_tag = $opening_tag;
+        $new_link_text = $link_text;
+
         if ($is_external || $is_special_link) {
-            // 确保不重复添加属性
-            if (strpos($full_tag, 'target=') === false) {
-                // 在 > 前添加 target="_blank"
-                $full_tag = preg_replace('/>$/', ' target="_blank">', $full_tag);
+            if ($is_external && strpos($opening_tag, 'class=') === false) {
+                $new_link_text = hyperplasma_append_external_link_marker($link_text);
             }
-            if (strpos($full_tag, 'rel=') === false) {
-                // 在 > 前添加 rel="noopener external"
-                $full_tag = preg_replace('/>$/', ' rel="noopener external">', $full_tag);
+
+            // 确保不重复添加属性
+            if (strpos($new_opening_tag, 'target=') === false) {
+                $new_opening_tag = preg_replace('/>$/', ' target="_blank">', $new_opening_tag);
+            }
+            if (strpos($new_opening_tag, 'rel=') === false) {
+                $new_opening_tag = preg_replace('/>$/', ' rel="noopener external">', $new_opening_tag);
             }
         }
 
-        return $full_tag;
+        return $new_opening_tag . $new_link_text . $closing_tag;
     }, $content);
 }
 
