@@ -219,24 +219,6 @@ add_action('wp_footer', function () {
 			articleContainer.addEventListener('mousemove', listeners.mousemove, true);
 			articleContainer.addEventListener('mouseleave', listeners.mouseleave, true);
 			
-			// 在脚注区域的ol前插入h1标题
-			var footnotesList = document.querySelector('div.footnotes ol');
-			if (footnotesList) {
-				var footnotesDiv = footnotesList.parentElement;
-				// 检查是否已经存在标题，避免重复添加
-				if (!footnotesDiv.querySelector('h1.footnotes-title')) {
-					var title = document.createElement('h1');
-					title.className = 'footnotes-title';
-					title.textContent = 'Hyplus注释';
-					footnotesList.parentElement.insertBefore(title, footnotesList);
-					
-					// 插入标题后，触发hytoc的增量添加（如果已加载）
-					if (typeof window.hyplus_add_toc_header_incremental === 'function') {
-						window.hyplus_add_toc_header_incremental(title);
-					}
-				}
-			}
-			
 			isInitialized = true;
 		}
 		

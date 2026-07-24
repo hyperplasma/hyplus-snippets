@@ -487,6 +487,24 @@ function hyplus_output_toc_scripts() {
         // 全局缓存：一次性预处理所有headers的anchor和pureText（页面级别，只执行一次）
         var cachedValidHeaders = null;
 
+        function ensureFootnoteTitle() {
+            var footnotesContainer = document.querySelector('.footnotes');
+            if (!footnotesContainer) return null;
+
+            var footnotesList = footnotesContainer.querySelector('ol');
+            if (!footnotesList) return null;
+
+            var title = footnotesContainer.querySelector('h1.footnotes-title');
+            if (!title) {
+                title = document.createElement('h1');
+                title.className = 'footnotes-title';
+                title.textContent = 'Hyplus注释';
+                footnotesContainer.insertBefore(title, footnotesList);
+            }
+
+            return title;
+        }
+
         // 一次性预处理所有headers，确定anchor和pureText，供所有mode共享，避免重复计算
         function preprocessAllHeaders() {
             if (cachedValidHeaders !== null) return; // 已缓存，直接返回
@@ -525,6 +543,25 @@ function hyplus_output_toc_scripts() {
                 header.id = anchor;
                 validHeaders.push({header: header, pureText: pureText});
             });
+
+            var footnoteTitle = ensureFootnoteTitle();
+            if (footnoteTitle) {
+                var footnotePureText = getHeaderTextWithoutSup(footnoteTitle);
+                var footnoteOriginalId = footnoteTitle.getAttribute('id');
+                var footnoteBaseAnchor = generateBaseAnchor(footnotePureText, footnoteOriginalId);
+                var footnoteAnchor = footnoteBaseAnchor;
+                var footnoteSuffix = 2;
+                while (anchorSet.has(footnoteAnchor)) {
+                    footnoteAnchor = footnoteBaseAnchor + '_' + footnoteSuffix;
+                    footnoteSuffix++;
+                }
+                anchorSet.add(footnoteAnchor);
+                footnoteTitle.dataset.hypluscurrentAnchor = footnoteAnchor;
+                footnoteTitle.dataset.hypluspureText = footnotePureText;
+                footnoteTitle.id = footnoteAnchor;
+                validHeaders.push({header: footnoteTitle, pureText: footnotePureText});
+            }
+
             cachedValidHeaders = validHeaders;
         }
 
@@ -782,7 +819,6 @@ function hyplus_output_toc_scripts() {
         }
 
         function handleAllAnchorLinks() {
-            var HEADER_HEIGHT = 70; // Sticky header height with a little extra offset
             document.addEventListener('click', function(e){
                 var target = e.target.closest('a[href*="#"]');
                 if (!target) return;
