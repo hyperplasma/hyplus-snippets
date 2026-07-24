@@ -34,7 +34,7 @@
 	/* 文字颜色 */
 	--hyplus-text-primary: #333;
 	--hyplus-text-nav-link: #175082;
-	--hyplus-text-nav-link-hover: #155a99;
+	--hyplus-text-nav-link-hover: #2774bc;
 	--hyplus-text-heading: #132d51;
 	--hyplus-text-title: #013664;
 	--hyplus-text-quote: #454545;
@@ -1162,7 +1162,8 @@ h2, h3, h4, h5, h6 {
 
 /* Lists (ul, ol) and List Items (li) Extra (see more before) */
 li::marker {
-	color: var(--hyplus-text-title);
+	color: var(--hyplus-text-nav-link-hover);
+	font-weight: 450;
 }
 
 /* ul li marker style */
@@ -1984,7 +1985,7 @@ body.sidebar-left .content-area {
 }
 
 /*
- * HY-Ultimate Buttons Addon - HyNav
+ * HY-HyNav (Ultimate Buttons Addon)
  * (including footnote hover popup CSS)
  */
 .hyplus-nav-container {
@@ -2064,7 +2065,7 @@ body.sidebar-left .content-area {
 .hyplus-nav-link:hover,
 .hyplus-nav-link:focus {
 	background: var(--hyplus-bg-button-hover);
-	color: var(--hyplus-text-nav-link-hover);
+	color: var(--hyplus-text-nav-link);
 	border-color: var(--hyplus-border-color-light);
 	box-shadow: 0 4px 14px 0 var(--hyplus-shadow-nav-hover), 0 1.5px 4px 0 var(--hyplus-shadow-nav-text);
 	transform: translateY(-1px) scale(1.025);
@@ -2074,7 +2075,7 @@ body.sidebar-left .content-area {
 
 .hyplus-nav-link:active {
 	background: var(--hyplus-bg-button-active);
-	color: var(--hyplus-text-nav-link-hover);
+	color: var(--hyplus-text-nav-link);
 	box-shadow: 0 1px 4px 0 var(--hyplus-shadow-nav-text);
 	transform: translateY(1px) scale(0.98);
 }
