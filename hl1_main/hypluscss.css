@@ -1893,7 +1893,7 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 .font-size-btn.reset {
 	padding: 2px 8px;
 	background-color: var(--hyplus-bg-button-light);
-	color: #333 !important;
+	/* color: #333 !important; */
 }
 
 .font-size-btn.reset:hover {
