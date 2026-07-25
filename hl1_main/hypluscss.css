@@ -22,7 +22,7 @@
 	/* 背景颜色 */
 	--hyplus-bg-overall: rgba(187,255,255,0.05);
 	--hyplus-bg-container: #f6fafb8c;
-	--hyplus-bg-container-solid: #fbfdfe;
+	--hyplus-bg-container-solid: #f9fcff;
 	--hyplus-bg-code-block: #eaeef398;
 	--hyplus-bg-code: #e4edf7a0;
 	--hyplus-bg-settings: #f8f9fa;
@@ -471,9 +471,10 @@ body.hyplus-atmosphere-night .nav-switch-buttons .active {
 body.hyplus-atmosphere-night input,
 body.hyplus-atmosphere-night textarea,
 body.hyplus-atmosphere-night select,
-body.hyplus-atmosphere-night button {
+body.hyplus-atmosphere-night button,
+body.hyplus-atmosphere-night .menu-toggle {
 	color: var(--hyplus-text-primary) !important;
-	background-color: #111827 !important;
+	background-color: #111827;
 	border-color: var(--hyplus-border-color-light) !important;
 }
 
