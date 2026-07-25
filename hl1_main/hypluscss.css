@@ -101,7 +101,7 @@ body.hyplus-atmosphere-red :root {
 	/* 背景颜色 - 红色调 */
 	--hyplus-bg-overall: rgba(255,200,200,0.05);
 	--hyplus-bg-container: #fff9f98c;
-	--hyplus-bg-container-solid: #fff9f9;
+	--hyplus-bg-container-solid: #fcf6f6;
 	--hyplus-bg-code-block: #eaeef398;
 	--hyplus-bg-code: #fdf0f0;
 	--hyplus-bg-settings: #fffbfb;
@@ -180,7 +180,7 @@ body.hyplus-atmosphere-purple :root {
 	/* 背景颜色 - 紫色调 */
 	--hyplus-bg-overall: rgba(225, 190, 231, 0.05);
 	--hyplus-bg-container: #fbf5fc8c;
-	--hyplus-bg-container-solid: #fbf5fc;
+	--hyplus-bg-container-solid: #fbf7fc;
 	--hyplus-bg-code-block: #eaeef398;
 	--hyplus-bg-code: #f3e5f5;
 	--hyplus-bg-settings: #faf7fb;
@@ -259,7 +259,7 @@ body.hyplus-atmosphere-green :root {
 	/* 背景颜色 - 绿色调 */
 	--hyplus-bg-overall: rgba(128, 203, 196, 0.05);
 	--hyplus-bg-container: #f5fbfb8c;
-	--hyplus-bg-container-solid: #f5fbfb;
+	--hyplus-bg-container-solid: #f7fcfc;
 	--hyplus-bg-code-block: #eaeef398;
 	--hyplus-bg-code: #e0f2f1b7;
 	--hyplus-bg-settings: #f8fbfb;
@@ -1164,6 +1164,7 @@ h2, h3, h4, h5, h6 {
 li::marker {
 	color: var(--hyplus-text-nav-link-hover);
 	font-weight: 450;
+	/* font-family: Consolas, monospace; */
 }
 
 /* ul li marker style */
@@ -1373,7 +1374,7 @@ body:not(.nav-buttons-left) #hybuttonContainer {
 	text-align: center;
 	line-height: 50px;
 	cursor: pointer;
-	font-family: Arial, sans-serif;
+	/* font-family: Arial, sans-serif; */
 	font-weight: bold;
 	box-shadow: 0 2px 6px 1px rgba(102, 139, 139, 0.45);
 	transition: transform 0.2s ease, background-color 0.5s ease;
