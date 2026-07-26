@@ -431,7 +431,8 @@ body.hyplus-atmosphere-night .post,
 body.hyplus-atmosphere-night .page,
 body.hyplus-atmosphere-night .entry-content,
 body.hyplus-atmosphere-night .sidebar,
-body.hyplus-atmosphere-night .site-main {
+body.hyplus-atmosphere-night .site-main,
+body.hyplus-atmosphere-night .entry-title a {
 	background-color: var(--hyplus-bg-container-solid) !important;
 	color: var(--hyplus-text-primary) !important;
 	border-color: var(--hyplus-border-color-main) !important;
@@ -454,7 +455,9 @@ body.hyplus-atmosphere-night .site-description, */
 } */
 
 /* body.hyplus-atmosphere-night a:hover, body.hyplus-atmosphere-night a:focus, body.hyplus-atmosphere-night a:active, */
-body.hyplus-atmosphere-night .hysnip-mode-none .hysnip-current-page:hover, body.hyplus-atmosphere-night .hysnip-mode-none .hysnip-current-page:focus, body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:active {
+body.hyplus-atmosphere-night .hysnip-mode-none .hysnip-current-page:hover, 
+body.hyplus-atmosphere-night .hysnip-mode-none .hysnip-current-page:focus, 
+body.hyplus-atmosphere-night .hysnip-mode-none.hysnip-current-page:active {
 	color: var(--hyplus-link-hover-color);
 }
 
@@ -472,7 +475,7 @@ body.hyplus-atmosphere-night input,
 body.hyplus-atmosphere-night textarea,
 body.hyplus-atmosphere-night select,
 body.hyplus-atmosphere-night button,
-body.hyplus-atmosphere-night .menu-toggle {
+body.hyplus-atmosphere-night .menu-toggle, body.hyplus-atmosphere-night .menu-toggle:hover, body.hyplus-atmosphere-night .menu-toggle:focus {
 	color: var(--hyplus-text-primary) !important;
 	background-color: #111827;
 	border-color: var(--hyplus-border-color-light) !important;
