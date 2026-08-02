@@ -149,10 +149,21 @@
             return null;
         }
 
-        function getActiveAtmosphere() {
-            if (document.body.classList.contains("hyplus-atmosphere-night")) return "night";
+        function isSystemNightModeEnabled() {
+            return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        }
+
+        function getManualAtmosphere() {
+            const manualAtmosphere = localStorage.getItem("manualAtmosphere");
+            if (manualAtmosphere) return manualAtmosphere;
             const stored = localStorage.getItem("selectedAtmosphere");
             return stored || "default";
+        }
+
+        function getActiveAtmosphere() {
+            if (isSystemNightModeEnabled()) return "night";
+            if (document.body.classList.contains("hyplus-atmosphere-night")) return "night";
+            return getManualAtmosphere();
         }
 
         function applyHyprogbarBackground() {
@@ -208,6 +219,13 @@
         }
 
         applyHyprogbarBackground();
+
+        const prefersDarkScheme = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+        if (prefersDarkScheme && prefersDarkScheme.addEventListener) {
+            prefersDarkScheme.addEventListener("change", applyHyprogbarBackground);
+        } else if (prefersDarkScheme && prefersDarkScheme.addListener) {
+            prefersDarkScheme.addListener(applyHyprogbarBackground);
+        }
 
         const atmosphereObserver = new MutationObserver(() => {
             applyHyprogbarBackground();

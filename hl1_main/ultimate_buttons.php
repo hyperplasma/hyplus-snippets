@@ -1036,53 +1036,86 @@
 	 * 修改网站整体气氛（颜色主题）
 	 * 可选值: 'default' (Hyplus水蓝), 'red' , 'purple', 'green', 'night'等
 	 */
+	function isSystemNightModeEnabled() {
+		return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+	}
+
+	function getManualAtmosphere() {
+		const manualAtmosphere = localStorage.getItem('manualAtmosphere');
+		if (manualAtmosphere) return manualAtmosphere;
+		const savedAtmosphere = localStorage.getItem('selectedAtmosphere');
+		return savedAtmosphere || 'default';
+	}
+
+	function syncAtmosphereSelectorState() {
+		const select = document.getElementById('atmosphereSelect');
+		if (!select) return;
+		const forced = isSystemNightModeEnabled();
+		select.disabled = forced;
+		select.title = forced ? '系统已强制使用夜间模式(Night)' : '请选择渲染气氛';
+		select.value = forced ? 'night' : getManualAtmosphere();
+	}
+
 	function getActiveAtmosphere() {
+		if (isSystemNightModeEnabled()) return 'night';
 		if (document.body.classList.contains('hyplus-atmosphere-night')) return 'night';
 		if (document.body.classList.contains('hyplus-atmosphere-red')) return 'red';
 		if (document.body.classList.contains('hyplus-atmosphere-purple')) return 'purple';
 		if (document.body.classList.contains('hyplus-atmosphere-green')) return 'green';
-		return localStorage.getItem('selectedAtmosphere') || 'default';
+		return getManualAtmosphere();
 	}
 
 	function changeAtmosphere(atmosphere) {
-		// 如果没有传入参数，则从选择器中获取
+		const darkModeForced = isSystemNightModeEnabled();
 		if (!atmosphere) {
 			const select = document.getElementById('atmosphereSelect');
 			atmosphere = select ? select.value : 'default';
 		}
+		const effectiveAtmosphere = darkModeForced ? 'night' : atmosphere;
 		
 		// 移除所有旧的atmosphere类
 		document.body.classList.remove('hyplus-atmosphere-red', 'hyplus-atmosphere-purple', 'hyplus-atmosphere-green', 'hyplus-atmosphere-night');
 		
 		// 应用新的atmosphere类
-		if (atmosphere === 'red') {
+		if (effectiveAtmosphere === 'red') {
 			document.body.classList.add('hyplus-atmosphere-red');
-		} else if (atmosphere === 'purple') {
+		} else if (effectiveAtmosphere === 'purple') {
 			document.body.classList.add('hyplus-atmosphere-purple');
-		} else if (atmosphere === 'green') {
+		} else if (effectiveAtmosphere === 'green') {
 			document.body.classList.add('hyplus-atmosphere-green');
-		} else if (atmosphere === 'night') {
+		} else if (effectiveAtmosphere === 'night') {
 			document.body.classList.add('hyplus-atmosphere-night');
 		}
 		// 'default'不需要添加类，默认样式已由:root定义
 		
-		// 保存用户选择到localStorage
-		localStorage.setItem('selectedAtmosphere', atmosphere);
+		if (!darkModeForced) {
+			localStorage.setItem('manualAtmosphere', effectiveAtmosphere);
+			localStorage.setItem('selectedAtmosphere', effectiveAtmosphere);
+		}
 		const currentBackground = getCookie('selectedBackground') || 'default';
 		changeBackground(currentBackground);
+		syncAtmosphereSelectorState();
 	}
 
 	function initAtmosphere() {
-		// 从localStorage读取保存的气氛选择
-		const savedAtmosphere = localStorage.getItem('selectedAtmosphere') || 'default';
-		
-		// 应用保存的气氛
-		changeAtmosphere(savedAtmosphere);
-		
-		// 更新下拉菜单的值
+		const manualAtmosphere = getManualAtmosphere();
+		const effectiveAtmosphere = isSystemNightModeEnabled() ? 'night' : manualAtmosphere;
+		changeAtmosphere(effectiveAtmosphere);
 		const select = document.getElementById('atmosphereSelect');
 		if (select) {
-			select.value = savedAtmosphere || 'default';
+			select.value = effectiveAtmosphere || 'default';
+		}
+		const prefersDarkScheme = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+		if (prefersDarkScheme) {
+			const handleSystemThemeChange = () => {
+				const nextAtmosphere = isSystemNightModeEnabled() ? 'night' : getManualAtmosphere();
+				changeAtmosphere(nextAtmosphere);
+			};
+			if (prefersDarkScheme.addEventListener) {
+				prefersDarkScheme.addEventListener('change', handleSystemThemeChange);
+			} else if (prefersDarkScheme.addListener) {
+				prefersDarkScheme.addListener(handleSystemThemeChange);
+			}
 		}
 	}
 
