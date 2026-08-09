@@ -484,6 +484,35 @@ function hyplus_output_toc_scripts() {
             }, 300);
         }
 
+        // 页面真正稳定之后再异步检测当前位置，适配浏览器“续读/恢复滚动位置”场景
+        function scheduleInitialActiveLinkSync() {
+            function runSync() {
+                var syncDelay = 120;
+                if (typeof window.requestIdleCallback === 'function') {
+                    window.requestIdleCallback(function(){
+                        updateAllActiveLinks();
+                    }, { timeout: 500 });
+                    return;
+                }
+                setTimeout(function(){
+                    updateAllActiveLinks();
+                }, syncDelay);
+            }
+
+            if (document.readyState === 'complete') {
+                runSync();
+                return;
+            }
+            window.addEventListener('load', runSync, { once: true });
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted || document.visibilityState === 'visible') {
+                    setTimeout(function(){
+                        updateAllActiveLinks();
+                    }, 120);
+                }
+            });
+        }
+
         // 全局缓存：一次性预处理所有headers的anchor和pureText（页面级别，只执行一次）
         var cachedValidHeaders = null;
 
@@ -651,8 +680,6 @@ function hyplus_output_toc_scripts() {
                     currentActiveLink: null,
                     mode: mode
                 });
-                // 初始更新
-                updateAllActiveLinks();
             }
 
             tocContent.addEventListener('click', function(e){
@@ -889,6 +916,9 @@ function hyplus_output_toc_scripts() {
             initToc();
             setupHeaderClickListeners();
             handleAllAnchorLinks();
+
+            // 仅在页面稳定后异步同步当前位置，避免续读场景下初始化阶段错过当前标题
+            scheduleInitialActiveLinkSync();
             
             // 注册全局 scroll 监听（仅当有需要高亮的容器时）
             if (tocContainers.length > 0) {
