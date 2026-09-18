@@ -1902,10 +1902,10 @@ body.nav-buttons-left .series-button:last-child:not(:first-child) {
 	/* color: #333 !important; */
 }
 
-.font-size-btn.reset:hover {
+/* .font-size-btn.reset:hover {
 	color: var(--hyplus-text-primary);
 	background-color: #d0e8ff;
-}
+} */
 
 .font-size-display {
 	min-width: 50px;
