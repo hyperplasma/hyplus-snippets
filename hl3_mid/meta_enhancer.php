@@ -117,17 +117,15 @@ function count_words_read_time() {
 
 function lh_single_cats_above_title() {
     if (is_single()) {
-        global $post;
-
-        $counter_str = count_words_read_time();
-        $emoji = '';
-
-        // 检查是否为密码保护的文章
-        if (!empty($post->post_password)) {
-            $emoji .= '🔐';
+        $current_post = get_post(get_the_ID());
+        if (!$current_post instanceof WP_Post) {
+            return;
         }
 
-        $series_buttons = hyplus_get_series_button_specs($post->ID);
+        $counter_str = count_words_read_time();
+        $is_password_protected = (string) $current_post->post_password !== '';
+
+        $series_buttons = hyplus_get_series_button_specs($current_post->ID);
         $series_html = '';
 
         if (!empty($series_buttons)) {
@@ -152,9 +150,7 @@ function lh_single_cats_above_title() {
                         <?php echo do_shortcode($series_html); ?>
                     </span>
                 <?php endif; ?>
-                <span class="post-meta-counter">
-                    <?php echo $counter_str; ?><span class="hyplus-unselectable"><?php echo $emoji ? '&nbsp;<a class="hyplus-scale" href="/user/akira37/"  style="display: inline-block;" title="受限内容">' . $emoji . '</a>' : ''; ?></span>
-                </span>
+                <span class="post-meta-counter"><?php echo $counter_str; ?><?php if ($is_password_protected): // 为避免多余空格显示，本行禁止换行 ?><span class="hyplus-unselectable">&nbsp;<a class="hyplus-scale" href="/user/akira37/" style="display: inline-block;" title="受限内容">🔐</a></span><?php endif; ?></span>
             </span>
         </div>
         <?php
