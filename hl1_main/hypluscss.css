@@ -2219,7 +2219,7 @@ body.sidebar-left .content-area {
 	/* box-shadow: 0 2.5px 10px 0 var(--hyplus-shadow-nav), 0 1px 2px 0 var(--hyplus-shadow-nav-text); */
 	box-shadow: 0 5px 10px var(--hyplus-shadow-nav), 0 2px 8px 0 var(--hyplus-shadow-nav-text);
 	padding: 0;
-	font-size: 0.9em;
+	font-size: 1em;
 	line-height: 1.6;
 	word-break: break-word;
 	pointer-events: auto;
@@ -2273,7 +2273,7 @@ body.sidebar-left .content-area {
 	flex: 1 1 auto;
 	min-height: 0;
 	padding: 0 22px 0.5em 22px;
-	font-size: 0.9em;
+	font-size: 1em;
 	overflow-y: auto;
 	overscroll-behavior-y: none;
 	-webkit-overflow-scrolling: touch;
