@@ -167,15 +167,29 @@
 					</div>
 				</div>
 
-				<!-- 字号缩放控制区 -->
+				<!-- 正文字号控制区（暂时停用；恢复时取消注释）
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
-						<span class="language-label">字号缩放:</span>
+						<span class="language-label">正文字号:</span>
 						<div class="font-size-controls">
 							<button id="decreaseFontBtn" class="font-size-btn">-</button>
 							<span id="fontSizeDisplay" class="font-size-display">100%</span>
 							<button id="increaseFontBtn" class="font-size-btn">+</button>
 							<button id="resetFontBtn" class="font-size-btn reset">还原</button>
+						</div>
+					</div>
+				</div>
+				-->
+
+				<!-- 侧栏字号控制区 -->
+				<div class="language-selector" style="margin-top: 12px;">
+					<div class="language-selector-row">
+						<span class="language-label">侧栏字号:</span>
+						<div class="font-size-controls">
+							<button id="decreaseSidebarFontBtn" class="font-size-btn">-</button>
+							<span id="sidebarFontSizeDisplay" class="font-size-display">100%</span>
+							<button id="increaseSidebarFontBtn" class="font-size-btn">+</button>
+							<button id="resetSidebarFontBtn" class="font-size-btn reset">还原</button>
 						</div>
 					</div>
 				</div>
@@ -291,11 +305,11 @@
 						<span class="shortcut-key">⌥D</span>
 					</div>
 					<div class="shortcut-item">
-						减小/增大字体
+						减小/增大侧栏字体
 						<span class="shortcut-key">⌥-/=</span>
 					</div>
 					<div class="shortcut-item">
-						还原字体大小
+						还原侧栏字体大小
 						<span class="shortcut-key">⌥0</span>
 					</div>
 				</div>
@@ -566,48 +580,60 @@
 
 	// 字体大小控制
 	function initFontSizeControls() {
-		// 缓存按钮元素
-		if (!window._hyplusFontCache) {
-			window._hyplusFontCache = {
-				decreaseFontBtn: document.getElementById('decreaseFontBtn'),
-				increaseFontBtn: document.getElementById('increaseFontBtn'),
-				resetFontBtn: document.getElementById('resetFontBtn'),
-				fontSizeDisplay: document.getElementById('fontSizeDisplay')
-			};
-		}
-		const { decreaseFontBtn, increaseFontBtn, resetFontBtn } = window._hyplusFontCache;
-		let scalePercent = parseInt(localStorage.getItem('fontScalePercent')) || 100;
-		updateFontScale(scalePercent);
+		/*
+		// 正文字号控制暂时停用；恢复时取消注释，并恢复对应设置项。
+		initFontScaleControl({
+			decrease: document.getElementById('decreaseFontBtn'),
+			increase: document.getElementById('increaseFontBtn'),
+			reset: document.getElementById('resetFontBtn'),
+			display: document.getElementById('fontSizeDisplay'),
+			cookieName: 'fontScalePercent',
+			target: document.querySelector('.site-main')
+		}, '--font-scale');
+		*/
 
-		decreaseFontBtn?.addEventListener('click', (event) => {
+		initFontScaleControl({
+			decrease: document.getElementById('decreaseSidebarFontBtn'),
+			increase: document.getElementById('increaseSidebarFontBtn'),
+			reset: document.getElementById('resetSidebarFontBtn'),
+			display: document.getElementById('sidebarFontSizeDisplay'),
+			cookieName: 'sidebarFontScalePercent',
+			target: document.documentElement
+		}, '--hyplus-widget-toc-font-scale');
+	}
+
+	function initFontScaleControl(control, property) {
+		const parsedValue = Number.parseInt(getCookie(control.cookieName), 10);
+		let scalePercent = Number.isFinite(parsedValue) ? Math.min(150, Math.max(50, parsedValue)) : 100;
+		const update = () => updateFontScale(scalePercent, control, property);
+
+		update();
+		control.decrease?.addEventListener('click', (event) => {
 			event.stopPropagation();
 			if (scalePercent > 50) {
-				scalePercent -= 2;
-				updateFontScale(scalePercent);
+				scalePercent = Math.max(50, scalePercent - 5);
+				update();
 			}
 		});
-
-		increaseFontBtn?.addEventListener('click', (event) => {
+		control.increase?.addEventListener('click', (event) => {
 			event.stopPropagation();
 			if (scalePercent < 150) {
-				scalePercent += 2;
-				updateFontScale(scalePercent);
+				scalePercent = Math.min(150, scalePercent + 5);
+				update();
 			}
 		});
-
-		resetFontBtn?.addEventListener('click', (event) => {
+		control.reset?.addEventListener('click', (event) => {
 			event.stopPropagation();
 			scalePercent = 100;
-			updateFontScale(scalePercent);
+			update();
 		});
 	}
 
-	function updateFontScale(scalePercent) {
-		const display = document.getElementById('fontSizeDisplay');
-		if (display) display.textContent = scalePercent + '%';
+	function updateFontScale(scalePercent, control, property) {
+		if (control.display) control.display.textContent = scalePercent + '%';
 		const scale = scalePercent / 100;
-		document.documentElement.style.setProperty('--font-scale', scale);
-		localStorage.setItem('fontScalePercent', scalePercent);
+		control.target.style.setProperty(property, scale);
+		setCookie(control.cookieName, scalePercent);
 	}
 
 	// 页面切换
@@ -747,9 +773,9 @@
 	
 	// 字体控制快捷键映射
 	const FONT_KEY_MAP = {
-		'-': 'decreaseFontBtn', '_': 'decreaseFontBtn', '–': 'decreaseFontBtn',
-		'=': 'increaseFontBtn', '+': 'increaseFontBtn', '≠': 'increaseFontBtn',
-		'0': 'resetFontBtn', 'º': 'resetFontBtn'
+		'-': 'decreaseSidebarFontBtn', '_': 'decreaseSidebarFontBtn', '–': 'decreaseSidebarFontBtn',
+		'=': 'increaseSidebarFontBtn', '+': 'increaseSidebarFontBtn', '≠': 'increaseSidebarFontBtn',
+		'0': 'resetSidebarFontBtn', 'º': 'resetSidebarFontBtn'
 	};
 
 	// 键盘快捷键处理

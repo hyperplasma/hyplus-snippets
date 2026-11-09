@@ -57,6 +57,12 @@ function hyplus_output_toc_scripts() {
         box-sizing: border-box;
         vertical-align: top;
     }
+    .hyplus-toc-container[data-toc-mode="widget"] {
+        font-size: calc(var(--hyplus-widget-toc-font-scale, 1) * 1em);
+    }
+    .hyplus-toc-container[data-toc-mode="widget"] * {
+        font-size: inherit;
+    }
 
     /* 仅用 emoji 显示，不要背景与边框 */
     .hyplus-toc-toggle {
