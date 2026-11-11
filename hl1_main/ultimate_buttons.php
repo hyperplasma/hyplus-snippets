@@ -167,29 +167,24 @@
 					</div>
 				</div>
 
-				<!-- 正文字号控制区（暂时停用；恢复时取消注释）
+				<!-- 字号控制区 -->
 				<div class="language-selector" style="margin-top: 12px;">
 					<div class="language-selector-row">
 						<span class="language-label">正文字号:</span>
 						<div class="font-size-controls">
-							<button id="decreaseFontBtn" class="font-size-btn">-</button>
+							<button id="decreaseFontBtn" class="font-size-btn" type="button">-</button>
 							<span id="fontSizeDisplay" class="font-size-display">100%</span>
-							<button id="increaseFontBtn" class="font-size-btn">+</button>
-							<button id="resetFontBtn" class="font-size-btn reset">还原</button>
+							<button id="increaseFontBtn" class="font-size-btn" type="button">+</button>
+							<button id="resetFontBtn" class="font-size-btn reset" type="button">还原</button>
 						</div>
 					</div>
-				</div>
-				-->
-
-				<!-- 侧栏字号控制区 -->
-				<div class="language-selector" style="margin-top: 12px;">
-					<div class="language-selector-row">
+					<div class="language-selector-row" style="margin-top: 10px;">
 						<span class="language-label">侧栏字号:</span>
 						<div class="font-size-controls">
-							<button id="decreaseSidebarFontBtn" class="font-size-btn">-</button>
+							<button id="decreaseSidebarFontBtn" class="font-size-btn" type="button">-</button>
 							<span id="sidebarFontSizeDisplay" class="font-size-display">100%</span>
-							<button id="increaseSidebarFontBtn" class="font-size-btn">+</button>
-							<button id="resetSidebarFontBtn" class="font-size-btn reset">还原</button>
+							<button id="increaseSidebarFontBtn" class="font-size-btn" type="button">+</button>
+							<button id="resetSidebarFontBtn" class="font-size-btn reset" type="button">还原</button>
 						</div>
 					</div>
 				</div>
@@ -580,8 +575,6 @@
 
 	// 字体大小控制
 	function initFontSizeControls() {
-		/*
-		// 正文字号控制暂时停用；恢复时取消注释，并恢复对应设置项。
 		initFontScaleControl({
 			decrease: document.getElementById('decreaseFontBtn'),
 			increase: document.getElementById('increaseFontBtn'),
@@ -589,8 +582,7 @@
 			display: document.getElementById('fontSizeDisplay'),
 			cookieName: 'fontScalePercent',
 			target: document.querySelector('.site-main')
-		}, '--font-scale');
-		*/
+		}, '--font-scale', 2);
 
 		initFontScaleControl({
 			decrease: document.getElementById('decreaseSidebarFontBtn'),
@@ -602,7 +594,7 @@
 		}, '--hyplus-widget-toc-font-scale');
 	}
 
-	function initFontScaleControl(control, property) {
+	function initFontScaleControl(control, property, step = 5) {
 		const parsedValue = Number.parseInt(getCookie(control.cookieName), 10);
 		let scalePercent = Number.isFinite(parsedValue) ? Math.min(150, Math.max(50, parsedValue)) : 100;
 		const update = () => updateFontScale(scalePercent, control, property);
@@ -611,14 +603,14 @@
 		control.decrease?.addEventListener('click', (event) => {
 			event.stopPropagation();
 			if (scalePercent > 50) {
-				scalePercent = Math.max(50, scalePercent - 5);
+				scalePercent = Math.max(50, scalePercent - step);
 				update();
 			}
 		});
 		control.increase?.addEventListener('click', (event) => {
 			event.stopPropagation();
 			if (scalePercent < 150) {
-				scalePercent = Math.min(150, scalePercent + 5);
+				scalePercent = Math.min(150, scalePercent + step);
 				update();
 			}
 		});
@@ -632,7 +624,7 @@
 	function updateFontScale(scalePercent, control, property) {
 		if (control.display) control.display.textContent = scalePercent + '%';
 		const scale = scalePercent / 100;
-		control.target.style.setProperty(property, scale);
+		control.target?.style.setProperty(property, scale);
 		setCookie(control.cookieName, scalePercent);
 	}
 

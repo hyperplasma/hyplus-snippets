@@ -1334,7 +1334,6 @@ table:not(.hyplus-excluded-table) tbody:last-child td {
 	min-width: 90px;
 }
 
-/* 正文字号缩放暂时停用；恢复时取消注释本段，并启用 Ultimate Buttons 对应控件。
 :root {
 	--font-scale: 1;
 }
@@ -1346,7 +1345,6 @@ button:not(.font-size-btn),
 article, section, blockquote, code, pre {
 	font-size: calc(var(--font-scale) * 1em);
 }
-*/
 
 /* 按钮组容器 */
 #hybuttonContainer {
